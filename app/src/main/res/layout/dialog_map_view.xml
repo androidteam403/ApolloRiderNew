@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dotted_line_color">
+
+    <RelativeLayout
+        android:id="@+id/header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/five_dp"
+        android:paddingBottom="@dimen/five_dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_order_header"
+                android:fontFamily="@font/roboto_regular"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_dimen_10" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="15000001234"
+                android:textSize="@dimen/text_dimen_15"
+                android:fontFamily="@font/roboto_bold"
+                android:textColor="@color/colorWhite"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/map_view_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_marginEnd="@dimen/five_dp"
+                android:text="@string/label_map_view"
+                android:fontFamily="@font/roboto_bold"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_dimen_12" />
+
+            <ImageView
+                android:layout_width="@dimen/thirty_five_dp"
+                android:layout_height="@dimen/thirty_five_dp"
+                android:contentDescription="@string/app_name"
+                android:padding="@dimen/five_dp"
+                android:src="@drawable/icon_close"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <fragment
+        android:id="@+id/map_view"
+        android:layout_below="@+id/header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/forty_five_dp"
+        class="com.google.android.gms.maps.SupportMapFragment"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_below="@+id/map_view"
+        android:layout_height="@dimen/one_dp"
+        android:background="@color/colorBlack"/>
+
+    <Button
+        android:id="@+id/btn_complaint_box"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/forty_five_dp"
+        android:layout_marginTop="@dimen/minus_forty_five_dp"
+        android:layout_below="@+id/map_view"
+        android:textColor="@color/colorWhite"
+        android:fontFamily="@font/roboto_bold"
+        android:textSize="@dimen/text_dimen_16"
+        android:background="@drawable/btn_complaint_ripple_effect"
+        android:text="@string/label_follow_map" />
+</RelativeLayout>

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginBottom="@dimen/five_dp"
+    android:layout_marginEnd="@dimen/five_dp"
+    android:layout_marginStart="@dimen/five_dp"
+    android:background="@drawable/cart_item_bg">
+
+    <LinearLayout
+        android:id="@+id/parent_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ninety_dp"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="@dimen/fifteen_dp"
+            android:src="@drawable/icon_medicine"
+            android:layout_marginTop="@dimen/three_dp"
+            android:layout_weight="0.05"
+            android:contentDescription="@string/app_name"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="0.53"
+            android:layout_marginStart="@dimen/five_dp">
+
+            <TextView
+                android:id="@+id/medicine_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Medicine name"
+                android:fontFamily="@font/roboto_bold"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/text_dimen_14" />
+
+            <TextView
+                android:id="@+id/medicine_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="by RANBAXY "
+                android:fontFamily="@font/roboto_regular"
+                android:textColor="@color/medicine_brand_color"
+                android:layout_gravity="center_vertical"
+                android:textSize="@dimen/text_dimen_11" />
+
+            <TextView
+                android:id="@+id/medicine_qty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10 Tablet(s) in a strip"
+                android:fontFamily="@font/roboto_regular"
+                android:textColor="@color/colorBlack"
+                android:layout_gravity="center_vertical"
+                android:textSize="@dimen/text_dimen_11" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/two_dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/discount_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="54.40*"
+                    android:fontFamily="@font/roboto_medium"
+                    android:textColor="@color/colorBlack"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="@dimen/text_dimen_13" />
+
+                <TextView
+                    android:id="@+id/actual_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/fifteen_dp"
+                    android:text="68.00"
+                    android:fontFamily="@font/roboto_medium"
+                    android:textColor="@color/strike_price_color"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="@dimen/text_dimen_11" />
+
+                <TextView
+                    android:id="@+id/save_percent"
+                    android:layout_width="wrap_content"
+                    android:background="@drawable/save_medicine_bg"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/five_dp"
+                    android:text="save 20%"
+                    android:fontFamily="@font/roboto_medium"
+                    android:textColor="@color/colorWhite"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="@dimen/text_dimen_10" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_estimated_price"
+                android:fontFamily="@font/roboto_medium"
+                android:textColor="@color/strike_price_color"
+                android:layout_gravity="center_vertical"
+                android:textSize="@dimen/text_dimen_11" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.22"
+            android:gravity="center"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="@dimen/fifteen_dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/qty_decrement"
+                android:layout_width="@dimen/twenty_seven_dp"
+                android:layout_height="@dimen/twenty_seven_dp"
+                android:contentDescription="@string/app_name"
+                android:padding="@dimen/five_dp"
+                android:src="@drawable/icon_product_decrement"/>
+
+            <TextView
+                android:id="@+id/item_qnty"
+                android:layout_width="@dimen/twenty_dp"
+                android:layout_height="wrap_content"
+                android:text="2"
+                android:gravity="center"
+                android:fontFamily="@font/roboto_bold"
+                android:textSize="@dimen/text_dimen_16"
+                android:layout_gravity="center_vertical"/>
+
+            <ImageView
+                android:id="@+id/qty_increment"
+                android:layout_width="@dimen/twenty_seven_dp"
+                android:layout_height="@dimen/twenty_seven_dp"
+                android:contentDescription="@string/app_name"
+                android:padding="@dimen/five_dp"
+                android:src="@drawable/icon_product_increment"/>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:gravity="end"
+            android:layout_marginBottom="@dimen/eighteen_dp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/twenty_dp"
+                android:layout_height="@dimen/twenty_dp"
+                android:contentDescription="@string/app_name"
+                android:padding="@dimen/five_dp"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/icon_item_close"/>
+
+            <TextView
+                android:id="@+id/item_total_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="108.87"
+                android:layout_marginEnd="@dimen/ten_dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:textColor="@color/colorBlack"
+                android:fontFamily="@font/roboto_bold"
+                android:textSize="@dimen/text_dimen_16" />
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

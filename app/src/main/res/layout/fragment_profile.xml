@@ -1,0 +1,570 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorWhite"
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/profile_header_bg"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingEnd="@dimen/ten_dp"
+                android:paddingTop="@dimen/five_dp"
+                android:gravity="center"
+                android:paddingBottom="@dimen/five_dp"
+                android:text="@string/label_personal_info"
+                android:textAllCaps="true"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/text_dimen_15"
+                android:fontFamily="@font/roboto_bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="@dimen/five_dp"
+                    android:layout_marginTop="@dimen/five_dp"
+                    android:weightSum="1">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/five_dp"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="@dimen/five_dp"
+                        android:layout_weight="0.5"
+                        android:orientation="vertical">
+
+                        <RelativeLayout
+                            android:layout_width="@dimen/eighty_dp"
+                            android:layout_height="@dimen/eighty_dp"
+                            android:paddingTop="@dimen/eight_dp"
+                            android:paddingBottom="@dimen/eight_dp"
+                            android:layout_gravity="center_horizontal">
+
+                            <ImageView
+                                android:id="@+id/user_image"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@drawable/image_circle_bg"
+                                android:contentDescription="@string/nav_header_desc"/>
+                        </RelativeLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="@dimen/five_dp"
+                        android:layout_marginBottom="@dimen/five_dp"
+                        android:layout_weight="0.5"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/two_dp"
+                            android:fontFamily="@font/roboto_regular"
+                            android:text="@string/label_employee_id"
+                            android:textSize="@dimen/text_dimen_12"
+                            android:textColor="@color/profile_header_color" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="8880002258"
+                            android:fontFamily="@font/roboto_bold"
+                            android:textSize="@dimen/text_dimen_14"
+                            android:textColor="@color/colorBlack" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/five_dp"
+                            android:fontFamily="@font/roboto_bold"
+                            android:text="Raghavendra Dabbidi"
+                            android:textSize="@dimen/text_dimen_14"
+                            android:textColor="@color/colorBlack" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_marginTop="@dimen/two_dp"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_bold"
+                            android:text="+91 9440012212"
+                            android:textSize="@dimen/text_dimen_14"
+                            android:textColor="@color/colorBlack" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/five_dp"
+                    android:layout_marginBottom="@dimen/five_dp"
+                    android:layout_marginStart="@dimen/fifteen_dp"
+                    android:layout_marginEnd="@dimen/fifteen_dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_regular"
+                        android:textSize="@dimen/text_dimen_12"
+                        android:text="@string/label_date_of_birth"
+                        android:textColor="@color/profile_header_color" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="25/09/1990"
+                        android:textSize="@dimen/text_dimen_14"
+                        android:textColor="@color/colorBlack"
+                        android:fontFamily="@font/roboto_bold" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/one_dp"
+                    android:background="@color/dashboard_item_border_color"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/five_dp"
+                    android:layout_marginBottom="@dimen/five_dp"
+                    android:layout_marginStart="@dimen/fifteen_dp"
+                    android:layout_marginEnd="@dimen/fifteen_dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_regular"
+                        android:textSize="@dimen/text_dimen_12"
+                        android:text="@string/label_area_of_operation"
+                        android:textColor="@color/profile_header_color" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Kukatpally"
+                        android:textColor="@color/colorBlack"
+                        android:fontFamily="@font/roboto_bold" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/one_dp"
+                    android:background="@color/dashboard_item_border_color"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/five_dp"
+                    android:layout_marginStart="@dimen/fifteen_dp"
+                    android:layout_marginEnd="@dimen/fifteen_dp"
+                    android:layout_marginBottom="@dimen/ten_dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_regular"
+                        android:text="@string/label_address"
+                        android:textSize="@dimen/text_dimen_12"
+                        android:textColor="@color/profile_header_color" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Prajay Megapolis, Kukatpally, Hyderabad."
+                        android:textColor="@color/colorBlack"
+                        android:fontFamily="@font/roboto_bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ten_dp"
+                android:background="@color/profile_header_bg"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingTop="@dimen/five_dp"
+                android:gravity="center"
+                android:paddingEnd="@dimen/ten_dp"
+                android:paddingBottom="@dimen/five_dp"
+                android:text="@string/label_vehicle_info"
+                android:textAllCaps="true"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/text_dimen_15"
+                android:fontFamily="@font/roboto_bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ten_dp"
+                    android:layout_marginStart="@dimen/fifteen_dp"
+                    android:layout_marginEnd="@dimen/fifteen_dp"
+                    android:layout_marginBottom="@dimen/five_dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_regular"
+                        android:textSize="@dimen/text_dimen_12"
+                        android:text="@string/label_model"
+                        android:textColor="@color/profile_header_color" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hero Splender"
+                        android:textColor="@color/colorBlack"
+                        android:fontFamily="@font/roboto_bold" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/one_dp"
+                    android:background="@color/dashboard_item_border_color"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/five_dp"
+                    android:layout_marginStart="@dimen/fifteen_dp"
+                    android:layout_marginEnd="@dimen/fifteen_dp"
+                    android:layout_marginBottom="@dimen/five_dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_regular"
+                        android:text="@string/label_making_year"
+                        android:textSize="@dimen/text_dimen_12"
+                        android:textColor="@color/profile_header_color" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2018"
+                        android:textColor="@color/colorBlack"
+                        android:fontFamily="@font/roboto_bold" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/one_dp"
+                    android:background="@color/dashboard_item_border_color"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/five_dp"
+                    android:layout_marginStart="@dimen/fifteen_dp"
+                    android:layout_marginEnd="@dimen/fifteen_dp"
+                    android:layout_marginBottom="@dimen/ten_dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_regular"
+                        android:textSize="@dimen/text_dimen_12"
+                        android:text="@string/label_registration_no"
+                        android:textColor="@color/profile_header_color" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TS08FU9506"
+                        android:textColor="@color/colorBlack"
+                        android:fontFamily="@font/roboto_bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/profile_header_bg"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingTop="@dimen/five_dp"
+                android:paddingEnd="@dimen/ten_dp"
+                android:gravity="center"
+                android:paddingBottom="@dimen/five_dp"
+                android:text="@string/label_documents_info"
+                android:textAllCaps="true"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/text_dimen_15"
+                android:fontFamily="@font/roboto_bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ten_dp"
+                    android:layout_marginStart="@dimen/ten_dp"
+                    android:layout_marginEnd="@dimen/ten_dp"
+                    android:layout_marginBottom="@dimen/five_dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_regular"
+                        android:textSize="@dimen/text_dimen_12"
+                        android:text="@string/label_driving_licence"
+                        android:textColor="@color/profile_header_color" />
+
+                    <ImageView
+                        android:layout_width="@dimen/one_hundred_dp"
+                        android:layout_height="@dimen/fifty_dp"
+                        android:layout_marginBottom="@dimen/five_dp"
+                        android:layout_marginTop="@dimen/five_dp"
+                        android:scaleType="fitXY"
+                        android:contentDescription="@string/app_name"
+                        android:src="@drawable/drivinglicense" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/one_dp"
+                    android:background="@color/dashboard_item_border_color"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/five_dp"
+                    android:layout_marginStart="@dimen/ten_dp"
+                    android:layout_marginEnd="@dimen/ten_dp"
+                    android:layout_marginBottom="@dimen/five_dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_regular"
+                        android:textSize="@dimen/text_dimen_12"
+                        android:text="@string/label_vehicle_rc"
+                        android:textColor="@color/profile_header_color" />
+
+                    <ImageView
+                        android:layout_width="@dimen/one_hundred_dp"
+                        android:layout_height="@dimen/fifty_dp"
+                        android:scaleType="fitXY"
+                        android:layout_marginBottom="@dimen/five_dp"
+                        android:layout_marginTop="@dimen/five_dp"
+                        android:contentDescription="@string/app_name"
+                        android:src="@drawable/rc" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/one_dp"
+                    android:background="@color/dashboard_item_border_color"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/five_dp"
+                    android:layout_marginStart="@dimen/ten_dp"
+                    android:layout_marginEnd="@dimen/ten_dp"
+                    android:layout_marginBottom="@dimen/ten_dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:textSize="@dimen/text_dimen_12"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_regular"
+                        android:text="@string/label_vehicle_insurance"
+                        android:textColor="@color/profile_header_color" />
+
+                    <ImageView
+                        android:layout_width="@dimen/one_hundred_dp"
+                        android:layout_height="@dimen/eighty_dp"
+                        android:scaleType="fitXY"
+                        android:layout_marginBottom="@dimen/five_dp"
+                        android:layout_marginTop="@dimen/five_dp"
+                        android:contentDescription="@string/app_name"
+                        android:src="@drawable/vehicleinsurance" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/profile_header_bg"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingTop="@dimen/five_dp"
+                android:paddingEnd="@dimen/ten_dp"
+                android:paddingBottom="@dimen/five_dp"
+                android:text="@string/label_language_speaks"
+                android:gravity="center"
+                android:textAllCaps="true"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/text_dimen_15"
+                android:fontFamily="@font/roboto_bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ten_dp"
+                android:layout_marginStart="@dimen/fifteen_dp"
+                android:layout_marginBottom="@dimen/fifteen_dp"
+                android:layout_marginEnd="@dimen/fifteen_dp"
+                android:textSize="@dimen/text_dimen_14"
+                android:fontFamily="@font/roboto_regular"
+                android:text="English, Telugu, Hindi"
+                android:textColor="@color/colorBlack" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/profile_header_bg"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingTop="@dimen/five_dp"
+                android:paddingEnd="@dimen/ten_dp"
+                android:paddingBottom="@dimen/five_dp"
+                android:text="@string/label_bank_details"
+                android:gravity="center"
+                android:textAllCaps="true"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/text_dimen_15"
+                android:fontFamily="@font/roboto_bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ten_dp"
+                    android:layout_marginStart="@dimen/fifteen_dp"
+                    android:layout_marginEnd="@dimen/fifteen_dp"
+                    android:layout_marginBottom="@dimen/five_dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_regular"
+                        android:text="@string/label_bank_name"
+                        android:textSize="@dimen/text_dimen_12"
+                        android:textColor="@color/profile_header_color" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="State Bank of India"
+                        android:textColor="@color/colorBlack"
+                        android:fontFamily="@font/roboto_bold" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/one_dp"
+                    android:background="@color/dashboard_item_border_color"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/five_dp"
+                    android:layout_marginStart="@dimen/fifteen_dp"
+                    android:layout_marginEnd="@dimen/fifteen_dp"
+                    android:layout_marginBottom="@dimen/five_dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_regular"
+                        android:textSize="@dimen/text_dimen_12"
+                        android:text="@string/label_account_number"
+                        android:textColor="@color/profile_header_color" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="110957879"
+                        android:textColor="@color/colorBlack"
+                        android:fontFamily="@font/roboto_bold" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/one_dp"
+                    android:background="@color/dashboard_item_border_color"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/five_dp"
+                    android:layout_marginStart="@dimen/fifteen_dp"
+                    android:layout_marginEnd="@dimen/fifteen_dp"
+                    android:layout_marginBottom="@dimen/fifteen_dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_regular"
+                        android:textSize="@dimen/text_dimen_12"
+                        android:text="@string/label_area"
+                        android:textColor="@color/profile_header_color" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ameerpet, Hyderabad"
+                        android:textColor="@color/colorBlack"
+                        android:fontFamily="@font/roboto_bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_complaint_box"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/forty_five_dp"
+                android:layout_marginTop="@dimen/ten_dp"
+                android:layout_marginStart="@dimen/thirty_dp"
+                android:layout_marginEnd="@dimen/thirty_dp"
+                android:layout_marginBottom="@dimen/twenty_dp"
+                android:textColor="@color/colorWhite"
+                android:fontFamily="@font/roboto_bold"
+                android:background="@drawable/btn_complaint_ripple_effect"
+                android:text="@string/label_complaint_box" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

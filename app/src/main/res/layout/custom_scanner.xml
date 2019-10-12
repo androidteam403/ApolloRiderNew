@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--Bar code Scanner window-->
+    <com.journeyapps.barcodescanner.BarcodeView
+        android:id="@+id/zxing_barcode_surface"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/roboto_regular"
+        app:zxing_framing_rect_height="@dimen/one_hundred_seventy_dp"
+        app:zxing_framing_rect_width="@dimen/two_hundred_eighty_dp" />
+
+    <!--Full Camera Window with viewfinder-->
+    <com.journeyapps.barcodescanner.ViewfinderView
+        android:id="@+id/zxing_viewfinder_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:zxing_possible_result_points="@color/colorPrimary"
+        app:zxing_result_view="@color/colorPrimary"
+        android:fontFamily="@font/roboto_regular"
+        app:zxing_viewfinder_laser="@color/dashboard_pending_text_color"
+        app:zxing_viewfinder_mask="#322100c8" />
+
+    <!--Help Text-->
+    <TextView
+        android:id="@+id/zxing_status_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_gravity="top|center_horizontal"
+        android:gravity="center"
+        android:text="@string/message"
+        android:textSize="@dimen/text_dimen_20"
+        android:fontFamily="@font/roboto_regular"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/zxing_status_text"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_scan_barcode"
+            android:layout_marginTop="@dimen/ten_dp"
+            android:layout_marginEnd="@dimen/twenty_dp"
+            android:layout_marginStart="@dimen/twenty_dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:fontFamily="@font/roboto_regular"
+            android:layout_marginBottom="@dimen/twenty_five_dp"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/text_dimen_17"/>
+
+        <ImageView
+            android:layout_width="@dimen/one_hundred_fifty_dp"
+            android:layout_height="@dimen/one_hundred_dp"
+            android:src="@drawable/icon_scanning_image"
+            android:contentDescription="@string/app_name"/>
+    </LinearLayout>
+</merge>

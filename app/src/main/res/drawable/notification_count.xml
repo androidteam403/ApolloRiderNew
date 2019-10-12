@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@color/dashboard_pending_text_color" />
+
+    <size
+        android:width="@dimen/seventeen_dp"
+        android:height="@dimen/seventeen_dp" />
+    <stroke
+        android:width="@dimen/one_point_five_dp"
+        android:color="@color/colorWhite" />
+</shape>

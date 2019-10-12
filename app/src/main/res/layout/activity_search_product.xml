@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorWhite"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_marginBottom="@dimen/fifty_dp"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorWhite"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/search_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/ten_dp"
+                android:background="@drawable/dashboard_order_item_bg"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/searched_product_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="Searched Product: "/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/results_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Results"
+                android:textSize="@dimen/text_dimen_15"
+                android:fontFamily="@font/roboto_bold"
+                android:layout_marginStart="@dimen/ten_dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/searchedItemRecyclerView"
+                android:layout_marginTop="@dimen/ten_dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/twelve_dp"
+                android:layout_marginStart="@dimen/twelve_dp" />
+
+            <TextView
+                android:id="@+id/add_to_cart_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/add_cart_unselect_bg"
+                android:layout_marginTop="@dimen/twenty_five_dp"
+                android:layout_marginBottom="@dimen/twenty_dp"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/text_dimen_15"
+                android:fontFamily="@font/roboto_bold"
+                android:text="Add to Cart"/>
+
+            <LinearLayout
+                android:id="@+id/preview_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_marginTop="@dimen/sixty_dp">
+
+                <ImageView
+                    android:id="@+id/captured_preview_image"
+                    android:layout_width="@dimen/one_hundred_twenty_dp"
+                    android:layout_height="@dimen/one_hundred_fifty_dp"
+                    android:src="@drawable/app_theme_bg"
+                    android:visibility="visible"
+                    android:contentDescription="@string/app_name"/>
+
+                <TextView
+                    android:id="@+id/scanned_bar_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Scanned Code: "
+                    android:visibility="visible"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/text_dimen_15"/>
+
+                <TextView
+                    android:id="@+id/continue_btn_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/add_cart_bg"
+                    android:layout_marginTop="@dimen/twenty_five_dp"
+                    android:layout_marginBottom="@dimen/twenty_dp"
+                    android:textAllCaps="true"
+                    android:textColor="@color/colorBlack"
+                    android:fontFamily="@font/roboto_bold"
+                    android:textSize="@dimen/text_dimen_15"
+                    android:text="Continue"/>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_height="@dimen/sixty_dp"
+        android:orientation="horizontal"
+        android:background="@color/colorWhite"
+        android:weightSum="1">
+
+        <LinearLayout
+            android:id="@+id/search_camera_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.33"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/thirty_five_dp"
+                android:layout_height="@dimen/thirty_five_dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/icon_camera_unselect"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_photo"
+                android:textAllCaps="true"
+                android:fontFamily="@font/roboto_regular"
+                android:textSize="@dimen/text_dimen_7"
+                android:textColor="@color/colorBlack"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/search_barcode_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.33"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/forty_dp"
+                android:layout_gravity="center"
+                android:layout_height="@dimen/thirty_five_dp"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/icon_sacnner_unselect"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_barcode"
+                android:fontFamily="@font/roboto_regular"
+                android:textAllCaps="true"
+                android:textSize="@dimen/text_dimen_7"
+                android:textColor="@color/colorBlack"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/search_voice_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.33"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/thirty_five_dp"
+                android:layout_gravity="center"
+                android:layout_height="@dimen/thirty_five_dp"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/icon_voice_unselect"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_voice_search"
+                android:fontFamily="@font/roboto_regular"
+                android:textAllCaps="true"
+                android:textSize="@dimen/text_dimen_7"
+                android:textColor="@color/colorBlack"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

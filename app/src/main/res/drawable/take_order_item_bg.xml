@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@color/new_message_header_bg" />
+    <size
+        android:width="@dimen/seventy_dp"
+        android:height="@dimen/seventy_dp" />
+    <stroke
+        android:width="@dimen/one_dp"
+        android:color="@color/take_order_stroke_color" />
+</shape>

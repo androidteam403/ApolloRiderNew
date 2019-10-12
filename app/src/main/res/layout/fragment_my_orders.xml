@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/orders_header_bg"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/fifteen_dp"
+            android:layout_weight="0.5"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/five_dp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="@string/label_order_type"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/text_dimen_13" />
+
+            <Spinner
+                android:id="@+id/orderTypeSpinner"
+                android:layout_width="match_parent"
+                android:background="@color/colorWhite"
+                android:layout_height="@dimen/thirty_dp"
+                android:fontFamily="@font/roboto_bold"
+                android:layout_marginStart="@dimen/minus_ten_dp"
+                android:layout_marginTop="@dimen/three_dp"
+                android:layout_marginBottom="@dimen/fifteen_dp"
+                style="@style/Widget.AppCompat.DropDownItem.Spinner"
+                android:theme="@style/ThemeOverlay.AppCompat.Light"
+                android:spinnerMode="dropdown"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ten_dp"
+            android:layout_marginEnd="@dimen/fifteen_dp"
+            android:layout_weight="0.5"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/five_dp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="@string/label_on_dated"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/text_dimen_13" />
+
+            <TextView
+                android:id="@+id/date_filter_text"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/thirty_dp"
+                android:layout_marginTop="@dimen/three_dp"
+                android:layout_marginBottom="@dimen/fifteen_dp"
+                android:background="@color/colorWhite"
+                android:padding="@dimen/five_dp"
+                android:textSize="@dimen/text_dimen_13"
+                android:fontFamily="@font/roboto_bold"
+                android:text="@string/label_today"
+                android:textColor="@color/colorBlack" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/ordersRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>

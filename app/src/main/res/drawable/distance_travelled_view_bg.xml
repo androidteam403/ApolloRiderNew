@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <corners android:radius="@dimen/twelve_dp" />
+
+    <size
+        android:width="@dimen/twenty_two_dp"
+        android:height="@dimen/twenty_two_dp" />
+
+    <stroke
+        android:width="@dimen/one_dp"
+        android:color="@color/map_distance_text_bg" />
+    <solid
+        android:color="@color/map_distance_text_bg"/>
+</shape>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="@dimen/fifteen_dp" />
+    <padding
+        android:bottom="@dimen/seven_dp"
+        android:left="@dimen/twelve_dp"
+        android:right="@dimen/twelve_dp"
+        android:top="@dimen/seven_dp" />
+    <solid android:color="@color/profile_header_bg" />
+</shape>

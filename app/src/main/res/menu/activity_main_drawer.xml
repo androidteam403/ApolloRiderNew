@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <group
+            android:id="@+id/take_order"
+            android:checkableBehavior="single">
+            <item
+                android:id="@+id/nav_take_order"
+                android:title="@string/menu_take_order" />
+        </group>
+        <group
+            android:id="@+id/dashboard"
+            android:checkableBehavior="single">
+            <item
+                android:id="@+id/nav_dashboard"
+                android:title="@string/menu_dashboard" />
+        </group>
+        <group
+            android:id="@+id/my_orders"
+            android:checkableBehavior="single">
+            <item
+                android:id="@+id/nav_orders"
+                android:title="@string/menu_my_orders" />
+        </group>
+        <group
+            android:id="@+id/notifications"
+            android:checkableBehavior="single">
+            <item
+                android:id="@+id/nav_notifications"
+                android:title="@string/menu_notifications" />
+        </group>
+        <group
+            android:id="@+id/profile"
+            android:checkableBehavior="single">
+            <item
+                android:id="@+id/nav_profile"
+                android:title="@string/menu_profile" />
+        </group>
+        <group
+            android:id="@+id/change_password"
+            android:checkableBehavior="single">
+            <item
+                android:id="@+id/nav_change_password"
+                android:title="@string/menu_change_password" />
+        </group>
+        <item
+            android:id="@+id/nav_faqs"
+            android:title="@string/menu_help" />
+    </group>
+</menu>

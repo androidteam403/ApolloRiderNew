@@ -1,0 +1,185 @@
+<resources>
+    <string name="app_name">ApolloEpos</string>
+    <string name="nav_header_title">Raghavendra Dabbidi</string>
+    <string name="nav_header_subtitle">+91 9440012212</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string-array name="navigation_drawer_items_array">
+        <item>New Order</item>
+        <item>Dashboard</item>
+        <item>My Orders</item>
+        <item>Notifications</item>
+        <item>Profile</item>
+        <item>Change Password</item>
+        <item>Help</item>
+    </string-array>
+
+    <string-array name="my_orders_item_array">
+        <item>All Orders</item>
+        <item>Delivered</item>
+        <item>New Order</item>
+        <item>Cancelled</item>
+    </string-array>
+
+    <string name="menu_take_order">New Order</string>
+    <string name="menu_dashboard">Dashboard</string>
+    <string name="menu_my_orders">My Orders</string>
+    <string name="menu_notifications">Notifications</string>
+    <string name="menu_profile">Profile</string>
+    <string name="menu_change_password">Change Password</string>
+    <string name="menu_help">Help</string>
+    <string name="menu_logout">Logout</string>
+    <string name="menu_delivery_order">Delivery Order</string>
+
+    <string name="label_email_hint">Email or Username</string>
+    <string name="label_password_hint">Password</string>
+    <string name="label_forgot_password"><u>Forgot Password?</u></string>
+    <string name="label_signin">SIGN IN</string>
+
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
+    <string name="label_type_pharmacy">P</string>
+    <string name="label_type_delivery">D</string>
+
+    <!-- Dashboard Screen -->
+    <string name="label_welcome">Welcome</string>
+    <string name="label_presence">Presence</string>
+    <string name="label_total_orders">Total\nOrders</string>
+    <string name="label_delivered_orders">Delivered\nOrders</string>
+    <string name="label_cancelled_orders">Cancelled\nOrders</string>
+    <string name="label_cod_received"> \nCOD Received</string>
+    <string name="label_cod_pending">COD\nPending Deposits</string>
+    <string name="labels_sales_generated">SALES Generated</string>
+    <string name="label_distance_travelled">Distance Travelled</string>
+    <string name="label_you_got">You got</string>
+    <string name="label_monday">Mon</string>
+    <string name="label_tuesday">Tue</string>
+    <string name="label_wednesday">Wed</string>
+    <string name="label_thursday">Thu</string>
+    <string name="label_friday">Fri</string>
+    <string name="label_saturday">Sat</string>
+    <string name="label_sunday">Sun</string>
+
+    <!-- Profile Screen -->
+    <string name="label_personal_info">Personal Info</string>
+    <string name="label_employee_id">Employee ID.:</string>
+    <string name="label_name">Name:</string>
+    <string name="label_phone_number">Phone No.:</string>
+    <string name="label_date_of_birth">Date of Birth:</string>
+    <string name="label_area_of_operation">Area of Operation:</string>
+    <string name="label_address">Address:</string>
+    <string name="label_vehicle_info">Vehicle Info</string>
+    <string name="label_model">Model:</string>
+    <string name="label_making_year">Making Year:</string>
+    <string name="label_registration_no">Registration No.:</string>
+    <string name="label_documents_info">Documents Info</string>
+    <string name="label_driving_licence">Driving Licence</string>
+    <string name="label_vehicle_rc">Vehicle RC</string>
+    <string name="label_vehicle_insurance">Vehicle Insurance</string>
+    <string name="label_language_speaks">Language Speaks</string>
+    <string name="label_bank_details">Bank Details</string>
+    <string name="label_bank_name">Bank Name:</string>
+    <string name="label_account_number">Account Number:</string>
+    <string name="label_area">Area:</string>
+    <string name="label_complaint_box">Complaint Box</string>
+
+    <!-- Notifications Screen -->
+    <string name="label_clear_all">Clear All</string>
+
+    <!-- My Orders Screen -->
+    <string name="label_order_type">Order Type:</string>
+    <string name="label_all_orders">All Orders</string>
+    <string name="label_on_dated">On Dated:</string>
+    <string name="label_today">Today</string>
+    <string name="label_order">Order #:</string>
+    <string name="label_amount">Amount:</string>
+    <string name="label_payment_type">Payment Type:</string>
+    <string name="label_apollo_pharmacy">Apollo Pharmacy</string>
+    <string name="label_status">Status:</string>
+    <string name="label_delivered_on">Delivered On:</string>
+    <string name="label_booked_on">Booked On:</string>
+    <string name="label_cancelled_on">Cancelled On:</string>
+    <string name="label_travelled">Travelled:</string>
+    <string name="label_order_header">Order #</string>
+    <string name="label_status_header">Status</string>
+    <string name="label_cod">COD</string>
+    <string name="label_cash_on_delivery">Cash on delivery</string>
+    <string name="label_order_list">Order List</string>
+    <string name="label_your_location">Your Location</string>
+    <string name="label_map_view">Map View</string>
+    <string name="label_contact_number">Contact No.</string>
+    <string name="label_accept_order">ACCEPT ORDER</string>
+    <string name="label_reject_order">REJECT ORDER</string>
+    <string name="label_qty">Qty.</string>
+    <string name="label_cost">Cost</string>
+    <string name="label_item_total">Item Total:</string>
+    <string name="label_delivery_charges">Delivery Chargers:</string>
+    <string name="label_packing_charges">Packing Charges:</string>
+    <string name="label_grand_total">Grand Total:</string>
+    <string name="label_instructions">INSTRUCTIONS</string>
+    <string name="label_instruction_one">Parcel contains Drugs with glass packed, handle with care</string>
+    <string name="label_instruction_two">"Don't tilt the box, it should be handled as per the instructions on the box"</string>
+    <string name="label_reject_reason_header">Write reason below for rejecting the order</string>
+    <string name="label_send">SEND</string>
+    <string name="label_follow_map">FOLLOW MAP</string>
+    <string name="label_order_accepted">ACCEPTED</string>
+    <string name="label_order_cancel">CANCEL ORDER</string>
+    <string name="label_cancel_reason_header">Write reason below for cancel the order</string>
+    <string name="label_cancel_item">CANCEL ITEM</string>
+    <string name="label_reached_the_store">1. Reached the Store</string>
+    <string name="label_scan_the_barcode">2. Scan the Barcode</string>
+    <string name="label_taken_the_parcel">3. Taken the parcel</string>
+    <string name="message" translatable="false">Place a barcode inside the viewfinder rectangle to scan it.</string>
+    <string name="turn_off_flashlight" translatable="false">FlashLight On</string>
+    <string name="turn_on_flashlight" translatable="false">FlashLight Off</string>
+    <string name="label_scan_barcode">Fetch the Product information by using barcode, scan in the below box</string>
+    <string name="label_continue_driving">Continue Driving</string>
+    <string name="label_reached_delivery_address">1. Reached at delivery address</string>
+    <string name="label_check_amount_details">2. Checked amount details</string>
+    <string name="label_handed_parcel_to">3. Handedover the parcel to</string>
+    <string name="label_proof_of_handover">4. Proof of handover</string>
+    <string name="label_otp_verification">5. OTP verification</string>
+    <string name="label_completed_delivery">6. Completed Delivery</string>
+    <string name="label_collected_amount">Collected Amount:</string>
+    <string name="label_signature_of_receiver">Signature of the receiver</string>
+    <string name="label_take_customer_signature">Touch here\nto take customer signature</string>
+    <string name="label_cost_of_product_more">Cost of the product is > 2,000.00</string>
+    <string name="label_photograph_of_receiver">(Take photograph of the receiver)</string>
+    <string name="label_skip_photo">Skip Photo</string>
+    <string name="label_order_no">Order No.:</string>
+    <string name="label_customer_name">Customer Name.:</string>
+    <string name="label_enter_signature">Please enter a signature</string>
+    <string name="label_back">Back</string>
+    <string name="label_clear">Clear</string>
+    <string name="label_save">Save</string>
+    <string name="label_touch_here_sign">touch here for new sign</string>
+    <string name="label_verify_otp">Verify OTP</string>
+    <string name="label_resend_otp">Resend OTP</string>
+    <string name="label_invalid_otp">Invalid OTP, try again</string>
+    <string name="label_otp_verification_completed">OTP Verification completed\nSuccessfully</string>
+    <string name="label_order_completed_successfully">Order Completed\nSuccessfully</string>
+    <string name="label_item_name">Item Name</string>
+    <string name="label_total">Total</string>
+    <string name="label_total_text">total:</string>
+    <string name="label_return_cancel">Return/Cancel</string>
+    <string name="label_refund_amount">Refund Amount:</string>
+    <string name="label_total_amount">Total Amount:</string>
+    <string name="label_update_order">UPDATE ORDER</string>
+    <string name="label_take_new_order_options">Select one of the option below\nto add the product to the list</string>
+    <string name="label_photo">Photo</string>
+    <string name="label_barcode">Barcode</string>
+    <string name="label_voice_search">Voice Search</string>
+    <string name="label_text_search">Text Search</string>
+    <string name="label_search_product">Search Product</string>
+    <string name="speech_prompt">Say something&#8230;</string>
+    <string name="speech_not_supported">Sorry! Your device doesn\'t support speech input</string>
+    <string name="label_estimated_price">*Estimate Price</string>
+    <string name="label_cart_order_list">ORDER LIST</string>
+    <string name="label_or">(or)</string>
+    <string name="label_search_results">Found %1$d results for %2$s</string>
+    <string name="label_fetching_product">Fetching Product Details...</string>
+    <string name="label_order_complaint">COMPLAINT</string>
+    <string name="label_complaint_reason_header">Write reason below for complaint</string>
+</resources>

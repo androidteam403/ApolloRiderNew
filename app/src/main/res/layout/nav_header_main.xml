@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/headerView"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/one_hundred_seventy_dp"
+    android:background="@color/nav_header_color"
+    android:gravity="bottom"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+    <ImageView
+        android:id="@+id/user_image"
+        android:layout_width="@dimen/seventy_dp"
+        android:layout_height="@dimen/seventy_dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/image_circle_bg"
+        android:padding="@dimen/one_dp"
+        android:contentDescription="@string/nav_header_desc" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:paddingTop="@dimen/nav_header_vertical_spacing"
+        android:text="@string/nav_header_title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/text_dimen_16"
+        android:fontFamily="@font/roboto_bold" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:fontFamily="@font/roboto_regular"
+        android:text="@string/nav_header_subtitle"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/text_dimen_14" />
+</LinearLayout>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:background="@color/colorWhite"
+    android:layout_height="match_parent">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/notificationRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/twelve_dp"
+        android:layout_marginTop="@dimen/twelve_dp"
+        android:layout_marginEnd="@dimen/twelve_dp"
+        android:layout_marginBottom="@dimen/fifty_dp" />
+
+    <TextView
+        android:id="@+id/clear_all_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="@dimen/ten_dp"
+        android:background="@drawable/notification_clear_bg"
+        android:text="@string/label_clear_all"
+        android:textAlignment="center"
+        android:fontFamily="@font/roboto_bold"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/text_dimen_15" />
+</RelativeLayout>
