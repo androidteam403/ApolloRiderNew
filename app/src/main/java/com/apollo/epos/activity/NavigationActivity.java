@@ -198,7 +198,7 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         setupDrawerToggle();
-        selectItem(0);
+        selectItem(1);
 //        ((NavigationDrawerAdapter) ((HeaderViewListAdapter) mDrawerList.getAdapter()).getWrappedAdapter()).notifyDataSetChanged();
         adapter.notifyDataSetChanged();
 
