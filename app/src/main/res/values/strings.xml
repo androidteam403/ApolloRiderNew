@@ -182,4 +182,15 @@
     <string name="label_fetching_product">Fetching Product Details...</string>
     <string name="label_order_complaint">COMPLAINT</string>
     <string name="label_complaint_reason_header">Write reason below for complaint</string>
+
+    <string name="permission_location_need_body">This app needs the Location permission, please allow to access the location</string>
+    <string name="permission_location_need_title">Location Permission Needed</string>
+    <string name="ok">ok</string>
+
+    <string name="title_activity_maps">Map</string>
+    <string name="permission_refused">Permission was not granted</string>
+    <string name="permission_request_title">Special Permission Request</string>
+    <string name="app_permission_notice">This permission request is very important to your app functionality. If it is not granted your app might not work the way it is intended</string>
+    <string name="failed_draw">Empty line path return</string>
+    <string name="server_error">Server error. Something when wrong with the server</string>
 </resources>

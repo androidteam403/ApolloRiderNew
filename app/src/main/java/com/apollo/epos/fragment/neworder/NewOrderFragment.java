@@ -1,7 +1,5 @@
 package com.apollo.epos.fragment.neworder;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.content.Context;
@@ -13,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -23,16 +20,14 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.transition.Fade;
 import androidx.transition.Slide;
 import androidx.transition.Transition;
 import androidx.transition.TransitionManager;
 
 import com.apollo.epos.R;
 import com.apollo.epos.activity.NavigationActivity;
-import com.apollo.epos.activity.ReachPharmacyActivity;
 import com.apollo.epos.adapter.CustomReasonAdapter;
-import com.apollo.epos.fragment.cancelorderitem.CancelOrderItemFragment;
+import com.apollo.epos.activity.MapViewActivity;
 import com.apollo.epos.fragment.deliveryorder.DeliveryOrderFragment;
 import com.apollo.epos.model.OrderItemModel;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -59,6 +54,8 @@ public class NewOrderFragment extends Fragment {
     protected LinearLayout orderDeliveryTimeLayout;
     @BindView(R.id.anim_parent_layout)
     protected LinearLayout animParentLayout;
+    @BindView(R.id.map_view_layout)
+    protected LinearLayout mapViewLayout;
 
     public static NewOrderFragment newInstance() {
         return new NewOrderFragment();
@@ -85,6 +82,11 @@ public class NewOrderFragment extends Fragment {
 
         Animation RightSwipe = AnimationUtils.loadAnimation(mActivity, R.anim.right_swipe);
         orderDeliveryTimeLayout.startAnimation(RightSwipe);
+
+        mapViewLayout.setOnClickListener(v -> {
+            Intent intent = new Intent(mActivity, MapViewActivity.class);
+            startActivity(intent);
+        });
     }
 
     ArrayList<OrderItemModel> medicineList = new ArrayList<>();
