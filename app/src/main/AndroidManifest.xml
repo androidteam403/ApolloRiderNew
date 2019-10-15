@@ -88,6 +88,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.NavigationActivity" />
         </activity>
+        <activity
+            android:name=".activity.CancelOrderActivity"
+            android:label="Cancelling Order Items"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.NavigationActivity" />
+        </activity>
     </application>
 
     <uses-feature
@@ -110,5 +118,6 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="com.google.android.permission.gsf.permission" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
 </manifest>

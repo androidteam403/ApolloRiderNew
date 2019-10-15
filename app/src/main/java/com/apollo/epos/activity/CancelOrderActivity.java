@@ -141,7 +141,7 @@ public class CancelOrderActivity extends AppCompatActivity implements OnItemClic
             TextView orderQuantity = layout.findViewById(R.id.order_quantity);
             TextView itemPrice = layout.findViewById(R.id.item_price);
             TextView itemTotalPrice = layout.findViewById(R.id.item_total_price);
-//            ImageView cancelItemImg = layout.findViewById(R.id.cancel_item_img);
+            ImageView cancelItemImg = layout.findViewById(R.id.cancel_item_img);
 
             orderName.setText(cancelledMedicineList.get(i).getMedicineName());
             orderQuantity.setText(cancelledMedicineList.get(i).getQty());
