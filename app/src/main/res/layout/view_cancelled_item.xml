@@ -21,8 +21,10 @@
             android:layout_weight="0.5">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/cancel_item_img"
+                android:layout_width="@dimen/twenty_dp"
+                android:layout_height="@dimen/twenty_dp"
+                android:padding="@dimen/five_dp"
                 android:layout_centerVertical="true"
                 android:contentDescription="@string/app_name"
                 android:src="@drawable/icon_cancelled_item_close"/>
@@ -47,6 +49,7 @@
             android:layout_weight="0.12"
             android:gravity="center"
             android:text="1"
+            android:layout_gravity="center_vertical"
             android:fontFamily="@font/roboto_regular"
             android:textColor="@color/colorBlack"
             android:textSize="@dimen/text_dimen_11" />
@@ -58,6 +61,7 @@
             android:layout_weight="0.15"
             android:gravity="end"
             android:text="78.00"
+            android:layout_gravity="center_vertical"
             android:fontFamily="@font/roboto_regular"
             android:textColor="@color/colorBlack"
             android:textSize="@dimen/text_dimen_11" />
@@ -68,6 +72,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.23"
             android:gravity="end"
+            android:layout_gravity="center_vertical"
             android:fontFamily="@font/roboto_regular"
             android:text="78.00"
             android:textColor="@color/colorBlack"

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ripple
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="@color/btn_hover_color"> <!-- The ripple will be red -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/btn_color"> <!-- The ripple will be red -->
 
     <!-- the normal bg color will be light grey -->
     <item>
@@ -19,7 +18,7 @@
         android:left="@dimen/minus_two_dp"
         android:right="@dimen/minus_two_dp"
         android:top="@dimen/forty_dp">
-        <shape android:shape="line"  >
+        <shape android:shape="line">
             <padding android:bottom="@dimen/one_dp" />
 
             <stroke

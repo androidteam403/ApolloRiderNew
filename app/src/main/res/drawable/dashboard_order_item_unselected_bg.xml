@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="@dimen/five_dp" />
+    <padding
+        android:bottom="@dimen/seven_dp"
+        android:left="@dimen/ten_dp"
+        android:right="@dimen/ten_dp"
+        android:top="@dimen/seven_dp" />
+    <solid android:color="@color/new_message_header_bg" />
+    <stroke
+        android:width="@dimen/three_dp"
+        android:color="@color/take_order_stroke_color" />
+</shape>

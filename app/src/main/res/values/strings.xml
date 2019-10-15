@@ -130,7 +130,7 @@
     <string name="label_cancel_item">CANCEL ITEM</string>
     <string name="label_reached_the_store">1. Reached the Store</string>
     <string name="label_scan_the_barcode">2. Scan the Barcode</string>
-    <string name="label_taken_the_parcel">3. Taken the parcel</string>
+    <string name="label_taken_the_parcel">3. Picked parcel</string>
     <string name="message" translatable="false">Place a barcode inside the viewfinder rectangle to scan it.</string>
     <string name="turn_off_flashlight" translatable="false">FlashLight On</string>
     <string name="turn_on_flashlight" translatable="false">FlashLight Off</string>
@@ -142,7 +142,7 @@
     <string name="label_proof_of_handover">4. Proof of handover</string>
     <string name="label_otp_verification">5. OTP verification</string>
     <string name="label_completed_delivery">6. Completed Delivery</string>
-    <string name="label_collected_amount">Collected Amount:</string>
+    <string name="label_collected_amount">Collect Amount:</string>
     <string name="label_signature_of_receiver">Signature of the receiver</string>
     <string name="label_take_customer_signature">Touch here\nto take customer signature</string>
     <string name="label_cost_of_product_more">Cost of the product is > 2,000.00</string>

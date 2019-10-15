@@ -11,11 +11,10 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".activity.NavigationActivity"
+            android:name=".activity.SplashScreen"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan">
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,9 +30,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.SplashScreen"
+            android:name=".activity.NavigationActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".activity.NewOrderActivity"
             android:screenOrientation="portrait" />
@@ -80,6 +80,14 @@
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
+        <activity
+            android:name=".activity.CancelOrderActivity"
+            android:label="Cancelling Order Items"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.NavigationActivity" />
+        </activity>
     </application>
 
     <uses-feature
@@ -96,6 +104,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />

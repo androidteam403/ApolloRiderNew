@@ -278,8 +278,8 @@
                                 android:text="@string/label_order_list"/>
 
                             <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_width="@dimen/fifteen_dp"
+                                android:layout_height="@dimen/fifteen_dp"
                                 android:layout_centerVertical="true"
                                 android:contentDescription="@string/app_name"
                                 android:layout_alignParentEnd="true"

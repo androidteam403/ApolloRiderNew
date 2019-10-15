@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorBlack"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/twenty_dp"
+                    android:paddingTop="@dimen/five_dp"
+                    android:paddingEnd="@dimen/fifteen_dp"
+                    android:paddingBottom="@dimen/five_dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/label_order_header"
+                            android:fontFamily="@font/roboto_regular"
+                            android:textColor="@color/colorWhite"
+                            android:textSize="@dimen/text_dimen_10" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="15000001234"
+                            android:textSize="@dimen/text_dimen_15"
+                            android:fontFamily="@font/roboto_bold"
+                            android:textColor="@color/colorWhite"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/label_status_header"
+                            android:fontFamily="@font/roboto_regular"
+                            android:textColor="@color/colorWhite"
+                            android:textSize="@dimen/text_dimen_9" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/menu_take_order"
+                            android:textSize="@dimen/text_dimen_12"
+                            android:fontFamily="@font/roboto_bold"
+                            android:textColor="@color/new_order_text_color"/>
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/eight_dp"
+                    android:layout_marginEnd="@dimen/eight_dp"
+                    android:layout_marginTop="@dimen/eight_dp"
+                    android:background="@color/new_order_header_view_bg"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/thirty_five_dp">
+
+                        <ImageView
+                            android:id="@+id/orders_list_img"
+                            android:layout_width="@dimen/thirty_dp"
+                            android:padding="@dimen/three_dp"
+                            android:layout_marginStart="@dimen/three_dp"
+                            android:layout_height="@dimen/thirty_dp"
+                            android:layout_centerVertical="true"
+                            android:contentDescription="@string/app_name"
+                            android:src="@drawable/icon_orders_list"/>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="@dimen/five_dp"
+                            android:layout_toEndOf="@+id/orders_list_img"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:textColor="@color/colorWhite"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto_regular"
+                                android:textStyle="bold"
+                                android:textSize="@dimen/text_dimen_11"
+                                android:text="@string/label_order_list"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:textColor="@color/colorWhite"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/minus_two_dp"
+                                android:fontFamily="@font/roboto_regular"
+                                android:textSize="@dimen/text_dimen_13"
+                                android:text="4 Items"/>
+                        </LinearLayout>
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:id="@+id/anim_parent_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:animateLayoutChanges="true"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/items_view_layout"
+                            android:layout_width="match_parent"
+                            android:layout_marginStart="@dimen/five_dp"
+                            android:layout_marginEnd="@dimen/five_dp"
+                            android:layout_marginBottom="@dimen/five_dp"
+                            android:layout_height="wrap_content"
+                            android:background="@color/colorWhite"
+                            android:visibility="visible"
+                            android:orientation="vertical">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_marginTop="@dimen/ten_dp"
+                                android:layout_marginStart="@dimen/twelve_dp"
+                                android:layout_marginEnd="@dimen/twelve_dp"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/roboto_bold"
+                                    android:layout_centerVertical="true"
+                                    android:textColor="@color/colorBlack"
+                                    android:textSize="@dimen/text_dimen_12"
+                                    android:layout_marginTop="@dimen/five_dp"
+                                    android:text="@string/label_order_list"/>
+
+                                <ImageView
+                                    android:layout_width="@dimen/fifteen_dp"
+                                    android:layout_height="@dimen/fifteen_dp"
+                                    android:layout_centerVertical="true"
+                                    android:contentDescription="@string/app_name"
+                                    android:layout_alignParentEnd="true"
+                                    android:src="@drawable/icon_cancel_order_header"/>
+                            </RelativeLayout>
+
+                            <LinearLayout
+                                android:id="@+id/item_name_layout"
+                                android:layout_width="match_parent"
+                                android:layout_marginEnd="@dimen/twelve_dp"
+                                android:layout_marginTop="@dimen/five_dp"
+                                android:layout_marginStart="@dimen/twelve_dp"
+                                android:padding="@dimen/three_dp"
+                                android:paddingStart="@dimen/five_dp"
+                                android:paddingEnd="@dimen/five_dp"
+                                android:background="@color/amount_calculation_bg_color"
+                                android:layout_height="wrap_content"
+                                android:weightSum="1"
+                                android:orientation="horizontal">
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="0.5"
+                                    android:orientation="horizontal">
+
+                                    <ImageView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center_vertical"
+                                        android:contentDescription="@string/app_name"
+                                        android:src="@drawable/icon_check_box_unselect"/>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/label_item_name"
+                                        android:layout_gravity="center_vertical"
+                                        android:layout_marginStart="@dimen/five_dp"
+                                        android:textColor="@color/colorBlack"
+                                        android:textSize="@dimen/text_dimen_11"
+                                        android:fontFamily="@font/roboto_bold" />
+                                </LinearLayout>
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="0.12"
+                                    android:gravity="center"
+                                    android:text="@string/label_qty"
+                                    android:textColor="@color/colorBlack"
+                                    android:textSize="@dimen/text_dimen_11"
+                                    android:fontFamily="@font/roboto_bold" />
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="0.15"
+                                    android:gravity="end"
+                                    android:text="@string/label_cost"
+                                    android:textColor="@color/colorBlack"
+                                    android:textSize="@dimen/text_dimen_11"
+                                    android:fontFamily="@font/roboto_bold" />
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="0.23"
+                                    android:gravity="end"
+                                    android:text="@string/label_total"
+                                    android:textColor="@color/colorBlack"
+                                    android:textSize="@dimen/text_dimen_11"
+                                    android:fontFamily="@font/roboto_bold" />
+                            </LinearLayout>
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/cancelItemRecyclerView"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/twelve_dp"
+                                android:layout_marginStart="@dimen/twelve_dp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/ten_dp"
+                                android:layout_marginEnd="@dimen/ten_dp"
+                                android:orientation="vertical">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:weightSum="1"
+                                    android:paddingTop="@dimen/three_dp"
+                                    android:paddingStart="@dimen/five_dp"
+                                    android:paddingEnd="@dimen/five_dp"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:textColor="@color/colorBlack"
+                                        android:layout_weight="0.56"
+                                        android:layout_gravity="end"
+                                        android:gravity="end"
+                                        android:textSize="@dimen/text_dimen_13"
+                                        android:fontFamily="@font/roboto_bold"
+                                        android:text="5" />
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:textColor="@color/colorBlack"
+                                        android:layout_weight="0.22"
+                                        android:layout_gravity="end"
+                                        android:fontFamily="@font/roboto_regular"
+                                        android:gravity="end"
+                                        android:textSize="@dimen/text_dimen_12"
+                                        android:text="@string/label_total_text" />
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:textColor="@color/colorBlack"
+                                        android:layout_weight="0.22"
+                                        android:layout_gravity="end"
+                                        android:gravity="end"
+                                        android:textSize="@dimen/text_dimen_13"
+                                        android:fontFamily="@font/roboto_bold"
+                                        android:text="377.00" />
+                                </LinearLayout>
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/one_dp"
+                                    android:layout_marginBottom="@dimen/five_dp"
+                                    android:background="@color/cancel_order_divider_color"
+                                    android:layout_marginTop="@dimen/three_dp"/>
+
+                                <LinearLayout
+                                    android:id="@+id/cancel_items_layout"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:visibility="gone"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/roboto_regular"
+                                        android:textSize="@dimen/text_dimen_12"
+                                        android:text="@string/label_return_cancel"
+                                        android:textColor="@color/colorBlack"/>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:padding="@dimen/three_dp"
+                                        android:paddingStart="@dimen/five_dp"
+                                        android:paddingEnd="@dimen/five_dp"
+                                        android:layout_marginTop="@dimen/two_dp"
+                                        android:background="@color/amount_calculation_bg_color"
+                                        android:layout_height="wrap_content"
+                                        android:weightSum="1"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="0.5"
+                                            android:gravity="center"
+                                            android:text="@string/label_item_name"
+                                            android:layout_gravity="center_vertical"
+                                            android:layout_marginStart="@dimen/five_dp"
+                                            android:textColor="@color/colorBlack"
+                                            android:textSize="@dimen/text_dimen_11"
+                                            android:fontFamily="@font/roboto_bold" />
+
+                                        <TextView
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="0.12"
+                                            android:gravity="center"
+                                            android:text="@string/label_qty"
+                                            android:textColor="@color/colorBlack"
+                                            android:textSize="@dimen/text_dimen_11"
+                                            android:fontFamily="@font/roboto_bold" />
+
+                                        <TextView
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="0.15"
+                                            android:gravity="end"
+                                            android:text="@string/label_cost"
+                                            android:textColor="@color/colorBlack"
+                                            android:textSize="@dimen/text_dimen_11"
+                                            android:fontFamily="@font/roboto_bold"/>
+
+                                        <TextView
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="0.23"
+                                            android:gravity="end"
+                                            android:text="@string/label_total"
+                                            android:textColor="@color/colorBlack"
+                                            android:textSize="@dimen/text_dimen_11"
+                                            android:fontFamily="@font/roboto_bold" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:id="@+id/cancelled_list_layout"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="vertical"/>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:weightSum="1"
+                                        android:paddingTop="@dimen/three_dp"
+                                        android:paddingBottom="@dimen/three_dp"
+                                        android:paddingStart="@dimen/five_dp"
+                                        android:paddingEnd="@dimen/five_dp"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:textColor="@color/colorBlack"
+                                            android:layout_weight="0.83"
+                                            android:layout_gravity="end"
+                                            android:fontFamily="@font/roboto_regular"
+                                            android:gravity="end"
+                                            android:textSize="@dimen/text_dimen_11"
+                                            android:text="@string/label_refund_amount" />
+
+                                        <TextView
+                                            android:id="@+id/refund_total_amount"
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:textColor="@color/colorBlack"
+                                            android:layout_weight="0.17"
+                                            android:layout_gravity="end"
+                                            android:gravity="end"
+                                            android:textSize="@dimen/text_dimen_12"
+                                            android:fontFamily="@font/roboto_bold"
+                                            android:text="-96.00" />
+                                    </LinearLayout>
+
+                                    <View
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/one_dp"
+                                        android:background="@color/cancel_order_divider_color"/>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:weightSum="1"
+                                        android:layout_marginBottom="@dimen/five_dp"
+                                        android:paddingTop="@dimen/three_dp"
+                                        android:paddingBottom="@dimen/three_dp"
+                                        android:paddingStart="@dimen/five_dp"
+                                        android:paddingEnd="@dimen/five_dp"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:textColor="@color/colorBlack"
+                                            android:layout_weight="0.83"
+                                            android:layout_gravity="end"
+                                            android:fontFamily="@font/roboto_regular"
+                                            android:gravity="end"
+                                            android:textSize="@dimen/text_dimen_11"
+                                            android:text="@string/label_total_amount" />
+
+                                        <TextView
+                                            android:id="@+id/total_payable_amount"
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:textColor="@color/colorBlack"
+                                            android:layout_weight="0.17"
+                                            android:layout_gravity="end"
+                                            android:gravity="end"
+                                            android:textSize="@dimen/text_dimen_12"
+                                            android:fontFamily="@font/roboto_bold"
+                                            android:text="218.00" />
+                                    </LinearLayout>
+
+                                    <TextView
+                                        android:id="@+id/update_order_btn"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/forty_five_dp"
+                                        android:layout_gravity="bottom|center"
+                                        android:layout_marginBottom="@dimen/ten_dp"
+                                        android:layout_marginTop="@dimen/five_dp"
+                                        android:background="@drawable/btn_map_ripple_effect"
+                                        android:gravity="center"
+                                        android:text="@string/label_update_order"
+                                        android:textAllCaps="true"
+                                        android:textColor="@color/colorWhite"
+                                        android:textSize="@dimen/text_dimen_16"
+                                        android:fontFamily="@font/roboto_bold" />
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

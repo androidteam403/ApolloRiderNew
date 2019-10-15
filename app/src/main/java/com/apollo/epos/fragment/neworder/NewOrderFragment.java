@@ -1,10 +1,17 @@
 package com.apollo.epos.fragment.neworder;
 
+import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +26,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.transition.Slide;
 import androidx.transition.Transition;
@@ -56,6 +65,10 @@ public class NewOrderFragment extends Fragment {
     protected LinearLayout animParentLayout;
     @BindView(R.id.map_view_layout)
     protected LinearLayout mapViewLayout;
+    @BindView(R.id.pharma_contact_number)
+    protected ImageView pharmaContactNumber;
+    @BindView(R.id.user_contact_number)
+    protected ImageView userContactNumber;
 
     public static NewOrderFragment newInstance() {
         return new NewOrderFragment();
@@ -238,5 +251,41 @@ public class NewOrderFragment extends Fragment {
 
         TransitionManager.beginDelayedTransition(animParentLayout, transition);
         itemsViewLayout.setVisibility(View.VISIBLE);
+    }
+
+    @OnClick(R.id.pharma_contact_number)
+    void onPharmaContactClick() {
+        checkCallPermissionSetting();
+    }
+
+    @OnClick(R.id.user_contact_number)
+    void onUserContactClick(){
+        checkCallPermissionSetting();
+    }
+
+    private void checkCallPermissionSetting() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                Log.d("Permissions_Status", "Permissions not granted");
+               /* if (ContextCompat.checkSelfPermission(CameraFunctionality.this, Manifest.permission.CAMERA)
+                        == PackageManager.PERMISSION_DENIED)*/
+                // ask for permission
+                ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.CALL_PHONE}, 1);
+            } else {
+                Log.d("Permissions_Status", "We have a permission");
+                // we have a permission
+                requestACall();
+            }
+        } else {
+            requestACall();
+        }
+    }
+
+    private void requestACall() {
+        String phonenumber = "+919440012212";
+        Intent intentcall = new Intent();
+        intentcall.setAction(Intent.ACTION_CALL);
+        intentcall.setData(Uri.parse("tel:" + phonenumber)); // set the Uri
+        mActivity.startActivity(intentcall);
     }
 }

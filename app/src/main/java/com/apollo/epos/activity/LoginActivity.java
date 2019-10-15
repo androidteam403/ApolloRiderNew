@@ -10,6 +10,7 @@ import com.apollo.epos.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.btn_signin)
@@ -23,11 +24,12 @@ public class LoginActivity extends AppCompatActivity {
         }
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+    }
 
-        signInBtn.setOnClickListener(view -> {
-            Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
-            startActivity(i);
-            overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
-        });
+    @OnClick(R.id.btn_signin)
+    void onSignInClick(){
+        Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
+        startActivity(i);
+        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
     }
 }

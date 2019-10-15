@@ -8,11 +8,11 @@
     tools:context=".activity.LoginActivity">
 
     <ImageView
-        android:layout_width="@dimen/one_hundred_dp"
-        android:layout_height="@dimen/one_hundred_dp"
+        android:layout_width="@dimen/one_hundred_thirty_dp"
+        android:layout_height="@dimen/one_hundred_thirty_dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/one_hundred_dp"
-        android:background="@drawable/app_logo"
+        android:layout_marginTop="@dimen/eighty_dp"
+        android:background="@drawable/app_shadow_logo"
         android:contentDescription="@string/app_name" />
 
     <LinearLayout
@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/colorWhite"
                 android:drawableStart="@drawable/ic_login_user"
-                android:drawablePadding="@dimen/eight_dp"
+                android:drawablePadding="@dimen/ten_dp"
                 android:hint="@string/label_email_hint"
                 android:inputType="textEmailAddress"
                 android:singleLine="true"

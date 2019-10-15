@@ -26,8 +26,8 @@
 
             <CheckBox
                 android:id="@+id/medicineCheckBox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/fifteen_dp"
+                android:layout_height="@dimen/fifteen_dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
                 android:button="@drawable/checkbox_selector"/>
@@ -76,8 +76,8 @@
 
             <ImageView
                 android:id="@+id/qty_decrement"
-                android:layout_width="@dimen/twenty_five_dp"
-                android:layout_height="@dimen/twenty_five_dp"
+                android:layout_width="@dimen/twenty_seven_dp"
+                android:layout_height="@dimen/twenty_seven_dp"
                 android:contentDescription="@string/app_name"
                 android:padding="@dimen/five_dp"
                 android:src="@drawable/icon_product_decrement"/>
@@ -94,8 +94,8 @@
 
             <ImageView
                 android:id="@+id/qty_increment"
-                android:layout_width="@dimen/twenty_five_dp"
-                android:layout_height="@dimen/twenty_five_dp"
+                android:layout_width="@dimen/twenty_seven_dp"
+                android:layout_height="@dimen/twenty_seven_dp"
                 android:contentDescription="@string/app_name"
                 android:padding="@dimen/five_dp"
                 android:src="@drawable/icon_product_increment"/>

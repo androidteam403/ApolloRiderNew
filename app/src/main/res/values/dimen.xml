@@ -67,6 +67,7 @@
     <dimen name="three_hundred_dp">300dp</dimen>
     <dimen name="three_hundred_twenty_dp">320dp</dimen>
     <dimen name="three_hundred_forty_dp">340dp</dimen>
+    <dimen name="four_hundred_twenty_dp">420dp</dimen>
     <dimen name="four_hundred_fifty_dp">450dp</dimen>
 
     <dimen name="text_dimen_6">6sp</dimen>
