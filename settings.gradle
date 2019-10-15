@@ -1,2 +1,2 @@
-include ':app', ':cusotmloader'
+include ':app', ':cusotmloader', ':drawroutemap'
 rootProject.name='ApolloEposApp'
