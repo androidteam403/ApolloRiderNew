@@ -8,9 +8,9 @@
 
     <ImageView
         android:id="@+id/image_app_logo"
-        android:layout_width="@dimen/one_hundred_fifty_dp"
-        android:layout_height="@dimen/one_hundred_fifty_dp"
+        android:layout_width="@dimen/one_hundred_seventy_dp"
+        android:layout_height="@dimen/one_hundred_seventy_dp"
         android:layout_centerInParent="true"
-        android:background="@drawable/app_logo"
+        android:background="@drawable/app_shadow_logo"
         android:contentDescription="@string/app_name" />
 </RelativeLayout>

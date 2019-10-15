@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -95,7 +96,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/roboto_regular"
                         android:textSize="@dimen/text_dimen_9"
-                        android:textColor="@color/alert_header_bg"
+                        android:textColor="@color/colorBlack"
                         android:text="Today"/>
 
                     <TextView
@@ -126,7 +127,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/roboto_regular"
                         android:textSize="@dimen/text_dimen_9"
-                        android:textColor="@color/alert_header_bg"
+                        android:textColor="@color/colorBlack"
                         android:text="Rs."/>
 
                     <TextView
@@ -193,7 +194,7 @@
                         android:layout_width="@dimen/thirty_dp"
                         android:padding="@dimen/three_dp"
                         android:layout_marginStart="@dimen/three_dp"
-                        android:layout_height="@dimen/thirty_dp"
+                        android:layout_height="@dimen/thirty_two_dp"
                         android:layout_centerVertical="true"
                         android:contentDescription="@string/app_name"
                         android:src="@drawable/icon_orders_list"/>
@@ -463,22 +464,52 @@
                                 android:fontFamily="@font/roboto_bold"
                                 android:textColor="@color/colorWhite"/>
 
-                            <TextView
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/roboto_regular"
-                                android:paddingTop="@dimen/eight_dp"
-                                android:text="@string/label_instruction_one"
-                                android:textColor="@color/colorWhite"
-                                android:textSize="@dimen/text_dimen_10"/>
+                                android:paddingTop="@dimen/five_dp"
+                                android:orientation="horizontal">
 
-                            <TextView
-                                android:layout_width="wrap_content"
+                                <ImageView
+                                    android:layout_width="@dimen/ten_dp"
+                                    android:layout_height="@dimen/eight_dp"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_marginEnd="@dimen/five_dp"
+                                    android:contentDescription="@string/app_name"
+                                    android:src="@drawable/icon_instructions_check"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:text="@string/label_instruction_one"
+                                    android:textColor="@color/colorWhite"
+                                    android:fontFamily="@font/roboto_regular"
+                                    android:textSize="@dimen/text_dimen_10"/>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/roboto_regular"
-                                android:text="@string/label_instruction_two"
-                                android:textColor="@color/colorWhite"
-                                android:textSize="@dimen/text_dimen_10"/>
+                                android:paddingTop="@dimen/five_dp"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="@dimen/ten_dp"
+                                    android:layout_height="@dimen/eight_dp"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_marginEnd="@dimen/five_dp"
+                                    android:contentDescription="@string/app_name"
+                                    android:src="@drawable/icon_instructions_check"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/label_instruction_two"
+                                    android:textColor="@color/colorWhite"
+                                    android:fontFamily="@font/roboto_regular"
+                                    android:textSize="@dimen/text_dimen_10"/>
+                            </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -724,12 +755,13 @@
                         </LinearLayout>
 
                         <ImageView
-                            android:layout_width="@dimen/twenty_dp"
-                            android:layout_height="@dimen/twenty_dp"
+                            android:id="@+id/pharma_contact_number"
+                            android:layout_width="@dimen/twenty_two_dp"
+                            android:layout_height="@dimen/twenty_two_dp"
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
                             android:contentDescription="@string/app_name"
-                            android:src="@drawable/icon_mobile_active"/>
+                            android:src="@drawable/icon_phone_select"/>
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -849,12 +881,13 @@
                         </LinearLayout>
 
                         <ImageView
-                            android:layout_width="@dimen/twenty_dp"
-                            android:layout_height="@dimen/twenty_dp"
+                            android:id="@+id/user_contact_number"
+                            android:layout_width="@dimen/twenty_two_dp"
+                            android:layout_height="@dimen/twenty_two_dp"
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
                             android:contentDescription="@string/app_name"
-                            android:src="@drawable/icon_mobile_active"/>
+                            android:src="@drawable/icon_phone_select"/>
                     </RelativeLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -863,9 +896,9 @@
                 android:id="@+id/order_delivery_time_layout"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/twenty_five_dp"
-                android:layout_marginStart="@dimen/eight_dp"
+                android:layout_marginStart="@dimen/ten_dp"
                 android:layout_marginTop="@dimen/thirty_five_dp"
-                android:layout_marginEnd="@dimen/eight_dp"
+                android:layout_marginEnd="@dimen/ten_dp"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -891,7 +924,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="start|center"
-                        android:layout_marginStart="@dimen/twelve_dp"
+                        android:paddingStart="@dimen/five_dp"
+                        android:layout_marginStart="@dimen/ten_dp"
                         android:background="@color/new_order_header_view_bg"
                         android:textColor="@color/colorWhite"
                         android:textSize="@dimen/text_dimen_8"

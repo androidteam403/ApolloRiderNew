@@ -5,6 +5,7 @@ import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -25,7 +26,6 @@ import butterknife.ButterKnife;
 public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapter.MyViewHolder> {
     private Activity activity;
     private ArrayList<MyOrdersItemModel> myOrdersList;
-    private boolean isCancelledClicked = false;
     private OnItemClickListener listener;
 
     public MyOrdersListAdapter(Activity activity, ArrayList<MyOrdersItemModel> myOrdersList, OnItemClickListener listener) {
@@ -55,8 +55,10 @@ public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapte
         TextView orderDate;
         @BindView(R.id.travelled_distance)
         TextView travelledDistance;
+        @BindView(R.id.status_type_icon)
+        ImageView statusTypeIcon;
         @BindView(R.id.order_status_layout)
-        RelativeLayout orderStatusLayout;
+        LinearLayout orderStatusLayout;
         @BindView(R.id.cancelled_reason_layout)
         LinearLayout cancelledReasonLayout;
         @BindView(R.id.pharma_user_address_layout)
@@ -119,6 +121,7 @@ public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapte
             holder.dividerViewFour.setBackgroundColor(activity.getColor(R.color.order_item_divider_color));
             holder.dividerViewFive.setBackgroundColor(activity.getColor(R.color.order_item_divider_color));
             holder.dividerViewSix.setBackgroundColor(activity.getColor(R.color.order_item_divider_color));
+            holder.statusTypeIcon.setImageDrawable(activity.getDrawable(R.drawable.icon_delivered_order));
         } else if (item.getDeliveryStatus().equalsIgnoreCase("New Order")) {
             holder.pharmaUserAddressLayout.setVisibility(View.GONE);
             holder.userAddressLayout.setVisibility(View.VISIBLE);
@@ -132,25 +135,25 @@ public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapte
             holder.dividerViewFour.setBackgroundColor(activity.getColor(R.color.new_order_bg));
             holder.dividerViewFive.setBackgroundColor(activity.getColor(R.color.colorWhite));
             holder.dividerViewSix.setBackgroundColor(activity.getColor(R.color.new_order_bg));
+            holder.statusTypeIcon.setImageDrawable(activity.getDrawable(R.drawable.icon_new_order));
         } else if (item.getDeliveryStatus().equalsIgnoreCase("Cancelled")) {
             holder.pharmaUserAddressLayout.setVisibility(View.VISIBLE);
             holder.userAddressLayout.setVisibility(View.GONE);
             holder.orderStatusLayout.setClickable(true);
             holder.orderDateText.setText(activity.getResources().getString(R.string.label_cancelled_on));
             holder.orderStatusLayout.setBackgroundColor(activity.getColor(R.color.dashboard_pending_text_color));
-            holder.cancelledReasonLayout.setVisibility(View.GONE);
+            holder.cancelledReasonLayout.setVisibility(View.VISIBLE);
             holder.dividerViewOne.setBackgroundColor(activity.getColor(R.color.order_item_divider_color));
             holder.dividerViewTwo.setBackgroundColor(activity.getColor(R.color.order_item_divider_color));
             holder.dividerViewThree.setBackgroundColor(activity.getColor(R.color.order_item_divider_color));
             holder.dividerViewFour.setBackgroundColor(activity.getColor(R.color.order_item_divider_color));
             holder.dividerViewFive.setBackgroundColor(activity.getColor(R.color.order_item_divider_color));
             holder.dividerViewSix.setBackgroundColor(activity.getColor(R.color.order_item_divider_color));
+            holder.statusTypeIcon.setImageDrawable(activity.getDrawable(R.drawable.icon_cancelled_order));
             holder.orderStatusLayout.setOnClickListener(v -> {
-                if (!isCancelledClicked) {
-                    isCancelledClicked = true;
+                if (holder.cancelledReasonLayout.getVisibility() == View.GONE) {
                     holder.cancelledReasonLayout.setVisibility(View.VISIBLE);
                 } else {
-                    isCancelledClicked = false;
                     holder.cancelledReasonLayout.setVisibility(View.GONE);
                 }
             });
@@ -159,7 +162,7 @@ public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapte
         holder.travelledDistance.setText(item.getTravelledDistance());
 
         holder.itemView.setOnClickListener(v -> {
-            if(listener != null){
+            if (listener != null) {
                 listener.OnItemClick(item);
             }
         });

@@ -50,6 +50,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.ArrayList;
+
+import butterknife.OnClick;
+
+import static com.apollo.epos.utils.ActivityUtils.getCurrentTime;
 import static com.apollo.epos.utils.FragmentUtils.TRANSITION_FROM_LEFT_TO_RIGHT;
 
 public class NavigationActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -60,6 +65,7 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
     private int selectedItemPos = -1;
     private String mCurrentFrag;
     private static TextView cartCount;
+    private ArrayList<String> fragPosList = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,7 +93,7 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
 
     @SuppressLint("WrongConstant")
     public void showFragment(Fragment fragment, @StringRes int titleResId) {
-        FragmentUtils.replaceFragment(this, fragment, R.id.content_frame, false, 5);
+        FragmentUtils.replaceFragment(this, fragment, R.id.content_frame, true, 5);
         if (titleResId == 0)
             return;
         setTitle(titleResId);
@@ -131,7 +137,6 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
-
     }
 
     @Override
@@ -205,8 +210,16 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
         TextView logoutText = findViewById(R.id.logout_btn);
         logoutText.setOnClickListener(v -> {
             mDrawerLayout.closeDrawer(GravityCompat.START);
+            finish();
+            overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
         });
     }
+
+//    @OnClick(R.id.logout_btn)
+//    void onLogoutClick() {
+//        mDrawerLayout.closeDrawer(GravityCompat.START);
+//        finish();
+//    }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
 
@@ -329,8 +342,8 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
         return true;
     }
 
-    public static void updateCartCount(String cartCnt){
-        cartCount.setText(cartCnt);
+    public static void updateCartCount(String cartCnt) {
+//        cartCount.setText(cartCnt);
     }
 
     @Override

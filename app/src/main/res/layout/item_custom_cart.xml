@@ -20,7 +20,7 @@
         android:background="@drawable/notification_count"
         android:gravity="center"
         android:layout_alignParentEnd="true"
-        android:text="0"
+        android:text="2"
         android:fontFamily="@font/roboto_regular"
         android:textColor="@color/colorWhite"
         android:textSize="@dimen/text_dimen_12"

@@ -43,56 +43,55 @@
                     android:layout_marginTop="@dimen/five_dp"
                     android:weightSum="1">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                    <RelativeLayout
+                        android:layout_width="@dimen/eighty_dp"
+                        android:layout_height="@dimen/eighty_dp"
+                        android:paddingTop="@dimen/eight_dp"
+                        android:layout_marginEnd="@dimen/ten_dp"
                         android:layout_marginTop="@dimen/five_dp"
-                        android:layout_gravity="center"
-                        android:layout_marginBottom="@dimen/five_dp"
-                        android:layout_weight="0.5"
-                        android:orientation="vertical">
+                        android:paddingBottom="@dimen/eight_dp"
+                        android:layout_marginStart="@dimen/ten_dp"
+                        android:layout_gravity="center_horizontal">
 
-                        <RelativeLayout
-                            android:layout_width="@dimen/eighty_dp"
-                            android:layout_height="@dimen/eighty_dp"
-                            android:paddingTop="@dimen/eight_dp"
-                            android:paddingBottom="@dimen/eight_dp"
-                            android:layout_gravity="center_horizontal">
-
-                            <ImageView
-                                android:id="@+id/user_image"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:background="@drawable/image_circle_bg"
-                                android:contentDescription="@string/nav_header_desc"/>
-                        </RelativeLayout>
-                    </LinearLayout>
+                        <ImageView
+                            android:id="@+id/user_image"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/image_circle_bg"
+                            android:contentDescription="@string/nav_header_desc"/>
+                    </RelativeLayout>
 
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginTop="@dimen/five_dp"
                         android:layout_marginBottom="@dimen/five_dp"
-                        android:layout_weight="0.5"
                         android:orientation="vertical">
 
-                        <TextView
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/two_dp"
-                            android:fontFamily="@font/roboto_regular"
-                            android:text="@string/label_employee_id"
-                            android:textSize="@dimen/text_dimen_12"
-                            android:textColor="@color/profile_header_color" />
+                            android:orientation="horizontal">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="8880002258"
-                            android:fontFamily="@font/roboto_bold"
-                            android:textSize="@dimen/text_dimen_14"
-                            android:textColor="@color/colorBlack" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto_regular"
+                                android:text="@string/label_employee_id"
+                                android:textSize="@dimen/text_dimen_12"
+                                android:textColor="@color/profile_header_color" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="8880002258"
+                                android:layout_marginStart="@dimen/three_dp"
+                                android:fontFamily="@font/roboto_bold"
+                                android:textSize="@dimen/text_dimen_14"
+                                android:textColor="@color/colorBlack" />
+                        </LinearLayout>
+
 
                         <TextView
                             android:layout_width="wrap_content"

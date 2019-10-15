@@ -40,6 +40,9 @@ import androidx.transition.TransitionManager;
 
 import com.apollo.epos.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 import dmax.dialog.SpotsDialog;
@@ -248,5 +251,10 @@ public class ActivityUtils {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+
+    public static String getCurrentTime(){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a", Locale.ENGLISH);
+        return dateFormat.format(new Date()).toString();
     }
 }

@@ -178,7 +178,7 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
         //textColor
         ObjectAnimator anim = ObjectAnimator.ofInt(newOrderLayout, "backgroundColor",
                 mActivity.getResources().getColor(R.color.colorPrimary),
-                mActivity.getResources().getColor(R.color.btn_color));
+                mActivity.getResources().getColor(R.color.dashboard_pending_text_color));
         anim.setDuration(1000);
         anim.setEvaluator(new ArgbEvaluator());
         anim.setRepeatMode(ValueAnimator.REVERSE);

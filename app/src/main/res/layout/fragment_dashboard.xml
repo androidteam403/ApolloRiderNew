@@ -77,7 +77,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/five_dp"
+                android:layout_marginTop="@dimen/two_dp"
                 android:fontFamily="@font/roboto_bold"
                 android:text="Raghavendra Dabbidi"
                 android:textSize="@dimen/text_dimen_15"
@@ -129,7 +129,7 @@
         android:layout_marginEnd="@dimen/ten_dp"
         android:layout_marginStart="@dimen/ten_dp"
         android:layout_marginBottom="@dimen/ten_dp"
-        android:background="@color/btn_color"
+        android:background="@color/dashboard_pending_text_color"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -142,8 +142,8 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="@dimen/thirty_five_dp"
-                android:layout_height="@dimen/forty_dp"
+                android:layout_width="@dimen/twenty_five_dp"
+                android:layout_height="@dimen/forty_five_dp"
                 android:layout_marginStart="@dimen/ten_dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="@dimen/fifteen_dp"
@@ -464,7 +464,7 @@
                             android:layout_width="@dimen/fifty_dp"
                             android:layout_height="@dimen/forty_dp"
                             android:contentDescription="@string/app_name"
-                            android:src="@drawable/db_total_orders" />
+                            android:src="@drawable/db_sales_generated" />
 
                         <TextView
                             android:layout_width="wrap_content"

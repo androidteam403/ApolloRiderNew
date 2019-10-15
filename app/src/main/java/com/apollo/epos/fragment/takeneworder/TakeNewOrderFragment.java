@@ -151,6 +151,10 @@ public class TakeNewOrderFragment extends Fragment implements OnItemClickListene
     @BindView(R.id.search_options_bottom_layout)
     protected LinearLayout searchOptionsBottomLayout;
     private int itemQty = 1;
+    @BindView(R.id.header_layout)
+    protected LinearLayout headerLayout;
+    @BindView(R.id.cart_items_img)
+    protected ImageView cartItemsImg;
 
     public static TakeNewOrderFragment newInstance() {
         return new TakeNewOrderFragment();
@@ -267,6 +271,8 @@ public class TakeNewOrderFragment extends Fragment implements OnItemClickListene
                                     " results for ", searchProductEditText.getText().toString(), 1.0f, 0.9f, R.font.roboto_bold));
 //                            resultsHeader.setText(mActivity.getResources().getString(R.string.label_search_results, medicineList.size(), searchProductEditText.getText().toString()));
 
+                            setSearchedItemsList();
+
                             btmSearchCameraLayout.setBackground(mActivity.getResources().getDrawable(R.drawable.take_order_item_bg));
                             btmSearchBarcodeLayout.setBackground(mActivity.getResources().getDrawable(R.drawable.take_order_item_bg));
                             btmSearchVoiceLayout.setBackground(mActivity.getResources().getDrawable(R.drawable.take_order_item_bg));
@@ -283,6 +289,7 @@ public class TakeNewOrderFragment extends Fragment implements OnItemClickListene
 
     @OnClick(R.id.search_layout)
     void onSearchLayoutClick() {
+        headerLayout.setBackground(mActivity.getResources().getDrawable(R.drawable.dashboard_order_item_selected_bg));
         searchLayout.setVisibility(View.GONE);
         customSearchLayout.setVisibility(View.VISIBLE);
         showSoftKeyboard(mActivity, searchProductEditText);
@@ -293,6 +300,7 @@ public class TakeNewOrderFragment extends Fragment implements OnItemClickListene
         searchProductEditText.setText("");
         customSearchLayout.setVisibility(View.GONE);
         searchLayout.setVisibility(View.VISIBLE);
+        headerLayout.setBackground(mActivity.getResources().getDrawable(R.drawable.dashboard_order_item_unselected_bg));
         hideKeyboardFrom(mActivity, searchProductEditText);
     }
 
@@ -451,6 +459,8 @@ public class TakeNewOrderFragment extends Fragment implements OnItemClickListene
                     ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                     bp.compress(Bitmap.CompressFormat.JPEG, 80, bytes);
 
+                    setSearchedItemsList();
+
                     String inputStr = "Dolo";
                     searchOptionsBottomLayout.setVisibility(View.VISIBLE);
                     scannedBarCode.setText(inputStr);
@@ -502,6 +512,8 @@ public class TakeNewOrderFragment extends Fragment implements OnItemClickListene
                         scannedProduct.setVisibility(View.GONE);
                         resultLayout.setVisibility(View.VISIBLE);
 
+                        setSearchedItemsList();
+
                         searchedProductName = result.get(0);
                         scannedBarCode.setText(result.get(0));
                         resultsHeader.setText(convertSpannableStringSizes(mActivity, "Found ", String.valueOf(medicineList.size()),
@@ -536,6 +548,8 @@ public class TakeNewOrderFragment extends Fragment implements OnItemClickListene
                             capturedPreviewImage.setImageDrawable(mActivity.getDrawable(R.drawable.icon_sacnner_unselect));
                             scannedProduct.setVisibility(View.GONE);
                             resultLayout.setVisibility(View.VISIBLE);
+
+                            setSearchedItemsList();
 
 //                            capturedPreviewImage.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.icon_scanned_bar));
                             searchedProductName = result.getContents();
@@ -657,6 +671,7 @@ public class TakeNewOrderFragment extends Fragment implements OnItemClickListene
 //            Toast.makeText(mActivity, "Item added to Cart", Toast.LENGTH_SHORT).show();
 //            addToCartText.setBackground(mActivity.getDrawable(R.drawable.add_cart_bg));
         } else {
+            cartItemsImg.setColorFilter(ContextCompat.getColor(mActivity, R.color.colorBlack));
             NavigationActivity.updateCartCount("0");
 //            addToCartText.setBackground(mActivity.getDrawable(R.drawable.add_cart_unselect_bg));
         }
@@ -665,7 +680,7 @@ public class TakeNewOrderFragment extends Fragment implements OnItemClickListene
     @Override
     public void onDecrementClick(int position) {
         itemQty = Integer.parseInt(medicineList.get(position).getQty());
-        if (itemQty > 1){
+        if (itemQty > 1) {
             itemQty = itemQty - 1;
             medicineList.get(position).setQty(String.valueOf(itemQty));
             searchedItemsAdapter.notifyDataSetChanged();
@@ -693,6 +708,7 @@ public class TakeNewOrderFragment extends Fragment implements OnItemClickListene
             Toast.makeText(mActivity, "Add any item to cart", Toast.LENGTH_SHORT).show();
         } else {
             NavigationActivity.updateCartCount(String.valueOf(selectedCnt));
+            cartItemsImg.setColorFilter(ContextCompat.getColor(mActivity, R.color.cart_item_color));
             Toast.makeText(mActivity, "Item added to cart", Toast.LENGTH_SHORT).show();
         }
     }

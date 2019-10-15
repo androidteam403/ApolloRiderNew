@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/label_order"
                 android:fontFamily="@font/roboto_regular"
-                android:textColor="@color/order_item_text_color"
+                android:textColor="@color/dashboard_text_color"
                 android:textSize="@dimen/text_dimen_12" />
 
             <TextView
@@ -59,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/roboto_regular"
                 android:text="@string/label_amount"
-                android:textColor="@color/order_item_text_color"
+                android:textColor="@color/dashboard_text_color"
                 android:textSize="@dimen/text_dimen_12" />
 
             <TextView
@@ -94,7 +94,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/label_payment_type"
                 android:fontFamily="@font/roboto_regular"
-                android:textColor="@color/order_item_text_color"
+                android:textColor="@color/dashboard_text_color"
                 android:textSize="@dimen/text_dimen_12" />
 
             <TextView
@@ -334,33 +334,47 @@
         android:orientation="horizontal"
         android:weightSum="3">
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/order_status_layout"
             android:layout_width="0dp"
+            android:gravity="center_vertical"
+            android:layout_gravity="start"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:gravity="center">
+            android:layout_weight="1">
 
-            <TextView
-                android:id="@+id/order_status_text"
+            <ImageView
+                android:id="@+id/status_type_icon"
+                android:layout_width="@dimen/twenty_two_dp"
+                android:layout_height="@dimen/eighteen_dp"
+                android:layout_marginEnd="@dimen/five_dp"
+                android:layout_marginStart="@dimen/ten_dp"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/icon_signature_save"/>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/label_status"
-                android:fontFamily="@font/roboto_regular"
-                android:textColor="@color/colorWhite"
-                android:textSize="@dimen/text_dimen_12" />
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/order_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/order_status_text"
-                android:text="Delivered"
-                android:fontFamily="@font/roboto_regular"
-                android:textColor="@color/colorWhite"
-                android:textSize="@dimen/text_dimen_13" />
-        </RelativeLayout>
+                <TextView
+                    android:id="@+id/order_status_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_status"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/text_dimen_12" />
+
+                <TextView
+                    android:id="@+id/order_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Delivered"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/text_dimen_13" />
+            </LinearLayout>
+        </LinearLayout>
 
         <View
             android:id="@+id/divider_view_five"
@@ -383,7 +397,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/roboto_regular"
                 android:text="@string/label_delivered_on"
-                android:textColor="@color/order_item_text_color"
+                android:textColor="@color/dashboard_text_color"
                 android:textSize="@dimen/text_dimen_12" />
 
             <TextView
@@ -418,7 +432,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/roboto_regular"
                 android:text="@string/label_travelled"
-                android:textColor="@color/order_item_text_color"
+                android:textColor="@color/dashboard_text_color"
                 android:textSize="@dimen/text_dimen_12" />
 
             <TextView
@@ -441,10 +455,19 @@
         android:background="@color/dashboard_pending_text_color"
         android:orientation="horizontal">
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/fifteen_dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/five_dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/icon_cancelled_img"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/five_dp"
+            android:layout_gravity="center_vertical"
             android:fontFamily="@font/roboto_regular"
             android:textColor="@color/colorWhite"
             android:textSize="@dimen/text_dimen_13"

@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -25,6 +26,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -32,6 +35,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -42,12 +46,14 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.apollo.epos.R;
+import com.apollo.epos.activity.CancelOrderActivity;
 import com.apollo.epos.activity.CaptureSignatureActivity;
 import com.apollo.epos.activity.NavigationActivity;
 import com.apollo.epos.activity.ReachPharmacyActivity;
 import com.apollo.epos.activity.ScannerActivity;
 import com.apollo.epos.adapter.CustomReasonAdapter;
 import com.apollo.epos.fragment.cancelorderitem.CancelOrderItemFragment;
+import com.apollo.epos.fragment.dashboard.DashboardFragment;
 import com.apollo.epos.fragment.neworder.NewOrderFragment;
 import com.apollo.epos.model.OrderItemModel;
 import com.apollo.epos.utils.ActivityUtils;
@@ -65,6 +71,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static android.app.Activity.RESULT_OK;
+import static com.apollo.epos.utils.ActivityUtils.getCurrentTime;
 import static com.apollo.epos.utils.ActivityUtils.showLayoutDownAnimation;
 import static com.apollo.epos.utils.ActivityUtils.showTextDownAnimation;
 
@@ -175,8 +182,6 @@ public class DeliveryOrderFragment extends Fragment implements AdapterView.OnIte
     protected EditText optNum6;
     @BindView(R.id.verify_otp_btn)
     protected TextView verifyOtpBtn;
-    @BindView(R.id.invalid_otp_layout)
-    protected RelativeLayout invalidOtpLayout;
     @BindView(R.id.verified_otp_text)
     protected TextView verifiedOtpText;
     @BindView(R.id.order_delivered_parent_layout)
@@ -187,6 +192,8 @@ public class DeliveryOrderFragment extends Fragment implements AdapterView.OnIte
     protected LinearLayout orderDeliveredChildTwoLayout;
     @BindView(R.id.cancel_item_btn)
     protected TextView cancelItemBtn;
+    @BindView(R.id.cancel_order_btn)
+    protected TextView cancelOrderBtn;
 
     @BindView(R.id.anim_reach_store_layout)
     protected LinearLayout animReachStoreLayout;
@@ -196,6 +203,10 @@ public class DeliveryOrderFragment extends Fragment implements AdapterView.OnIte
     protected LinearLayout animScanBarCodeLayout;
     @BindView(R.id.anim_address_reached_layout)
     protected LinearLayout animAddressReachedLayout;
+    @BindView(R.id.parentScrollView)
+    protected ScrollView parentScrollView;
+    @BindView(R.id.user_contact_number)
+    protected ImageView userContactNumber;
 
     String[] cancelReasons = {"Select from predefined statements", "Taken leave", "Not feeling well", "Soo far from my current location"};
     String[] customerTypesList = {"Customer", "Other"};
@@ -207,6 +218,7 @@ public class DeliveryOrderFragment extends Fragment implements AdapterView.OnIte
     private File file;
     private boolean imageStatus = false;
     private Bitmap bp;
+    private boolean userPhoneClick = false;
 
     public static DeliveryOrderFragment newInstance() {
         return new DeliveryOrderFragment();
@@ -246,14 +258,13 @@ public class DeliveryOrderFragment extends Fragment implements AdapterView.OnIte
 
             showTextDownAnimation(R.id.anim_reach_store_layout, animReachStoreLayout, storeReachedTime);
 //            ActivityUtils.footerAnimation(mActivity, animReachStoreLayout, storeReachedTime);
-//            storeReachedTime.setVisibility(View.VISIBLE);
+            storeReachedTime.setText(getCurrentTime());
         }
     }
 
     @OnClick(R.id.scan_barcode_layout)
     void scanBarCodeClick() {
         if (selectionTag == 1) {
-            selectionTag = 2;
             new IntentIntegrator(mActivity).setCaptureActivity(ScannerActivity.class).initiateScan();
             mActivity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
         }
@@ -267,7 +278,7 @@ public class DeliveryOrderFragment extends Fragment implements AdapterView.OnIte
             takenParcelImg.setImageDrawable(mActivity.getDrawable(R.drawable.icon_status_completed));
 
             showTextDownAnimation(R.id.anim_taken_parcel_layout, animTakenParcelLayout, parcelTakenTime);
-//            parcelTakenTime.setVisibility(View.VISIBLE);
+            parcelTakenTime.setText(getCurrentTime());
             continueProcessLayout.setVisibility(View.VISIBLE);
         }
     }
@@ -276,6 +287,18 @@ public class DeliveryOrderFragment extends Fragment implements AdapterView.OnIte
     void onContinueDrivingClick() {
         if (selectionTag == 3) {
             selectionTag = 4;
+//            Animation RightSwipe = AnimationUtils.loadAnimation(mActivity, R.anim.bottom_swipe);
+//            parentScrollView.startAnimation(RightSwipe);
+
+//            int bottomDp = (int) getResources().getDimension(R.dimen.one_hundred_dp);
+//            int marginBottom = (int) ActivityUtils.convertDpToPixel(bottomDp, mActivity);
+//            parentScrollView.post(new Runnable() {
+//                public void run() {
+//                    parentScrollView.scrollTo(0, marginBottom);
+//                }
+//            });
+            userPhoneClick = true;
+            userContactNumber.setImageDrawable(mActivity.getDrawable(R.drawable.icon_phone_select));
             deliveryItemsView.setVisibility(View.VISIBLE);
             userMobileNumberHeader.setVisibility(View.VISIBLE);
             userMobileNumber.setVisibility(View.VISIBLE);
@@ -289,6 +312,7 @@ public class DeliveryOrderFragment extends Fragment implements AdapterView.OnIte
             selectionTag = 5;
             reachedDeliveryAddressLayout.setBackgroundColor(mActivity.getResources().getColor(R.color.order_status_processed_color));
             reachedAddressImg.setImageDrawable(mActivity.getDrawable(R.drawable.icon_status_completed));
+            addressReachedTime.setText(getCurrentTime());
             addressReachedTime.setVisibility(View.VISIBLE);
             cancelItemBtn.setVisibility(View.VISIBLE);
         }
@@ -318,7 +342,7 @@ public class DeliveryOrderFragment extends Fragment implements AdapterView.OnIte
     void onSignaturePadParentLayoutClick() {
         if (selectionTag == 7) {
             selectionTag = 8;
-            signaturePadParentLayout.setBackgroundColor(mActivity.getResources().getColor(R.color.order_status_processed_color));
+            signaturePadParentLayout.setBackgroundColor(mActivity.getResources().getColor(R.color.order_status_pending_color));
             signaturePadImg.setImageDrawable(mActivity.getDrawable(R.drawable.icon_status_completed));
             signaturePadChildLayout.setVisibility(View.VISIBLE);
         }
@@ -348,7 +372,7 @@ public class DeliveryOrderFragment extends Fragment implements AdapterView.OnIte
     void onOtpVerificationParentLayoutClick() {
         if (selectionTag == 8) {
             selectionTag = 9;
-            otpVerificationParentLayout.setBackgroundColor(mActivity.getResources().getColor(R.color.order_status_processed_color));
+            otpVerificationParentLayout.setBackgroundColor(mActivity.getResources().getColor(R.color.order_status_pending_color));
             otpVerificationImg.setImageDrawable(mActivity.getDrawable(R.drawable.icon_status_completed));
             otpVerificationChildLayout.setVisibility(View.VISIBLE);
             setPINListeners();
@@ -360,26 +384,36 @@ public class DeliveryOrderFragment extends Fragment implements AdapterView.OnIte
         if (pinHiddenEditText.getText().toString().equalsIgnoreCase("000000")) {
             otpEditTextLayout.setVisibility(View.GONE);
             verifyOtpBtn.setVisibility(View.GONE);
-            invalidOtpLayout.setVisibility(View.GONE);
+            otpEditTextLayout.setBackground(mActivity.getResources().getDrawable(R.drawable.otp_bg));
             verifiedOtpText.setVisibility(View.VISIBLE);
+            otpVerificationParentLayout.setBackgroundColor(mActivity.getResources().getColor(R.color.order_status_processed_color));
             orderDeliveredParentLayout.setBackground(getResources().getDrawable(R.drawable.order_delivered_layout_bg));
             orderDeliveredChildOneLayout.setVisibility(View.GONE);
             orderDeliveredChildTwoLayout.setVisibility(View.VISIBLE);
 
+            verifyOtpBtn.setBackground(mActivity.getResources().getDrawable(R.drawable.continue_driving_btn_bg));
+            cancelItemBtn.setVisibility(View.GONE);
+            cancelOrderBtn.setVisibility(View.GONE);
+
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.MATCH_PARENT);
             int rightDp = (int) getResources().getDimension(R.dimen.five_dp);
-            int bottomDp = (int) getResources().getDimension(R.dimen.forty_dp);
+            int bottomDp = (int) getResources().getDimension(R.dimen.twenty_five_dp);
             int marginEnd = (int) ActivityUtils.convertDpToPixel(rightDp, mActivity);
             int marginBottom = (int) ActivityUtils.convertDpToPixel(bottomDp, mActivity);
-            params.setMargins(0, 0, 0, marginBottom);
+            params.setMargins(0, 0, marginEnd, marginBottom);
             deliveryItemsView.setLayoutParams(params);
 
+            new Handler().postDelayed(() -> {
+                ((NavigationActivity) Objects.requireNonNull(mActivity)).showFragment(new DashboardFragment(), R.string.menu_dashboard);
+                ((NavigationActivity) Objects.requireNonNull(mActivity)).updateSelection(1);
+            }, 1000);
         } else {
             otpEditTextLayout.setVisibility(View.VISIBLE);
             verifyOtpBtn.setVisibility(View.VISIBLE);
-            invalidOtpLayout.setVisibility(View.VISIBLE);
+            otpEditTextLayout.setBackground(mActivity.getResources().getDrawable(R.drawable.otp_error_bg));
             verifiedOtpText.setVisibility(View.GONE);
+            verifyOtpBtn.setBackground(mActivity.getResources().getDrawable(R.drawable.verify_otp_error_bg));
         }
     }
 
@@ -465,8 +499,11 @@ public class DeliveryOrderFragment extends Fragment implements AdapterView.OnIte
 
     @OnClick(R.id.cancel_item_btn)
     void onCancelItemClick() {
-        ((NavigationActivity) Objects.requireNonNull(mActivity)).showFragment(new CancelOrderItemFragment(), R.string.menu_take_order);
-        ((NavigationActivity) Objects.requireNonNull(mActivity)).updateSelection(-1);
+        Intent i = new Intent(mActivity, CancelOrderActivity.class);
+        startActivity(i);
+        mActivity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+//        ((NavigationActivity) Objects.requireNonNull(mActivity)).showFragment(new CancelOrderItemFragment(), R.string.menu_take_order);
+//        ((NavigationActivity) Objects.requireNonNull(mActivity)).updateSelection(-1);
     }
 
     @Override
@@ -488,6 +525,7 @@ public class DeliveryOrderFragment extends Fragment implements AdapterView.OnIte
                 byte[] byteArray = data.getByteArrayExtra("capturedSignature");
                 Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
                 customerSignatureView.setImageBitmap(bmp);
+                signaturePadParentLayout.setBackgroundColor(mActivity.getResources().getColor(R.color.order_status_processed_color));
             }
         } else if (requestCode == CAM_REQUEST && resultCode == RESULT_OK) {
             imageStatus = true;
@@ -523,6 +561,7 @@ public class DeliveryOrderFragment extends Fragment implements AdapterView.OnIte
                 if (result.getContents() == null) {
 //                Toast.makeText(this, "Scan Cancelled", Toast.LENGTH_LONG).show();
                 } else {
+                    selectionTag = 2;
                     scanBarcodeLayout.setBackgroundColor(mActivity.getResources().getColor(R.color.order_status_processed_color));
                     scanBarcodeImg.setImageDrawable(mActivity.getDrawable(R.drawable.icon_status_completed));
                     scannedBarCode.setText("Scanned Bar Code: " + result.getContents());
@@ -607,6 +646,7 @@ public class DeliveryOrderFragment extends Fragment implements AdapterView.OnIte
                 optNum4.setText("");
                 optNum5.setText("");
                 optNum6.setText("");
+                verifyOtpBtn.setBackground(mActivity.getResources().getDrawable(R.drawable.verify_otp_error_bg));
             } else if (s.length() == 1) {
                 optNum1.setText(s.charAt(0) + "");
                 optNum2.setText("");
@@ -614,26 +654,32 @@ public class DeliveryOrderFragment extends Fragment implements AdapterView.OnIte
                 optNum4.setText("");
                 optNum5.setText("");
                 optNum6.setText("");
+                verifyOtpBtn.setBackground(mActivity.getResources().getDrawable(R.drawable.verify_otp_error_bg));
             } else if (s.length() == 2) {
                 optNum2.setText(s.charAt(1) + "");
                 optNum3.setText("");
                 optNum4.setText("");
                 optNum5.setText("");
                 optNum6.setText("");
+                verifyOtpBtn.setBackground(mActivity.getResources().getDrawable(R.drawable.verify_otp_error_bg));
             } else if (s.length() == 3) {
                 optNum3.setText(s.charAt(2) + "");
                 optNum4.setText("");
                 optNum5.setText("");
                 optNum6.setText("");
+                verifyOtpBtn.setBackground(mActivity.getResources().getDrawable(R.drawable.verify_otp_error_bg));
             } else if (s.length() == 4) {
                 optNum4.setText(s.charAt(3) + "");
                 optNum5.setText("");
                 optNum6.setText("");
+                verifyOtpBtn.setBackground(mActivity.getResources().getDrawable(R.drawable.verify_otp_error_bg));
             } else if (s.length() == 5) {
                 optNum5.setText(s.charAt(4) + "");
                 optNum6.setText("");
+                verifyOtpBtn.setBackground(mActivity.getResources().getDrawable(R.drawable.verify_otp_error_bg));
             } else if (s.length() == 6) {
                 optNum6.setText(s.charAt(5) + "");
+                verifyOtpBtn.setBackground(mActivity.getResources().getDrawable(R.drawable.continue_driving_btn_bg));
             }
         }
 
@@ -756,5 +802,42 @@ public class DeliveryOrderFragment extends Fragment implements AdapterView.OnIte
         editText.setFocusable(true);
         editText.setFocusableInTouchMode(true);
         editText.requestFocus();
+    }
+
+    @OnClick(R.id.pharma_contact_number)
+    void onPharmaContactClick() {
+        checkCallPermissionSetting();
+    }
+
+    @OnClick(R.id.user_contact_number)
+    void onUserContactClick() {
+        if (userPhoneClick)
+            checkCallPermissionSetting();
+    }
+
+    private void checkCallPermissionSetting() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                Log.d("Permissions_Status", "Permissions not granted");
+               /* if (ContextCompat.checkSelfPermission(CameraFunctionality.this, Manifest.permission.CAMERA)
+                        == PackageManager.PERMISSION_DENIED)*/
+                // ask for permission
+                ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.CALL_PHONE}, 1);
+            } else {
+                Log.d("Permissions_Status", "We have a permission");
+                // we have a permission
+                requestACall();
+            }
+        } else {
+            requestACall();
+        }
+    }
+
+    private void requestACall() {
+        String phonenumber = "+919440012212";
+        Intent intentcall = new Intent();
+        intentcall.setAction(Intent.ACTION_CALL);
+        intentcall.setData(Uri.parse("tel:" + phonenumber)); // set the Uri
+        mActivity.startActivity(intentcall);
     }
 }

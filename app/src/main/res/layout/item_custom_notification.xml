@@ -7,8 +7,8 @@
 
     <ImageView
         android:id="@+id/notify_image"
-        android:layout_width="@dimen/thirty_dp"
-        android:layout_height="@dimen/thirty_dp"
+        android:layout_width="@dimen/twenty_five_dp"
+        android:layout_height="@dimen/twenty_five_dp"
         android:contentDescription="@string/app_name"
         android:gravity="center"
         android:src="@drawable/icon_notification" />

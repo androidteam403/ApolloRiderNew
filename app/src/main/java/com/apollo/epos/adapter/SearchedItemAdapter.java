@@ -81,6 +81,11 @@ public class SearchedItemAdapter extends RecyclerView.Adapter<SearchedItemAdapte
             holder.parentLayout.setBackground(null);
         }
 
+        holder.medicineCheckBox.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(position, !item.isSelected());
+            }
+        });
         holder.medicineInfoLayout.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onItemClick(position, !item.isSelected());

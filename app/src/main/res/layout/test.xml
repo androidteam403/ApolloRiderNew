@@ -7,94 +7,215 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_marginTop="@dimen/eight_dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/fifteen_dp"
+            android:layout_height="@dimen/thirty_two_dp"
+            android:background="@drawable/horizontal_dotted_line"
+            android:contentDescription="@string/app_name"
+            android:hardwareAccelerated="false"
+            android:layerType="software" />
 
         <LinearLayout
-            android:id="@+id/preview_layout"
+            android:id="@+id/otp_verification_parent_layout"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/fifty_dp"
-            android:layout_marginStart="@dimen/ten_dp"
-            android:visibility="visible"
-            android:background="#c4e9d6"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:padding="@dimen/seven_dp"
+            android:background="@color/order_status_pending_color"
+            android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/captured_preview_image"
-                android:layout_width="@dimen/thirty_dp"
-                android:layout_height="@dimen/forty_dp"
-                android:src="@drawable/progress_bar_shape"
-                android:visibility="visible"
-                android:layout_marginStart="@dimen/five_dp"
-                android:layout_marginBottom="@dimen/five_dp"
-                android:layout_marginTop="@dimen/five_dp"
-                android:contentDescription="@string/app_name"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/otp_verification_img"
+                    android:layout_width="@dimen/eighteen_dp"
+                    android:layout_height="@dimen/fifteen_dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="end"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/icon_status_pending" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="@string/label_otp_verification"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/text_dimen_13"
+                    android:fontFamily="@font/roboto_bold" />
+            </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/five_dp"
-                android:layout_marginBottom="@dimen/five_dp"
-                android:layout_marginTop="@dimen/five_dp"
-                android:gravity="center_vertical"
+                android:animateLayoutChanges="true"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/scanned_bar_code"
+                <LinearLayout
+                    android:id="@+id/otp_verification_child_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Scanned Code: "
-                    android:fontFamily="@font/roboto_regular"
-                    android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/text_dimen_15"/>
+                    android:layout_marginTop="@dimen/five_dp"
+                    android:layout_marginStart="@dimen/fifteen_dp"
+                    android:layout_marginEnd="@dimen/ten_dp"
+                    android:layout_marginBottom="@dimen/five_dp"
+                    android:visibility="visible"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/scanned_product"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="Product Name: "
-                    android:visibility="gone"
-                    android:fontFamily="@font/roboto_regular"
-                    android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/text_dimen_15"/>
+                    <LinearLayout
+                        android:id="@+id/otp_editText_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/forty_five_dp"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="@dimen/twenty_five_dp"
+                        android:layout_marginTop="@dimen/five_dp"
+                        android:layout_marginEnd="@dimen/thirty_dp"
+                        android:background="@drawable/otp_bg"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:visibility="visible"
+                        android:weightSum="1.5">
+
+                        <EditText
+                            android:id="@+id/opt_num1"
+                            style="@style/otp_editText_style"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.25"
+                            android:fontFamily="@font/roboto_regular"
+                            android:backgroundTint="@color/dashboard_text_color"
+                            android:text=""
+                            android:textColorHint="@color/colorWhite" />
+
+                        <EditText
+                            android:id="@+id/opt_num2"
+                            style="@style/otp_editText_style"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.25"
+                            android:fontFamily="@font/roboto_regular"
+                            android:backgroundTint="@color/dashboard_text_color"
+                            android:text=""
+                            android:textColorHint="@color/colorWhite" />
+
+                        <EditText
+                            android:id="@+id/opt_num3"
+                            style="@style/otp_editText_style"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.25"
+                            android:fontFamily="@font/roboto_regular"
+                            android:backgroundTint="@color/dashboard_text_color"
+                            android:text=""
+                            android:textColorHint="@color/colorWhite" />
+
+                        <EditText
+                            android:id="@+id/opt_num4"
+                            style="@style/otp_editText_style"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.25"
+                            android:fontFamily="@font/roboto_regular"
+                            android:backgroundTint="@color/dashboard_text_color"
+                            android:text=""
+                            android:textColorHint="@color/colorWhite" />
+
+                        <EditText
+                            android:id="@+id/opt_num5"
+                            style="@style/otp_editText_style"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.25"
+                            android:fontFamily="@font/roboto_regular"
+                            android:backgroundTint="@color/dashboard_text_color"
+                            android:text=""
+                            android:textColorHint="@color/colorWhite" />
+
+                        <EditText
+                            android:id="@+id/opt_num6"
+                            style="@style/otp_editText_style"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.25"
+                            android:fontFamily="@font/roboto_regular"
+                            android:backgroundTint="@color/dashboard_text_color"
+                            android:text=""
+                            android:textColorHint="@color/colorWhite" />
+                    </LinearLayout>
+
+                    <EditText
+                        android:id="@+id/pin_hidden_edittext"
+                        android:layout_width="@dimen/one_dp"
+                        android:layout_height="@dimen/one_dp"
+                        android:layout_gravity="center_horizontal"
+                        android:background="@null"
+                        android:cursorVisible="false"
+                        android:gravity="center_horizontal"
+                        android:inputType="number"
+                        android:fontFamily="@font/roboto_regular"
+                        android:maxLength="6"
+                        android:password="true"
+                        android:textColor="#00000000" />
+
+                    <TextView
+                        android:id="@+id/verify_otp_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorWhite"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="@dimen/ten_dp"
+                        android:visibility="visible"
+                        android:textSize="@dimen/text_dimen_13"
+                        android:fontFamily="@font/roboto_bold"
+                        android:background="@drawable/continue_driving_btn_bg"
+                        android:text="@string/label_verify_otp"/>
+
+                    <RelativeLayout
+                        android:id="@+id/invalid_otp_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="visible"
+                        android:layout_marginTop="@dimen/eight_dp">
+
+                        <TextView
+                            android:id="@+id/invalid_otp_text"
+                            android:layout_width="wrap_content"
+                            android:textStyle="bold"
+                            android:textSize="@dimen/text_dimen_12"
+                            android:fontFamily="@font/roboto_regular"
+                            android:layout_height="wrap_content"
+                            android:text="@string/label_invalid_otp"
+                            android:textColor="@color/colorBlack"/>
+
+                        <TextView
+                            android:id="@+id/resend_otp_btn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:textColor="@color/colorWhite"
+                            android:textSize="@dimen/text_dimen_13"
+                            android:fontFamily="@font/roboto_bold"
+                            android:background="@drawable/continue_driving_btn_bg"
+                            android:text="@string/label_resend_otp"/>
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/verified_otp_text"
+                        android:layout_marginTop="@dimen/four_dp"
+                        android:layout_width="wrap_content"
+                        android:visibility="gone"
+                        android:fontFamily="@font/roboto_bold"
+                        android:textSize="@dimen/text_dimen_15"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_otp_verification_completed"
+                        android:textColor="@color/colorWhite"/>
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/result_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/results_header"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Results"
-                android:textSize="@dimen/text_dimen_15"
-                android:fontFamily="@font/roboto_regular"
-                android:layout_marginStart="@dimen/ten_dp"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/searchedItemRecyclerView"
-                android:layout_marginTop="@dimen/ten_dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/twelve_dp"
-                android:layout_marginStart="@dimen/twelve_dp" />
-
-            <TextView
-                android:id="@+id/add_to_cart_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@drawable/add_cart_unselect_bg"
-                android:layout_marginTop="@dimen/twenty_five_dp"
-                android:layout_marginBottom="@dimen/twenty_dp"
-                android:textColor="@color/colorBlack"
-                android:textSize="@dimen/text_dimen_15"
-                android:fontFamily="@font/roboto_bold"
-                android:text="Add to Cart"/>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
