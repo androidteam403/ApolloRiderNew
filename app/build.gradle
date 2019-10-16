@@ -72,7 +72,9 @@ dependencies {
 //    implementation 'com.google.android.gms:play-services-location:11.8.0'
 
     implementation 'com.google.android.gms:play-services:11.8.0'
+    implementation 'com.google.android.gms:play-services-location:11.8.0'
     implementation 'com.google.maps.android:android-maps-utils:0.5+'
+
     // map clustering
     implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
 

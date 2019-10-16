@@ -157,7 +157,10 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
             stopLocationUpdates();
             cancelLocationTimer();
             geoLocation = "" + loc.getLatitude() + "," + loc.getLongitude();
-
+            if (this instanceof MapViewActivity) {
+                MapViewActivity mapViewActivity = (MapViewActivity) this;
+                mapViewActivity.refresh();
+            }
 
         }
 
@@ -170,20 +173,22 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
-    protected void getCurrentLocation(final boolean shouldShowProgress, final Context context) {
+    protected void getCurrentLocation(final Context context) {
         LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         if (lm != null && lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && mGoogleApiClient != null) {
             if (mGoogleApiClient.isConnected()) {
                 mGoogleApiClient.disconnect();
             }
             mGoogleApiClient.connect();
-
             new CountDownTimer(COUNT_DOWN_TIME, COUNT_DOWN_TIME_INTERVAL) {
 
                 @Override
                 public void onTick(long millisUntilFinished) {
                     if (geoLocation != null) {
-
+                        if (BaseActivity.this instanceof MapViewActivity) {
+                            MapViewActivity mapViewActivity = (MapViewActivity) BaseActivity.this;
+                            mapViewActivity.refresh();
+                        }
                     }
 
                     this.cancel();
@@ -191,13 +196,16 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
 
                 @Override
                 public void onFinish() {
-
                     this.cancel();
                 }
             }.start();
         } else {
 
         }
+    }
+
+    protected void refresh() {
+
     }
 
 }

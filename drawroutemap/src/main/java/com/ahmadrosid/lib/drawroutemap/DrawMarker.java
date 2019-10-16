@@ -4,14 +4,27 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.os.Handler;
+import android.os.SystemClock;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 
 import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.AbstractQueue;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by ocittwo on 11/14/16.
@@ -25,6 +38,8 @@ public class DrawMarker {
 
     public static DrawMarker INSTANCE;
 
+    Marker marker = null;
+
     public static DrawMarker getInstance(Context context) {
         INSTANCE = new DrawMarker(context);
         return INSTANCE;
@@ -36,15 +51,32 @@ public class DrawMarker {
         this.context = context;
     }
 
-    public void draw(GoogleMap googleMap, LatLng location, int resDrawable, String title) {
+    public void draw(GoogleMap googleMap, LatLng location, int resDrawable, String title, int load, HashMap<Integer, Marker> hashMap) {
         Drawable circleDrawable = ContextCompat.getDrawable(context, resDrawable);
         BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
 
-        googleMap.addMarker(new MarkerOptions()
-                .position(location)
-                .title(title)
-                .icon(markerIcon)
-        );
+        if (load != 0 && hashMap.containsKey(1)) {
+            Marker marker = hashMap.get(load);
+            marker.setPosition(location); // Update your marker
+        } else {
+            marker = googleMap.addMarker(new MarkerOptions()
+                    .position(location)
+                    .title(title)
+                    .icon(markerIcon));
+
+            hashMap.put(load, marker);
+        }
+
+//        if (marker == null) {
+//            MarkerOptions options = new MarkerOptions()
+//                    .position(location)
+//                    .title(title)
+//                    .icon(markerIcon);
+//            marker = googleMap.addMarker(options);
+//        }
+//        else {
+//            marker.setPosition(location);
+//        }
     }
 
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
@@ -55,4 +87,5 @@ public class DrawMarker {
         drawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
+
 }

@@ -88,14 +88,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.NavigationActivity" />
         </activity>
-        <activity
-            android:name=".activity.CancelOrderActivity"
-            android:label="Cancelling Order Items"
-            android:screenOrientation="portrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.NavigationActivity" />
-        </activity>
+
     </application>
 
     <uses-feature

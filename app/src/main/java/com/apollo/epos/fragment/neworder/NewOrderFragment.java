@@ -5,9 +5,12 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.LayoutTransition;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,7 +40,9 @@ import com.apollo.epos.R;
 import com.apollo.epos.activity.NavigationActivity;
 import com.apollo.epos.adapter.CustomReasonAdapter;
 import com.apollo.epos.activity.MapViewActivity;
+import com.apollo.epos.dialog.DialogManager;
 import com.apollo.epos.fragment.deliveryorder.DeliveryOrderFragment;
+import com.apollo.epos.listeners.DialogMangerCallback;
 import com.apollo.epos.model.OrderItemModel;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
@@ -47,6 +52,9 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.content.Context.LOCATION_SERVICE;
 
 public class NewOrderFragment extends Fragment {
     private Activity mActivity;
@@ -69,6 +77,9 @@ public class NewOrderFragment extends Fragment {
     protected ImageView pharmaContactNumber;
     @BindView(R.id.user_contact_number)
     protected ImageView userContactNumber;
+
+
+    private final int REQ_LOC_PERMISSION = 5002;
 
     public static NewOrderFragment newInstance() {
         return new NewOrderFragment();
@@ -97,8 +108,7 @@ public class NewOrderFragment extends Fragment {
         orderDeliveryTimeLayout.startAnimation(RightSwipe);
 
         mapViewLayout.setOnClickListener(v -> {
-            Intent intent = new Intent(mActivity, MapViewActivity.class);
-            startActivity(intent);
+          gotoMapActivity();
         });
     }
 
@@ -288,4 +298,112 @@ public class NewOrderFragment extends Fragment {
         intentcall.setData(Uri.parse("tel:" + phonenumber)); // set the Uri
         mActivity.startActivity(intentcall);
     }
+
+
+    private boolean checkForLocPermission() {
+        if (android.os.Build.VERSION.SDK_INT >= 23) {
+            return ActivityCompat.checkSelfPermission(mActivity, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        } else {
+            return true;
+        }
+    }
+
+    private void requestForLocPermission(final int reqCode) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(mActivity, ACCESS_FINE_LOCATION)) {
+
+            // Show an explanation to the user *asynchronously* -- don't block
+            // this thread waiting for the user's response! After the user
+            // sees the explanation, try again to request the permission.
+            DialogManager.showSingleBtnPopup(mActivity, new DialogMangerCallback() {
+                @Override
+                public void onOkClick(View v) {
+                    ActivityCompat.requestPermissions(mActivity,
+                            new String[]{ACCESS_FINE_LOCATION},
+                            reqCode);
+                }
+
+                @Override
+                public void onCancelClick(View view) {
+
+                }
+            }, getString(R.string.app_name), getString(R.string.locationPermissionMsg), getString(R.string.ok));
+        } else {
+
+            // No explanation needed, we can request the permission.
+
+            ActivityCompat.requestPermissions(mActivity,
+                    new String[]{ACCESS_FINE_LOCATION},
+                    reqCode);
+
+            // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+            // app-defined int constant. The callback method gets the
+            // result of the request.
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQ_LOC_PERMISSION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    gotoMapActivity();
+
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    DialogManager.showToast(mActivity, getString(R.string.noAccessTo));
+                }
+            }
+            break;
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
+    private void gotoMapActivity() {
+        if (checkForLocPermission()) {
+            if (checkGPSOn(mActivity)) {
+                Intent intent = new Intent(mActivity, MapViewActivity.class);
+                startActivity(intent);
+            } else {
+                showGPSDisabledAlertToUser(mActivity);
+            }
+
+        } else {
+            requestForLocPermission(REQ_LOC_PERMISSION);
+            return;
+        }
+    }
+
+    public boolean checkGPSOn(Context context) {
+        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+    }
+
+    public void showGPSDisabledAlertToUser(Context context) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setTitle(getString(R.string.alert));
+        alertDialogBuilder.setMessage(getString(R.string.permission_gps_bogy))
+                .setCancelable(false)
+                .setPositiveButton(getString(R.string.open_settings),
+                        (dialog, id) -> {
+                            Intent callGPSSettingIntent = new Intent(
+                                    android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            startActivity(callGPSSettingIntent);
+                        });
+        alertDialogBuilder.setNegativeButton(getString(R.string.cancel),
+                (dialog, id) -> dialog.cancel());
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
+    }
+
 }

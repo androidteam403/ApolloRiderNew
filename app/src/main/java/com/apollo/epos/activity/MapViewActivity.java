@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.location.Location;
 import android.location.LocationListener;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import androidx.core.content.ContextCompat;
 import com.ahmadrosid.lib.drawroutemap.DrawMarker;
 import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
 import com.apollo.epos.R;
+import com.apollo.epos.utils.ActivityUtils;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -28,6 +30,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+
+import java.util.HashMap;
 
 import butterknife.ButterKnife;
 
@@ -37,7 +42,10 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     private GoogleMap mMap;
     private final int REQ_LOC_PERMISSION = 123;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-    private boolean refreshLocation;
+    protected static GoogleApiClient mGoogleApiClient;
+    protected static LocationRequest mLocationRequest;
+    private static final long INTERVAL = 1000 * 10;
+    private static final long FASTEST_INTERVAL = 1000 * 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,35 +53,68 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_map_view);
         ButterKnife.bind(this);
-
-        GoogleClientBuild();
+//show error dialog if GoolglePlayServices not available
+        if (ActivityUtils.checkPlayServices(MapViewActivity.this)) {
+            buildGoogleApiClient();
+        }
         createLocRequest();
+        GoogleClientBuild();
+
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        LatLng origin = new LatLng(17.438525, 78.4078843);
-        LatLng destination = new LatLng(17.4410197, 78.3788463);
-        LatLng other = new LatLng(17.4411128, 78.3827845);
-        DrawRouteMaps.getInstance(this)
-                .draw(origin, destination, mMap,0);
-        DrawRouteMaps.getInstance(this)
-                .draw(destination, other, mMap,1);
 
-        DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.marker_a, "Origin Location");
-        DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.marker_b, "Destination Location");
-        DrawMarker.getInstance(this).draw(mMap, other, R.drawable.marker_b, "Other Location");
-
-        LatLngBounds bounds = new LatLngBounds.Builder()
-                .include(origin)
-                .include(destination)
-                .include(other).build();
-
-        Point displaySize = new Point();
-        getWindowManager().getDefaultDisplay().getSize(displaySize);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, displaySize.x, 250, 30));
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(MapViewActivity.this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                //Location Permission already granted
+                GoogleClientBuild();
+//                mGoogleMap.setMyLocationEnabled(true);
+            } else {
+                //Request Location Permission
+                checkLocationPermission();
+            }
+        } else {
+            GoogleClientBuild();
+//            mGoogleMap.setMyLocationEnabled(true);
+        }
     }
+
+    private HashMap<Integer, Marker> hashMap = new HashMap<>();
+    private boolean callOneTimeLocation;
+
+    @Override
+    public void onLocationChanged(Location location) {
+        LatLng origin = new LatLng(location.getLatitude(), location.getLongitude());
+        if (!callOneTimeLocation) {
+            LatLng destination = new LatLng(17.4410197, 78.3788463);
+            LatLng other = new LatLng(17.4411128, 78.3827845);
+            DrawRouteMaps.getInstance(this)
+                    .draw(origin, destination, mMap, 0);
+            DrawRouteMaps.getInstance(this)
+                    .draw(destination, other, mMap, 1);
+
+            DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.marker_a, "Current Location", 1, hashMap);
+            DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.marker_b, "Destination Location", 0, hashMap);
+            DrawMarker.getInstance(this).draw(mMap, other, R.drawable.marker_b, "Other Location", 0, hashMap);
+
+            LatLngBounds bounds = new LatLngBounds.Builder()
+                    .include(origin)
+                    .include(destination)
+                    .include(other).build();
+
+            Point displaySize = new Point();
+            getWindowManager().getDefaultDisplay().getSize(displaySize);
+            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, displaySize.x, 250, 30));
+            callOneTimeLocation = true;
+        } else {
+            DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.marker_a, "Current Location", 1, hashMap);
+        }
+    }
+
 
     private synchronized void GoogleClientBuild() {
         mGoogleApiClient = new GoogleApiClient.Builder(MapViewActivity.this).addApi(LocationServices.API).
@@ -84,10 +125,9 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     }
 
     public void createLocRequest() {
-        mLocationRequest = new LocationRequest().setInterval(10000).
-                setFastestInterval(5000).
-                setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY).
-                setSmallestDisplacement(500);
+        mLocationRequest = new LocationRequest().setInterval(INTERVAL)
+                .setFastestInterval(FASTEST_INTERVAL)
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
     }
 
@@ -101,6 +141,7 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     public void startLocationUpdate() {
         checkPermission();
     }
+
     private void checkPermission() {
         int checkSelf = ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
         if (checkSelf != PackageManager.PERMISSION_GRANTED) {
@@ -168,10 +209,8 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
                             == PackageManager.PERMISSION_GRANTED) {
 
                         if (mGoogleApiClient != null) {
-                            refreshLocation = true;
                             mGoogleApiClient.connect();
                         } else {
-                            refreshLocation = true;
                             buildGoogleApiClient();
                             mGoogleApiClient.connect();
                         }
@@ -194,7 +233,6 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
 
 
     private void initializeMap() {
-
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map_view);
         mapFragment.getMapAsync(this);
@@ -202,20 +240,21 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
 
     @Override
     public void onConnectionSuspended(int i) {
-        mGoogleApiClient.connect();
+        if (i == 1) {
+            mGoogleApiClient.connect();
+        }
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
+        mGoogleApiClient.connect();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        if (refreshLocation) {
-            if (mGoogleApiClient != null) {
-                mGoogleApiClient.connect();
-            }
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
         }
     }
 
@@ -258,7 +297,4 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     public void onProviderDisabled(String provider) {
 
     }
-
-
-
 }
