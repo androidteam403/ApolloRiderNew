@@ -46,6 +46,8 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     protected static LocationRequest mLocationRequest;
     private static final long INTERVAL = 1000 * 10;
     private static final long FASTEST_INTERVAL = 1000 * 5;
+    private HashMap<Integer, Marker> hashMap = new HashMap<>();
+    private boolean callOneTimeLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +55,7 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_map_view);
         ButterKnife.bind(this);
+
 //show error dialog if GoolglePlayServices not available
         if (ActivityUtils.checkPlayServices(MapViewActivity.this)) {
             buildGoogleApiClient();
@@ -65,7 +68,6 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(MapViewActivity.this,
                     Manifest.permission.ACCESS_FINE_LOCATION)
@@ -82,9 +84,6 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
 //            mGoogleMap.setMyLocationEnabled(true);
         }
     }
-
-    private HashMap<Integer, Marker> hashMap = new HashMap<>();
-    private boolean callOneTimeLocation;
 
     @Override
     public void onLocationChanged(Location location) {
