@@ -638,13 +638,13 @@
                             android:gravity="center">
 
                             <TextView
+                                android:id="@+id/delivery_pharm_txt"
                                 android:layout_width="wrap_content"
                                 android:textColor="@color/colorWhite"
                                 android:textSize="@dimen/text_dimen_9"
                                 android:fontFamily="@font/roboto_bold"
                                 android:includeFontPadding="false"
-                                android:layout_height="wrap_content"
-                                android:text="2.5"/>
+                                android:layout_height="wrap_content"/>
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -788,13 +788,13 @@
                             android:gravity="center">
 
                             <TextView
+                                android:id="@+id/delivery_user_txt"
                                 android:layout_width="wrap_content"
                                 android:textColor="@color/colorWhite"
                                 android:textSize="@dimen/text_dimen_9"
                                 android:fontFamily="@font/roboto_bold"
                                 android:includeFontPadding="false"
-                                android:layout_height="wrap_content"
-                                android:text="4.3"/>
+                                android:layout_height="wrap_content"/>
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -921,6 +921,7 @@
                         android:src="@drawable/icon_delivery_view"/>
 
                     <TextView
+                        android:id="@+id/total_distance_txt"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="start|center"
@@ -929,9 +930,8 @@
                         android:background="@color/new_order_header_view_bg"
                         android:textColor="@color/colorWhite"
                         android:textSize="@dimen/text_dimen_8"
-                        android:fontFamily="@font/roboto_regular"
-                        android:text="Total distance is 6.8KM from your location and expected time is 35mins."/>
-                </RelativeLayout>
+                        android:fontFamily="@font/roboto_regular"/>
+            </RelativeLayout>
             </LinearLayout>
 
             <Button

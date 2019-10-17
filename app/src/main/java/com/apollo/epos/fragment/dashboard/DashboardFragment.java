@@ -4,39 +4,36 @@ import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.RectF;
 import android.graphics.drawable.AnimationDrawable;
-import android.graphics.drawable.ColorDrawable;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.apollo.epos.R;
-import com.apollo.epos.activity.LoginActivity;
 import com.apollo.epos.activity.NavigationActivity;
-import com.apollo.epos.activity.NewOrderActivity;
-import com.apollo.epos.activity.SplashScreen;
-import com.apollo.epos.fragment.cancelorderitem.CancelOrderItemFragment;
+import com.apollo.epos.dialog.DialogManager;
 import com.apollo.epos.fragment.neworder.NewOrderFragment;
+import com.apollo.epos.listeners.DialogMangerCallback;
 import com.apollo.epos.utils.XYMarkerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -64,6 +61,9 @@ import butterknife.BindColor;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.content.Context.LOCATION_SERVICE;
 
 public class DashboardFragment extends Fragment implements OnChartValueSelectedListener, DashboardView {
     private Activity mActivity;
@@ -119,6 +119,9 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
 
     @BindView(R.id.user_status)
     protected TextView userStatus;
+
+
+    private final int REQ_LOC_PERMISSION = 5002;
 
     public static DashboardFragment newInstance() {
         return new DashboardFragment();
@@ -186,14 +189,13 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
         anim.start();
 
         newOrderLayout.setOnClickListener(v -> {
-            ((NavigationActivity) Objects.requireNonNull(mActivity)).showFragment(new NewOrderFragment(), R.string.menu_take_order);
-            ((NavigationActivity) Objects.requireNonNull(mActivity)).updateSelection(-1);
+            gotoOrderFragment();
 //            Intent mainIntent = new Intent(mActivity, NewOrderActivity.class);
 //            startActivityForResult(mainIntent, 1);
 //            mActivity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
         });
 
-        setData(5, 15, 0, 12, 8, 22, 10, 45, 3 , 15, 0 , 28, 5 ,15);
+        setData(5, 15, 0, 12, 8, 22, 10, 45, 3, 15, 0, 28, 5, 15);
         totalOrdersVal.setText("183");
         deliveredOrdersVal.setText("152");
         cancelledOrdersVal.setText("31");
@@ -360,15 +362,15 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
     }
 
     @OnClick(R.id.first_orders_list)
-    void onFirstOrdersClick(){
-        if(isFirstOrdersClicked)
+    void onFirstOrdersClick() {
+        if (isFirstOrdersClicked)
             return;
 
         Animation animSlideFromBottom = AnimationUtils.loadAnimation(mActivity, R.anim.slide_from_bottom);
         ordersInformationLayout.clearAnimation();
         ordersInformationLayout.startAnimation(animSlideFromBottom);
 
-        setData(3, 10, 5, 22, 0, 20, 10, 35, 2 , 20, 8 , 40, 0 ,10);
+        setData(3, 10, 5, 22, 0, 20, 10, 35, 2, 20, 8, 40, 0, 10);
         totalOrdersVal.setText("172");
         deliveredOrdersVal.setText("147");
         cancelledOrdersVal.setText("25");
@@ -389,15 +391,15 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
     }
 
     @OnClick(R.id.second_orders_list)
-    void onSecondOrdersClick(){
-        if(isSecondOrdersClicked)
+    void onSecondOrdersClick() {
+        if (isSecondOrdersClicked)
             return;
 
         Animation animSlideFromBottom = AnimationUtils.loadAnimation(mActivity, R.anim.slide_from_bottom);
         ordersInformationLayout.clearAnimation();
         ordersInformationLayout.startAnimation(animSlideFromBottom);
 
-        setData(2, 10, 6, 26, 10, 29, 0, 10, 5 , 25, 18 , 30, 6 ,15);
+        setData(2, 10, 6, 26, 10, 29, 0, 10, 5, 25, 18, 30, 6, 15);
         totalOrdersVal.setText("192");
         deliveredOrdersVal.setText("145");
         cancelledOrdersVal.setText("49");
@@ -418,15 +420,15 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
     }
 
     @OnClick(R.id.third_orders_list)
-    void onThirdOrdersClick(){
-        if(isThirdOrdersClicked)
+    void onThirdOrdersClick() {
+        if (isThirdOrdersClicked)
             return;
 
         Animation animSlideFromBottom = AnimationUtils.loadAnimation(mActivity, R.anim.slide_from_bottom);
         ordersInformationLayout.clearAnimation();
         ordersInformationLayout.startAnimation(animSlideFromBottom);
 
-        setData(5, 20, 0, 10, 8, 30, 2, 15, 3 , 12, 8 , 26, 2 ,30);
+        setData(5, 20, 0, 10, 8, 30, 2, 15, 3, 12, 8, 26, 2, 30);
         totalOrdersVal.setText("171");
         deliveredOrdersVal.setText("143");
         cancelledOrdersVal.setText("28");
@@ -447,8 +449,8 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
     }
 
     @OnClick(R.id.fourth_orders_list)
-    void onFourthOrdersClick(){
-        if(isFourthOrdersClicked)
+    void onFourthOrdersClick() {
+        if (isFourthOrdersClicked)
             return;
 
         Animation animSlideFromBottom = AnimationUtils.loadAnimation(mActivity, R.anim.slide_from_bottom);
@@ -460,7 +462,7 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
         thirdOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
         fourthOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.btn_color));
 
-        setData(5, 15, 0, 12, 8, 22, 10, 45, 3 , 15, 0 , 28, 5 ,15);
+        setData(5, 15, 0, 12, 8, 22, 10, 45, 3, 15, 0, 28, 5, 15);
         totalOrdersVal.setText("183");
         deliveredOrdersVal.setText("152");
         cancelledOrdersVal.setText("31");
@@ -473,5 +475,111 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
         isSecondOrdersClicked = false;
         isThirdOrdersClicked = false;
         isFourthOrdersClicked = true;
+    }
+
+
+    private boolean checkForLocPermission() {
+        if (android.os.Build.VERSION.SDK_INT >= 23) {
+            return ActivityCompat.checkSelfPermission(mActivity, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        } else {
+            return true;
+        }
+    }
+
+    private void requestForLocPermission(final int reqCode) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(mActivity, ACCESS_FINE_LOCATION)) {
+
+            // Show an explanation to the user *asynchronously* -- don't block
+            // this thread waiting for the user's response! After the user
+            // sees the explanation, try again to request the permission.
+            DialogManager.showSingleBtnPopup(mActivity, new DialogMangerCallback() {
+                @Override
+                public void onOkClick(View v) {
+                    ActivityCompat.requestPermissions(mActivity,
+                            new String[]{ACCESS_FINE_LOCATION},
+                            reqCode);
+                }
+
+                @Override
+                public void onCancelClick(View view) {
+
+                }
+            }, getString(R.string.app_name), getString(R.string.locationPermissionMsg), getString(R.string.ok));
+        } else {
+
+            // No explanation needed, we can request the permission.
+
+            ActivityCompat.requestPermissions(mActivity,
+                    new String[]{ACCESS_FINE_LOCATION},
+                    reqCode);
+
+            // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+            // app-defined int constant. The callback method gets the
+            // result of the request.
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQ_LOC_PERMISSION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    gotoOrderFragment();
+
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    DialogManager.showToast(mActivity, getString(R.string.noAccessTo));
+                }
+            }
+            break;
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
+    private void gotoOrderFragment() {
+        if (checkForLocPermission()) {
+            if (checkGPSOn(mActivity)) {
+                ((NavigationActivity) Objects.requireNonNull(mActivity)).showFragment(new NewOrderFragment(), R.string.menu_take_order);
+                ((NavigationActivity) Objects.requireNonNull(mActivity)).updateSelection(-1);
+            } else {
+                showGPSDisabledAlertToUser(mActivity);
+            }
+        } else {
+            requestForLocPermission(REQ_LOC_PERMISSION);
+            return;
+        }
+    }
+
+    public boolean checkGPSOn(Context context) {
+        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+    }
+
+    public void showGPSDisabledAlertToUser(Context context) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setTitle(getString(R.string.alert));
+        alertDialogBuilder.setMessage(getString(R.string.permission_gps_bogy))
+                .setCancelable(false)
+                .setPositiveButton(getString(R.string.open_settings),
+                        (dialog, id) -> {
+                            Intent callGPSSettingIntent = new Intent(
+                                    android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            startActivity(callGPSSettingIntent);
+                        });
+        alertDialogBuilder.setNegativeButton(getString(R.string.cancel),
+                (dialog, id) -> dialog.cancel());
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
     }
 }

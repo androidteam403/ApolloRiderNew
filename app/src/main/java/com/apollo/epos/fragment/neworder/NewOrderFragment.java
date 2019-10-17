@@ -1,13 +1,10 @@
 package com.apollo.epos.fragment.neworder;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
@@ -36,18 +33,28 @@ import androidx.transition.Slide;
 import androidx.transition.Transition;
 import androidx.transition.TransitionManager;
 
+import com.ahmadrosid.lib.drawroutemap.DirectionApiCallback;
+import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
 import com.apollo.epos.R;
+import com.apollo.epos.activity.MapViewActivity;
 import com.apollo.epos.activity.NavigationActivity;
 import com.apollo.epos.adapter.CustomReasonAdapter;
-import com.apollo.epos.activity.MapViewActivity;
 import com.apollo.epos.dialog.DialogManager;
 import com.apollo.epos.fragment.deliveryorder.DeliveryOrderFragment;
 import com.apollo.epos.listeners.DialogMangerCallback;
 import com.apollo.epos.model.OrderItemModel;
+import com.apollo.epos.service.GPSLocationService;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,8 +62,9 @@ import butterknife.OnClick;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.Context.LOCATION_SERVICE;
+import static com.google.android.gms.internal.zzahn.runOnUiThread;
 
-public class NewOrderFragment extends Fragment {
+public class NewOrderFragment extends Fragment implements DirectionApiCallback {
     private Activity mActivity;
     @BindView(R.id.items_view_image)
     protected ImageView itemsViewImage;
@@ -77,6 +85,12 @@ public class NewOrderFragment extends Fragment {
     protected ImageView pharmaContactNumber;
     @BindView(R.id.user_contact_number)
     protected ImageView userContactNumber;
+    @BindView(R.id.delivery_pharm_txt)
+    protected TextView deliveryPharmTxt;
+    @BindView(R.id.delivery_user_txt)
+    protected TextView deliveryUserTxt;
+    @BindView(R.id.total_distance_txt)
+    protected TextView totalDistanceTxt;
 
 
     private final int REQ_LOC_PERMISSION = 5002;
@@ -108,8 +122,30 @@ public class NewOrderFragment extends Fragment {
         orderDeliveryTimeLayout.startAnimation(RightSwipe);
 
         mapViewLayout.setOnClickListener(v -> {
-          gotoMapActivity();
+            gotoMapActivity();
         });
+
+        getCurrentLocation();
+    }
+
+    private void getCurrentLocation() {
+        GPSLocationService gps = new GPSLocationService(mActivity);
+        if (gps.canGetLocation()) {
+
+            LatLng origin = new LatLng(gps.getLatitude(), gps.getLongitude());
+
+            LatLng destination = new LatLng(17.4410197, 78.3788463);
+            LatLng other = new LatLng(17.4411128, 78.3827845);
+
+            DrawRouteMaps.getInstance(mActivity, this)
+                    .draw(origin, destination, null, 0);
+            DrawRouteMaps.getInstance(mActivity, this)
+                    .draw(destination, other, null, 1);
+            DrawRouteMaps.getInstance(mActivity, this)
+                    .draw(origin, other, null, 2);
+        } else {
+            gps.showSettingsAlert();
+        }
     }
 
     ArrayList<OrderItemModel> medicineList = new ArrayList<>();
@@ -269,7 +305,7 @@ public class NewOrderFragment extends Fragment {
     }
 
     @OnClick(R.id.user_contact_number)
-    void onUserContactClick(){
+    void onUserContactClick() {
         checkCallPermissionSetting();
     }
 
@@ -406,4 +442,56 @@ public class NewOrderFragment extends Fragment {
         alert.show();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (GPSLocationService.isFromSetting == true) {
+            GPSLocationService.isFromSetting = false;
+        }
+    }
+
+    @Override
+    public void onDirectionApi(int colorFlag, JSONArray v) {
+        String distance;
+        float removing = 0;
+        try {
+            if(v != null) {
+                distance = ((JSONObject) v.get(0)).getJSONObject("distance").getString("text");
+                removing = Float.parseFloat(distance.replace("\"", "").replace("km", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
+            }
+            } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        float finalRemoving = removing;
+        if(finalRemoving != 0) {
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    float i;
+                    try {
+                        for (i = 0; i <= 100; i++) {
+                            runOnUiThread(() -> {
+                                if (colorFlag == 0) {
+
+                                    deliveryPharmTxt.setText(finalRemoving + "");
+                                } else if (colorFlag == 1) {
+                                    deliveryUserTxt.setText(finalRemoving + "");
+                                } else if (colorFlag == 2) {
+                                    totalDistanceTxt.setText("Total distance is " + finalRemoving + "KM from your location and expected time is 35mins.");
+                                }
+
+                            });
+
+
+                            sleep(500);
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            thread.start();
+        }
+    }
 }

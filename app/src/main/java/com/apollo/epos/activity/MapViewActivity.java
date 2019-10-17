@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.ahmadrosid.lib.drawroutemap.DirectionApiCallback;
 import com.ahmadrosid.lib.drawroutemap.DrawMarker;
 import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
 import com.apollo.epos.R;
@@ -32,12 +33,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 
+import org.json.JSONArray;
+
 import java.util.HashMap;
 
 import butterknife.ButterKnife;
 
 public class MapViewActivity extends BaseActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, DirectionApiCallback {
 
     private GoogleMap mMap;
     private final int REQ_LOC_PERMISSION = 123;
@@ -91,14 +94,14 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         if (!callOneTimeLocation) {
             LatLng destination = new LatLng(17.4410197, 78.3788463);
             LatLng other = new LatLng(17.4411128, 78.3827845);
-            DrawRouteMaps.getInstance(this)
+            DrawRouteMaps.getInstance(this,this)
                     .draw(origin, destination, mMap, 0);
-            DrawRouteMaps.getInstance(this)
+            DrawRouteMaps.getInstance(this,this)
                     .draw(destination, other, mMap, 1);
 
-            DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.marker_a, "Current Location", 1, hashMap);
-            DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.marker_b, "Destination Location", 0, hashMap);
-            DrawMarker.getInstance(this).draw(mMap, other, R.drawable.marker_b, "Other Location", 0, hashMap);
+            DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.icon_delivery_person, "Current Location", 1, hashMap);
+            DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.icon_pharmacy, "Destination Location", 0, hashMap);
+            DrawMarker.getInstance(this).draw(mMap, other, R.drawable.icon_ordered_user, "Other Location", 0, hashMap);
 
             LatLngBounds bounds = new LatLngBounds.Builder()
                     .include(origin)
@@ -110,7 +113,7 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
             mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, displaySize.x, 250, 30));
             callOneTimeLocation = true;
         } else {
-            DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.marker_a, "Current Location", 1, hashMap);
+            DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.icon_delivery_person, "Current Location", 1, hashMap);
         }
     }
 
@@ -295,5 +298,9 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     @Override
     public void onProviderDisabled(String provider) {
 
+    }
+
+    @Override
+    public void onDirectionApi(int colorFlag, JSONArray jsonArray) {
     }
 }

@@ -4,27 +4,16 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
-import android.os.Handler;
-import android.os.SystemClock;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Interpolator;
-import android.view.animation.LinearInterpolator;
 
 import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import java.util.AbstractQueue;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by ocittwo on 11/14/16.
@@ -66,17 +55,6 @@ public class DrawMarker {
 
             hashMap.put(load, marker);
         }
-
-//        if (marker == null) {
-//            MarkerOptions options = new MarkerOptions()
-//                    .position(location)
-//                    .title(title)
-//                    .icon(markerIcon);
-//            marker = googleMap.addMarker(options);
-//        }
-//        else {
-//            marker.setPosition(location);
-//        }
     }
 
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {

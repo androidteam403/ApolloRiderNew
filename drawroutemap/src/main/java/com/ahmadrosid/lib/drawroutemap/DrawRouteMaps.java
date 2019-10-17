@@ -18,16 +18,18 @@ public class DrawRouteMaps {
 
     private static DrawRouteMaps instance;
     private Context context;
+    private DirectionApiCallback directionApiCallback;
 
-    public static DrawRouteMaps getInstance(Context context) {
+    public static DrawRouteMaps getInstance(Context context, DirectionApiCallback directionApiCallback) {
         instance = new DrawRouteMaps();
         instance.context = context;
+        instance.directionApiCallback = directionApiCallback;
         return instance;
     }
 
     public DrawRouteMaps draw(LatLng origin, LatLng destination, GoogleMap googleMap, int colorFlag){
         String url_route = FetchUrl.getUrl(origin, destination);
-        DrawRoute drawRoute = new DrawRoute(googleMap, colorFlag);
+        DrawRoute drawRoute = new DrawRoute(googleMap, colorFlag, directionApiCallback);
         drawRoute.execute(url_route);
         return instance;
     }

@@ -19,6 +19,13 @@ import java.util.List;
  * @Web http://ahmadrosid.com
  */
 public class DataRouteParser {
+    private DirectionApiCallback directionApiCallback;
+    private int colorFlag;
+
+    public DataRouteParser(int colorFlag, DirectionApiCallback directionApiCallback) {
+        this.directionApiCallback = directionApiCallback;
+        this.colorFlag = colorFlag;
+    }
 
     /**
      * Receives a JSONObject and returns a list of lists containing latitude and longitude
@@ -37,6 +44,7 @@ public class DataRouteParser {
             /** Traversing all routes */
             for (int i = 0; i < jRoutes.length(); i++) {
                 jLegs = ((JSONObject) jRoutes.get(i)).getJSONArray("legs");
+                directionApiCallback.onDirectionApi(colorFlag, jLegs);
                 List path = new ArrayList<>();
 
                 /** Traversing all legs */
