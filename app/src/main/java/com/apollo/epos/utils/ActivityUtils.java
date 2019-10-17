@@ -39,6 +39,9 @@ import androidx.transition.Transition;
 import androidx.transition.TransitionManager;
 
 import com.apollo.epos.R;
+import com.apollo.epos.dialog.DialogManager;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -253,8 +256,38 @@ public class ActivityUtils {
         }
     }
 
-    public static String getCurrentTime(){
+    public static String getCurrentTime() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a", Locale.ENGLISH);
         return dateFormat.format(new Date()).toString();
     }
+
+    public static boolean checkPlayServices(Context context) {
+        int result = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
+        if (result == ConnectionResult.SUCCESS) {
+            return true;
+        } else if (ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED == result) {
+            DialogManager.showToast(context, "Update google play services for better performance");
+        } else if (ConnectionResult.SERVICE_MISSING == result) {
+            DialogManager.showToast(context, "google play services missing install/update for better performance");
+        } else if (ConnectionResult.SERVICE_DISABLED == result) {
+            DialogManager.showToast(context, "google play services disabled enable for better performance");
+        } else if (ConnectionResult.SERVICE_INVALID == result) {
+            DialogManager.showToast(context, "google play services invalid install/update for better performance");
+        }
+
+    /*if (GooglePlayServicesUtil.isUserRecoverableError(result)) {
+
+         * GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+         *
+         * PLAY_SERVICES_RESOLUTION_REQUEST).show();
+
+    } else {
+        BuildLog.i("Tag", "This device is not supported.");
+        Utility.showAlert(context, "", "This device is not supported better change device for better performance");
+
+    }*/
+
+        return false;
+    }
+
 }
