@@ -34,7 +34,6 @@ public class RouteDrawerTask extends AsyncTask<String, Integer, List<List<HashMa
     private GoogleMap mMap;
     private int colorFlag;
     private DirectionApiCallback directionApiCallback;
-    private boolean isPolyAdded = false;
     private Polyline polyline;
 
     public RouteDrawerTask(GoogleMap mMap, int colorFlag, DirectionApiCallback directionApiCallback) {
@@ -104,13 +103,7 @@ public class RouteDrawerTask extends AsyncTask<String, Integer, List<List<HashMa
 
 //        // Drawing polyline in the Google Map for the i-th route
         if (lineOptions != null && mMap != null) {
-            if (isPolyAdded == false){
                 polyline = mMap.addPolyline(lineOptions);
-                isPolyAdded = true;
-            }else{
-                polyline.setPoints(points);
-            }
-//             mMap.addPolyline(lineOptions);
         } else {
             Log.d("onPostExecute", "without Polylines draw");
         }

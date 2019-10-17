@@ -113,8 +113,8 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
             mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, displaySize.x, 250, 30));
             callOneTimeLocation = true;
         } else {
-//            DrawRouteMaps.getInstance(this,this)
-//                    .draw(origin, destination, mMap, 0);
+            DrawRouteMaps.getInstance(this,this)
+                    .draw(origin, destination, mMap, 0);
             DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.icon_delivery_person, "Current Location", 1, hashMap);
         }
     }
