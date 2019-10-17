@@ -1,6 +1,7 @@
 package com.apollo.epos.activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Service;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,18 +9,22 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -28,30 +33,41 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.MenuItemCompat;
 
 import com.apollo.epos.R;
 import com.apollo.epos.adapter.CustomReasonAdapter;
+import com.apollo.epos.fragment.dashboard.DashboardFragment;
+import com.apollo.epos.fragment.neworder.NewOrderFragment;
 import com.apollo.epos.utils.ActivityUtils;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ReachPharmacyActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener,
+import static com.apollo.epos.utils.ActivityUtils.getCurrentTime;
+import static com.apollo.epos.utils.ActivityUtils.showLayoutDownAnimation;
+import static com.apollo.epos.utils.ActivityUtils.showTextDownAnimation;
+
+public class OrderDeliveryActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener,
         View.OnFocusChangeListener, View.OnKeyListener {
     @BindView(R.id.reached_store_layout)
     protected LinearLayout reachedStoreLayout;
@@ -79,6 +95,8 @@ public class ReachPharmacyActivity extends AppCompatActivity implements AdapterV
     protected RelativeLayout continueProcessLayout;
     @BindView(R.id.continue_driving_btn)
     protected TextView continueDrivingBtn;
+    @BindView(R.id.order_delivery_process_img)
+    protected ImageView orderDeliveryProcessImg;
     @BindView(R.id.delivery_items_view)
     protected TextView deliveryItemsView;
     @BindView(R.id.user_mobile_number_header)
@@ -157,8 +175,6 @@ public class ReachPharmacyActivity extends AppCompatActivity implements AdapterV
     protected EditText optNum6;
     @BindView(R.id.verify_otp_btn)
     protected TextView verifyOtpBtn;
-    @BindView(R.id.invalid_otp_layout)
-    protected RelativeLayout invalidOtpLayout;
     @BindView(R.id.verified_otp_text)
     protected TextView verifiedOtpText;
     @BindView(R.id.order_delivered_parent_layout)
@@ -167,6 +183,21 @@ public class ReachPharmacyActivity extends AppCompatActivity implements AdapterV
     protected RelativeLayout orderDeliveredChildOneLayout;
     @BindView(R.id.order_delivered_child_two_layout)
     protected LinearLayout orderDeliveredChildTwoLayout;
+    @BindView(R.id.cancel_item_btn)
+    protected TextView cancelItemBtn;
+    @BindView(R.id.cancel_order_btn)
+    protected TextView cancelOrderBtn;
+
+    @BindView(R.id.anim_reach_store_layout)
+    protected LinearLayout animReachStoreLayout;
+    @BindView(R.id.anim_taken_parcel_layout)
+    protected LinearLayout animTakenParcelLayout;
+    @BindView(R.id.anim_scan_barcode_layout)
+    protected LinearLayout animScanBarCodeLayout;
+    @BindView(R.id.anim_address_reached_layout)
+    protected LinearLayout animAddressReachedLayout;
+    @BindView(R.id.user_contact_number)
+    protected ImageView userContactNumber;
 
     String[] cancelReasons = {"Select from predefined statements", "Taken leave", "Not feeling well", "Soo far from my current location"};
     String[] customerTypesList = {"Customer", "Other"};
@@ -178,29 +209,54 @@ public class ReachPharmacyActivity extends AppCompatActivity implements AdapterV
     private File file;
     private boolean imageStatus = false;
     private Bitmap bp;
+    private boolean userPhoneClick = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_reach_pharmacy);
+        setContentView(R.layout.activity_order_delivery);
         ButterKnife.bind(this);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-            getSupportActionBar().setDisplayShowCustomEnabled(true);
-            getSupportActionBar().setCustomView(R.layout.custom_action_bar);
-            View view = getSupportActionBar().getCustomView();
-            ImageView backArrow = view.findViewById(R.id.back_arrow);
-            TextView activityName = view.findViewById(R.id.activity_title);
-            LinearLayout notificationLayout = view.findViewById(R.id.notification_layout);
-            backArrow.setOnClickListener(v -> {
-                finish();
-                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
-            });
-            activityName.setText(getResources().getString(R.string.menu_take_order));
-        }
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+//        if (getSupportActionBar() != null) {
+//            getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+//            getSupportActionBar().setDisplayShowCustomEnabled(true);
+//            getSupportActionBar().setCustomView(R.layout.custom_action_bar);
+//            View view = getSupportActionBar().getCustomView();
+//            ImageView backArrow = view.findViewById(R.id.back_arrow);
+//            TextView activityName = view.findViewById(R.id.activity_title);
+//            LinearLayout notificationLayout = view.findViewById(R.id.notification_layout);
+//            backArrow.setOnClickListener(v -> {
+//                finish();
+//                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+//            });
+//            activityName.setText(getResources().getString(R.string.menu_take_order));
+//        }
 
-        CustomReasonAdapter customUserListAdapter = new CustomReasonAdapter(ReachPharmacyActivity.this, customerTypesList);
+//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+
+        toolbar.setNavigationIcon(R.drawable.icon_back);// Toolbar icon in Drawable folder
+//        toolbar.setTitle("App");
+//        toolbar.setTitleTextColor(Color.WHITE);// Title Color
+        setSupportActionBar(toolbar);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();// Do what do you want on toolbar button
+            }
+        });
+
+        CollapsingToolbarLayout collapsingToolbarLayout =
+                (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+
+//        collapsingToolbarLayout.setTitle("My Toolbar Title");
+        collapsingToolbarLayout.setTitleEnabled(false);
+        toolbar.setTitle("My Title");
+        toolbar.setTitleTextAppearance(this, R.style.ToolbarTextAppearance);
+
+
+        CustomReasonAdapter customUserListAdapter = new CustomReasonAdapter(this, customerTypesList);
         customerTypeSpinner.setAdapter(customUserListAdapter);
         customerTypeSpinner.setOnItemSelectedListener(this);
     }
@@ -211,15 +267,17 @@ public class ReachPharmacyActivity extends AppCompatActivity implements AdapterV
             selectionTag = 1;
             reachedStoreLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
             reachedStoreImg.setImageDrawable(getDrawable(R.drawable.icon_status_completed));
-            storeReachedTime.setVisibility(View.VISIBLE);
+
+            showTextDownAnimation(R.id.anim_reach_store_layout, animReachStoreLayout, storeReachedTime);
+//            ActivityUtils.footerAnimation(mActivity, animReachStoreLayout, storeReachedTime);
+            storeReachedTime.setText(getCurrentTime());
         }
     }
 
     @OnClick(R.id.scan_barcode_layout)
     void scanBarCodeClick() {
         if (selectionTag == 1) {
-            selectionTag = 2;
-            new IntentIntegrator(ReachPharmacyActivity.this).setCaptureActivity(ScannerActivity.class).initiateScan();
+            new IntentIntegrator(this).setCaptureActivity(ScannerActivity.class).initiateScan();
             overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
         }
     }
@@ -230,7 +288,9 @@ public class ReachPharmacyActivity extends AppCompatActivity implements AdapterV
             selectionTag = 3;
             takenParcelLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
             takenParcelImg.setImageDrawable(getDrawable(R.drawable.icon_status_completed));
-            parcelTakenTime.setVisibility(View.VISIBLE);
+
+            showTextDownAnimation(R.id.anim_taken_parcel_layout, animTakenParcelLayout, parcelTakenTime);
+            parcelTakenTime.setText(getCurrentTime());
             continueProcessLayout.setVisibility(View.VISIBLE);
         }
     }
@@ -239,7 +299,20 @@ public class ReachPharmacyActivity extends AppCompatActivity implements AdapterV
     void onContinueDrivingClick() {
         if (selectionTag == 3) {
             selectionTag = 4;
+//            Animation RightSwipe = AnimationUtils.loadAnimation(mActivity, R.anim.bottom_swipe);
+//            parentScrollView.startAnimation(RightSwipe);
+
+//            int bottomDp = (int) getResources().getDimension(R.dimen.one_hundred_dp);
+//            int marginBottom = (int) ActivityUtils.convertDpToPixel(bottomDp, mActivity);
+//            parentScrollView.post(new Runnable() {
+//                public void run() {
+//                    parentScrollView.scrollTo(0, marginBottom);
+//                }
+//            });
+            userPhoneClick = true;
+            userContactNumber.setImageDrawable(getResources().getDrawable(R.drawable.icon_phone_select));
             deliveryItemsView.setVisibility(View.VISIBLE);
+            orderDeliveryProcessImg.setVisibility(View.GONE);
             userMobileNumberHeader.setVisibility(View.VISIBLE);
             userMobileNumber.setVisibility(View.VISIBLE);
             deliveryItemsListLayout.setVisibility(View.VISIBLE);
@@ -252,7 +325,9 @@ public class ReachPharmacyActivity extends AppCompatActivity implements AdapterV
             selectionTag = 5;
             reachedDeliveryAddressLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
             reachedAddressImg.setImageDrawable(getDrawable(R.drawable.icon_status_completed));
+            addressReachedTime.setText(getCurrentTime());
             addressReachedTime.setVisibility(View.VISIBLE);
+            cancelItemBtn.setVisibility(View.VISIBLE);
         }
     }
 
@@ -280,7 +355,7 @@ public class ReachPharmacyActivity extends AppCompatActivity implements AdapterV
     void onSignaturePadParentLayoutClick() {
         if (selectionTag == 7) {
             selectionTag = 8;
-            signaturePadParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
+            signaturePadParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_pending_color));
             signaturePadImg.setImageDrawable(getDrawable(R.drawable.icon_status_completed));
             signaturePadChildLayout.setVisibility(View.VISIBLE);
         }
@@ -288,7 +363,7 @@ public class ReachPharmacyActivity extends AppCompatActivity implements AdapterV
 
     @OnClick(R.id.signature_layout)
     void onSignatureLayoutClick() {
-        Intent intent = new Intent(ReachPharmacyActivity.this, CaptureSignatureActivity.class);
+        Intent intent = new Intent(this, CaptureSignatureActivity.class);
         startActivityForResult(intent, SIGNATURE_REQUEST_CODE);
         overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
     }
@@ -297,7 +372,7 @@ public class ReachPharmacyActivity extends AppCompatActivity implements AdapterV
     void onCaptureImageClick() {
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
-        imageViewSetting();
+        cameraPermissionSetting();
     }
 
     @OnClick(R.id.clear_captured_image)
@@ -310,7 +385,7 @@ public class ReachPharmacyActivity extends AppCompatActivity implements AdapterV
     void onOtpVerificationParentLayoutClick() {
         if (selectionTag == 8) {
             selectionTag = 9;
-            otpVerificationParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
+            otpVerificationParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_pending_color));
             otpVerificationImg.setImageDrawable(getDrawable(R.drawable.icon_status_completed));
             otpVerificationChildLayout.setVisibility(View.VISIBLE);
             setPINListeners();
@@ -322,34 +397,50 @@ public class ReachPharmacyActivity extends AppCompatActivity implements AdapterV
         if (pinHiddenEditText.getText().toString().equalsIgnoreCase("000000")) {
             otpEditTextLayout.setVisibility(View.GONE);
             verifyOtpBtn.setVisibility(View.GONE);
-            invalidOtpLayout.setVisibility(View.GONE);
+            otpEditTextLayout.setBackground(getResources().getDrawable(R.drawable.otp_bg));
             verifiedOtpText.setVisibility(View.VISIBLE);
+            otpVerificationParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
             orderDeliveredParentLayout.setBackground(getResources().getDrawable(R.drawable.order_delivered_layout_bg));
             orderDeliveredChildOneLayout.setVisibility(View.GONE);
             orderDeliveredChildTwoLayout.setVisibility(View.VISIBLE);
 
+            verifyOtpBtn.setBackground(getResources().getDrawable(R.drawable.continue_driving_btn_bg));
+            cancelItemBtn.setVisibility(View.GONE);
+            cancelOrderBtn.setVisibility(View.GONE);
+
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.MATCH_PARENT);
             int rightDp = (int) getResources().getDimension(R.dimen.five_dp);
-            int bottomDp = (int) getResources().getDimension(R.dimen.forty_dp);
-            int marginEnd = (int) ActivityUtils.convertDpToPixel(rightDp, ReachPharmacyActivity.this);
-            int marginBottom = (int) ActivityUtils.convertDpToPixel(bottomDp, ReachPharmacyActivity.this);
+            int bottomDp = (int) getResources().getDimension(R.dimen.twenty_five_dp);
+            int marginEnd = (int) ActivityUtils.convertDpToPixel(rightDp, this);
+            int marginBottom = (int) ActivityUtils.convertDpToPixel(bottomDp, this);
             params.setMargins(0, 0, marginEnd, marginBottom);
             deliveryItemsView.setLayoutParams(params);
 
+            new Handler().postDelayed(() -> {
+//                NavigationActivity.getInstance().showFragment(new DashboardFragment(), R.string.menu_dashboard);
+//                NavigationActivity.getInstance().updateSelection(1);
+
+                Intent intent = getIntent();
+                intent.putExtra("OrderCompleted", "true");
+                setResult(RESULT_OK, intent);
+                finish();
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+            }, 1000);
         } else {
             otpEditTextLayout.setVisibility(View.VISIBLE);
             verifyOtpBtn.setVisibility(View.VISIBLE);
-            invalidOtpLayout.setVisibility(View.VISIBLE);
+            otpEditTextLayout.setBackground(getResources().getDrawable(R.drawable.otp_error_bg));
             verifiedOtpText.setVisibility(View.GONE);
+            verifyOtpBtn.setBackground(getResources().getDrawable(R.drawable.verify_otp_error_bg));
         }
     }
 
-    private void imageViewSetting() {
+    private void cameraPermissionSetting() {
         if (Build.VERSION.SDK_INT >= 23) {
-            if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                    && ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 Log.d("Permissions_Status", "Permissions not granted");
                /* if (ContextCompat.checkSelfPermission(CameraFunctionality.this, Manifest.permission.CAMERA)
                         == PackageManager.PERMISSION_DENIED)*/
@@ -360,44 +451,15 @@ public class ReachPharmacyActivity extends AppCompatActivity implements AdapterV
                 // we have a permission
                 imagePickerAction();
             }
-
         } else {
             imagePickerAction();
         }
     }
 
     private void imagePickerAction() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(ReachPharmacyActivity.this);
-        builder.setItems(new CharSequence[]
-                        {"Camera", "Select from Gallery"},
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // The 'which' argument contains the index position
-                        // of the selected item
-                        switch (which) {
-                            case 0:
-                                camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                file = new File(Environment.getExternalStorageDirectory(), "file" + String.valueOf(System.currentTimeMillis()) + ".jpg");
-                                //  uri = Uri.fromFile(file);
-                                //camera_intent.putExtra(MediaStore.EXTRA_OUTPUT,uri);
-                                //camera_intent.putExtra("return-data",true);
-                                startActivityForResult(camera_intent, CAM_REQUEST);
-                                break;
-                            case 1:
-                                gal_intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                                startActivityForResult(Intent.createChooser(gal_intent, "Select Image from Gallery"), GAL_REQUEST);
-                        }
-                    }
-                });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                //  user_image.setImageDrawable(null);
-                imageStatus = false;
-                dialogInterface.dismiss();
-            }
-        });
-        builder.create().show();
+        camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        file = new File(Environment.getExternalStorageDirectory(), "file" + String.valueOf(System.currentTimeMillis()) + ".jpg");
+        startActivityForResult(camera_intent, CAM_REQUEST);
     }
 
     @OnClick(R.id.cancel_order_btn)
@@ -410,15 +472,26 @@ public class ReachPharmacyActivity extends AppCompatActivity implements AdapterV
 
         TextView headerText = dialogView.findViewById(R.id.sheet_header);
         headerText.setText(getResources().getString(R.string.label_order_cancel));
+        TextView cancelHeaderText = dialogView.findViewById(R.id.cancel_order_header);
+        cancelHeaderText.setText(getResources().getString(R.string.label_cancel_reason_header));
         ImageView closeDialog = dialogView.findViewById(R.id.close_icon);
         closeDialog.setOnClickListener(v -> {
             dialog.dismiss();
         });
 
         Spinner reasonSpinner = dialogView.findViewById(R.id.rejectReasonSpinner);
-        CustomReasonAdapter customAdapter = new CustomReasonAdapter(ReachPharmacyActivity.this, cancelReasons);
+        CustomReasonAdapter customAdapter = new CustomReasonAdapter(this, cancelReasons);
         reasonSpinner.setAdapter(customAdapter);
         reasonSpinner.setOnItemSelectedListener(this);
+    }
+
+    @OnClick(R.id.cancel_item_btn)
+    void onCancelItemClick() {
+        Intent i = new Intent(this, CancelOrderActivity.class);
+        startActivity(i);
+        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+//        ((NavigationActivity) Objects.requireNonNull(mActivity)).showFragment(new CancelOrderItemFragment(), R.string.menu_take_order);
+//        ((NavigationActivity) Objects.requireNonNull(mActivity)).updateSelection(-1);
     }
 
     @Override
@@ -432,8 +505,7 @@ public class ReachPharmacyActivity extends AppCompatActivity implements AdapterV
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.e("ReachPharmacy", "Request code : " + requestCode);
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SIGNATURE_REQUEST_CODE) {
             if (data != null) {
                 hintSignatureText.setVisibility(View.GONE);
@@ -441,6 +513,7 @@ public class ReachPharmacyActivity extends AppCompatActivity implements AdapterV
                 byte[] byteArray = data.getByteArrayExtra("capturedSignature");
                 Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
                 customerSignatureView.setImageBitmap(bmp);
+                signaturePadParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
             }
         } else if (requestCode == CAM_REQUEST && resultCode == RESULT_OK) {
             imageStatus = true;
@@ -476,10 +549,13 @@ public class ReachPharmacyActivity extends AppCompatActivity implements AdapterV
                 if (result.getContents() == null) {
 //                Toast.makeText(this, "Scan Cancelled", Toast.LENGTH_LONG).show();
                 } else {
+                    selectionTag = 2;
                     scanBarcodeLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
                     scanBarcodeImg.setImageDrawable(getDrawable(R.drawable.icon_status_completed));
-                    scannedBarLayout.setVisibility(View.VISIBLE);
                     scannedBarCode.setText("Scanned Bar Code: " + result.getContents());
+
+                    showLayoutDownAnimation(R.id.anim_scan_barcode_layout, animScanBarCodeLayout, scannedBarLayout);
+//                    scannedBarLayout.setVisibility(View.VISIBLE);
                 }
             } else {
 // This is important, otherwise the result will not be passed to the fragment
@@ -493,7 +569,7 @@ public class ReachPharmacyActivity extends AppCompatActivity implements AdapterV
             // Decode image size
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(getApplicationContext().getContentResolver().openInputStream(selectedImage), null, o);
+            BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage), null, o);
             // The new size we want to scale to
             // final int REQUIRED_SIZE =  size;
             // Find the correct scale value. It should be the power of 2.
@@ -511,7 +587,7 @@ public class ReachPharmacyActivity extends AppCompatActivity implements AdapterV
             // Decode with inSampleSize
             BitmapFactory.Options o2 = new BitmapFactory.Options();
             o2.inSampleSize = scale;
-            return BitmapFactory.decodeStream(getApplicationContext().getContentResolver().openInputStream(selectedImage), null, o2);
+            return BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage), null, o2);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -558,6 +634,7 @@ public class ReachPharmacyActivity extends AppCompatActivity implements AdapterV
                 optNum4.setText("");
                 optNum5.setText("");
                 optNum6.setText("");
+                verifyOtpBtn.setBackground(getResources().getDrawable(R.drawable.verify_otp_error_bg));
             } else if (s.length() == 1) {
                 optNum1.setText(s.charAt(0) + "");
                 optNum2.setText("");
@@ -565,26 +642,32 @@ public class ReachPharmacyActivity extends AppCompatActivity implements AdapterV
                 optNum4.setText("");
                 optNum5.setText("");
                 optNum6.setText("");
+                verifyOtpBtn.setBackground(getResources().getDrawable(R.drawable.verify_otp_error_bg));
             } else if (s.length() == 2) {
                 optNum2.setText(s.charAt(1) + "");
                 optNum3.setText("");
                 optNum4.setText("");
                 optNum5.setText("");
                 optNum6.setText("");
+                verifyOtpBtn.setBackground(getResources().getDrawable(R.drawable.verify_otp_error_bg));
             } else if (s.length() == 3) {
                 optNum3.setText(s.charAt(2) + "");
                 optNum4.setText("");
                 optNum5.setText("");
                 optNum6.setText("");
+                verifyOtpBtn.setBackground(getResources().getDrawable(R.drawable.verify_otp_error_bg));
             } else if (s.length() == 4) {
                 optNum4.setText(s.charAt(3) + "");
                 optNum5.setText("");
                 optNum6.setText("");
+                verifyOtpBtn.setBackground(getResources().getDrawable(R.drawable.verify_otp_error_bg));
             } else if (s.length() == 5) {
                 optNum5.setText(s.charAt(4) + "");
                 optNum6.setText("");
+                verifyOtpBtn.setBackground(getResources().getDrawable(R.drawable.verify_otp_error_bg));
             } else if (s.length() == 6) {
                 optNum6.setText(s.charAt(5) + "");
+                verifyOtpBtn.setBackground(getResources().getDrawable(R.drawable.continue_driving_btn_bg));
             }
         }
 
@@ -707,5 +790,59 @@ public class ReachPharmacyActivity extends AppCompatActivity implements AdapterV
         editText.setFocusable(true);
         editText.setFocusableInTouchMode(true);
         editText.requestFocus();
+    }
+
+    @OnClick(R.id.pharma_contact_number)
+    void onPharmaContactClick() {
+        checkCallPermissionSetting();
+    }
+
+    @OnClick(R.id.user_contact_number)
+    void onUserContactClick() {
+        if (userPhoneClick)
+            checkCallPermissionSetting();
+    }
+
+    private void checkCallPermissionSetting() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                Log.d("Permissions_Status", "Permissions not granted");
+               /* if (ContextCompat.checkSelfPermission(CameraFunctionality.this, Manifest.permission.CAMERA)
+                        == PackageManager.PERMISSION_DENIED)*/
+                // ask for permission
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, 1);
+            } else {
+                Log.d("Permissions_Status", "We have a permission");
+                // we have a permission
+                requestACall();
+            }
+        } else {
+            requestACall();
+        }
+    }
+
+    private void requestACall() {
+        String phonenumber = "+919440012212";
+        Intent intentcall = new Intent();
+        intentcall.setAction(Intent.ACTION_CALL);
+        intentcall.setData(Uri.parse("tel:" + phonenumber)); // set the Uri
+        startActivity(intentcall);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            Intent intent = getIntent();
+            setResult(RESULT_OK, intent);
+            finish();
+            overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -1,8 +1,6 @@
 package com.apollo.epos.fragment.neworder;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.content.Context;
@@ -18,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -30,16 +27,14 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.transition.Fade;
 import androidx.transition.Slide;
 import androidx.transition.Transition;
 import androidx.transition.TransitionManager;
 
 import com.apollo.epos.R;
 import com.apollo.epos.activity.NavigationActivity;
-import com.apollo.epos.activity.ReachPharmacyActivity;
+import com.apollo.epos.activity.OrderDeliveryActivity;
 import com.apollo.epos.adapter.CustomReasonAdapter;
-import com.apollo.epos.fragment.cancelorderitem.CancelOrderItemFragment;
 import com.apollo.epos.fragment.deliveryorder.DeliveryOrderFragment;
 import com.apollo.epos.model.OrderItemModel;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -70,6 +65,7 @@ public class NewOrderFragment extends Fragment {
     protected ImageView pharmaContactNumber;
     @BindView(R.id.user_contact_number)
     protected ImageView userContactNumber;
+    private boolean isContactingToUser = false;
 
     public static NewOrderFragment newInstance() {
         return new NewOrderFragment();
@@ -197,46 +193,42 @@ public class NewOrderFragment extends Fragment {
         ((NavigationActivity) Objects.requireNonNull(mActivity)).showFragment(new DeliveryOrderFragment(), R.string.menu_take_order);
         ((NavigationActivity) Objects.requireNonNull(mActivity)).updateSelection(-1);
 
-//        Intent i = new Intent(mActivity, ReachPharmacyActivity.class);
+//        Intent i = new Intent(mActivity, OrderDeliveryActivity.class);
 //        startActivity(i);
 //        mActivity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
     }
 
     @OnClick(R.id.btn_reject_order)
     public void toggleBottomSheet() {
-        View dialogView = getLayoutInflater().inflate(R.layout.bottom_sheet, null);
-        BottomSheetDialog dialog = new BottomSheetDialog(mActivity);
-        dialog.setContentView(dialogView);
-        dialog.setCancelable(false);
-        dialog.show();
+        Intent mainIntent = new Intent(mActivity, OrderDeliveryActivity.class);
+        startActivityForResult(mainIntent, 1);
+        mActivity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 
-        ImageView closeDialog = dialogView.findViewById(R.id.close_icon);
-        closeDialog.setOnClickListener(v -> {
-            dialog.dismiss();
-        });
-
-        Spinner reasonSpinner = dialogView.findViewById(R.id.rejectReasonSpinner);
-        CustomReasonAdapter customAdapter = new CustomReasonAdapter(mActivity, rejectReasons);
-        reasonSpinner.setAdapter(customAdapter);
-        reasonSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                Toast.makeText(mActivity," "+reasonSpinner[position])
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-//        if (sheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
-//            sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-////            btnBottomSheet.setText("Close sheet");
-//        } else {
-//            sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-////            btnBottomSheet.setText("Expand sheet");
-//        }
+//        View dialogView = getLayoutInflater().inflate(R.layout.bottom_sheet, null);
+//        BottomSheetDialog dialog = new BottomSheetDialog(mActivity);
+//        dialog.setContentView(dialogView);
+//        dialog.setCancelable(false);
+//        dialog.show();
+//
+//        ImageView closeDialog = dialogView.findViewById(R.id.close_icon);
+//        closeDialog.setOnClickListener(v -> {
+//            dialog.dismiss();
+//        });
+//
+//        Spinner reasonSpinner = dialogView.findViewById(R.id.rejectReasonSpinner);
+//        CustomReasonAdapter customAdapter = new CustomReasonAdapter(mActivity, rejectReasons);
+//        reasonSpinner.setAdapter(customAdapter);
+//        reasonSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+////                Toast.makeText(mActivity," "+reasonSpinner[position])
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
     }
 
     private void toggle() {
@@ -255,8 +247,9 @@ public class NewOrderFragment extends Fragment {
     }
 
     @OnClick(R.id.user_contact_number)
-    void onUserContactClick(){
-        checkCallPermissionSetting();
+    void onUserContactClick() {
+        if (isContactingToUser)
+            checkCallPermissionSetting();
     }
 
     private void checkCallPermissionSetting() {

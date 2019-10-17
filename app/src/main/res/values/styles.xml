@@ -14,7 +14,7 @@
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
@@ -111,5 +111,10 @@
         <item name="colorControlHighlight">@color/colorBlack</item>
         <item name="android:cacheColorHint">@color/colorBlack</item>
         <item name="android:textColorHint">@color/colorBlack</item>
+    </style>
+
+    <style name="ToolbarTextAppearance">
+        <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="android:textSize">@dimen/text_dimen_18</item>
     </style>
 </resources>

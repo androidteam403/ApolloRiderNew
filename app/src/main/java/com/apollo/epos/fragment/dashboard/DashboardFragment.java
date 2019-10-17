@@ -9,34 +9,24 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.RectF;
 import android.graphics.drawable.AnimationDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.apollo.epos.R;
-import com.apollo.epos.activity.LoginActivity;
-import com.apollo.epos.activity.NavigationActivity;
 import com.apollo.epos.activity.NewOrderActivity;
-import com.apollo.epos.activity.SplashScreen;
-import com.apollo.epos.fragment.cancelorderitem.CancelOrderItemFragment;
-import com.apollo.epos.fragment.neworder.NewOrderFragment;
 import com.apollo.epos.utils.XYMarkerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -58,7 +48,6 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.MPPointF;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import butterknife.BindColor;
 import butterknife.BindView;
@@ -119,6 +108,7 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
 
     @BindView(R.id.user_status)
     protected TextView userStatus;
+    private static final int ACTIVITY_CHANGE = 10;
 
     public static DashboardFragment newInstance() {
         return new DashboardFragment();
@@ -186,14 +176,14 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
         anim.start();
 
         newOrderLayout.setOnClickListener(v -> {
-            ((NavigationActivity) Objects.requireNonNull(mActivity)).showFragment(new NewOrderFragment(), R.string.menu_take_order);
-            ((NavigationActivity) Objects.requireNonNull(mActivity)).updateSelection(-1);
-//            Intent mainIntent = new Intent(mActivity, NewOrderActivity.class);
-//            startActivityForResult(mainIntent, 1);
-//            mActivity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+//            ((NavigationActivity) Objects.requireNonNull(mActivity)).showFragment(new NewOrderFragment(), R.string.menu_take_order);
+//            ((NavigationActivity) Objects.requireNonNull(mActivity)).updateSelection(-1);
+            Intent mainIntent = new Intent(mActivity, NewOrderActivity.class);
+            startActivityForResult(mainIntent, ACTIVITY_CHANGE);
+            mActivity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
         });
 
-        setData(5, 15, 0, 12, 8, 22, 10, 45, 3 , 15, 0 , 28, 5 ,15);
+        setData(5, 15, 0, 12, 8, 22, 10, 45, 3, 15, 0, 28, 5, 15);
         totalOrdersVal.setText("183");
         deliveredOrdersVal.setText("152");
         cancelledOrdersVal.setText("31");
@@ -360,15 +350,15 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
     }
 
     @OnClick(R.id.first_orders_list)
-    void onFirstOrdersClick(){
-        if(isFirstOrdersClicked)
+    void onFirstOrdersClick() {
+        if (isFirstOrdersClicked)
             return;
 
         Animation animSlideFromBottom = AnimationUtils.loadAnimation(mActivity, R.anim.slide_from_bottom);
         ordersInformationLayout.clearAnimation();
         ordersInformationLayout.startAnimation(animSlideFromBottom);
 
-        setData(3, 10, 5, 22, 0, 20, 10, 35, 2 , 20, 8 , 40, 0 ,10);
+        setData(3, 10, 5, 22, 0, 20, 10, 35, 2, 20, 8, 40, 0, 10);
         totalOrdersVal.setText("172");
         deliveredOrdersVal.setText("147");
         cancelledOrdersVal.setText("25");
@@ -389,15 +379,15 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
     }
 
     @OnClick(R.id.second_orders_list)
-    void onSecondOrdersClick(){
-        if(isSecondOrdersClicked)
+    void onSecondOrdersClick() {
+        if (isSecondOrdersClicked)
             return;
 
         Animation animSlideFromBottom = AnimationUtils.loadAnimation(mActivity, R.anim.slide_from_bottom);
         ordersInformationLayout.clearAnimation();
         ordersInformationLayout.startAnimation(animSlideFromBottom);
 
-        setData(2, 10, 6, 26, 10, 29, 0, 10, 5 , 25, 18 , 30, 6 ,15);
+        setData(2, 10, 6, 26, 10, 29, 0, 10, 5, 25, 18, 30, 6, 15);
         totalOrdersVal.setText("192");
         deliveredOrdersVal.setText("145");
         cancelledOrdersVal.setText("49");
@@ -418,15 +408,15 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
     }
 
     @OnClick(R.id.third_orders_list)
-    void onThirdOrdersClick(){
-        if(isThirdOrdersClicked)
+    void onThirdOrdersClick() {
+        if (isThirdOrdersClicked)
             return;
 
         Animation animSlideFromBottom = AnimationUtils.loadAnimation(mActivity, R.anim.slide_from_bottom);
         ordersInformationLayout.clearAnimation();
         ordersInformationLayout.startAnimation(animSlideFromBottom);
 
-        setData(5, 20, 0, 10, 8, 30, 2, 15, 3 , 12, 8 , 26, 2 ,30);
+        setData(5, 20, 0, 10, 8, 30, 2, 15, 3, 12, 8, 26, 2, 30);
         totalOrdersVal.setText("171");
         deliveredOrdersVal.setText("143");
         cancelledOrdersVal.setText("28");
@@ -447,8 +437,8 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
     }
 
     @OnClick(R.id.fourth_orders_list)
-    void onFourthOrdersClick(){
-        if(isFourthOrdersClicked)
+    void onFourthOrdersClick() {
+        if (isFourthOrdersClicked)
             return;
 
         Animation animSlideFromBottom = AnimationUtils.loadAnimation(mActivity, R.anim.slide_from_bottom);
@@ -460,7 +450,7 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
         thirdOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
         fourthOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.btn_color));
 
-        setData(5, 15, 0, 12, 8, 22, 10, 45, 3 , 15, 0 , 28, 5 ,15);
+        setData(5, 15, 0, 12, 8, 22, 10, 45, 3, 15, 0, 28, 5, 15);
         totalOrdersVal.setText("183");
         deliveredOrdersVal.setText("152");
         cancelledOrdersVal.setText("31");
@@ -473,5 +463,18 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
         isSecondOrdersClicked = false;
         isThirdOrdersClicked = false;
         isFourthOrdersClicked = true;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == ACTIVITY_CHANGE){
+            if(data != null){
+                boolean isOrderCompleted = Boolean.parseBoolean(data.getStringExtra("OrderCompleted"));
+                if(isOrderCompleted){
+                  Log.e("DashboardFrag", "Order Completed Successful");
+                }
+            }
+        }
     }
 }

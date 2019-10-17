@@ -496,6 +496,7 @@
                                 android:visibility="gone"
                                 android:text=""
                                 android:layout_marginBottom="@dimen/thirty_dp"
+                                android:layout_marginEnd="@dimen/ten_dp"
                                 android:background="@drawable/dashed_line"/>
                         </LinearLayout>
 

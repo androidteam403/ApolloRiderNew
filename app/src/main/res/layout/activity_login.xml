@@ -30,6 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/eighty_dp"
+            android:fontFamily="@font/roboto_regular"
             android.support.design:hintTextAppearance="@style/EditTextInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -50,6 +51,7 @@
             android:id="@+id/input_layout_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_regular"
             android.support.design:hintTextAppearance="@style/EditTextInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -67,11 +69,12 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
+            android:id="@+id/forgot_password_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:layout_marginTop="@dimen/ten_dp"
-            android:layout_marginEnd="@dimen/five_dp"
+            android:layout_marginTop="@dimen/five_dp"
+            android:padding="@dimen/five_dp"
             android:text="@string/label_forgot_password"
             android:fontFamily="@font/roboto_regular"
             android:textColor="@color/colorWhite" />
