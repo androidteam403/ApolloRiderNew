@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONObject;
@@ -27,10 +28,14 @@ import java.util.List;
  */
 public class RouteDrawerTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
 
-    private PolylineOptions lineOptions;
+    private PolylineOptions lineOptions = null;
+    private ArrayList<LatLng> points = null;
+
     private GoogleMap mMap;
     private int colorFlag;
     private DirectionApiCallback directionApiCallback;
+    private boolean isPolyAdded = false;
+    private Polyline polyline;
 
     public RouteDrawerTask(GoogleMap mMap, int colorFlag, DirectionApiCallback directionApiCallback) {
         this.mMap = mMap;
@@ -69,8 +74,6 @@ public class RouteDrawerTask extends AsyncTask<String, Integer, List<List<HashMa
     }
 
     private void drawPolyLine(List<List<HashMap<String, String>>> result) {
-        ArrayList<LatLng> points;
-        lineOptions = null;
         for (int i = 0; i < result.size(); i++) {
             points = new ArrayList<>();
             lineOptions = new PolylineOptions();
@@ -89,7 +92,8 @@ public class RouteDrawerTask extends AsyncTask<String, Integer, List<List<HashMa
                 points.add(position);
             }
 
-//            // Adding all the points in the route to LineOptions
+
+            // Adding all the points in the route to LineOptions
             lineOptions.addAll(points);
             lineOptions.width(6);
             if (colorFlag == 0)
@@ -100,7 +104,13 @@ public class RouteDrawerTask extends AsyncTask<String, Integer, List<List<HashMa
 
 //        // Drawing polyline in the Google Map for the i-th route
         if (lineOptions != null && mMap != null) {
-            mMap.addPolyline(lineOptions);
+            if (isPolyAdded == false){
+                polyline = mMap.addPolyline(lineOptions);
+                isPolyAdded = true;
+            }else{
+                polyline.setPoints(points);
+            }
+//             mMap.addPolyline(lineOptions);
         } else {
             Log.d("onPostExecute", "without Polylines draw");
         }

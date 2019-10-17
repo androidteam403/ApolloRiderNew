@@ -91,9 +91,9 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     @Override
     public void onLocationChanged(Location location) {
         LatLng origin = new LatLng(location.getLatitude(), location.getLongitude());
+        LatLng destination = new LatLng(17.4410197, 78.3788463);
+        LatLng other = new LatLng(17.4411128, 78.3827845);
         if (!callOneTimeLocation) {
-            LatLng destination = new LatLng(17.4410197, 78.3788463);
-            LatLng other = new LatLng(17.4411128, 78.3827845);
             DrawRouteMaps.getInstance(this,this)
                     .draw(origin, destination, mMap, 0);
             DrawRouteMaps.getInstance(this,this)
@@ -113,6 +113,8 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
             mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, displaySize.x, 250, 30));
             callOneTimeLocation = true;
         } else {
+//            DrawRouteMaps.getInstance(this,this)
+//                    .draw(origin, destination, mMap, 0);
             DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.icon_delivery_person, "Current Location", 1, hashMap);
         }
     }
