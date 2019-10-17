@@ -12,6 +12,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        useLibrary 'org.apache.http.legacy'
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -22,6 +24,11 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    dexOptions {
+        preDexLibraries = false
+        javaMaxHeapSize "4g"
     }
 }
 
@@ -60,9 +67,17 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.1'
     implementation 'com.github.hadiidbouk:ChartProgressBar-Android:2.0.6'
 
-    //Google Maps
-    implementation 'com.google.android.gms:play-services-maps:11.8.0'
+//    //Google Maps
+//    implementation 'com.google.android.gms:play-services-maps:11.8.0'
+//    implementation 'com.google.android.gms:play-services-location:11.8.0'
+
+    implementation 'com.google.android.gms:play-services:11.8.0'
     implementation 'com.google.android.gms:play-services-location:11.8.0'
+    implementation 'com.google.maps.android:android-maps-utils:0.5+'
+
+    // map clustering
+    implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+
 
     //Add QR Library Here
     implementation 'com.journeyapps:zxing-android-embedded:3.5.0'
@@ -71,4 +86,7 @@ dependencies {
     implementation 'com.kyanogen.signatureview:signature-view:1.0'
 
     implementation project(path: ':cusotmloader')
+
+    implementation 'androidx.multidex:multidex:2.0.0'
+    implementation project(path: ':drawroutemap')
 }
