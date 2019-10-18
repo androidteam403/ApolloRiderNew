@@ -34,6 +34,7 @@ import com.apollo.epos.activity.NavigationActivity;
 import com.apollo.epos.dialog.DialogManager;
 import com.apollo.epos.fragment.neworder.NewOrderFragment;
 import com.apollo.epos.listeners.DialogMangerCallback;
+import com.apollo.epos.activity.NewOrderActivity;
 import com.apollo.epos.utils.XYMarkerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -119,6 +120,7 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
 
     @BindView(R.id.user_status)
     protected TextView userStatus;
+    private static final int ACTIVITY_CHANGE = 10;
 
 
     private final int REQ_LOC_PERMISSION = 5002;
@@ -189,10 +191,12 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
         anim.start();
 
         newOrderLayout.setOnClickListener(v -> {
-            gotoOrderFragment();
+//            ((NavigationActivity) Objects.requireNonNull(mActivity)).showFragment(new NewOrderFragment(), R.string.menu_take_order);
+//            ((NavigationActivity) Objects.requireNonNull(mActivity)).updateSelection(-1);
 //            Intent mainIntent = new Intent(mActivity, NewOrderActivity.class);
-//            startActivityForResult(mainIntent, 1);
+//            startActivityForResult(mainIntent, ACTIVITY_CHANGE);
 //            mActivity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+            gotoOrderFragment();
         });
 
         setData(5, 15, 0, 12, 8, 22, 10, 45, 3, 15, 0, 28, 5, 15);
@@ -548,8 +552,10 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
     private void gotoOrderFragment() {
         if (checkForLocPermission()) {
             if (checkGPSOn(mActivity)) {
-                ((NavigationActivity) Objects.requireNonNull(mActivity)).showFragment(new NewOrderFragment(), R.string.menu_take_order);
-                ((NavigationActivity) Objects.requireNonNull(mActivity)).updateSelection(-1);
+                Intent intent = new Intent(mActivity, NewOrderActivity.class);
+                startActivityForResult(intent, ACTIVITY_CHANGE);
+//                ((NavigationActivity) Objects.requireNonNull(mActivity)).showFragment(new NewOrderFragment(), R.string.menu_take_order);
+//                ((NavigationActivity) Objects.requireNonNull(mActivity)).updateSelection(-1);
             } else {
                 showGPSDisabledAlertToUser(mActivity);
             }
@@ -561,7 +567,6 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
 
     public boolean checkGPSOn(Context context) {
         LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
     }
@@ -581,5 +586,18 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
                 (dialog, id) -> dialog.cancel());
         AlertDialog alert = alertDialogBuilder.create();
         alert.show();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == ACTIVITY_CHANGE){
+            if(data != null){
+                boolean isOrderCompleted = Boolean.parseBoolean(data.getStringExtra("OrderCompleted"));
+                if(isOrderCompleted){
+                  Log.e("DashboardFrag", "Order Completed Successful");
+                }
+            }
+        }
     }
 }

@@ -21,7 +21,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activity.LoginActivity"
             android:screenOrientation="portrait" />
@@ -36,13 +35,26 @@
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".activity.NewOrderActivity"
-            android:screenOrientation="portrait" />
+            android:label="New Order"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.NavigationActivity" />
+        </activity>
+        <activity
+            android:name=".activity.OrderDeliveryActivity"
+            android:label="New Order"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.NewOrderActivity" />
+        </activity>
         <activity
             android:name=".activity.MapViewActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.ReachPharmacyActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.ScannerActivity"
             android:label="Scan Barcode"

@@ -1,11 +1,13 @@
 package com.apollo.epos.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -66,13 +68,18 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
     private int selectedItemPos = -1;
     private String mCurrentFrag;
     private static TextView cartCount;
-    private ArrayList<String> fragPosList = new ArrayList<>();
+    private static NavigationActivity instance;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sample);
+        instance = this;
         initCustomNavigationDrawer();
+    }
+
+    public static NavigationActivity getInstance() {
+        return instance;
     }
 
     boolean doubleBackToExitPressedOnce = false;
@@ -294,6 +301,7 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
 
     void setupToolbar() {
         mtoolbar = (Toolbar) findViewById(R.id.toolbar);
+        mtoolbar.setTitleTextAppearance(this, R.style.ToolbarTextAppearance);
         setSupportActionBar(mtoolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }

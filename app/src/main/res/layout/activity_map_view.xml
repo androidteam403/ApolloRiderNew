@@ -54,6 +54,7 @@
                 android:textSize="@dimen/text_dimen_12" />
 
             <ImageView
+                android:id="@+id/close_activity_img"
                 android:layout_width="@dimen/thirty_five_dp"
                 android:layout_height="@dimen/thirty_five_dp"
                 android:contentDescription="@string/app_name"

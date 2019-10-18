@@ -39,6 +39,7 @@ import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.R;
 import com.apollo.epos.activity.MapViewActivity;
 import com.apollo.epos.activity.NavigationActivity;
+import com.apollo.epos.activity.OrderDeliveryActivity;
 import com.apollo.epos.adapter.CustomReasonAdapter;
 import com.apollo.epos.dialog.DialogManager;
 import com.apollo.epos.fragment.deliveryorder.DeliveryOrderFragment;
@@ -95,6 +96,7 @@ public class NewOrderFragment extends Fragment implements DirectionApiCallback, 
 
 
     private final int REQ_LOC_PERMISSION = 5002;
+    private boolean isContactingToUser = false;
 
     public static NewOrderFragment newInstance() {
         return new NewOrderFragment();
@@ -246,7 +248,7 @@ public class NewOrderFragment extends Fragment implements DirectionApiCallback, 
         ((NavigationActivity) Objects.requireNonNull(mActivity)).showFragment(new DeliveryOrderFragment(), R.string.menu_take_order);
         ((NavigationActivity) Objects.requireNonNull(mActivity)).updateSelection(-1);
 
-//        Intent i = new Intent(mActivity, ReachPharmacyActivity.class);
+//        Intent i = new Intent(mActivity, OrderDeliveryActivity.class);
 //        startActivity(i);
 //        mActivity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
     }
@@ -305,7 +307,8 @@ public class NewOrderFragment extends Fragment implements DirectionApiCallback, 
 
     @OnClick(R.id.user_contact_number)
     void onUserContactClick() {
-        checkCallPermissionSetting();
+        if (isContactingToUser)
+            checkCallPermissionSetting();
     }
 
     private void checkCallPermissionSetting() {
@@ -481,8 +484,6 @@ public class NewOrderFragment extends Fragment implements DirectionApiCallback, 
                                     totalDistanceTxt.setText("Total distance is " + finalDistance + "KM from your location and expected time is 35mins.");
                                 }
                             });
-
-
                             sleep(500);
                         }
                     } catch (InterruptedException e) {

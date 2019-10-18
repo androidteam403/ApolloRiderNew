@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorWhite"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/forgot_details_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/ten_dp"
+        android:visibility="visible">
+
+        <RelativeLayout
+            android:id="@+id/header_text_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/five_dp">
+
+            <TextView
+                android:id="@+id/forgot_password_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="@string/label_forgot_password_title"
+                android:textColor="@color/colorBlack"
+                android:fontFamily="@font/roboto_bold"
+                android:textSize="@dimen/text_dimen_16" />
+
+            <ImageView
+                android:id="@+id/close_button"
+                android:layout_width="@dimen/thirty_dp"
+                android:layout_height="@dimen/thirty_dp"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="end"
+                android:padding="@dimen/five_dp"
+                android:contentDescription="@string/app_name"
+                android:scaleType="fitEnd"
+                android:src="@drawable/icon_close"
+                android:tint="@color/colorBlack"/>
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/one_dp"
+            android:layout_below="@+id/header_text_layout"
+            android:background="@color/dashboard_item_border_color" />
+
+        <TextView
+            android:id="@+id/password_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/header_text_layout"
+            android:layout_marginBottom="@dimen/fifteen_dp"
+            android:layout_marginTop="@dimen/ten_dp"
+            android:layout_marginStart="@dimen/five_dp"
+            android:layout_marginEnd="@dimen/five_dp"
+            android:text="@string/label_forgot_password_text"
+            android:textSize="@dimen/text_dimen_15"
+            android:fontFamily="@font/roboto_regular"/>
+
+        <EditText
+            android:id="@+id/forgot_details_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/password_description"
+            android:layout_marginBottom="@dimen/twenty_dp"
+            android:background="@drawable/edit_text_bg"
+            android:gravity="center"
+            android:hint="@string/label_login_name_hint"
+            android:inputType="textEmailAddress"
+            android:textSize="@dimen/text_dimen_15"
+            android:fontFamily="@font/roboto_regular"/>
+
+        <Button
+            android:id="@+id/forgot_details_reset_button"
+            android:layout_width="match_parent"
+            android:layout_below="@+id/forgot_details_email"
+            android:layout_height="@dimen/forty_five_dp"
+            android:layout_marginBottom="@dimen/five_dp"
+            android:fontFamily="@font/roboto_bold"
+            android:background="@drawable/btn_signin_ripple_effect"
+            android:text="@string/label_send" />
+    </RelativeLayout>
+</LinearLayout>

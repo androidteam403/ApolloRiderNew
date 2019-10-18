@@ -182,6 +182,9 @@
     <string name="label_fetching_product">Fetching Product Details...</string>
     <string name="label_order_complaint">COMPLAINT</string>
     <string name="label_complaint_reason_header">Write reason below for complaint</string>
+    <string name="label_forgot_password_title">Forgot Password</string>
+    <string name="label_login_name_hint">Registered E-mail/Mobile</string>
+    <string name="label_forgot_password_text">Please enter your Registered E-mail address/Mobile number and we will send you an email with new password</string>
 
     <string name="permission_location_need_body">This app needs the Location permission, please allow to access the location</string>
     <string name="permission_location_need_title">Location Permission Needed</string>

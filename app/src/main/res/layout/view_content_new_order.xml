@@ -887,7 +887,7 @@
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
                             android:contentDescription="@string/app_name"
-                            android:src="@drawable/icon_phone_select"/>
+                            android:src="@drawable/icon_phone_unselect"/>
                     </RelativeLayout>
                 </LinearLayout>
             </LinearLayout>
