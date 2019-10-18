@@ -430,11 +430,9 @@ public class NewOrderActivity extends AppCompatActivity implements DirectionApiC
         }
     }
 
-    public boolean checkGPSOn(Context context) {
+    public static boolean checkGPSOn(Context context) {
         LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
     }
 
     public void showGPSDisabledAlertToUser(Context context) {

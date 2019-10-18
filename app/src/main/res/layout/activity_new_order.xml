@@ -602,7 +602,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
-                        android:layout_marginStart="@dimen/three_dp"
+                        android:layout_marginStart="@dimen/two_dp"
                         android:contentDescription="@string/app_name"
                         android:background="@drawable/progress_dotted_line"
                         android:hardwareAccelerated="false"
@@ -652,8 +652,9 @@
                             android:orientation="horizontal">
 
                             <ImageView
-                                android:layout_width="@dimen/twenty_five_dp"
-                                android:layout_height="@dimen/twenty_five_dp"
+                                android:layout_width="@dimen/thirty_dp"
+                                android:layout_height="@dimen/thirty_dp"
+                                android:padding="@dimen/three_dp"
                                 android:contentDescription="@string/app_name"
                                 android:src="@drawable/icon_map_view"/>
 
@@ -664,6 +665,7 @@
                                 android:gravity="center"
                                 android:layout_marginStart="@dimen/five_dp"
                                 android:text="@string/label_map_view"
+                                android:visibility="gone"
                                 android:fontFamily="@font/roboto_bold"
                                 android:textColor="@color/colorBlack"
                                 android:textSize="@dimen/text_dimen_11" />
