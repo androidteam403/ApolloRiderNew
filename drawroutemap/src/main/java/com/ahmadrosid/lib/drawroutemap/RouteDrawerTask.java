@@ -1,7 +1,5 @@
 package com.ahmadrosid.lib.drawroutemap;
 
-import android.content.Context;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -9,7 +7,6 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONObject;
@@ -34,12 +31,13 @@ public class RouteDrawerTask extends AsyncTask<String, Integer, List<List<HashMa
     private GoogleMap mMap;
     private int colorFlag;
     private DirectionApiCallback directionApiCallback;
-    private Polyline polyline;
+    private TaskLoadedCallback taskLoadedCallback;
 
-    public RouteDrawerTask(GoogleMap mMap, int colorFlag, DirectionApiCallback directionApiCallback) {
+    public RouteDrawerTask(GoogleMap mMap, int colorFlag, DirectionApiCallback directionApiCallback, TaskLoadedCallback taskLoadedCallback) {
         this.mMap = mMap;
         this.colorFlag = colorFlag;
         this.directionApiCallback = directionApiCallback;
+        this.taskLoadedCallback = taskLoadedCallback;
     }
 
     @Override
@@ -51,7 +49,7 @@ public class RouteDrawerTask extends AsyncTask<String, Integer, List<List<HashMa
             jObject = new JSONObject(jsonData[0]);
 
             Log.d("RouteDrawerTask", jsonData[0]);
-            DataRouteParser parser = new DataRouteParser(colorFlag,directionApiCallback);
+            DataRouteParser parser = new DataRouteParser(colorFlag, directionApiCallback);
             Log.d("RouteDrawerTask", parser.toString());
 
             // Starts parsing data
@@ -95,18 +93,26 @@ public class RouteDrawerTask extends AsyncTask<String, Integer, List<List<HashMa
             // Adding all the points in the route to LineOptions
             lineOptions.addAll(points);
             lineOptions.width(6);
-            if (colorFlag == 0)
+            if (colorFlag == 0) {
                 lineOptions.color(ContextCompat.getColor(DrawRouteMaps.getContext(), R.color.delivery_pharmacy));
-            else
+            } else {
                 lineOptions.color(ContextCompat.getColor(DrawRouteMaps.getContext(), R.color.delivery_user));
+            }
+
+            if (lineOptions != null && mMap != null && colorFlag == 0) {
+                taskLoadedCallback.onTaskDone(lineOptions);
+            } else if (lineOptions != null && mMap != null && colorFlag == 1) {
+                mMap.addPolyline(lineOptions);
+            }
         }
 
 //        // Drawing polyline in the Google Map for the i-th route
-        if (lineOptions != null && mMap != null) {
-                polyline = mMap.addPolyline(lineOptions);
-        } else {
-            Log.d("onPostExecute", "without Polylines draw");
-        }
+//        if (lineOptions != null && mMap != null) {
+////            taskLoadedCallback.onTaskDone(lineOptions);
+//            mMap.addPolyline(lineOptions);
+//        } else {
+//            Log.d("onPostExecute", "without Polylines draw");
+//        }
     }
 
 }

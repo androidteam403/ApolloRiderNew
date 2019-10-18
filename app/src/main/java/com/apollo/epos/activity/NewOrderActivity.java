@@ -26,43 +26,49 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.databinding.Bindable;
 import androidx.transition.Slide;
 import androidx.transition.Transition;
 import androidx.transition.TransitionManager;
 
 import com.ahmadrosid.lib.drawroutemap.DirectionApiCallback;
 import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
+import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.R;
 import com.apollo.epos.adapter.CustomReasonAdapter;
 import com.apollo.epos.dialog.DialogManager;
-import com.apollo.epos.fragment.deliveryorder.DeliveryOrderFragment;
 import com.apollo.epos.listeners.DialogMangerCallback;
 import com.apollo.epos.model.OrderItemModel;
 import com.apollo.epos.service.GPSLocationService;
+import com.apollo.epos.service.NetworkUtils;
+import com.apollo.epos.utils.ActivityUtils;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.novoda.merlin.BindableInterface;
+import com.novoda.merlin.Connectable;
+import com.novoda.merlin.Disconnectable;
+import com.novoda.merlin.Merlin;
+import com.novoda.merlin.NetworkStatus;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static com.google.android.gms.internal.zzahn.runOnUiThread;
 
-public class NewOrderActivity extends AppCompatActivity implements DirectionApiCallback {
+public class NewOrderActivity extends BaseActivity implements DirectionApiCallback, TaskLoadedCallback, Connectable, Disconnectable, BindableInterface {
     @BindView(R.id.items_view_image)
     protected ImageView itemsViewImage;
     @BindView(R.id.items_view_layout)
@@ -92,6 +98,9 @@ public class NewOrderActivity extends AppCompatActivity implements DirectionApiC
     protected TextView totalDistanceTxt;
     private final int REQ_LOC_PERMISSION = 5002;
 
+    private float firstTime = 0;
+    private float secondTime = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,11 +111,10 @@ public class NewOrderActivity extends AppCompatActivity implements DirectionApiC
         toolbar.setNavigationIcon(R.drawable.icon_back);// Toolbar icon in Drawable folder
         setSupportActionBar(toolbar);
 
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();// Do what do you want on toolbar button
-            }
+        ActivityUtils.showDialog(NewOrderActivity.this, "Getting Location");
+
+        toolbar.setNavigationOnClickListener(v -> {
+            onBackPressed();// Do what do you want on toolbar button
         });
 
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
@@ -123,40 +131,8 @@ public class NewOrderActivity extends AppCompatActivity implements DirectionApiC
         });
 
         getCurrentLocation();
-
-//        sheetBehavior = BottomSheetBehavior.from(layoutBottomSheet);
-//
-//        /**
-//         * bottom sheet state change listener
-//         * we are changing button text when sheet changed state
-//         * */
-//        sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-//            @Override
-//            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-//                switch (newState) {
-//                    case BottomSheetBehavior.STATE_HIDDEN:
-//                        break;
-//                    case BottomSheetBehavior.STATE_EXPANDED: {
-////                        rejectOrderBtn.setText("Close Sheet");
-//                    }
-//                    break;
-//                    case BottomSheetBehavior.STATE_COLLAPSED: {
-////                        btnBottomSheet.setText("Expand Sheet");
-//                    }
-//                    break;
-//                    case BottomSheetBehavior.STATE_DRAGGING:
-//                        break;
-//                    case BottomSheetBehavior.STATE_SETTLING:
-//                        break;
-//                }
-//            }
-//
-//            @Override
-//            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-//
-//            }
-//        });
     }
+
 
     private void getCurrentLocation() {
         GPSLocationService gps = new GPSLocationService(this);
@@ -167,12 +143,10 @@ public class NewOrderActivity extends AppCompatActivity implements DirectionApiC
             LatLng destination = new LatLng(17.4410197, 78.3788463);
             LatLng other = new LatLng(17.4411128, 78.3827845);
 
-            DrawRouteMaps.getInstance(this, this)
+            DrawRouteMaps.getInstance(this, this, this::onTaskDone)
                     .draw(origin, destination, null, 0);
-            DrawRouteMaps.getInstance(this, this)
+            DrawRouteMaps.getInstance(this, this, this::onTaskDone)
                     .draw(destination, other, null, 1);
-            DrawRouteMaps.getInstance(this, this)
-                    .draw(origin, other, null, 2);
         } else {
             gps.showSettingsAlert();
         }
@@ -335,10 +309,10 @@ public class NewOrderActivity extends AppCompatActivity implements DirectionApiC
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == RESULT_OK){
-            if(data != null){
+        if (resultCode == RESULT_OK) {
+            if (data != null) {
                 boolean isOrderCompleted = Boolean.parseBoolean(data.getStringExtra("OrderCompleted"));
-                if(isOrderCompleted){
+                if (isOrderCompleted) {
                     Intent intent = getIntent();
                     intent.putExtra("OrderCompleted", "true");
                     setResult(RESULT_OK, intent);
@@ -419,8 +393,12 @@ public class NewOrderActivity extends AppCompatActivity implements DirectionApiC
     private void gotoMapActivity() {
         if (checkForLocPermission()) {
             if (checkGPSOn(this)) {
-                Intent intent = new Intent(this, MapViewActivity.class);
-                startActivity(intent);
+                if (NetworkUtils.isNetworkConnected(NewOrderActivity.this)) {
+                    Intent intent = new Intent(this, MapViewActivity.class);
+                    startActivity(intent);
+                }else {
+                    DialogManager.showToast(NewOrderActivity.this, getString(R.string.no_interent));
+                }
             } else {
                 showGPSDisabledAlertToUser(this);
             }
@@ -455,28 +433,24 @@ public class NewOrderActivity extends AppCompatActivity implements DirectionApiC
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if (GPSLocationService.isFromSetting == true) {
-            GPSLocationService.isFromSetting = false;
-        }
-    }
-
-    @Override
     public void onDirectionApi(int colorFlag, JSONArray v) {
-        String distance;
+        String distance, time;
         float removing = 0;
+        float removingTime = 0;
         try {
-            if(v != null) {
+            if (v != null) {
                 distance = ((JSONObject) v.get(0)).getJSONObject("distance").getString("text");
+                time = ((JSONObject) v.get(0)).getJSONObject("duration").getString("text");
                 removing = Float.parseFloat(distance.replace("\"", "").replace("km", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
+                removingTime = Float.parseFloat(time.replace("\"", "").replace("mins", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         float finalRemoving = removing;
-        if(finalRemoving != 0) {
+        float finalTime = removingTime;
+        if (finalRemoving != 0) {
             Thread thread = new Thread() {
                 @Override
                 public void run() {
@@ -486,10 +460,15 @@ public class NewOrderActivity extends AppCompatActivity implements DirectionApiC
                             runOnUiThread(() -> {
                                 if (colorFlag == 0) {
                                     deliveryPharmTxt.setText(finalRemoving + "");
+                                    firstTime = finalTime;
                                 } else if (colorFlag == 1) {
                                     deliveryUserTxt.setText(finalRemoving + "");
-                                } else if (colorFlag == 2) {
-                                    totalDistanceTxt.setText("Total distance is " + finalRemoving + "KM from your location and expected time is 35mins.");
+                                    secondTime = finalTime;
+                                }
+                                if (!deliveryPharmTxt.getText().toString().isEmpty() && !deliveryUserTxt.getText().toString().isEmpty() && firstTime != 0 && secondTime != 0) {
+                                    float finalDistance = Float.parseFloat(deliveryPharmTxt.getText().toString()) + Float.parseFloat(deliveryUserTxt.getText().toString());
+                                    float lastTime = firstTime + secondTime;
+                                    totalDistanceTxt.setText("Total distance is " + finalDistance + "KM from your location and expected time is " + Math.round(lastTime) + "mins.");
                                 }
                             });
                             sleep(500);
@@ -501,5 +480,61 @@ public class NewOrderActivity extends AppCompatActivity implements DirectionApiC
             };
             thread.start();
         }
+        ActivityUtils.hideDialog();
     }
+
+
+    @Override
+    protected Merlin createMerlin() {
+        return new Merlin.Builder()
+                .withConnectableCallbacks()
+                .withDisconnectableCallbacks()
+                .withBindableCallbacks()
+                .build(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (GPSLocationService.isFromSetting == true) {
+            GPSLocationService.isFromSetting = false;
+        }
+        registerConnectable(this);
+        registerDisconnectable(this);
+        registerBindable(this);
+    }
+
+    @Override
+    public void onBind(NetworkStatus networkStatus) {
+        if (!networkStatus.isAvailable()) {
+            onDisconnect();
+        }
+    }
+
+    @Override
+    public void onTaskDone(Object... values) {
+
+    }
+
+    @Override
+    public void onConnect() {
+        getCurrentLocation();
+        ActivityUtils.hideDialog();
+    }
+
+    @Override
+    public void onDisconnect() {
+        ActivityUtils.showDialog(NewOrderActivity.this, "Getting Location");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
 }

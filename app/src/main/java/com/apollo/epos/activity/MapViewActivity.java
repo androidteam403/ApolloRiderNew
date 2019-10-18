@@ -19,13 +19,16 @@ import androidx.core.content.ContextCompat;
 import com.ahmadrosid.lib.drawroutemap.DirectionApiCallback;
 import com.ahmadrosid.lib.drawroutemap.DrawMarker;
 import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
+import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.R;
+import com.apollo.epos.service.GPSLocationService;
 import com.apollo.epos.utils.ActivityUtils;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -33,6 +36,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.novoda.merlin.BindableInterface;
+import com.novoda.merlin.Connectable;
+import com.novoda.merlin.Disconnectable;
+import com.novoda.merlin.Merlin;
+import com.novoda.merlin.NetworkStatus;
 
 import org.json.JSONArray;
 
@@ -43,7 +53,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MapViewActivity extends BaseActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener, DirectionApiCallback {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, DirectionApiCallback, TaskLoadedCallback, Connectable, Disconnectable, BindableInterface {
 
     private GoogleMap mMap;
     private final int REQ_LOC_PERMISSION = 123;
@@ -56,6 +66,7 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     private boolean callOneTimeLocation;
     @BindView(R.id.close_activity_img)
     protected ImageView closeActivityImg;
+    private Polyline currentPolyline;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +87,8 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setPadding(0, 0, 0, 80);
+        mMap.clear();
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(MapViewActivity.this,
                     Manifest.permission.ACCESS_FINE_LOCATION)
@@ -98,30 +111,33 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         LatLng origin = new LatLng(location.getLatitude(), location.getLongitude());
         LatLng destination = new LatLng(17.4410197, 78.3788463);
         LatLng other = new LatLng(17.4411128, 78.3827845);
+
+        DrawRouteMaps.getInstance(this, this, this)
+                .draw(origin, destination, mMap, 0);
+        DrawRouteMaps.getInstance(this, this, this)
+                .draw(destination, other, mMap, 1);
+        DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.icon_delivery_person, "Current Location", 1, hashMap);
+        DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.icon_pharmacy, "Destination Location", 0, hashMap);
+        DrawMarker.getInstance(this).draw(mMap, other, R.drawable.icon_ordered_user, "Other Location", 0, hashMap);
+
         if (!callOneTimeLocation) {
-            DrawRouteMaps.getInstance(this,this)
-                    .draw(origin, destination, mMap, 0);
-            DrawRouteMaps.getInstance(this,this)
-                    .draw(destination, other, mMap, 1);
-
-            DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.icon_delivery_person, "Current Location", 1, hashMap);
-            DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.icon_pharmacy, "Destination Location", 0, hashMap);
-            DrawMarker.getInstance(this).draw(mMap, other, R.drawable.icon_ordered_user, "Other Location", 0, hashMap);
-
             LatLngBounds bounds = new LatLngBounds.Builder()
                     .include(origin)
                     .include(destination)
                     .include(other).build();
 
-            Point displaySize = new Point();
-            getWindowManager().getDefaultDisplay().getSize(displaySize);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, displaySize.x, 250, 30));
+            int width = getResources().getDisplayMetrics().widthPixels;
+            int height = getResources().getDisplayMetrics().heightPixels;
+            int padding = (int) (width * 0.10); // offset from edges of the map 10% of screen
+
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+
+            mMap.moveCamera(cu);
+            mMap.animateCamera(cu);
+
             callOneTimeLocation = true;
-        } else {
-//            DrawRouteMaps.getInstance(this,this)
-//                    .draw(origin, destination, mMap, 0);
-            DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.icon_delivery_person, "Current Location", 1, hashMap);
         }
+        ActivityUtils.hideDialog();
     }
 
 
@@ -249,9 +265,7 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
 
     @Override
     public void onConnectionSuspended(int i) {
-        if (i == 1) {
             mGoogleApiClient.connect();
-        }
     }
 
     @Override
@@ -265,6 +279,7 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
         }
+        ActivityUtils.showDialog(MapViewActivity.this, "Getting Location");
     }
 
     @Override
@@ -273,6 +288,12 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
         }
+
+        registerConnectable(this);
+        registerDisconnectable(this);
+        registerBindable(this);
+
+        hashMap.clear();
     }
 
     @Override
@@ -290,6 +311,7 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
+        hashMap.clear();
     }
 
     @Override
@@ -311,9 +333,42 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     public void onDirectionApi(int colorFlag, JSONArray jsonArray) {
     }
 
+    @Override
+    public void onTaskDone(Object... values) {
+        if (currentPolyline != null)
+            currentPolyline.remove();
+        currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+    }
+
     @OnClick(R.id.close_activity_img)
-    void onMapCloseClick(){
+    void onMapCloseClick() {
         finish();
         overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+    }
+
+    @Override
+    protected Merlin createMerlin() {
+        return new Merlin.Builder()
+                .withConnectableCallbacks()
+                .withDisconnectableCallbacks()
+                .withBindableCallbacks()
+                .build(this);
+    }
+
+    @Override
+    public void onBind(NetworkStatus networkStatus) {
+        if (!networkStatus.isAvailable()) {
+            onDisconnect();
+        }
+    }
+
+    @Override
+    public void onConnect() {
+        ActivityUtils.hideDialog();
+    }
+
+    @Override
+    public void onDisconnect() {
+        ActivityUtils.showDialog(MapViewActivity.this, "Getting Location");
     }
 }

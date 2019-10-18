@@ -88,5 +88,10 @@ dependencies {
     implementation project(path: ':cusotmloader')
 
     implementation 'androidx.multidex:multidex:2.0.0'
+
     implementation project(path: ':drawroutemap')
+
+    implementation project(path: ':core')
+
+
 }
