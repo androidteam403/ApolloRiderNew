@@ -24,6 +24,7 @@ import androidx.core.content.ContextCompat;
 import com.ahmadrosid.lib.drawroutemap.DirectionApiCallback;
 import com.ahmadrosid.lib.drawroutemap.DrawMarker;
 import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
+import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.R;
 import com.apollo.epos.utils.ActivityUtils;
 import com.google.android.gms.appindexing.AppIndex;
@@ -51,7 +52,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener, DirectionApiCallback {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, DirectionApiCallback, TaskLoadedCallback, Connectable, Disconnectable, BindableInterface {
 
     private GoogleMap mMap;
     private final int REQ_LOC_PERMISSION = 123;
@@ -127,10 +128,10 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
 
             DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.location_current, "Current Location", 1, hashMap);
             if (locType.equalsIgnoreCase("Pharmacy")) {
-                DrawRouteMaps.getInstance(this, this).draw(origin, destination, mMap, 0);
+                DrawRouteMaps.getInstance(this, this, this).draw(origin, destination, mMap, 0);
                 DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_pharmacy, "Pharmacy Location", 0, hashMap);
             } else if (locType.equalsIgnoreCase("Destination")) {
-                DrawRouteMaps.getInstance(this, this).draw(origin, destination, mMap, 1);
+                DrawRouteMaps.getInstance(this, this, this).draw(origin, destination, mMap, 1);
                 DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_destination, "Destination Location", 0, hashMap);
             }
 
@@ -143,6 +144,11 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
         } else {
             DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.location_current, "Current Location", 1, hashMap);
         }
+    }
+
+    @Override
+    protected Merlin createMerlin() {
+        return null;
     }
 
     private synchronized void GoogleClientBuild() {
@@ -366,5 +372,10 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
         intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
         startActivity(intent);
+    }
+
+    @Override
+    public void onTaskDone(Object... values) {
+
     }
 }
