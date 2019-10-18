@@ -97,6 +97,8 @@ public class NewOrderFragment extends Fragment implements DirectionApiCallback, 
 
     private final int REQ_LOC_PERMISSION = 5002;
     private boolean isContactingToUser = false;
+    private float firstTime = 0;
+    private float secondTime = 0;
 
     public static NewOrderFragment newInstance() {
         return new NewOrderFragment();
@@ -454,18 +456,22 @@ public class NewOrderFragment extends Fragment implements DirectionApiCallback, 
 
     @Override
     public void onDirectionApi(int colorFlag, JSONArray v) {
-        String distance;
+        String distance, time;
         float removing = 0;
+        float removingTime = 0;
         try {
             if(v != null) {
                 distance = ((JSONObject) v.get(0)).getJSONObject("distance").getString("text");
+                time = ((JSONObject) v.get(0)).getJSONObject("duration").getString("text");
                 removing = Float.parseFloat(distance.replace("\"", "").replace("km", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
+                removingTime = Float.parseFloat(time.replace("\"", "").replace("mins", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
             }
             } catch (JSONException e) {
             e.printStackTrace();
         }
 
         float finalRemoving = removing;
+        float finalTime = removingTime;
         if(finalRemoving != 0) {
             Thread thread = new Thread() {
                 @Override
@@ -476,12 +482,16 @@ public class NewOrderFragment extends Fragment implements DirectionApiCallback, 
                             runOnUiThread(() -> {
                                 if (colorFlag == 0) {
                                     deliveryPharmTxt.setText(finalRemoving + "");
+                                    firstTime = finalTime;
                                 } else if (colorFlag == 1) {
                                     deliveryUserTxt.setText(finalRemoving + "");
+                                    secondTime = finalTime;
                                 }
-                                if(!deliveryPharmTxt.getText().toString().isEmpty() && !deliveryUserTxt.getText().toString().isEmpty()) {
+                                if (!deliveryPharmTxt.getText().toString().isEmpty() && !deliveryUserTxt.getText().toString().isEmpty() && firstTime != 0 && secondTime != 0) {
                                     float finalDistance = Float.parseFloat(deliveryPharmTxt.getText().toString()) + Float.parseFloat(deliveryUserTxt.getText().toString());
-                                    totalDistanceTxt.setText("Total distance is " + finalDistance + "KM from your location and expected time is 35mins.");
+                                    float lastTime = firstTime + secondTime;
+                                    totalDistanceTxt.setText("Total distance is " + finalDistance + "KM from your location and expected time is " + lastTime + "mins.");
+
                                 }
                             });
                             sleep(500);

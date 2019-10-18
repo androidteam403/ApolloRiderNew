@@ -1,55 +1,32 @@
 package com.apollo.epos.activity;
 
-import android.app.ActivityManager;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
-import android.media.ExifInterface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.provider.MediaStore;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
+import com.novoda.merlin.BindableInterface;
+import com.novoda.merlin.Connectable;
+import com.novoda.merlin.Disconnectable;
+import com.novoda.merlin.Logger;
+import com.novoda.merlin.Merlin;
 
 /**
  * Created by Rakesh on 14,October,2019
  */
-public class BaseActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public abstract class BaseActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-
+    private ProgressDialog dialog;
     protected static GoogleApiClient mGoogleApiClient;
     protected static LocationRequest mLocationRequest;
     private final String TAG = "mGoogleApiClient";
@@ -58,6 +35,16 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
     protected final int COUNT_DOWN_TIME = 30000;
     protected final int COUNT_DOWN_TIME_INTERVAL = 1000;
     private CountDownTimer mLocationCountDownTimer;
+
+    private DemoLogHandle logHandle;
+    protected Merlin merlin;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        logHandle = new DemoLogHandle();
+        merlin = createMerlin();
+    }
 
     public synchronized void buildGoogleApiClient() {
         if (mGoogleApiClient == null) {
@@ -206,6 +193,80 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
 
     protected void refresh() {
 
+    }
+
+
+    protected abstract Merlin createMerlin();
+
+    protected void registerConnectable(Connectable connectable) {
+        merlin.registerConnectable(connectable);
+    }
+
+    protected void registerDisconnectable(Disconnectable disconnectable) {
+        merlin.registerDisconnectable(disconnectable);
+    }
+
+    protected void registerBindable(BindableInterface bindable) {
+        merlin.registerBindable(bindable);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Logger.attach(logHandle);
+        merlin.bind();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        merlin.unbind();
+        Logger.detach(logHandle);
+    }
+
+    private static class DemoLogHandle implements Logger.LogHandle {
+
+        private static final String TAG = "DemoLogHandle";
+
+        @Override
+        public void v(Object... message) {
+            Log.v(TAG, message[0].toString());
+        }
+
+        @Override
+        public void i(Object... message) {
+            Log.i(TAG, message[0].toString());
+        }
+
+        @Override
+        public void d(Object... msg) {
+            Log.d(TAG, msg[0].toString());
+        }
+
+        @Override
+        public void d(Throwable throwable, Object... message) {
+            Log.d(TAG, message[0].toString(), throwable);
+        }
+
+        @Override
+        public void w(Object... message) {
+            Log.w(TAG, message[0].toString());
+        }
+
+        @Override
+        public void w(Throwable throwable, Object... message) {
+            Log.w(TAG, message[0].toString(), throwable);
+        }
+
+        @Override
+        public void e(Object... message) {
+            Log.e(TAG, message[0].toString());
+        }
+
+        @Override
+        public void e(Throwable throwable, Object... message) {
+            Log.e(TAG, message[0].toString(), throwable);
+        }
     }
 
 }
