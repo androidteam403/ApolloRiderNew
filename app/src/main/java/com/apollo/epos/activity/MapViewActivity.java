@@ -20,8 +20,11 @@ import androidx.core.content.ContextCompat;
 import com.ahmadrosid.lib.drawroutemap.DirectionApiCallback;
 import com.ahmadrosid.lib.drawroutemap.DrawMarker;
 import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
+import com.ahmadrosid.lib.drawroutemap.ProgressLoadedCallback;
 import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.R;
+import com.apollo.epos.dialog.DialogManager;
+import com.apollo.epos.service.GPSLocationService;
 import com.apollo.epos.utils.ActivityUtils;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
@@ -53,7 +56,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MapViewActivity extends BaseActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener, DirectionApiCallback, TaskLoadedCallback, Connectable, Disconnectable, BindableInterface {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, DirectionApiCallback, TaskLoadedCallback, Connectable, Disconnectable, BindableInterface, ProgressLoadedCallback {
 
     private GoogleMap mMap;
     private final int REQ_LOC_PERMISSION = 123;
@@ -76,6 +79,8 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_map_view);
         ButterKnife.bind(this);
+
+        ActivityUtils.showDialog(MapViewActivity.this, "Getting Location");
 
         followGoogleMap.setVisibility(View.GONE);
 
@@ -367,11 +372,18 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
 
     @Override
     public void onConnect() {
-        ActivityUtils.hideDialog();
+//        ActivityUtils.hideDialog();
+//        DialogManager.showToast(MapViewActivity.this, "Network Connected");
     }
 
     @Override
     public void onDisconnect() {
-        ActivityUtils.showDialog(MapViewActivity.this, "Getting Location");
+//        ActivityUtils.showDialog(MapViewActivity.this, "Getting Location");
+        DialogManager.showToast(MapViewActivity.this, getString(R.string.no_interent));
+    }
+
+    @Override
+    public void onTaskDone(boolean flag) {
+
     }
 }
