@@ -4,12 +4,13 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -21,7 +22,6 @@ import com.ahmadrosid.lib.drawroutemap.DrawMarker;
 import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
 import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.R;
-import com.apollo.epos.service.GPSLocationService;
 import com.apollo.epos.utils.ActivityUtils;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
@@ -67,6 +67,8 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     @BindView(R.id.close_activity_img)
     protected ImageView closeActivityImg;
     private Polyline currentPolyline;
+    @BindView(R.id.follow_google_map)
+    protected Button followGoogleMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +76,8 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_map_view);
         ButterKnife.bind(this);
+
+        followGoogleMap.setVisibility(View.GONE);
 
 //show error dialog if GoolglePlayServices not available
         if (ActivityUtils.checkPlayServices(MapViewActivity.this)) {
@@ -115,9 +119,9 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
                 .draw(origin, destination, mMap, 0);
         DrawRouteMaps.getInstance(this, this, this)
                 .draw(destination, other, mMap, 1);
-        DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.icon_delivery_person, "Current Location", 1, hashMap);
-        DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.icon_pharmacy, "Destination Location", 0, hashMap);
-        DrawMarker.getInstance(this).draw(mMap, other, R.drawable.icon_ordered_user, "Other Location", 0, hashMap);
+        DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.location_current, "Current Location", 1, hashMap);
+        DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_pharmacy, "Destination Location", 0, hashMap);
+        DrawMarker.getInstance(this).draw(mMap, other, R.drawable.location_destination, "Other Location", 0, hashMap);
 
         if (!callOneTimeLocation) {
             LatLngBounds bounds = new LatLngBounds.Builder()
@@ -264,7 +268,7 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
 
     @Override
     public void onConnectionSuspended(int i) {
-            mGoogleApiClient.connect();
+        mGoogleApiClient.connect();
     }
 
     @Override

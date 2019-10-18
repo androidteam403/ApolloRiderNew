@@ -32,6 +32,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -39,6 +40,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.novoda.merlin.BindableInterface;
+import com.novoda.merlin.Connectable;
+import com.novoda.merlin.Disconnectable;
+import com.novoda.merlin.Merlin;
+import com.novoda.merlin.NetworkStatus;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,6 +82,7 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
     protected TextView travelDistance;
     @BindView(R.id.travel_time)
     protected TextView travelTime;
+    private Polyline currentPolyline;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +110,8 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setPadding(0, 0, 0, 80);
+        mMap.clear();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(TrackMapActivity.this,
                     Manifest.permission.ACCESS_FINE_LOCATION)
@@ -124,31 +135,33 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
         currentLat = location.getLatitude();
         currentLon = location.getLongitude();
         LatLng destination = new LatLng(latitude, longitude);
-        if (!callOneTimeLocation) {
 
-            DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.location_current, "Current Location", 1, hashMap);
-            if (locType.equalsIgnoreCase("Pharmacy")) {
-                DrawRouteMaps.getInstance(this, this, this).draw(origin, destination, mMap, 0);
-                DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_pharmacy, "Pharmacy Location", 0, hashMap);
-            } else if (locType.equalsIgnoreCase("Destination")) {
-                DrawRouteMaps.getInstance(this, this, this).draw(origin, destination, mMap, 1);
-                DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_destination, "Destination Location", 0, hashMap);
-            }
-
-            LatLngBounds bounds = new LatLngBounds.Builder().include(origin).include(destination).build();
-
-            Point displaySize = new Point();
-            getWindowManager().getDefaultDisplay().getSize(displaySize);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, displaySize.x, 250, 30));
-            callOneTimeLocation = true;
-        } else {
-            DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.location_current, "Current Location", 1, hashMap);
+        DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.location_current, "Current Location", 1, hashMap);
+        if (locType.equalsIgnoreCase("Pharmacy")) {
+            DrawRouteMaps.getInstance(this, this, this).draw(origin, destination, mMap, 0);
+            DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_pharmacy, "Pharmacy Location", 0, hashMap);
+        } else if (locType.equalsIgnoreCase("Destination")) {
+            DrawRouteMaps.getInstance(this, this, this).draw(origin, destination, mMap, 1);
+            DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_destination, "Destination Location", 0, hashMap);
         }
-    }
 
-    @Override
-    protected Merlin createMerlin() {
-        return null;
+        if (!callOneTimeLocation) {
+            LatLngBounds bounds = new LatLngBounds.Builder()
+                    .include(origin)
+                    .include(destination).build();
+
+            int width = getResources().getDisplayMetrics().widthPixels;
+            int height = getResources().getDisplayMetrics().heightPixels;
+            int padding = (int) (width * 0.10); // offset from edges of the map 10% of screen
+
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+
+            mMap.moveCamera(cu);
+            mMap.animateCamera(cu);
+
+            callOneTimeLocation = true;
+        }
+        ActivityUtils.hideDialog();
     }
 
     private synchronized void GoogleClientBuild() {
@@ -279,6 +292,7 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
         }
+        ActivityUtils.showDialog(TrackMapActivity.this, "Getting Location");
     }
 
     @Override
@@ -287,6 +301,11 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
         }
+        registerConnectable(this);
+        registerDisconnectable(this);
+        registerBindable(this);
+
+        hashMap.clear();
     }
 
     @Override
@@ -304,6 +323,7 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
+        hashMap.clear();
     }
 
     @Override
@@ -323,22 +343,23 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
 
     @Override
     public void onDirectionApi(int colorFlag, JSONArray jsonArray) {
-        String distance;
+        String distance, time;
         float removing = 0;
-        String journeyTime = "";
+        float removingTime = 0;
         try {
             if (jsonArray != null) {
                 distance = ((JSONObject) jsonArray.get(0)).getJSONObject("distance").getString("text");
+                time = ((JSONObject) jsonArray.get(0)).getJSONObject("duration").getString("text");
                 removing = Float.parseFloat(distance.replace("\"", "").replace("km", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
-                journeyTime = ((JSONObject) jsonArray.get(0)).getJSONObject("duration").getString("text");
+                removingTime = Float.parseFloat(time.replace("\"", "").replace("mins", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         float finalRemoving = removing;
+        float finalTime = removingTime;
         if (finalRemoving != 0) {
-            String finalJourneyTime = journeyTime;
             Thread thread = new Thread() {
                 @Override
                 public void run() {
@@ -347,7 +368,7 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
                         for (i = 0; i <= 100; i++) {
                             runOnUiThread(() -> {
                                 travelDistance.setText("Travel Distance: " + finalRemoving + "KM");
-                                travelTime.setText("Travel Time: " + finalJourneyTime);
+                                travelTime.setText("Travel Time: " + Math.round(finalTime) + "Mins.");
                             });
                             sleep(500);
                         }
@@ -376,6 +397,34 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
 
     @Override
     public void onTaskDone(Object... values) {
+        if (currentPolyline != null)
+            currentPolyline.remove();
+        currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+    }
 
+    @Override
+    protected Merlin createMerlin() {
+        return new Merlin.Builder()
+                .withConnectableCallbacks()
+                .withDisconnectableCallbacks()
+                .withBindableCallbacks()
+                .build(this);
+    }
+
+    @Override
+    public void onBind(NetworkStatus networkStatus) {
+        if (!networkStatus.isAvailable()) {
+            onDisconnect();
+        }
+    }
+
+    @Override
+    public void onConnect() {
+        ActivityUtils.hideDialog();
+    }
+
+    @Override
+    public void onDisconnect() {
+        ActivityUtils.showDialog(TrackMapActivity.this, "Getting Location");
     }
 }

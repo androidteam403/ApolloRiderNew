@@ -123,9 +123,6 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
         toolbar.setTitle("My Title");
         toolbar.setTitleTextAppearance(this, R.style.ToolbarTextAppearance);
 
-        Animation RightSwipe = AnimationUtils.loadAnimation(this, R.anim.right_swipe);
-        orderDeliveryTimeLayout.startAnimation(RightSwipe);
-
         mapViewLayout.setOnClickListener(v -> {
             gotoMapActivity();
         });
@@ -479,6 +476,9 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
             thread.start();
         }
         ActivityUtils.hideDialog();
+        
+        Animation RightSwipe = AnimationUtils.loadAnimation(this, R.anim.right_swipe);
+        orderDeliveryTimeLayout.startAnimation(RightSwipe);
     }
 
 
