@@ -35,6 +35,7 @@ import androidx.transition.TransitionManager;
 
 import com.ahmadrosid.lib.drawroutemap.DirectionApiCallback;
 import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
+import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.R;
 import com.apollo.epos.activity.MapViewActivity;
 import com.apollo.epos.activity.NavigationActivity;
@@ -64,7 +65,7 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.Context.LOCATION_SERVICE;
 import static com.google.android.gms.internal.zzahn.runOnUiThread;
 
-public class NewOrderFragment extends Fragment implements DirectionApiCallback {
+public class NewOrderFragment extends Fragment implements DirectionApiCallback, TaskLoadedCallback {
     private Activity mActivity;
     @BindView(R.id.items_view_image)
     protected ImageView itemsViewImage;
@@ -137,12 +138,10 @@ public class NewOrderFragment extends Fragment implements DirectionApiCallback {
             LatLng destination = new LatLng(17.4410197, 78.3788463);
             LatLng other = new LatLng(17.4411128, 78.3827845);
 
-            DrawRouteMaps.getInstance(mActivity, this)
+            DrawRouteMaps.getInstance(mActivity, this, this::onTaskDone)
                     .draw(origin, destination, null, 0);
-            DrawRouteMaps.getInstance(mActivity, this)
+            DrawRouteMaps.getInstance(mActivity, this, this::onTaskDone)
                     .draw(destination, other, null, 1);
-            DrawRouteMaps.getInstance(mActivity, this)
-                    .draw(origin, other, null, 2);
         } else {
             gps.showSettingsAlert();
         }
@@ -473,14 +472,14 @@ public class NewOrderFragment extends Fragment implements DirectionApiCallback {
                         for (i = 0; i <= 100; i++) {
                             runOnUiThread(() -> {
                                 if (colorFlag == 0) {
-
                                     deliveryPharmTxt.setText(finalRemoving + "");
                                 } else if (colorFlag == 1) {
                                     deliveryUserTxt.setText(finalRemoving + "");
-                                } else if (colorFlag == 2) {
-                                    totalDistanceTxt.setText("Total distance is " + finalRemoving + "KM from your location and expected time is 35mins.");
                                 }
-
+                                if(!deliveryPharmTxt.getText().toString().isEmpty() && !deliveryUserTxt.getText().toString().isEmpty()) {
+                                    float finalDistance = Float.parseFloat(deliveryPharmTxt.getText().toString()) + Float.parseFloat(deliveryUserTxt.getText().toString());
+                                    totalDistanceTxt.setText("Total distance is " + finalDistance + "KM from your location and expected time is 35mins.");
+                                }
                             });
 
 
@@ -493,5 +492,10 @@ public class NewOrderFragment extends Fragment implements DirectionApiCallback {
             };
             thread.start();
         }
+    }
+
+    @Override
+    public void onTaskDone(Object... values) {
+
     }
 }

@@ -19,6 +19,7 @@ import com.ahmadrosid.lib.drawroutemap.DirectionApiCallback;
 import com.ahmadrosid.lib.drawroutemap.DrawMarker;
 import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
 import com.apollo.epos.R;
+import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.utils.ActivityUtils;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
@@ -32,6 +33,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONArray;
 
@@ -40,7 +43,7 @@ import java.util.HashMap;
 import butterknife.ButterKnife;
 
 public class MapViewActivity extends BaseActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener, DirectionApiCallback {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, DirectionApiCallback, TaskLoadedCallback {
 
     private GoogleMap mMap;
     private final int REQ_LOC_PERMISSION = 123;
@@ -51,6 +54,7 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     private static final long FASTEST_INTERVAL = 1000 * 5;
     private HashMap<Integer, Marker> hashMap = new HashMap<>();
     private boolean callOneTimeLocation;
+    private Polyline currentPolyline;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +75,8 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setPadding(0,0,0,80);
+//        mMap.clear();
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(MapViewActivity.this,
                     Manifest.permission.ACCESS_FINE_LOCATION)
@@ -93,12 +99,12 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         LatLng origin = new LatLng(location.getLatitude(), location.getLongitude());
         LatLng destination = new LatLng(17.4410197, 78.3788463);
         LatLng other = new LatLng(17.4411128, 78.3827845);
-        if (!callOneTimeLocation) {
-            DrawRouteMaps.getInstance(this,this)
-                    .draw(origin, destination, mMap, 0);
-            DrawRouteMaps.getInstance(this,this)
-                    .draw(destination, other, mMap, 1);
 
+        if (!callOneTimeLocation) {
+            DrawRouteMaps.getInstance(this,this,this)
+                    .draw(origin, destination, mMap, 0);
+            DrawRouteMaps.getInstance(this,this,this)
+                    .draw(destination, other, mMap, 1);
             DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.icon_delivery_person, "Current Location", 1, hashMap);
             DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.icon_pharmacy, "Destination Location", 0, hashMap);
             DrawMarker.getInstance(this).draw(mMap, other, R.drawable.icon_ordered_user, "Other Location", 0, hashMap);
@@ -110,12 +116,12 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
 
             Point displaySize = new Point();
             getWindowManager().getDefaultDisplay().getSize(displaySize);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, displaySize.x, 250, 30));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, displaySize.x, 300, 30));
             callOneTimeLocation = true;
         } else {
-//            DrawRouteMaps.getInstance(this,this)
+//            DrawRouteMaps.getInstance(this,this, this::onTaskDone)
 //                    .draw(origin, destination, mMap, 0);
-            DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.icon_delivery_person, "Current Location", 1, hashMap);
+//            DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.icon_delivery_person, "Current Location", 1, hashMap);
         }
     }
 
@@ -304,5 +310,12 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
 
     @Override
     public void onDirectionApi(int colorFlag, JSONArray jsonArray) {
+    }
+
+    @Override
+    public void onTaskDone(Object... values) {
+//        if (currentPolyline != null)
+//            currentPolyline.remove();
+//        currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
     }
 }

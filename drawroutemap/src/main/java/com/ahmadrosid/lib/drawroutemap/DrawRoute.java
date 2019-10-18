@@ -25,11 +25,13 @@ public class DrawRoute extends AsyncTask<String, Void, String> {
     private GoogleMap mMap;
     private int colorFlag;
     private DirectionApiCallback directionApiCallback;
+    private TaskLoadedCallback taskLoadedCallback;
 
-    public DrawRoute(GoogleMap mMap, int colorFlag, DirectionApiCallback directionApiCallback) {
+    public DrawRoute(GoogleMap mMap, int colorFlag, DirectionApiCallback directionApiCallback, TaskLoadedCallback taskLoadedCallback) {
         this.mMap = mMap;
         this.colorFlag = colorFlag;
         this.directionApiCallback = directionApiCallback;
+        this.taskLoadedCallback = taskLoadedCallback;
     }
 
     @Override
@@ -47,7 +49,7 @@ public class DrawRoute extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-        RouteDrawerTask routeDrawerTask = new RouteDrawerTask(mMap, colorFlag, directionApiCallback);
+        RouteDrawerTask routeDrawerTask = new RouteDrawerTask(mMap, colorFlag, directionApiCallback, taskLoadedCallback);
         routeDrawerTask.execute(result);
     }
 
