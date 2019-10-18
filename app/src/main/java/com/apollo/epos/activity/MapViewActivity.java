@@ -10,6 +10,7 @@ import android.location.LocationListener;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
@@ -37,7 +38,9 @@ import org.json.JSONArray;
 
 import java.util.HashMap;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MapViewActivity extends BaseActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, DirectionApiCallback {
@@ -51,6 +54,8 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     private static final long FASTEST_INTERVAL = 1000 * 5;
     private HashMap<Integer, Marker> hashMap = new HashMap<>();
     private boolean callOneTimeLocation;
+    @BindView(R.id.close_activity_img)
+    protected ImageView closeActivityImg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -304,5 +309,11 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
 
     @Override
     public void onDirectionApi(int colorFlag, JSONArray jsonArray) {
+    }
+
+    @OnClick(R.id.close_activity_img)
+    void onMapCloseClick(){
+        finish();
+        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
     }
 }

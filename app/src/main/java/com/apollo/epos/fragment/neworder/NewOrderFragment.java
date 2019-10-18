@@ -33,6 +33,8 @@ import androidx.transition.Slide;
 import androidx.transition.Transition;
 import androidx.transition.TransitionManager;
 
+import com.ahmadrosid.lib.drawroutemap.DirectionApiCallback;
+import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
 import com.apollo.epos.R;
 import com.apollo.epos.activity.MapViewActivity;
 import com.apollo.epos.activity.NavigationActivity;
@@ -61,6 +63,7 @@ import butterknife.OnClick;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.Context.LOCATION_SERVICE;
+import static com.google.android.gms.internal.zzahn.runOnUiThread;
 
 public class NewOrderFragment extends Fragment implements DirectionApiCallback {
     private Activity mActivity;
@@ -473,17 +476,13 @@ public class NewOrderFragment extends Fragment implements DirectionApiCallback {
                         for (i = 0; i <= 100; i++) {
                             runOnUiThread(() -> {
                                 if (colorFlag == 0) {
-
                                     deliveryPharmTxt.setText(finalRemoving + "");
                                 } else if (colorFlag == 1) {
                                     deliveryUserTxt.setText(finalRemoving + "");
                                 } else if (colorFlag == 2) {
                                     totalDistanceTxt.setText("Total distance is " + finalRemoving + "KM from your location and expected time is 35mins.");
                                 }
-
                             });
-
-
                             sleep(500);
                         }
                     } catch (InterruptedException e) {

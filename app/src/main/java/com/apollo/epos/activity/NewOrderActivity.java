@@ -2,8 +2,11 @@ package com.apollo.epos.activity;
 
 import android.Manifest;
 import android.animation.LayoutTransition;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,12 +35,22 @@ import androidx.transition.Slide;
 import androidx.transition.Transition;
 import androidx.transition.TransitionManager;
 
+import com.ahmadrosid.lib.drawroutemap.DirectionApiCallback;
+import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
 import com.apollo.epos.R;
 import com.apollo.epos.adapter.CustomReasonAdapter;
+import com.apollo.epos.dialog.DialogManager;
 import com.apollo.epos.fragment.deliveryorder.DeliveryOrderFragment;
+import com.apollo.epos.listeners.DialogMangerCallback;
 import com.apollo.epos.model.OrderItemModel;
+import com.apollo.epos.service.GPSLocationService;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -46,7 +59,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class NewOrderActivity extends AppCompatActivity {
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static com.google.android.gms.internal.zzahn.runOnUiThread;
+
+public class NewOrderActivity extends AppCompatActivity implements DirectionApiCallback {
     @BindView(R.id.items_view_image)
     protected ImageView itemsViewImage;
     @BindView(R.id.items_view_layout)
@@ -66,6 +82,15 @@ public class NewOrderActivity extends AppCompatActivity {
     protected ImageView userContactNumber;
     private boolean isContactingToUser = false;
     private static final int ACTIVITY_CHANGE = 10;
+    @BindView(R.id.map_view_layout)
+    protected LinearLayout mapViewLayout;
+    @BindView(R.id.delivery_pharm_txt)
+    protected TextView deliveryPharmTxt;
+    @BindView(R.id.delivery_user_txt)
+    protected TextView deliveryUserTxt;
+    @BindView(R.id.total_distance_txt)
+    protected TextView totalDistanceTxt;
+    private final int REQ_LOC_PERMISSION = 5002;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +118,11 @@ public class NewOrderActivity extends AppCompatActivity {
         Animation RightSwipe = AnimationUtils.loadAnimation(this, R.anim.right_swipe);
         orderDeliveryTimeLayout.startAnimation(RightSwipe);
 
+        mapViewLayout.setOnClickListener(v -> {
+            gotoMapActivity();
+        });
+
+        getCurrentLocation();
 
 //        sheetBehavior = BottomSheetBehavior.from(layoutBottomSheet);
 //
@@ -126,6 +156,26 @@ public class NewOrderActivity extends AppCompatActivity {
 //
 //            }
 //        });
+    }
+
+    private void getCurrentLocation() {
+        GPSLocationService gps = new GPSLocationService(this);
+        if (gps.canGetLocation()) {
+
+            LatLng origin = new LatLng(gps.getLatitude(), gps.getLongitude());
+
+            LatLng destination = new LatLng(17.4410197, 78.3788463);
+            LatLng other = new LatLng(17.4411128, 78.3827845);
+
+            DrawRouteMaps.getInstance(this, this)
+                    .draw(origin, destination, null, 0);
+            DrawRouteMaps.getInstance(this, this)
+                    .draw(destination, other, null, 1);
+            DrawRouteMaps.getInstance(this, this)
+                    .draw(origin, other, null, 2);
+        } else {
+            gps.showSettingsAlert();
+        }
     }
 
     ArrayList<OrderItemModel> medicineList = new ArrayList<>();
@@ -296,6 +346,160 @@ public class NewOrderActivity extends AppCompatActivity {
                     overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
                 }
             }
+        }
+    }
+
+    private boolean checkForLocPermission() {
+        if (android.os.Build.VERSION.SDK_INT >= 23) {
+            return ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        } else {
+            return true;
+        }
+    }
+
+    private void requestForLocPermission(final int reqCode) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, ACCESS_FINE_LOCATION)) {
+
+            // Show an explanation to the user *asynchronously* -- don't block
+            // this thread waiting for the user's response! After the user
+            // sees the explanation, try again to request the permission.
+            DialogManager.showSingleBtnPopup(this, new DialogMangerCallback() {
+                @Override
+                public void onOkClick(View v) {
+                    ActivityCompat.requestPermissions(NewOrderActivity.this,
+                            new String[]{ACCESS_FINE_LOCATION},
+                            reqCode);
+                }
+
+                @Override
+                public void onCancelClick(View view) {
+
+                }
+            }, getString(R.string.app_name), getString(R.string.locationPermissionMsg), getString(R.string.ok));
+        } else {
+
+            // No explanation needed, we can request the permission.
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{ACCESS_FINE_LOCATION},
+                    reqCode);
+
+            // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+            // app-defined int constant. The callback method gets the
+            // result of the request.
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQ_LOC_PERMISSION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    gotoMapActivity();
+
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    DialogManager.showToast(this, getString(R.string.noAccessTo));
+                }
+            }
+            break;
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
+    private void gotoMapActivity() {
+        if (checkForLocPermission()) {
+            if (checkGPSOn(this)) {
+                Intent intent = new Intent(this, MapViewActivity.class);
+                startActivity(intent);
+            } else {
+                showGPSDisabledAlertToUser(this);
+            }
+        } else {
+            requestForLocPermission(REQ_LOC_PERMISSION);
+            return;
+        }
+    }
+
+    public boolean checkGPSOn(Context context) {
+        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+    }
+
+    public void showGPSDisabledAlertToUser(Context context) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setTitle(getString(R.string.alert));
+        alertDialogBuilder.setMessage(getString(R.string.permission_gps_bogy))
+                .setCancelable(false)
+                .setPositiveButton(getString(R.string.open_settings),
+                        (dialog, id) -> {
+                            Intent callGPSSettingIntent = new Intent(
+                                    android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            startActivity(callGPSSettingIntent);
+                        });
+        alertDialogBuilder.setNegativeButton(getString(R.string.cancel),
+                (dialog, id) -> dialog.cancel());
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (GPSLocationService.isFromSetting == true) {
+            GPSLocationService.isFromSetting = false;
+        }
+    }
+
+    @Override
+    public void onDirectionApi(int colorFlag, JSONArray v) {
+        String distance;
+        float removing = 0;
+        try {
+            if(v != null) {
+                distance = ((JSONObject) v.get(0)).getJSONObject("distance").getString("text");
+                removing = Float.parseFloat(distance.replace("\"", "").replace("km", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        float finalRemoving = removing;
+        if(finalRemoving != 0) {
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    float i;
+                    try {
+                        for (i = 0; i <= 100; i++) {
+                            runOnUiThread(() -> {
+                                if (colorFlag == 0) {
+                                    deliveryPharmTxt.setText(finalRemoving + "");
+                                } else if (colorFlag == 1) {
+                                    deliveryUserTxt.setText(finalRemoving + "");
+                                } else if (colorFlag == 2) {
+                                    totalDistanceTxt.setText("Total distance is " + finalRemoving + "KM from your location and expected time is 35mins.");
+                                }
+                            });
+                            sleep(500);
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            thread.start();
         }
     }
 }

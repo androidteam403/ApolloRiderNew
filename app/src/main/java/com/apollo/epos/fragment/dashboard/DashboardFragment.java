@@ -56,6 +56,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.MPPointF;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import butterknife.BindColor;
 import butterknife.BindView;
@@ -551,8 +552,10 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
     private void gotoOrderFragment() {
         if (checkForLocPermission()) {
             if (checkGPSOn(mActivity)) {
-                ((NavigationActivity) Objects.requireNonNull(mActivity)).showFragment(new NewOrderFragment(), R.string.menu_take_order);
-                ((NavigationActivity) Objects.requireNonNull(mActivity)).updateSelection(-1);
+                Intent intent = new Intent(mActivity, NewOrderActivity.class);
+                startActivityForResult(intent, ACTIVITY_CHANGE);
+//                ((NavigationActivity) Objects.requireNonNull(mActivity)).showFragment(new NewOrderFragment(), R.string.menu_take_order);
+//                ((NavigationActivity) Objects.requireNonNull(mActivity)).updateSelection(-1);
             } else {
                 showGPSDisabledAlertToUser(mActivity);
             }
@@ -564,7 +567,6 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
 
     public boolean checkGPSOn(Context context) {
         LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
     }
