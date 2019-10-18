@@ -518,13 +518,15 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
 
     @Override
     public void onConnect() {
+//        ActivityUtils.hideDialog();
+//        DialogManager.showToast(NewOrderActivity.this, "Network Connected");
         getCurrentLocation();
-        ActivityUtils.hideDialog();
     }
 
     @Override
     public void onDisconnect() {
-        ActivityUtils.showDialog(NewOrderActivity.this, "Getting Location");
+//        ActivityUtils.showDialog(NewOrderActivity.this, "Getting Location");
+        DialogManager.showToast(NewOrderActivity.this, getString(R.string.no_interent));
     }
 
     @Override

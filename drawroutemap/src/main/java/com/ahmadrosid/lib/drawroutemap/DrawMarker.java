@@ -55,6 +55,7 @@ public class DrawMarker {
 
             hashMap.put(load, marker);
         }
+
     }
 
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
