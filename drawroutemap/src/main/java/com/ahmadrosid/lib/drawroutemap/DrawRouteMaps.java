@@ -19,17 +19,19 @@ public class DrawRouteMaps {
     private static DrawRouteMaps instance;
     private Context context;
     private DirectionApiCallback directionApiCallback;
+    private TaskLoadedCallback taskLoadedCallback;
 
-    public static DrawRouteMaps getInstance(Context context, DirectionApiCallback directionApiCallback) {
+    public static DrawRouteMaps getInstance(Context context, DirectionApiCallback directionApiCallback, TaskLoadedCallback taskLoadedCallback) {
         instance = new DrawRouteMaps();
         instance.context = context;
         instance.directionApiCallback = directionApiCallback;
+        instance.taskLoadedCallback = taskLoadedCallback;
         return instance;
     }
 
     public DrawRouteMaps draw(LatLng origin, LatLng destination, GoogleMap googleMap, int colorFlag){
         String url_route = FetchUrl.getUrl(origin, destination);
-        DrawRoute drawRoute = new DrawRoute(googleMap, colorFlag, directionApiCallback);
+        DrawRoute drawRoute = new DrawRoute(googleMap, colorFlag, directionApiCallback, taskLoadedCallback);
         drawRoute.execute(url_route);
         return instance;
     }

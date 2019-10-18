@@ -30,11 +30,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.apollo.epos.R;
-import com.apollo.epos.activity.NavigationActivity;
-import com.apollo.epos.dialog.DialogManager;
-import com.apollo.epos.fragment.neworder.NewOrderFragment;
-import com.apollo.epos.listeners.DialogMangerCallback;
 import com.apollo.epos.activity.NewOrderActivity;
+import com.apollo.epos.dialog.DialogManager;
+import com.apollo.epos.listeners.DialogMangerCallback;
+import com.apollo.epos.service.NetworkUtils;
 import com.apollo.epos.utils.XYMarkerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -56,7 +55,6 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.MPPointF;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import butterknife.BindColor;
 import butterknife.BindView;
@@ -552,10 +550,15 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
     private void gotoOrderFragment() {
         if (checkForLocPermission()) {
             if (checkGPSOn(mActivity)) {
-                Intent intent = new Intent(mActivity, NewOrderActivity.class);
-                startActivityForResult(intent, ACTIVITY_CHANGE);
+                if (NetworkUtils.isNetworkConnected(mActivity)) {
+                    Intent intent = new Intent(mActivity, NewOrderActivity.class);
+                    startActivityForResult(intent, ACTIVITY_CHANGE);
 //                ((NavigationActivity) Objects.requireNonNull(mActivity)).showFragment(new NewOrderFragment(), R.string.menu_take_order);
 //                ((NavigationActivity) Objects.requireNonNull(mActivity)).updateSelection(-1);
+
+                } else {
+                    DialogManager.showToast(mActivity, getString(R.string.no_interent));
+                }
             } else {
                 showGPSDisabledAlertToUser(mActivity);
             }
@@ -591,11 +594,11 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == ACTIVITY_CHANGE){
-            if(data != null){
+        if (requestCode == ACTIVITY_CHANGE) {
+            if (data != null) {
                 boolean isOrderCompleted = Boolean.parseBoolean(data.getStringExtra("OrderCompleted"));
-                if(isOrderCompleted){
-                  Log.e("DashboardFrag", "Order Completed Successful");
+                if (isOrderCompleted) {
+                    Log.e("DashboardFrag", "Order Completed Successful");
                 }
             }
         }

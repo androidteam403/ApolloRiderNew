@@ -35,6 +35,7 @@ import androidx.transition.TransitionManager;
 
 import com.ahmadrosid.lib.drawroutemap.DirectionApiCallback;
 import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
+import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.R;
 import com.apollo.epos.activity.MapViewActivity;
 import com.apollo.epos.activity.NavigationActivity;
@@ -65,7 +66,7 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.Context.LOCATION_SERVICE;
 import static com.google.android.gms.internal.zzahn.runOnUiThread;
 
-public class NewOrderFragment extends Fragment implements DirectionApiCallback {
+public class NewOrderFragment extends Fragment implements DirectionApiCallback, TaskLoadedCallback {
     private Activity mActivity;
     @BindView(R.id.items_view_image)
     protected ImageView itemsViewImage;
@@ -96,6 +97,8 @@ public class NewOrderFragment extends Fragment implements DirectionApiCallback {
 
     private final int REQ_LOC_PERMISSION = 5002;
     private boolean isContactingToUser = false;
+    private float firstTime = 0;
+    private float secondTime = 0;
 
     public static NewOrderFragment newInstance() {
         return new NewOrderFragment();
@@ -139,12 +142,10 @@ public class NewOrderFragment extends Fragment implements DirectionApiCallback {
             LatLng destination = new LatLng(17.4410197, 78.3788463);
             LatLng other = new LatLng(17.4411128, 78.3827845);
 
-            DrawRouteMaps.getInstance(mActivity, this)
+            DrawRouteMaps.getInstance(mActivity, this, this::onTaskDone)
                     .draw(origin, destination, null, 0);
-            DrawRouteMaps.getInstance(mActivity, this)
+            DrawRouteMaps.getInstance(mActivity, this, this::onTaskDone)
                     .draw(destination, other, null, 1);
-            DrawRouteMaps.getInstance(mActivity, this)
-                    .draw(origin, other, null, 2);
         } else {
             gps.showSettingsAlert();
         }
@@ -455,18 +456,22 @@ public class NewOrderFragment extends Fragment implements DirectionApiCallback {
 
     @Override
     public void onDirectionApi(int colorFlag, JSONArray v) {
-        String distance;
+        String distance, time;
         float removing = 0;
+        float removingTime = 0;
         try {
             if(v != null) {
                 distance = ((JSONObject) v.get(0)).getJSONObject("distance").getString("text");
+                time = ((JSONObject) v.get(0)).getJSONObject("duration").getString("text");
                 removing = Float.parseFloat(distance.replace("\"", "").replace("km", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
+                removingTime = Float.parseFloat(time.replace("\"", "").replace("mins", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
             }
             } catch (JSONException e) {
             e.printStackTrace();
         }
 
         float finalRemoving = removing;
+        float finalTime = removingTime;
         if(finalRemoving != 0) {
             Thread thread = new Thread() {
                 @Override
@@ -477,10 +482,16 @@ public class NewOrderFragment extends Fragment implements DirectionApiCallback {
                             runOnUiThread(() -> {
                                 if (colorFlag == 0) {
                                     deliveryPharmTxt.setText(finalRemoving + "");
+                                    firstTime = finalTime;
                                 } else if (colorFlag == 1) {
                                     deliveryUserTxt.setText(finalRemoving + "");
-                                } else if (colorFlag == 2) {
-                                    totalDistanceTxt.setText("Total distance is " + finalRemoving + "KM from your location and expected time is 35mins.");
+                                    secondTime = finalTime;
+                                }
+                                if (!deliveryPharmTxt.getText().toString().isEmpty() && !deliveryUserTxt.getText().toString().isEmpty() && firstTime != 0 && secondTime != 0) {
+                                    float finalDistance = Float.parseFloat(deliveryPharmTxt.getText().toString()) + Float.parseFloat(deliveryUserTxt.getText().toString());
+                                    float lastTime = firstTime + secondTime;
+                                    totalDistanceTxt.setText("Total distance is " + finalDistance + "KM from your location and expected time is " + lastTime + "mins.");
+
                                 }
                             });
                             sleep(500);
@@ -492,5 +503,10 @@ public class NewOrderFragment extends Fragment implements DirectionApiCallback {
             };
             thread.start();
         }
+    }
+
+    @Override
+    public void onTaskDone(Object... values) {
+
     }
 }

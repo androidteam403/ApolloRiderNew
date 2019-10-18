@@ -46,7 +46,7 @@ public class DrawMarker {
 
         if (load != 0 && hashMap.containsKey(1)) {
             Marker marker = hashMap.get(load);
-            marker.setPosition(location); // Update your marker
+            marker.setPosition(location);// Update your marker
         } else {
             marker = googleMap.addMarker(new MarkerOptions()
                     .position(location)

@@ -205,4 +205,8 @@
     <string name="gps">Please enable GPS to continue</string>
     <string name="cancel">Cancel</string>
 
+
+
+    <string name="no_interent">Please Check Your Network Connection</string>
+
 </resources>
