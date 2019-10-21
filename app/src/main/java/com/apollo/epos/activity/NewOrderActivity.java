@@ -463,6 +463,9 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
             thread.start();
         }
         ActivityUtils.hideDialog();
+
+        Animation RightSwipe = AnimationUtils.loadAnimation(this, R.anim.right_swipe);
+        orderDeliveryTimeLayout.startAnimation(RightSwipe);
     }
 
 

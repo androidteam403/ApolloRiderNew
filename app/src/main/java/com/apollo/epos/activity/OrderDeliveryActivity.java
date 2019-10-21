@@ -204,6 +204,8 @@ public class OrderDeliveryActivity extends AppCompatActivity implements AdapterV
     protected LinearLayout animAddressReachedLayout;
     @BindView(R.id.user_contact_number)
     protected ImageView userContactNumber;
+    @BindView(R.id.finish_activity_img)
+    protected ImageView finishActivityImg;
 
     String[] cancelReasons = {"Select from predefined statements", "Taken leave", "Not feeling well", "Soo far from my current location"};
     String[] customerTypesList = {"Customer", "Other"};
@@ -219,6 +221,8 @@ public class OrderDeliveryActivity extends AppCompatActivity implements AdapterV
     @BindView(R.id.map_view_layout)
     protected LinearLayout mapViewLayout;
     private final int REQ_LOC_PERMISSION = 5002;
+    private boolean isPharmacyLoc = false;
+    private boolean isDestinationLoc = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -855,16 +859,35 @@ public class OrderDeliveryActivity extends AppCompatActivity implements AdapterV
         return super.onOptionsItemSelected(item);
     }
 
-    @OnClick(R.id.map_view_layout)
-    void onMapClick(){
-        gotoMapActivity();
+    @OnClick(R.id.finish_activity_img)
+    void onFinishActivityClick() {
+        finish();
+        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
     }
 
-    private void gotoMapActivity() {
+    @OnClick(R.id.pharmacy_map_view_img)
+    void onPharmaMapImgClick() {
+        isPharmacyLoc = true;
+        isDestinationLoc = false;
+        gotoTrackMapActivity("Pharmacy", 17.4410197, 78.3788463);
+    }
+
+    @OnClick(R.id.map_view_layout)
+    void onMapClick() {
+        isPharmacyLoc = false;
+        isDestinationLoc = true;
+        gotoTrackMapActivity("Destination", 17.4411128, 78.3827845);
+    }
+
+    private void gotoTrackMapActivity(String locType, double latitude, double longitude) {
         if (checkForLocPermission()) {
             if (checkGPSOn(this)) {
-                Intent intent = new Intent(this, MapViewActivity.class);
+                Intent intent = new Intent(this, TrackMapActivity.class);
+                intent.putExtra("locType", locType);
+                intent.putExtra("Lat", latitude);
+                intent.putExtra("Lon", longitude);
                 startActivity(intent);
+                overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
             } else {
                 showGPSDisabledAlertToUser(this);
             }
@@ -914,16 +937,13 @@ public class OrderDeliveryActivity extends AppCompatActivity implements AdapterV
 
     private void requestForLocPermission(final int reqCode) {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, ACCESS_FINE_LOCATION)) {
-
             // Show an explanation to the user *asynchronously* -- don't block
             // this thread waiting for the user's response! After the user
             // sees the explanation, try again to request the permission.
             DialogManager.showSingleBtnPopup(this, new DialogMangerCallback() {
                 @Override
                 public void onOkClick(View v) {
-                    ActivityCompat.requestPermissions(OrderDeliveryActivity.this,
-                            new String[]{ACCESS_FINE_LOCATION},
-                            reqCode);
+                    ActivityCompat.requestPermissions(OrderDeliveryActivity.this, new String[]{ACCESS_FINE_LOCATION}, reqCode);
                 }
 
                 @Override
@@ -932,13 +952,8 @@ public class OrderDeliveryActivity extends AppCompatActivity implements AdapterV
                 }
             }, getString(R.string.app_name), getString(R.string.locationPermissionMsg), getString(R.string.ok));
         } else {
-
             // No explanation needed, we can request the permission.
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{ACCESS_FINE_LOCATION},
-                    reqCode);
-
+            ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION}, reqCode);
             // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
             // app-defined int constant. The callback method gets the
             // result of the request.
@@ -954,11 +969,13 @@ public class OrderDeliveryActivity extends AppCompatActivity implements AdapterV
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-                    gotoMapActivity();
-
+                    if (isPharmacyLoc) {
+                        gotoTrackMapActivity("Pharmacy", 17.4410197, 78.3788463);
+                    } else if (isDestinationLoc) {
+                        gotoTrackMapActivity("Destination", 17.4411128, 78.3827845);
+                    }
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.

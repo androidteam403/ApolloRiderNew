@@ -3,18 +3,19 @@ package com.apollo.epos.activity;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.location.Criteria;
+import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
@@ -23,10 +24,8 @@ import androidx.core.content.ContextCompat;
 import com.ahmadrosid.lib.drawroutemap.DirectionApiCallback;
 import com.ahmadrosid.lib.drawroutemap.DrawMarker;
 import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
-import com.ahmadrosid.lib.drawroutemap.ProgressLoadedCallback;
 import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.R;
-import com.apollo.epos.dialog.DialogManager;
 import com.apollo.epos.utils.ActivityUtils;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
@@ -50,15 +49,18 @@ import com.novoda.merlin.Merlin;
 import com.novoda.merlin.NetworkStatus;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MapViewActivity extends BaseActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener, DirectionApiCallback, TaskLoadedCallback, Connectable, Disconnectable, BindableInterface, ProgressLoadedCallback {
+public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, DirectionApiCallback, TaskLoadedCallback, Connectable, Disconnectable, BindableInterface {
 
     private GoogleMap mMap;
     private final int REQ_LOC_PERMISSION = 123;
@@ -71,10 +73,16 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     private boolean callOneTimeLocation;
     @BindView(R.id.close_activity_img)
     protected ImageView closeActivityImg;
-    private Polyline currentPolyline, secondPolyline;
-    private LatLng origin, destination, other;
-    @BindView(R.id.follow_google_map)
-    protected Button followGoogleMap;
+    private String locType;
+    private double latitude, longitude;
+    private double currentLat, currentLon;
+    @BindView(R.id.travel_info_layout)
+    protected LinearLayout travelInfoLayout;
+    @BindView(R.id.travel_distance)
+    protected TextView travelDistance;
+    @BindView(R.id.travel_time)
+    protected TextView travelTime;
+    private Polyline currentPolyline;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,12 +91,16 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         setContentView(R.layout.activity_map_view);
         ButterKnife.bind(this);
 
-        ActivityUtils.showDialog(MapViewActivity.this, "Getting Location");
-
-        followGoogleMap.setVisibility(View.GONE);
+        travelInfoLayout.setVisibility(View.VISIBLE);
+        Intent intent = getIntent();
+        if (intent != null) {
+            locType = Objects.requireNonNull(intent.getExtras()).getString("locType");
+            latitude = intent.getExtras().getDouble("Lat");
+            longitude = intent.getExtras().getDouble("Lon");
+        }
 
 //show error dialog if GoolglePlayServices not available
-        if (ActivityUtils.checkPlayServices(MapViewActivity.this)) {
+        if (ActivityUtils.checkPlayServices(TrackMapActivity.this)) {
             buildGoogleApiClient();
         }
         createLocRequest();
@@ -100,8 +112,8 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         mMap = googleMap;
         mMap.setPadding(0, 0, 0, 80);
         mMap.clear();
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(MapViewActivity.this,
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(TrackMapActivity.this,
                     Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 //Location Permission already granted
@@ -115,47 +127,28 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
             GoogleClientBuild();
 //            mGoogleMap.setMyLocationEnabled(true);
         }
-
-        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        String provider = locationManager.getBestProvider(criteria, true);
-        Location location = locationManager.getLastKnownLocation(provider);
-
-        if (origin == null && destination == null && other == null) {
-            if (location != null) {
-                double latitude = location.getLatitude();
-                double longitude = location.getLongitude();
-                LatLng latLng = new LatLng(latitude, longitude);
-//            myPosition = new LatLng(latitude, longitude);
-
-
-                LatLng coordinate = new LatLng(latitude, longitude);
-                CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(coordinate, 19);
-                mMap.animateCamera(yourLocation);
-            }
-
-        }
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        origin = new LatLng(location.getLatitude(), location.getLongitude());
-        destination = new LatLng(17.4410197, 78.3788463);
-        other = new LatLng(17.4411128, 78.3827845);
+        LatLng origin = new LatLng(location.getLatitude(), location.getLongitude());
+        currentLat = location.getLatitude();
+        currentLon = location.getLongitude();
+        LatLng destination = new LatLng(latitude, longitude);
 
-        DrawRouteMaps.getInstance(this, this, this)
-                .draw(origin, destination, mMap, 0);
-        DrawRouteMaps.getInstance(this, this, this)
-                .draw(destination, other, mMap, 1);
         DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.location_current, "Current Location", 1, hashMap);
-        DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_pharmacy, "Destination Location", 0, hashMap);
-        DrawMarker.getInstance(this).draw(mMap, other, R.drawable.location_destination, "Other Location", 0, hashMap);
+        if (locType.equalsIgnoreCase("Pharmacy")) {
+            DrawRouteMaps.getInstance(this, this, this).draw(origin, destination, mMap, 0);
+            DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_pharmacy, "Pharmacy Location", 0, hashMap);
+        } else if (locType.equalsIgnoreCase("Destination")) {
+            DrawRouteMaps.getInstance(this, this, this).draw(origin, destination, mMap, 1);
+            DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_destination, "Destination Location", 0, hashMap);
+        }
 
         if (!callOneTimeLocation) {
             LatLngBounds bounds = new LatLngBounds.Builder()
                     .include(origin)
-                    .include(destination)
-                    .include(other).build();
+                    .include(destination).build();
 
             int width = getResources().getDisplayMetrics().widthPixels;
             int height = getResources().getDisplayMetrics().heightPixels;
@@ -171,9 +164,8 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         ActivityUtils.hideDialog();
     }
 
-
     private synchronized void GoogleClientBuild() {
-        mGoogleApiClient = new GoogleApiClient.Builder(MapViewActivity.this).addApi(LocationServices.API).
+        mGoogleApiClient = new GoogleApiClient.Builder(TrackMapActivity.this).addApi(LocationServices.API).
                 addConnectionCallbacks(this).
                 addApi(AppIndex.API).
                 addApi(AppIndex.API).
@@ -184,7 +176,6 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         mLocationRequest = new LocationRequest().setInterval(INTERVAL)
                 .setFastestInterval(FASTEST_INTERVAL)
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
     }
 
     @Override
@@ -201,7 +192,7 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     private void checkPermission() {
         int checkSelf = ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
         if (checkSelf != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(MapViewActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(TrackMapActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQ_LOC_PERMISSION);
                 }
@@ -219,11 +210,9 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-
             // Should we show an explanation?
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
-
                     // Show an explanation to the user *asynchronously* -- don't block
                     // this thread waiting for the user's response! After the user
                     // sees the explanation, try again to request the permission.
@@ -255,48 +244,41 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
             case REQ_LOC_PERMISSION:
             case MY_PERMISSIONS_REQUEST_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay! Do the
                     // location-related task you need to do.
                     if (ContextCompat.checkSelfPermission(getApplicationContext(),
-                            Manifest.permission.ACCESS_FINE_LOCATION)
-                            == PackageManager.PERMISSION_GRANTED) {
-
+                            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                         if (mGoogleApiClient != null) {
                             mGoogleApiClient.connect();
                         } else {
                             buildGoogleApiClient();
                             mGoogleApiClient.connect();
                         }
-
                         initializeMap();
                     }
                 } else {
-
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                     Toast.makeText(getApplicationContext(), "permission denied", Toast.LENGTH_LONG).show();
                 }
                 return;
             }
-
             // other 'case' lines to check for other
             // permissions this app might request
         }
     }
 
-
     private void initializeMap() {
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map_view);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_view);
         mapFragment.getMapAsync(this);
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-        mGoogleApiClient.connect();
+        if (i == 1) {
+            mGoogleApiClient.connect();
+        }
     }
 
     @Override
@@ -310,7 +292,7 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
         }
-        ActivityUtils.showDialog(MapViewActivity.this, "Getting Location");
+        ActivityUtils.showDialog(TrackMapActivity.this, "Getting Location");
     }
 
     @Override
@@ -319,7 +301,6 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
         }
-
         registerConnectable(this);
         registerDisconnectable(this);
         registerBindable(this);
@@ -362,28 +343,68 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
 
     @Override
     public void onDirectionApi(int colorFlag, JSONArray jsonArray) {
-    }
+        String distance, time;
+        float removing = 0;
+        float removingTime = 0;
+        try {
+            if (jsonArray != null) {
+                distance = ((JSONObject) jsonArray.get(0)).getJSONObject("distance").getString("text");
+                time = ((JSONObject) jsonArray.get(0)).getJSONObject("duration").getString("text");
+                removing = Float.parseFloat(distance.replace("\"", "").replace("km", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
+                removingTime = Float.parseFloat(time.replace("\"", "").replace("mins", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-    @Override
-    public Polyline onTaskDone(Object... values) {
-        if (currentPolyline != null)
-            currentPolyline.remove();
-        currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
-        return currentPolyline;
-    }
-
-    @Override
-    public Polyline onSecondTaskDone(Object... values) {
-        if (secondPolyline != null)
-            secondPolyline.remove();
-        secondPolyline = mMap.addPolyline((PolylineOptions) values[0]);
-        return secondPolyline;
+        float finalRemoving = removing;
+        float finalTime = removingTime;
+        if (finalRemoving != 0) {
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    float i;
+                    try {
+                        for (i = 0; i <= 100; i++) {
+                            runOnUiThread(() -> {
+                                travelDistance.setText("Travel Distance: " + finalRemoving + "KM");
+                                travelTime.setText("Travel Time: " + Math.round(finalTime) + "Mins.");
+                            });
+                            sleep(500);
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            thread.start();
+        }
     }
 
     @OnClick(R.id.close_activity_img)
     void onMapCloseClick() {
         finish();
         overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+    }
+
+    @OnClick(R.id.follow_google_map)
+    void onGoogleNavigationClick() {
+        String uri = "http://maps.google.com/maps?saddr=" + currentLat + "," + currentLon + "&daddr=" + latitude + "," + longitude;
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
+        intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+        startActivity(intent);
+    }
+
+    @Override
+    public Polyline onTaskDone(Object... values) {
+        if (currentPolyline != null)
+            currentPolyline.remove();
+      return currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+    }
+
+    @Override
+    public Polyline onSecondTaskDone(Object... values) {
+        return null;
     }
 
     @Override
@@ -404,18 +425,11 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
 
     @Override
     public void onConnect() {
-//        ActivityUtils.hideDialog();
-//        DialogManager.showToast(MapViewActivity.this, "Network Connected");
+        ActivityUtils.hideDialog();
     }
 
     @Override
     public void onDisconnect() {
-//        ActivityUtils.showDialog(MapViewActivity.this, "Getting Location");
-        DialogManager.showToast(MapViewActivity.this, getString(R.string.no_interent));
-    }
-
-    @Override
-    public void onTaskDone(boolean flag) {
-
+        ActivityUtils.showDialog(TrackMapActivity.this, "Getting Location");
     }
 }

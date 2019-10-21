@@ -57,6 +57,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".activity.TrackMapActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".activity.ScannerActivity"
             android:label="Scan Barcode"
             android:screenOrientation="portrait">
@@ -86,13 +90,6 @@
                 android:value=".activity.NavigationActivity" />
         </activity>
 
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBY57sFc1I5c5YMmQ7AhrazAhHZ6L8ccn8" />
-
-        <uses-library
-            android:name="org.apache.http.legacy"
-            android:required="false" />
         <activity
             android:name=".activity.CancelOrderActivity"
             android:label="Cancelling Order Items"
@@ -101,6 +98,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.NavigationActivity" />
         </activity>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBY57sFc1I5c5YMmQ7AhrazAhHZ6L8ccn8" />
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
 
     </application>
 
