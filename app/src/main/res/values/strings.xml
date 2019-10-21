@@ -123,7 +123,7 @@
     <string name="label_instruction_two">"Don't tilt the box, it should be handled as per the instructions on the box"</string>
     <string name="label_reject_reason_header">Write reason below for rejecting the order</string>
     <string name="label_send">SEND</string>
-    <string name="label_follow_map">FOLLOW MAP</string>
+    <string name="label_follow_map">Follow MAP</string>
     <string name="label_order_accepted">ACCEPTED</string>
     <string name="label_order_cancel">CANCEL ORDER</string>
     <string name="label_cancel_reason_header">Write reason below for cancel the order</string>

@@ -86,7 +86,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_dimen_13"
-                android:text="Travel Distance: "
+                android:text="Distance "
                 android:textColor="@color/colorWhite"
                 android:fontFamily="@font/roboto_regular"/>
 
@@ -96,23 +96,31 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_dimen_13"
-                android:text="Travel Time: "
+                android:text="Time "
                 android:textColor="@color/colorWhite"
                 android:fontFamily="@font/roboto_regular"/>
         </LinearLayout>
 
     </LinearLayout>
 
-    <fragment
-        android:id="@+id/map_view"
-        android:layout_below="@+id/header_layout"
+    <LinearLayout
+        android:id="@+id/map_view_child_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        class="com.google.android.gms.maps.SupportMapFragment"/>
+        android:layout_below="@+id/header_layout"
+        android:orientation="vertical">
+
+        <fragment
+            android:id="@+id/map_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            class="com.google.android.gms.maps.SupportMapFragment"/>
+    </LinearLayout>
+
 
     <View
         android:layout_width="match_parent"
-        android:layout_below="@+id/map_view"
+        android:layout_below="@+id/map_view_child_layout"
         android:layout_height="@dimen/one_dp"
         android:background="@color/colorBlack"/>
 
@@ -121,10 +129,11 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/forty_five_dp"
         android:layout_marginTop="@dimen/minus_forty_five_dp"
-        android:layout_below="@+id/map_view"
+        android:layout_below="@+id/map_view_child_layout"
         android:textColor="@color/colorWhite"
         android:fontFamily="@font/roboto_bold"
         android:textSize="@dimen/text_dimen_16"
+        android:textAllCaps="false"
         android:background="@drawable/btn_complaint_ripple_effect"
         android:text="@string/label_follow_map" />
 </RelativeLayout>

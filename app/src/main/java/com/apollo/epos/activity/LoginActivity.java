@@ -34,6 +34,7 @@ public class LoginActivity extends AppCompatActivity {
         Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
         startActivity(i);
         overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+        finish();
     }
 
     @OnClick(R.id.forgot_password_text)

@@ -93,5 +93,7 @@ dependencies {
 
     implementation project(path: ':core')
 
-
+    //SharedPref
+    implementation 'com.orhanobut:hawk:2.0.1'
+    implementation 'pub.devrel:easypermissions:1.0.1'
 }

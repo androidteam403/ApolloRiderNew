@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
+
+    <RelativeLayout
+        android:id="@+id/floatingChatButton"
+        android:layout_width="@dimen/fifty_five_dp"
+        android:layout_height="@dimen/fifty_five_dp"
+        android:layout_gravity="end"
+        android:layout_marginBottom="@dimen/one_hundred_dp"
+        android:layout_marginTop="@dimen/ten_dp"
+        android:layout_marginStart="@dimen/five_dp"
+        android:layout_marginEnd="@dimen/five_dp"
+        android:visibility="visible">
+
+        <ImageView
+            android:id="@+id/myButton1"
+            android:layout_width="@dimen/fifty_five_dp"
+            android:layout_height="@dimen/fifty_five_dp"
+            android:background="@drawable/apollo_circle_logo"
+            android:contentDescription="@string/app_name" />
+    </RelativeLayout>
+</LinearLayout>

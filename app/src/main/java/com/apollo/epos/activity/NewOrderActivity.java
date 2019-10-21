@@ -2,6 +2,7 @@ package com.apollo.epos.activity;
 
 import android.Manifest;
 import android.animation.LayoutTransition;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -43,6 +44,7 @@ import com.apollo.epos.adapter.CustomReasonAdapter;
 import com.apollo.epos.dialog.DialogManager;
 import com.apollo.epos.listeners.DialogMangerCallback;
 import com.apollo.epos.model.OrderItemModel;
+import com.apollo.epos.service.FloatingTouchService;
 import com.apollo.epos.service.GPSLocationService;
 import com.apollo.epos.service.NetworkUtils;
 import com.apollo.epos.utils.ActivityUtils;
@@ -54,6 +56,7 @@ import com.novoda.merlin.Connectable;
 import com.novoda.merlin.Disconnectable;
 import com.novoda.merlin.Merlin;
 import com.novoda.merlin.NetworkStatus;
+import com.orhanobut.hawk.Hawk;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -67,6 +70,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static com.apollo.epos.utils.AppConstants.LAST_ACTIVITY;
 
 public class NewOrderActivity extends BaseActivity implements DirectionApiCallback, TaskLoadedCallback, Connectable, Disconnectable, BindableInterface {
     @BindView(R.id.items_view_image)
@@ -126,6 +130,8 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
         mapViewLayout.setOnClickListener(v -> {
             gotoMapActivity();
         });
+
+        orderDeliveryTimeLayout.setVisibility(View.INVISIBLE);
 
         getCurrentLocation();
     }
@@ -476,7 +482,7 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
             thread.start();
         }
         ActivityUtils.hideDialog();
-        
+        orderDeliveryTimeLayout.setVisibility(View.VISIBLE);
         Animation RightSwipe = AnimationUtils.loadAnimation(this, R.anim.right_swipe);
         orderDeliveryTimeLayout.startAnimation(RightSwipe);
     }
@@ -489,17 +495,6 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
                 .withDisconnectableCallbacks()
                 .withBindableCallbacks()
                 .build(this);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (GPSLocationService.isFromSetting == true) {
-            GPSLocationService.isFromSetting = false;
-        }
-        registerConnectable(this);
-        registerDisconnectable(this);
-        registerBindable(this);
     }
 
     @Override
@@ -533,8 +528,33 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onResume() {
+        Hawk.put(LAST_ACTIVITY, getClass().getSimpleName());
+        super.onResume();
+        if (GPSLocationService.isFromSetting == true) {
+            GPSLocationService.isFromSetting = false;
+        }
+        registerConnectable(this);
+        registerDisconnectable(this);
+        registerBindable(this);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Intent intent = new Intent(NewOrderActivity.this, FloatingTouchService.class);
+        if (isMyServiceRunning(FloatingTouchService.class)) {
+            stopService(intent);
+        }
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -1,15 +1,17 @@
 package com.apollo.epos.activity;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.Typeface;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,7 +32,6 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.MenuItemCompat;
@@ -43,24 +44,22 @@ import com.apollo.epos.fragment.changepassword.ChangePasswordFragment;
 import com.apollo.epos.fragment.dashboard.DashboardFragment;
 import com.apollo.epos.fragment.help.HelpFragment;
 import com.apollo.epos.fragment.myorders.MyOrdersFragment;
-import com.apollo.epos.fragment.neworder.NewOrderFragment;
 import com.apollo.epos.fragment.notifications.NotificationsFragment;
 import com.apollo.epos.fragment.profile.ProfileFragment;
 import com.apollo.epos.fragment.takeneworder.TakeNewOrderFragment;
 import com.apollo.epos.model.NavDrawerModel;
+import com.apollo.epos.service.FloatingTouchService;
 import com.apollo.epos.utils.FragmentUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.navigation.NavigationView;
+import com.novoda.merlin.Merlin;
+import com.orhanobut.hawk.Hawk;
 
-import java.util.ArrayList;
-
-import butterknife.OnClick;
-
-import static com.apollo.epos.utils.ActivityUtils.getCurrentTime;
+import static com.apollo.epos.utils.AppConstants.LAST_ACTIVITY;
 import static com.apollo.epos.utils.FragmentUtils.TRANSITION_FROM_LEFT_TO_RIGHT;
 
-public class NavigationActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class NavigationActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
     Toolbar toolbar;
     LinearLayout linearLayout;
     ActionBarDrawerToggle toggle;
@@ -73,9 +72,16 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sample);
+        setContentView(R.layout.activity_navigation);
         instance = this;
         initCustomNavigationDrawer();
+
+        handleAssistiveTouchWindow();
+    }
+
+    @Override
+    protected Merlin createMerlin() {
+        return new Merlin.Builder().withConnectableCallbacks().withDisconnectableCallbacks().withBindableCallbacks().build(this);
     }
 
     public static NavigationActivity getInstance() {
@@ -388,6 +394,63 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
             if (isFinishingActivity) {
                 selectItem(3);
             }
+        }else if (requestCode == REQUEST_CODE) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (Settings.canDrawOverlays(this)) {
+                    Intent intent = new Intent(NavigationActivity.this, FloatingTouchService.class);
+                    if (isMyServiceRunning(FloatingTouchService.class)) {
+                        stopService(intent);
+                    } else {
+                        startService(intent);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        Hawk.put(LAST_ACTIVITY, getClass().getSimpleName());
+        super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Intent intent = new Intent(NavigationActivity.this, FloatingTouchService.class);
+        if (isMyServiceRunning(FloatingTouchService.class)) {
+            stopService(intent);
+        }
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public final static int REQUEST_CODE = 1234;
+    private void handleAssistiveTouchWindow() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (!Settings.canDrawOverlays(NavigationActivity.this)) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, REQUEST_CODE);
+            } else {
+                Intent intent = new Intent(NavigationActivity.this, FloatingTouchService.class);
+                if (!isMyServiceRunning(FloatingTouchService.class)) {
+                    startService(intent);
+                }
+            }
+        } else {
+            Intent intent = new Intent(NavigationActivity.this, FloatingTouchService.class);
+            if (isMyServiceRunning(FloatingTouchService.class))
+                stopService(intent);
+            else
+                startService(intent);
         }
     }
 }

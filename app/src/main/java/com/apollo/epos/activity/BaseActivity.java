@@ -20,6 +20,7 @@ import com.novoda.merlin.Connectable;
 import com.novoda.merlin.Disconnectable;
 import com.novoda.merlin.Logger;
 import com.novoda.merlin.Merlin;
+import com.orhanobut.hawk.Hawk;
 
 /**
  * Created by Rakesh on 14,October,2019
@@ -42,6 +43,7 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Hawk.init(getApplicationContext()).build();
         logHandle = new DemoLogHandle();
         merlin = createMerlin();
     }
@@ -268,5 +270,4 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
             Log.e(TAG, message[0].toString(), throwable);
         }
     }
-
 }

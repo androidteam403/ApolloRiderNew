@@ -2,6 +2,7 @@ package com.apollo.epos.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;
@@ -53,12 +54,15 @@ import com.apollo.epos.dialog.DialogManager;
 import com.apollo.epos.fragment.dashboard.DashboardFragment;
 import com.apollo.epos.fragment.neworder.NewOrderFragment;
 import com.apollo.epos.listeners.DialogMangerCallback;
+import com.apollo.epos.service.FloatingTouchService;
 import com.apollo.epos.service.GPSLocationService;
 import com.apollo.epos.utils.ActivityUtils;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.novoda.merlin.Merlin;
+import com.orhanobut.hawk.Hawk;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -72,8 +76,9 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static com.apollo.epos.utils.ActivityUtils.getCurrentTime;
 import static com.apollo.epos.utils.ActivityUtils.showLayoutDownAnimation;
 import static com.apollo.epos.utils.ActivityUtils.showTextDownAnimation;
+import static com.apollo.epos.utils.AppConstants.LAST_ACTIVITY;
 
-public class OrderDeliveryActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener,
+public class OrderDeliveryActivity extends BaseActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener,
         View.OnFocusChangeListener, View.OnKeyListener {
     @BindView(R.id.reached_store_layout)
     protected LinearLayout reachedStoreLayout;
@@ -927,14 +932,6 @@ public class OrderDeliveryActivity extends AppCompatActivity implements AdapterV
         alert.show();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (GPSLocationService.isFromSetting == true) {
-            GPSLocationService.isFromSetting = false;
-        }
-    }
-
     private void requestForLocPermission(final int reqCode) {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, ACCESS_FINE_LOCATION)) {
             // Show an explanation to the user *asynchronously* -- don't block
@@ -986,5 +983,38 @@ public class OrderDeliveryActivity extends AppCompatActivity implements AdapterV
             // other 'case' lines to check for other
             // permissions this app might request
         }
+    }
+
+    @Override
+    protected Merlin createMerlin() {
+        return new Merlin.Builder().withConnectableCallbacks().withDisconnectableCallbacks().withBindableCallbacks().build(this);
+    }
+
+    @Override
+    protected void onResume() {
+        Hawk.put(LAST_ACTIVITY, getClass().getSimpleName());
+        super.onResume();
+        if (GPSLocationService.isFromSetting == true) {
+            GPSLocationService.isFromSetting = false;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Intent intent = new Intent(OrderDeliveryActivity.this, FloatingTouchService.class);
+        if (isMyServiceRunning(FloatingTouchService.class)) {
+            stopService(intent);
+        }
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

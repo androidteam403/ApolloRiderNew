@@ -1,8 +1,11 @@
 package com.apollo.epos.activity;
 
 import android.Manifest;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -24,6 +27,7 @@ import com.ahmadrosid.lib.drawroutemap.ProgressLoadedCallback;
 import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.R;
 import com.apollo.epos.dialog.DialogManager;
+import com.apollo.epos.service.FloatingTouchService;
 import com.apollo.epos.service.GPSLocationService;
 import com.apollo.epos.utils.ActivityUtils;
 import com.google.android.gms.appindexing.AppIndex;
@@ -46,6 +50,7 @@ import com.novoda.merlin.Connectable;
 import com.novoda.merlin.Disconnectable;
 import com.novoda.merlin.Merlin;
 import com.novoda.merlin.NetworkStatus;
+import com.orhanobut.hawk.Hawk;
 
 import org.json.JSONArray;
 
@@ -54,6 +59,8 @@ import java.util.HashMap;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.apollo.epos.utils.AppConstants.LAST_ACTIVITY;
 
 public class MapViewActivity extends BaseActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, DirectionApiCallback, TaskLoadedCallback, Connectable, Disconnectable, BindableInterface, ProgressLoadedCallback {
@@ -291,20 +298,6 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if (mGoogleApiClient != null) {
-            mGoogleApiClient.connect();
-        }
-
-        registerConnectable(this);
-        registerDisconnectable(this);
-        registerBindable(this);
-
-        hashMap.clear();
-    }
-
-    @Override
     public void onStop() {
         if (mGoogleApiClient != null) {
             mGoogleApiClient.disconnect();
@@ -385,5 +378,39 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     @Override
     public void onTaskDone(boolean flag) {
 
+    }
+
+    @Override
+    protected void onResume() {
+        Hawk.put(LAST_ACTIVITY, getClass().getSimpleName());
+        super.onResume();
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
+
+        registerConnectable(this);
+        registerDisconnectable(this);
+        registerBindable(this);
+
+        hashMap.clear();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Intent intent = new Intent(MapViewActivity.this, FloatingTouchService.class);
+        if (isMyServiceRunning(FloatingTouchService.class)) {
+            stopService(intent);
+        }
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

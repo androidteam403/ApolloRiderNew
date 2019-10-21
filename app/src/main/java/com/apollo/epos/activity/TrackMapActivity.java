@@ -1,7 +1,9 @@
 package com.apollo.epos.activity;
 
 import android.Manifest;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +29,7 @@ import com.ahmadrosid.lib.drawroutemap.DrawMarker;
 import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
 import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.R;
+import com.apollo.epos.service.FloatingTouchService;
 import com.apollo.epos.utils.ActivityUtils;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
@@ -47,6 +51,7 @@ import com.novoda.merlin.Connectable;
 import com.novoda.merlin.Disconnectable;
 import com.novoda.merlin.Merlin;
 import com.novoda.merlin.NetworkStatus;
+import com.orhanobut.hawk.Hawk;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,6 +63,8 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.apollo.epos.utils.AppConstants.LAST_ACTIVITY;
 
 public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, DirectionApiCallback, TaskLoadedCallback, Connectable, Disconnectable, BindableInterface {
@@ -271,6 +278,10 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
 
     private void initializeMap() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_view);
+        LinearLayout mapViewChildLayout = findViewById(R.id.map_view_child_layout);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mapViewChildLayout.getLayoutParams();
+        params.setMargins(0, 0, 0, 40);
+        mapViewChildLayout.setLayoutParams(params);
         mapFragment.getMapAsync(this);
     }
 
@@ -293,19 +304,6 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
             mGoogleApiClient.connect();
         }
         ActivityUtils.showDialog(TrackMapActivity.this, "Getting Location");
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mGoogleApiClient != null) {
-            mGoogleApiClient.connect();
-        }
-        registerConnectable(this);
-        registerDisconnectable(this);
-        registerBindable(this);
-
-        hashMap.clear();
     }
 
     @Override
@@ -367,8 +365,8 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
                     try {
                         for (i = 0; i <= 100; i++) {
                             runOnUiThread(() -> {
-                                travelDistance.setText("Travel Distance: " + finalRemoving + "KM");
-                                travelTime.setText("Travel Time: " + Math.round(finalTime) + "Mins.");
+                                travelDistance.setText("Distance " + finalRemoving + "KM");
+                                travelTime.setText("Time " + Math.round(finalTime) + "Mins.");
                             });
                             sleep(500);
                         }
@@ -426,5 +424,38 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
     @Override
     public void onDisconnect() {
         ActivityUtils.showDialog(TrackMapActivity.this, "Getting Location");
+    }
+
+    @Override
+    protected void onResume() {
+        Hawk.put(LAST_ACTIVITY, getClass().getSimpleName());
+        super.onResume();
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
+        registerConnectable(this);
+        registerDisconnectable(this);
+        registerBindable(this);
+
+        hashMap.clear();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Intent intent = new Intent(TrackMapActivity.this, FloatingTouchService.class);
+        if (isMyServiceRunning(FloatingTouchService.class)) {
+            stopService(intent);
+        }
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
