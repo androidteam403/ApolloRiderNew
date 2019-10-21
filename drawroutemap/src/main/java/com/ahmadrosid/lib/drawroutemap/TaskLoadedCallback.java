@@ -1,5 +1,9 @@
 package com.ahmadrosid.lib.drawroutemap;
 
+import com.google.android.gms.maps.model.Polyline;
+
 public interface TaskLoadedCallback {
-    void onTaskDone(Object... values);
+    Polyline onTaskDone(Object... values);
+
+    Polyline onSecondTaskDone(Object... values);
 }

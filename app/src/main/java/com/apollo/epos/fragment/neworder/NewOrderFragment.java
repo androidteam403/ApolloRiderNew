@@ -6,7 +6,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
@@ -24,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -39,22 +42,35 @@ import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.R;
 import com.apollo.epos.activity.MapViewActivity;
 import com.apollo.epos.activity.NavigationActivity;
-import com.apollo.epos.activity.OrderDeliveryActivity;
 import com.apollo.epos.adapter.CustomReasonAdapter;
 import com.apollo.epos.dialog.DialogManager;
 import com.apollo.epos.fragment.deliveryorder.DeliveryOrderFragment;
 import com.apollo.epos.listeners.DialogMangerCallback;
 import com.apollo.epos.model.OrderItemModel;
 import com.apollo.epos.service.GPSLocationService;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -66,7 +82,7 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.Context.LOCATION_SERVICE;
 import static com.google.android.gms.internal.zzahn.runOnUiThread;
 
-public class NewOrderFragment extends Fragment implements DirectionApiCallback, TaskLoadedCallback {
+public class NewOrderFragment extends Fragment implements DirectionApiCallback, TaskLoadedCallback{
     private Activity mActivity;
     @BindView(R.id.items_view_image)
     protected ImageView itemsViewImage;
@@ -142,9 +158,9 @@ public class NewOrderFragment extends Fragment implements DirectionApiCallback, 
             LatLng destination = new LatLng(17.4410197, 78.3788463);
             LatLng other = new LatLng(17.4411128, 78.3827845);
 
-            DrawRouteMaps.getInstance(mActivity, this, this::onTaskDone)
+            DrawRouteMaps.getInstance(mActivity, this, this)
                     .draw(origin, destination, null, 0);
-            DrawRouteMaps.getInstance(mActivity, this, this::onTaskDone)
+            DrawRouteMaps.getInstance(mActivity, this, this)
                     .draw(destination, other, null, 1);
         } else {
             gps.showSettingsAlert();
@@ -506,7 +522,15 @@ public class NewOrderFragment extends Fragment implements DirectionApiCallback, 
     }
 
     @Override
-    public void onTaskDone(Object... values) {
-
+    public Polyline onTaskDone(Object... values) {
+        return null;
     }
+
+    @Override
+    public Polyline onSecondTaskDone(Object... values) {
+        return null;
+    }
+
+
+
 }

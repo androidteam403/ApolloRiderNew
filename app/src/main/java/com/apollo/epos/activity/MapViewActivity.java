@@ -4,9 +4,11 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.graphics.Point;
+import android.graphics.Color;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Window;
@@ -23,7 +25,6 @@ import com.ahmadrosid.lib.drawroutemap.ProgressLoadedCallback;
 import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.R;
 import com.apollo.epos.dialog.DialogManager;
-import com.apollo.epos.service.GPSLocationService;
 import com.apollo.epos.utils.ActivityUtils;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
@@ -68,7 +69,8 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     private boolean callOneTimeLocation;
     @BindView(R.id.close_activity_img)
     protected ImageView closeActivityImg;
-    private Polyline currentPolyline;
+    private Polyline currentPolyline, secondPolyline;
+    private LatLng origin, destination, other;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,13 +110,33 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
             GoogleClientBuild();
 //            mGoogleMap.setMyLocationEnabled(true);
         }
+
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        String provider = locationManager.getBestProvider(criteria, true);
+        Location location = locationManager.getLastKnownLocation(provider);
+
+        if (origin == null && destination == null && other == null) {
+            if (location != null) {
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
+                LatLng latLng = new LatLng(latitude, longitude);
+//            myPosition = new LatLng(latitude, longitude);
+
+
+                LatLng coordinate = new LatLng(latitude, longitude);
+                CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(coordinate, 19);
+                mMap.animateCamera(yourLocation);
+            }
+
+        }
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        LatLng origin = new LatLng(location.getLatitude(), location.getLongitude());
-        LatLng destination = new LatLng(17.4410197, 78.3788463);
-        LatLng other = new LatLng(17.4411128, 78.3827845);
+        origin = new LatLng(location.getLatitude(), location.getLongitude());
+        destination = new LatLng(17.4410197, 78.3788463);
+        other = new LatLng(17.4411128, 78.3827845);
 
         DrawRouteMaps.getInstance(this, this, this)
                 .draw(origin, destination, mMap, 0);
@@ -269,7 +291,7 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
 
     @Override
     public void onConnectionSuspended(int i) {
-            mGoogleApiClient.connect();
+        mGoogleApiClient.connect();
     }
 
     @Override
@@ -338,10 +360,19 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     }
 
     @Override
-    public void onTaskDone(Object... values) {
+    public Polyline onTaskDone(Object... values) {
         if (currentPolyline != null)
             currentPolyline.remove();
         currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+        return currentPolyline;
+    }
+
+    @Override
+    public Polyline onSecondTaskDone(Object... values) {
+        if (secondPolyline != null)
+            secondPolyline.remove();
+        secondPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+        return secondPolyline;
     }
 
     @OnClick(R.id.close_activity_img)
