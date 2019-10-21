@@ -460,7 +460,6 @@
                                         android:background="@drawable/btn_map_ripple_effect"
                                         android:gravity="center"
                                         android:text="@string/label_update_order"
-                                        android:textAllCaps="true"
                                         android:textColor="@color/colorWhite"
                                         android:textSize="@dimen/text_dimen_16"
                                         android:fontFamily="@font/roboto_bold" />

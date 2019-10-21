@@ -166,7 +166,7 @@
     <string name="label_return_cancel">Return/Cancel</string>
     <string name="label_refund_amount">Refund Amount:</string>
     <string name="label_total_amount">Total Amount:</string>
-    <string name="label_update_order">UPDATE ORDER</string>
+    <string name="label_update_order">Update Order</string>
     <string name="label_take_new_order_options">Select one of the option below\nto add the product to the list</string>
     <string name="label_photo">Photo</string>
     <string name="label_barcode">Barcode</string>
