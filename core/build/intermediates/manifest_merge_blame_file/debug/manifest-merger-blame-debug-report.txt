@@ -3,23 +3,23 @@
 3    package="com.novoda.merlin" >
 4
 5    <uses-sdk android:minSdkVersion="14" />
-5-->E:\rakesh_androidStudio\ApolloEpos\core\src\main\AndroidManifest.xml
+5-->E:\Apollo\EPOS\App\ApolloEposApp\core\src\main\AndroidManifest.xml
 6
 7    <uses-permission android:name="android.permission.INTERNET" />
-7-->E:\rakesh_androidStudio\ApolloEpos\core\src\main\AndroidManifest.xml:5:3-65
-7-->E:\rakesh_androidStudio\ApolloEpos\core\src\main\AndroidManifest.xml:5:20-62
+7-->E:\Apollo\EPOS\App\ApolloEposApp\core\src\main\AndroidManifest.xml:5:3-65
+7-->E:\Apollo\EPOS\App\ApolloEposApp\core\src\main\AndroidManifest.xml:5:20-62
 8    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-8-->E:\rakesh_androidStudio\ApolloEpos\core\src\main\AndroidManifest.xml:6:3-77
-8-->E:\rakesh_androidStudio\ApolloEpos\core\src\main\AndroidManifest.xml:6:20-74
+8-->E:\Apollo\EPOS\App\ApolloEposApp\core\src\main\AndroidManifest.xml:6:3-77
+8-->E:\Apollo\EPOS\App\ApolloEposApp\core\src\main\AndroidManifest.xml:6:20-74
 9
 10    <application>
-10-->E:\rakesh_androidStudio\ApolloEpos\core\src\main\AndroidManifest.xml:8:3-14:17
+10-->E:\Apollo\EPOS\App\ApolloEposApp\core\src\main\AndroidManifest.xml:8:3-14:17
 11        <service
-11-->E:\rakesh_androidStudio\ApolloEpos\core\src\main\AndroidManifest.xml:10:5-12:34
+11-->E:\Apollo\EPOS\App\ApolloEposApp\core\src\main\AndroidManifest.xml:10:5-12:34
 12            android:name="com.novoda.merlin.MerlinService"
-12-->E:\rakesh_androidStudio\ApolloEpos\core\src\main\AndroidManifest.xml:11:7-53
+12-->E:\Apollo\EPOS\App\ApolloEposApp\core\src\main\AndroidManifest.xml:11:7-53
 13            android:exported="false" />
-13-->E:\rakesh_androidStudio\ApolloEpos\core\src\main\AndroidManifest.xml:12:7-31
+13-->E:\Apollo\EPOS\App\ApolloEposApp\core\src\main\AndroidManifest.xml:12:7-31
 14    </application>
 15
 16</manifest>

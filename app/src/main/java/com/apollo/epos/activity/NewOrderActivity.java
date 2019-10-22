@@ -82,6 +82,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static com.apollo.epos.utils.ActivityUtils.getBigFloatToDecimalFloat;
 import static com.apollo.epos.utils.AppConstants.LAST_ACTIVITY;
 
 public class NewOrderActivity extends BaseActivity implements DirectionApiCallback, TaskLoadedCallback, Connectable, Disconnectable, BindableInterface, GoogleApiClient.ConnectionCallbacks,
@@ -177,6 +178,7 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
     private String TAG = "Location";
 
     private final int REQ_LOC_PERMISSION = 5002;
+    private boolean isGpsDataReceived = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -215,10 +217,7 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
                 requestForLocPermission(REQ_LOC_PERMISSION);
                 return;
             }
-
-
         });
-
 
         mRequestingLocationUpdates = false;
         mLastUpdateTime = "";
@@ -233,8 +232,6 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
         buildLocationSettingsRequest();
 
         orderDeliveryTimeLayout.setVisibility(View.INVISIBLE);
-
-        getCurrentLocation();
     }
 
     private boolean checkForLocPermission() {
@@ -310,15 +307,19 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
         GPSLocationService gps = new GPSLocationService(this);
         if (gps.canGetLocation()) {
 
-            LatLng origin = new LatLng(gps.getLatitude(), gps.getLongitude());
+            if (!isGpsDataReceived) {
+                LatLng origin = new LatLng(gps.getLatitude(), gps.getLongitude());
 
-            LatLng destination = new LatLng(17.4410197, 78.3788463);
-            LatLng other = new LatLng(17.4411128, 78.3827845);
+                LatLng destination = new LatLng(17.4410197, 78.3788463);
+                LatLng other = new LatLng(17.4411128, 78.3827845);
 
-            DrawRouteMaps.getInstance(this, this, this)
-                    .draw(origin, destination, null, 0);
-            DrawRouteMaps.getInstance(this, this, this)
-                    .draw(destination, other, null, 1);
+                DrawRouteMaps.getInstance(this, this, this)
+                        .draw(origin, destination, null, 0);
+                DrawRouteMaps.getInstance(this, this, this)
+                        .draw(destination, other, null, 1);
+
+                isGpsDataReceived = true;
+            }
         } else {
             gps.showSettingsAlert();
         }
@@ -543,7 +544,7 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
                                 if (!deliveryPharmTxt.getText().toString().isEmpty() && !deliveryUserTxt.getText().toString().isEmpty() && firstTime != 0 && secondTime != 0) {
                                     float finalDistance = Float.parseFloat(deliveryPharmTxt.getText().toString()) + Float.parseFloat(deliveryUserTxt.getText().toString());
                                     float lastTime = firstTime + secondTime;
-                                    totalDistanceTxt.setText("Total distance is " + finalDistance + "KM from your location and expected time is " + Math.round(lastTime) + "mins.");
+                                    totalDistanceTxt.setText("Total distance is " + getBigFloatToDecimalFloat(finalDistance)+ "KM from your location and expected time is " + Math.round(lastTime) + "mins.");
                                 }
                             });
                             sleep(500);
@@ -556,9 +557,14 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
             thread.start();
         }
         ActivityUtils.hideDialog();
-        orderDeliveryTimeLayout.setVisibility(View.VISIBLE);
-        Animation RightSwipe = AnimationUtils.loadAnimation(this, R.anim.right_swipe);
-        orderDeliveryTimeLayout.startAnimation(RightSwipe);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                orderDeliveryTimeLayout.setVisibility(View.VISIBLE);
+                Animation RightSwipe = AnimationUtils.loadAnimation(NewOrderActivity.this, R.anim.right_swipe);
+                orderDeliveryTimeLayout.startAnimation(RightSwipe);
+            }
+        });
     }
 
 
@@ -846,12 +852,14 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
     public void onStart() {
         super.onStart();
         mGoogleApiClient.connect();
+        getCurrentLocation();
     }
 
     @Override
     public void onStop() {
         super.onStop();
         mGoogleApiClient.disconnect();
+        isGpsDataReceived = false;
     }
 
     /**
