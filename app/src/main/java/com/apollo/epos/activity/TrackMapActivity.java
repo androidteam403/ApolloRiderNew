@@ -8,8 +8,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,6 +31,7 @@ import com.ahmadrosid.lib.drawroutemap.DrawMarker;
 import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
 import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.R;
+import com.apollo.epos.dialog.DialogManager;
 import com.apollo.epos.service.FloatingTouchService;
 import com.apollo.epos.utils.ActivityUtils;
 import com.google.android.gms.appindexing.AppIndex;
@@ -89,7 +92,8 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
     protected TextView travelDistance;
     @BindView(R.id.travel_time)
     protected TextView travelTime;
-    private Polyline currentPolyline;
+    private Polyline currentPolyline, secondPolyline;
+    private LatLng origin , destination;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,25 +143,47 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
             GoogleClientBuild();
 //            mGoogleMap.setMyLocationEnabled(true);
         }
+
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        String provider = locationManager.getBestProvider(criteria, true);
+        Location location = locationManager.getLastKnownLocation(provider);
+
+        if (origin == null && destination == null) {
+            if (location != null) {
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
+                LatLng latLng = new LatLng(latitude, longitude);
+//            myPosition = new LatLng(latitude, longitude);
+
+                LatLng coordinate = new LatLng(latitude, longitude);
+                CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(coordinate, 19);
+                mMap.animateCamera(yourLocation);
+            }
+        }
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        LatLng origin = new LatLng(location.getLatitude(), location.getLongitude());
+        origin = new LatLng(location.getLatitude(), location.getLongitude());
         currentLat = location.getLatitude();
         currentLon = location.getLongitude();
-        LatLng destination = new LatLng(latitude, longitude);
+        destination = new LatLng(latitude, longitude);
 
-        DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.location_current, "Current Location", 1, hashMap);
         if (locType.equalsIgnoreCase("Pharmacy")) {
-            DrawRouteMaps.getInstance(this, this, this).draw(origin, destination, mMap, 0);
             DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_pharmacy, "Pharmacy Location", 0, hashMap);
         } else if (locType.equalsIgnoreCase("Destination")) {
-            DrawRouteMaps.getInstance(this, this, this).draw(origin, destination, mMap, 1);
             DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_destination, "Destination Location", 0, hashMap);
         }
 
         if (!callOneTimeLocation) {
+            DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.location_current, "Current Location", 1, hashMap);
+            if (locType.equalsIgnoreCase("Pharmacy")) {
+                DrawRouteMaps.getInstance(this, this, this).draw(origin, destination, mMap, 0);
+            } else if (locType.equalsIgnoreCase("Destination")) {
+                DrawRouteMaps.getInstance(this, this, this).draw(origin, destination, mMap, 1);
+            }
+
             LatLngBounds bounds = new LatLngBounds.Builder()
                     .include(origin)
                     .include(destination).build();
@@ -316,6 +342,7 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
         if (mGoogleApiClient != null) {
             mGoogleApiClient.disconnect();
         }
+        callOneTimeLocation = false;
         super.onStop();
     }
 
@@ -407,7 +434,10 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
 
     @Override
     public Polyline onSecondTaskDone(Object... values) {
-        return null;
+        if (secondPolyline != null)
+            secondPolyline.remove();
+        secondPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+        return secondPolyline;
     }
 
     @Override
@@ -428,12 +458,12 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
 
     @Override
     public void onConnect() {
-        ActivityUtils.hideDialog();
+//        ActivityUtils.hideDialog();
     }
 
     @Override
     public void onDisconnect() {
-        ActivityUtils.showDialog(TrackMapActivity.this, "Getting Location");
+        DialogManager.showToast(TrackMapActivity.this, getString(R.string.no_interent));
     }
 
     @Override

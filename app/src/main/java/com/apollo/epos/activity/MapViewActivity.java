@@ -155,13 +155,15 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         destination = new LatLng(17.4410197, 78.3788463);
         other = new LatLng(17.4411128, 78.3827845);
 
-        DrawRouteMaps.getInstance(this, this, this).draw(origin, destination, mMap, 0);
-        DrawRouteMaps.getInstance(this, this, this).draw(destination, other, mMap, 1);
+
         DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.location_current, "Current Location", 1, hashMap);
         DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_pharmacy, "Destination Location", 0, hashMap);
         DrawMarker.getInstance(this).draw(mMap, other, R.drawable.location_destination, "Other Location", 0, hashMap);
 
         if (!callOneTimeLocation) {
+            DrawRouteMaps.getInstance(this, this, this).draw(origin, destination, mMap, 0);
+            DrawRouteMaps.getInstance(this, this, this).draw(destination, other, mMap, 1);
+
             LatLngBounds bounds = new LatLngBounds.Builder().include(origin).include(destination).include(other).build();
 
             int width = getResources().getDisplayMetrics().widthPixels;
@@ -178,14 +180,11 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     }
 
     private synchronized void GoogleClientBuild() {
-        mGoogleApiClient = new GoogleApiClient.Builder(MapViewActivity.this).addApi(LocationServices.API).
-                addConnectionCallbacks(this).addApi(AppIndex.API).addApi(AppIndex.API).
-                addOnConnectionFailedListener(this).build();
+        mGoogleApiClient = new GoogleApiClient.Builder(MapViewActivity.this).addApi(LocationServices.API).addConnectionCallbacks(this).addApi(AppIndex.API).addApi(AppIndex.API).addOnConnectionFailedListener(this).build();
     }
 
     public void createLocRequest() {
-        mLocationRequest = new LocationRequest().setInterval(INTERVAL).setFastestInterval(FASTEST_INTERVAL)
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest = new LocationRequest().setInterval(INTERVAL).setFastestInterval(FASTEST_INTERVAL).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
     @Override
@@ -218,8 +217,7 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     }
 
     private void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -243,8 +241,7 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
                             .show();
                 } else {
                     // No explanation needed, we can request the permission.
-                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                            MY_PERMISSIONS_REQUEST_LOCATION);
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
                 }
             }
         }
@@ -256,14 +253,11 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
             case REQ_LOC_PERMISSION:
             case MY_PERMISSIONS_REQUEST_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     // permission was granted, yay! Do the
                     // location-related task you need to do.
-                    if (ContextCompat.checkSelfPermission(getApplicationContext(),
-                            Manifest.permission.ACCESS_FINE_LOCATION)
-                            == PackageManager.PERMISSION_GRANTED) {
+                    if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
                         if (mGoogleApiClient != null) {
                             mGoogleApiClient.connect();
@@ -296,7 +290,9 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
 
     @Override
     public void onConnectionSuspended(int i) {
-        mGoogleApiClient.connect();
+        if (i == 1) {
+            mGoogleApiClient.connect();
+        }
     }
 
     @Override
@@ -318,6 +314,7 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         if (mGoogleApiClient != null) {
             mGoogleApiClient.disconnect();
         }
+        callOneTimeLocation = false;
         super.onStop();
     }
 
