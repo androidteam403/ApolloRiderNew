@@ -7,8 +7,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -63,7 +66,8 @@ import butterknife.OnClick;
 import static com.apollo.epos.utils.AppConstants.LAST_ACTIVITY;
 
 public class MapViewActivity extends BaseActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener, DirectionApiCallback, TaskLoadedCallback, Connectable, Disconnectable, BindableInterface, ProgressLoadedCallback {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, DirectionApiCallback, TaskLoadedCallback, Connectable,
+        Disconnectable, BindableInterface, ProgressLoadedCallback {
 
     private GoogleMap mMap;
     private final int REQ_LOC_PERMISSION = 123;
@@ -76,7 +80,8 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     private boolean callOneTimeLocation;
     @BindView(R.id.close_activity_img)
     protected ImageView closeActivityImg;
-    private Polyline currentPolyline;
+    private Polyline currentPolyline, secondPolyline;
+    private LatLng origin, destination, other;
     @BindView(R.id.follow_google_map)
     protected Button followGoogleMap;
 
@@ -119,34 +124,46 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
             GoogleClientBuild();
 //            mGoogleMap.setMyLocationEnabled(true);
         }
+
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        String provider = locationManager.getBestProvider(criteria, true);
+        Location location = locationManager.getLastKnownLocation(provider);
+
+        if (origin == null && destination == null && other == null) {
+            if (location != null) {
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
+                LatLng latLng = new LatLng(latitude, longitude);
+//            myPosition = new LatLng(latitude, longitude);
+
+                LatLng coordinate = new LatLng(latitude, longitude);
+                CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(coordinate, 19);
+                mMap.animateCamera(yourLocation);
+            }
+        }
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        LatLng origin = new LatLng(location.getLatitude(), location.getLongitude());
-        LatLng destination = new LatLng(17.4410197, 78.3788463);
-        LatLng other = new LatLng(17.4411128, 78.3827845);
+        origin = new LatLng(location.getLatitude(), location.getLongitude());
+        destination = new LatLng(17.4410197, 78.3788463);
+        other = new LatLng(17.4411128, 78.3827845);
 
-        DrawRouteMaps.getInstance(this, this, this)
-                .draw(origin, destination, mMap, 0);
-        DrawRouteMaps.getInstance(this, this, this)
-                .draw(destination, other, mMap, 1);
+        DrawRouteMaps.getInstance(this, this, this).draw(origin, destination, mMap, 0);
+        DrawRouteMaps.getInstance(this, this, this).draw(destination, other, mMap, 1);
         DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.location_current, "Current Location", 1, hashMap);
         DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_pharmacy, "Destination Location", 0, hashMap);
         DrawMarker.getInstance(this).draw(mMap, other, R.drawable.location_destination, "Other Location", 0, hashMap);
 
         if (!callOneTimeLocation) {
-            LatLngBounds bounds = new LatLngBounds.Builder()
-                    .include(origin)
-                    .include(destination)
-                    .include(other).build();
+            LatLngBounds bounds = new LatLngBounds.Builder().include(origin).include(destination).include(other).build();
 
             int width = getResources().getDisplayMetrics().widthPixels;
             int height = getResources().getDisplayMetrics().heightPixels;
             int padding = (int) (width * 0.10); // offset from edges of the map 10% of screen
 
             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
-
             mMap.moveCamera(cu);
             mMap.animateCamera(cu);
 
@@ -155,20 +172,15 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         ActivityUtils.hideDialog();
     }
 
-
     private synchronized void GoogleClientBuild() {
         mGoogleApiClient = new GoogleApiClient.Builder(MapViewActivity.this).addApi(LocationServices.API).
-                addConnectionCallbacks(this).
-                addApi(AppIndex.API).
-                addApi(AppIndex.API).
+                addConnectionCallbacks(this).addApi(AppIndex.API).addApi(AppIndex.API).
                 addOnConnectionFailedListener(this).build();
     }
 
     public void createLocRequest() {
-        mLocationRequest = new LocationRequest().setInterval(INTERVAL)
-                .setFastestInterval(FASTEST_INTERVAL)
+        mLocationRequest = new LocationRequest().setInterval(INTERVAL).setFastestInterval(FASTEST_INTERVAL)
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
     }
 
     @Override
@@ -273,8 +285,7 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
 
 
     private void initializeMap() {
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map_view);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_view);
         mapFragment.getMapAsync(this);
     }
 
@@ -335,10 +346,19 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     }
 
     @Override
-    public void onTaskDone(Object... values) {
+    public Polyline onTaskDone(Object... values) {
         if (currentPolyline != null)
             currentPolyline.remove();
         currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+        return currentPolyline;
+    }
+
+    @Override
+    public Polyline onSecondTaskDone(Object... values) {
+        if (secondPolyline != null)
+            secondPolyline.remove();
+        secondPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+        return secondPolyline;
     }
 
     @OnClick(R.id.close_activity_img)

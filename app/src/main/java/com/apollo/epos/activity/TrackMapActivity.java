@@ -394,10 +394,15 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onTaskDone(Object... values) {
+    public Polyline onTaskDone(Object... values) {
         if (currentPolyline != null)
             currentPolyline.remove();
-        currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+      return currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+    }
+
+    @Override
+    public Polyline onSecondTaskDone(Object... values) {
+        return null;
     }
 
     @Override

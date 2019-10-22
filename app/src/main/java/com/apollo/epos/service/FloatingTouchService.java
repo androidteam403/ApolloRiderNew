@@ -76,7 +76,7 @@ public class FloatingTouchService extends Service {
         return null;
     }
 
-    int delay = 500; //milliseconds
+    int delay = 1000; //milliseconds
 
     private void init() {
         mHandler = new MyHandler();
@@ -94,6 +94,7 @@ public class FloatingTouchService extends Service {
                 if (isAppOnForeground(FloatingTouchService.this, getApplicationContext().getPackageName())) {
                     mAssistiveTouchView.setVisibility(View.GONE);
                 } else {
+//                    mAssistiveTouchView.setAlpha(1);
                     mAssistiveTouchView.setVisibility(View.VISIBLE);
                 }
                 mHandler.postDelayed(this, delay);
