@@ -8,7 +8,6 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Build;
@@ -23,7 +22,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.Switch;
 
 import com.apollo.epos.R;
 import com.apollo.epos.activity.MapViewActivity;
@@ -164,18 +162,33 @@ public class FloatingTouchService extends Service {
                 lastAssistiveTouchViewY = mParams.y;
 
                 String resumeActivity = Hawk.get(LAST_ACTIVITY, "");
+                Log.e("AssistiveTouch", "Activity fetched from shared pref : = : = : = : = : = : = : = : ");
                 if (resumeActivity.equalsIgnoreCase(NavigationActivity.class.getSimpleName())) {
-                    startActivity(new Intent(getApplicationContext(), NavigationActivity.class));
+                    Log.e("AssistiveTouch", "Activity Calling  =========== ");
+                    Intent intent = new Intent(getApplicationContext(), NavigationActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(intent);
+//                    startActivity(new Intent(getApplicationContext(), NavigationActivity.class));
                 } else if (resumeActivity.equalsIgnoreCase(NewOrderActivity.class.getSimpleName())) {
-                    startActivity(new Intent(getApplicationContext(), NewOrderActivity.class));
+                    Intent intent = new Intent(getApplicationContext(), NewOrderActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(intent);
                 } else if (resumeActivity.equalsIgnoreCase(MapViewActivity.class.getSimpleName())) {
-                    startActivity(new Intent(getApplicationContext(), MapViewActivity.class));
+                    Intent intent = new Intent(getApplicationContext(), MapViewActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(intent);
                 } else if (resumeActivity.equalsIgnoreCase(OrderDeliveryActivity.class.getSimpleName())) {
-                    startActivity(new Intent(getApplicationContext(), OrderDeliveryActivity.class));
+                    Intent intent = new Intent(getApplicationContext(), OrderDeliveryActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(intent);
                 } else if (resumeActivity.equalsIgnoreCase(TrackMapActivity.class.getSimpleName())) {
-                    startActivity(new Intent(getApplicationContext(), TrackMapActivity.class));
+                    Intent intent = new Intent(getApplicationContext(), TrackMapActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(intent);
                 } else {
-                    startActivity(new Intent(getApplicationContext(), NavigationActivity.class));
+                    Intent intent = new Intent(getApplicationContext(), NavigationActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(intent);
                 }
 
 //                Context ctx = getApplicationContext();

@@ -234,6 +234,11 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_delivery);
         ButterKnife.bind(this);
+
+        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
+            finish();
+            return;
+        }
 //        if (getSupportActionBar() != null) {
 //            getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 //            getSupportActionBar().setDisplayShowCustomEnabled(true);

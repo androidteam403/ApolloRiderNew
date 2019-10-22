@@ -74,8 +74,13 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
         instance = this;
-        initCustomNavigationDrawer();
 
+        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
+            finish();
+            return;
+        }
+
+        initCustomNavigationDrawer();
         handleAssistiveTouchWindow();
     }
 

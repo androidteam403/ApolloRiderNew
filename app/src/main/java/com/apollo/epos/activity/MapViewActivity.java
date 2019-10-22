@@ -92,6 +92,11 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         setContentView(R.layout.activity_map_view);
         ButterKnife.bind(this);
 
+        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
+            finish();
+            return;
+        }
+
         ActivityUtils.showDialog(MapViewActivity.this, "Getting Location");
 
         followGoogleMap.setVisibility(View.GONE);

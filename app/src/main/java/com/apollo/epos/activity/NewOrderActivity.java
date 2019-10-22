@@ -181,6 +181,11 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
         setContentView(R.layout.activity_new_order);
         ButterKnife.bind(this);
 
+        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
+            finish();
+            return;
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.icon_back);// Toolbar icon in Drawable folder
         setSupportActionBar(toolbar);
