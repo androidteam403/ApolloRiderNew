@@ -42,6 +42,7 @@ import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.R;
 import com.apollo.epos.adapter.CustomReasonAdapter;
 import com.apollo.epos.dialog.DialogManager;
+import com.apollo.epos.listeners.DialogMangerCallback;
 import com.apollo.epos.model.OrderItemModel;
 import com.apollo.epos.service.FloatingTouchService;
 import com.apollo.epos.service.GPSLocationService;
@@ -175,6 +176,8 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
 
     private String TAG = "Location";
 
+    private final int REQ_LOC_PERMISSION = 5002;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -201,7 +204,14 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
         orderDeliveryTimeLayout.startAnimation(RightSwipe);
 
         mapViewLayout.setOnClickListener(v -> {
-            startUpdatesButtonHandler(mapViewLayout);
+            if (checkForLocPermission()) {
+                startUpdatesButtonHandler(mapViewLayout);
+            } else {
+                requestForLocPermission(REQ_LOC_PERMISSION);
+                return;
+            }
+
+
         });
 
 
@@ -220,6 +230,74 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
         orderDeliveryTimeLayout.setVisibility(View.INVISIBLE);
 
         getCurrentLocation();
+    }
+
+    private boolean checkForLocPermission() {
+        if (android.os.Build.VERSION.SDK_INT >= 23) {
+            return ActivityCompat.checkSelfPermission(NewOrderActivity.this, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        } else {
+            return true;
+        }
+    }
+
+
+    private void requestForLocPermission(final int reqCode) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(NewOrderActivity.this, ACCESS_FINE_LOCATION)) {
+
+            // Show an explanation to the user *asynchronously* -- don't block
+            // this thread waiting for the user's response! After the user
+            // sees the explanation, try again to request the permission.
+            DialogManager.showSingleBtnPopup(NewOrderActivity.this, new DialogMangerCallback() {
+                @Override
+                public void onOkClick(View v) {
+                    ActivityCompat.requestPermissions(NewOrderActivity.this,
+                            new String[]{ACCESS_FINE_LOCATION},
+                            reqCode);
+                }
+
+                @Override
+                public void onCancelClick(View view) {
+
+                }
+            }, getString(R.string.app_name), getString(R.string.locationPermissionMsg), getString(R.string.ok));
+        } else {
+
+            // No explanation needed, we can request the permission.
+
+            ActivityCompat.requestPermissions(NewOrderActivity.this,
+                    new String[]{ACCESS_FINE_LOCATION},
+                    reqCode);
+
+            // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+            // app-defined int constant. The callback method gets the
+            // result of the request.
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQ_LOC_PERMISSION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    startUpdatesButtonHandler(mapViewLayout);
+
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    DialogManager.showToast(NewOrderActivity.this, getString(R.string.noAccessTo));
+                }
+            }
+            break;
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 
 
