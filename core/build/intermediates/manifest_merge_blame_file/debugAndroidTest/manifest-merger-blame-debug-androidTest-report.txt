@@ -1,0 +1,47 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.novoda.merlin.test" >
+4
+5    <uses-sdk
+5-->E:\rakesh_androidStudio\ApolloEpos\core\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2296623148859801339.xml:5:5-74
+6        android:minSdkVersion="14"
+6-->E:\rakesh_androidStudio\ApolloEpos\core\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2296623148859801339.xml:5:15-41
+7        android:targetSdkVersion="14" />
+7-->E:\rakesh_androidStudio\ApolloEpos\core\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2296623148859801339.xml:5:42-71
+8
+9    <instrumentation
+9-->E:\rakesh_androidStudio\ApolloEpos\core\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2296623148859801339.xml:11:5-15:72
+10        android:name="android.test.InstrumentationTestRunner"
+10-->E:\rakesh_androidStudio\ApolloEpos\core\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2296623148859801339.xml:11:22-75
+11        android:functionalTest="false"
+11-->E:\rakesh_androidStudio\ApolloEpos\core\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2296623148859801339.xml:14:22-52
+12        android:handleProfiling="false"
+12-->E:\rakesh_androidStudio\ApolloEpos\core\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2296623148859801339.xml:13:22-53
+13        android:label="Tests for com.novoda.merlin.test"
+13-->E:\rakesh_androidStudio\ApolloEpos\core\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2296623148859801339.xml:15:22-70
+14        android:targetPackage="com.novoda.merlin.test" />
+14-->E:\rakesh_androidStudio\ApolloEpos\core\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2296623148859801339.xml:12:22-68
+15
+16    <uses-permission android:name="android.permission.INTERNET" />
+16-->[__tested_artifact__::core] E:\rakesh_androidStudio\ApolloEpos\core\build\intermediates\library_manifest\debug\AndroidManifest.xml:7:5-67
+16-->[__tested_artifact__::core] E:\rakesh_androidStudio\ApolloEpos\core\build\intermediates\library_manifest\debug\AndroidManifest.xml:7:22-64
+17    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+17-->[__tested_artifact__::core] E:\rakesh_androidStudio\ApolloEpos\core\build\intermediates\library_manifest\debug\AndroidManifest.xml:8:5-79
+17-->[__tested_artifact__::core] E:\rakesh_androidStudio\ApolloEpos\core\build\intermediates\library_manifest\debug\AndroidManifest.xml:8:22-76
+18
+19    <application android:debuggable="true" >
+19-->E:\rakesh_androidStudio\ApolloEpos\core\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2296623148859801339.xml:7:5-9:19
+19-->E:\rakesh_androidStudio\ApolloEpos\core\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2296623148859801339.xml:7:18-43
+20        <uses-library android:name="android.test.runner" />
+20-->E:\rakesh_androidStudio\ApolloEpos\core\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2296623148859801339.xml:8:9-60
+20-->E:\rakesh_androidStudio\ApolloEpos\core\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2296623148859801339.xml:8:23-57
+21
+22        <service
+22-->[__tested_artifact__::core] E:\rakesh_androidStudio\ApolloEpos\core\build\intermediates\library_manifest\debug\AndroidManifest.xml:11:9-13:40
+23            android:name="com.novoda.merlin.MerlinService"
+23-->[__tested_artifact__::core] E:\rakesh_androidStudio\ApolloEpos\core\build\intermediates\library_manifest\debug\AndroidManifest.xml:12:13-59
+24            android:exported="false" />
+24-->[__tested_artifact__::core] E:\rakesh_androidStudio\ApolloEpos\core\build\intermediates\library_manifest\debug\AndroidManifest.xml:13:13-37
+25    </application>
+26
+27</manifest>
