@@ -1,11 +1,13 @@
 package com.apollo.epos.fragment.dashboard;
 
+import android.Manifest;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -14,6 +16,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.AnimationDrawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -26,9 +29,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.apollo.epos.R;
@@ -37,6 +42,7 @@ import com.apollo.epos.activity.NewOrderActivity;
 import com.apollo.epos.dialog.DialogManager;
 import com.apollo.epos.listeners.DialogMangerCallback;
 import com.apollo.epos.service.NetworkUtils;
+import com.apollo.epos.utils.ActivityUtils;
 import com.apollo.epos.utils.XYMarkerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -56,6 +62,7 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.MPPointF;
+import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -67,6 +74,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.nabinbhandari.android.permissions.PermissionHandler;
+import com.nabinbhandari.android.permissions.Permissions;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -138,6 +147,9 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
     @BindView(R.id.user_status)
     protected TextView userStatus;
     private static final int ACTIVITY_CHANGE = 10;
+
+
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
 
     /**
@@ -255,16 +267,6 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
         anim.setRepeatCount(ValueAnimator.INFINITE);
         anim.start();
 
-        newOrderLayout.setOnClickListener(v -> {
-            if (checkForLocPermission()) {
-                startUpdatesButtonHandler(newOrderLayout);
-            } else {
-                requestForLocPermission(REQ_LOC_PERMISSION);
-                return;
-            }
-
-        });
-
         setData(5, 15, 0, 12, 8, 22, 10, 45, 3, 15, 0, 28, 5, 15);
         totalOrdersVal.setText("183");
         deliveredOrdersVal.setText("152");
@@ -273,74 +275,6 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
         codPendingVal.setText("560");
         salesGeneratedVal.setText("24 Orders");
         travelledDistanceVal.setText("110.4 KM");
-    }
-
-    private boolean checkForLocPermission() {
-        if (android.os.Build.VERSION.SDK_INT >= 23) {
-            return ActivityCompat.checkSelfPermission(mActivity, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-        } else {
-            return true;
-        }
-    }
-
-
-    private void requestForLocPermission(final int reqCode) {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(mActivity, ACCESS_FINE_LOCATION)) {
-
-            // Show an explanation to the user *asynchronously* -- don't block
-            // this thread waiting for the user's response! After the user
-            // sees the explanation, try again to request the permission.
-            DialogManager.showSingleBtnPopup(mActivity, new DialogMangerCallback() {
-                @Override
-                public void onOkClick(View v) {
-                    ActivityCompat.requestPermissions(mActivity,
-                            new String[]{ACCESS_FINE_LOCATION},
-                            reqCode);
-                }
-
-                @Override
-                public void onCancelClick(View view) {
-
-                }
-            }, getString(R.string.app_name), getString(R.string.locationPermissionMsg), getString(R.string.ok));
-        } else {
-
-            // No explanation needed, we can request the permission.
-
-            ActivityCompat.requestPermissions(mActivity,
-                    new String[]{ACCESS_FINE_LOCATION},
-                    reqCode);
-
-            // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-            // app-defined int constant. The callback method gets the
-            // result of the request.
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case REQ_LOC_PERMISSION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                    startUpdatesButtonHandler(newOrderLayout);
-
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    DialogManager.showToast(mActivity, getString(R.string.noAccessTo));
-                }
-            }
-            break;
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
     }
 
     @Override
@@ -355,9 +289,110 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
 
         // Kick off the process of building the GoogleApiClient, LocationRequest, and
         // LocationSettingsRequest objects.
-        buildGoogleApiClient();
+
+        //show error dialog if GoolglePlayServices not available
+        if (ActivityUtils.checkPlayServices(mActivity)) {
+            buildGoogleApiClient();
+        }
         createLocationRequest();
+        GoogleClientBuild();
         buildLocationSettingsRequest();
+
+        newOrderLayout.setOnClickListener(v -> {
+            startUpdatesButtonHandler(newOrderLayout);
+
+        });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+
+        for(String permission: permissions){
+            if(ActivityCompat.shouldShowRequestPermissionRationale(mActivity, permission)){
+                //denied
+                Log.e("denied", permission);
+            }else{
+                if(ActivityCompat.checkSelfPermission(mActivity, permission) == PackageManager.PERMISSION_GRANTED){
+                    //allowed
+                    Log.e("allowed", permission);
+
+                    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                        // permission was granted, yay! Do the
+                        // location-related task you need to do.
+                        if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+                            if (mGoogleApiClient != null) {
+                                mGoogleApiClient.connect();
+                            } else {
+                                buildGoogleApiClient();
+                                mGoogleApiClient.connect();
+                            }
+                        }
+                    }
+                } else{
+                    //set to never ask again
+                    Log.e("set to never ask again", permission);
+                    //do something here.
+                    requestLocation();
+                }
+            }
+        }
+//        switch (requestCode) {
+//            case REQ_LOC_PERMISSION:
+//            case MY_PERMISSIONS_REQUEST_LOCATION: {
+//                // If request is cancelled, the result arrays are empty.
+//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//
+//                    // permission was granted, yay! Do the
+//                    // location-related task you need to do.
+//                    if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+//
+//                        if (mGoogleApiClient != null) {
+//                            mGoogleApiClient.connect();
+//                        } else {
+//                            buildGoogleApiClient();
+//                            mGoogleApiClient.connect();
+//                        }
+//                    }
+//                } else {
+//
+//                    // permission denied, boo! Disable the
+//                    // functionality that depends on this permission.
+////                    Toast.makeText(mActivity, "permission denied", Toast.LENGTH_LONG).show();
+//                    requestLocation();
+//
+//                }
+//                return;
+//            }
+//
+//            // other 'case' lines to check for other
+//            // permissions this app might request
+//        }
+    }
+
+    public void requestLocation() {
+        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
+//        String rationale = "Please provide location permission so that you can ...";
+//        Permissions.Options options = new Permissions.Options()
+//                .setRationaleDialogTitle("Info")
+//                .setSettingsDialogTitle("Warning");
+
+        Permissions.check(mActivity, permissions, null, null, new PermissionHandler() {
+            @Override
+            public void onGranted() {
+//                Toast.makeText(mActivity, "Location granted.", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onDenied(Context context, ArrayList<String> deniedPermissions) {
+                Toast.makeText(mActivity, "Location denied.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private synchronized void GoogleClientBuild() {
+        mGoogleApiClient = new GoogleApiClient.Builder(mActivity).addApi(LocationServices.API).addConnectionCallbacks(this).addApi(AppIndex.API).addApi(AppIndex.API).addOnConnectionFailedListener(this).build();
     }
 
     @Override
@@ -794,16 +829,32 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
      * Requests location updates from the FusedLocationApi.
      */
     protected void startLocationUpdates() {
-        LocationServices.FusedLocationApi.requestLocationUpdates(
-                mGoogleApiClient,
-                mLocationRequest,
-                this
-        ).setResultCallback(status -> {
-            mRequestingLocationUpdates = true;
-            Intent intent = new Intent(mActivity, NewOrderActivity.class);
-            startActivityForResult(intent, ACTIVITY_CHANGE);
-    });
+        checkPermission();
+    }
 
+    private void checkPermission() {
+        int checkSelf = ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION);
+        if (checkSelf != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(mActivity, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQ_LOC_PERMISSION);
+                }
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQ_LOC_PERMISSION);
+                }
+            }
+        } else {
+            LocationServices.FusedLocationApi.requestLocationUpdates(
+                    mGoogleApiClient,
+                    mLocationRequest,
+                    this
+            ).setResultCallback(status -> {
+                mRequestingLocationUpdates = true;
+                Intent intent = new Intent(mActivity, NewOrderActivity.class);
+                startActivityForResult(intent, ACTIVITY_CHANGE);
+            });
+        }
     }
 
     /**
@@ -859,7 +910,6 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
     @Override
     public void onConnected(Bundle connectionHint) {
         Log.i("Location", "Connected to GoogleApiClient");
-
         // If the initial location was never previously requested, we use
         // FusedLocationApi.getLastLocation() to get it. If it was previously requested, we store
         // its value in the Bundle and check for it in onCreate(). We
@@ -904,7 +954,6 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-
         savedInstanceState.putBoolean(KEY_REQUESTING_LOCATION_UPDATES, mRequestingLocationUpdates);
         savedInstanceState.putParcelable(KEY_LOCATION, mCurrentLocation);
         savedInstanceState.putString(KEY_LAST_UPDATED_TIME_STRING, mLastUpdateTime);

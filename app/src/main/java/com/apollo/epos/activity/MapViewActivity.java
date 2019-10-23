@@ -285,9 +285,7 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
 
     @Override
     public void onConnectionSuspended(int i) {
-        if (i == 1) {
-            mGoogleApiClient.connect();
-        }
+        mGoogleApiClient.connect();
     }
 
     @Override
@@ -344,18 +342,18 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
 
     @Override
     public Polyline onTaskDone(Object... values) {
-        if (currentPolyline != null)
+        if (currentPolyline != null) {
             currentPolyline.remove();
-        currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
-        return currentPolyline;
+        }
+        return currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
     }
 
     @Override
     public Polyline onSecondTaskDone(Object... values) {
-        if (secondPolyline != null)
+        if (secondPolyline != null) {
             secondPolyline.remove();
-        secondPolyline = mMap.addPolyline((PolylineOptions) values[0]);
-        return secondPolyline;
+        }
+        return secondPolyline = mMap.addPolyline((PolylineOptions) values[0]);
     }
 
     @OnClick(R.id.close_activity_img)

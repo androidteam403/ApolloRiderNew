@@ -165,19 +165,11 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
         currentLon = location.getLongitude();
         destination = new LatLng(latitude, longitude);
 
-        if (locType.equalsIgnoreCase("Pharmacy")) {
-            DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_pharmacy, "Pharmacy Location", 0, hashMap);
-        } else if (locType.equalsIgnoreCase("Destination")) {
-            DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_destination, "Destination Location", 0, hashMap);
-        }
+        DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.location_current, "Current Location", 1, hashMap);
+        DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_pharmacy, "Destination Location", 0, hashMap);
 
         if (!callOneTimeLocation) {
-            DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.location_current, "Current Location", 1, hashMap);
-            if (locType.equalsIgnoreCase("Pharmacy")) {
-                DrawRouteMaps.getInstance(this, this, this).draw(origin, destination, mMap, 0);
-            } else if (locType.equalsIgnoreCase("Destination")) {
-                DrawRouteMaps.getInstance(this, this, this).draw(origin, destination, mMap, 1);
-            }
+            DrawRouteMaps.getInstance(this, this, this).draw(origin, destination, mMap, 0);
 
             LatLngBounds bounds = new LatLngBounds.Builder()
                     .include(origin)
@@ -313,9 +305,7 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
 
     @Override
     public void onConnectionSuspended(int i) {
-        if (i == 1) {
             mGoogleApiClient.connect();
-        }
     }
 
     @Override
@@ -422,17 +412,18 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
 
     @Override
     public Polyline onTaskDone(Object... values) {
-        if (currentPolyline != null)
+        if (currentPolyline != null) {
             currentPolyline.remove();
+        }
       return currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
     }
 
     @Override
     public Polyline onSecondTaskDone(Object... values) {
-        if (secondPolyline != null)
+        if (secondPolyline != null) {
             secondPolyline.remove();
-        secondPolyline = mMap.addPolyline((PolylineOptions) values[0]);
-        return secondPolyline;
+        }
+        return secondPolyline = mMap.addPolyline((PolylineOptions) values[0]);
     }
 
     @Override

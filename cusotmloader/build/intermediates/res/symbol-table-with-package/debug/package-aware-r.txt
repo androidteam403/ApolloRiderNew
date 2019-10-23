@@ -1513,6 +1513,7 @@ style CastExpandedController
 style CastIntroOverlay
 style CastMiniController
 style CustomCastTheme
+style Permissions_TransparentTheme
 style Platform_AppCompat
 style Platform_AppCompat_Light
 style Platform_ThemeOverlay_AppCompat
