@@ -323,4 +323,10 @@ public class ActivityUtils {
         }
         return result;
     }
+
+    public static float getBigFloatToDecimalFloat(float inputNum){
+        inputNum /= Math.pow(10, (int) Math.log10(inputNum));
+        inputNum = ((int) (inputNum * 10)) / 10.0f; // <-- performs one digit floor
+        return inputNum;
+    }
 }

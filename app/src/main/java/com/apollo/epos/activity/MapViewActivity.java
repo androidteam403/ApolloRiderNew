@@ -18,6 +18,8 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
@@ -56,6 +58,8 @@ import com.novoda.merlin.NetworkStatus;
 import com.orhanobut.hawk.Hawk;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 
@@ -63,6 +67,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.apollo.epos.utils.ActivityUtils.getBigFloatToDecimalFloat;
 import static com.apollo.epos.utils.AppConstants.LAST_ACTIVITY;
 
 public class MapViewActivity extends BaseActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
@@ -84,6 +89,13 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     private LatLng origin, destination, other;
     @BindView(R.id.follow_google_map)
     protected Button followGoogleMap;
+    @BindView(R.id.travel_info_layout)
+    protected LinearLayout travelInfoLayout;
+    @BindView(R.id.travel_distance)
+    protected TextView travelDistance;
+    @BindView(R.id.travel_time)
+    protected TextView travelTime;
+    private float firstTime = 0, secondTime = 0, firstDistance = 0, secondDistance = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +104,12 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         setContentView(R.layout.activity_map_view);
         ButterKnife.bind(this);
 
+        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
+            finish();
+            return;
+        }
+
+        travelInfoLayout.setVisibility(View.VISIBLE);
         ActivityUtils.showDialog(MapViewActivity.this, "Getting Location");
 
         followGoogleMap.setVisibility(View.GONE);
@@ -338,6 +356,54 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
 
     @Override
     public void onDirectionApi(int colorFlag, JSONArray jsonArray) {
+        String distance, time;
+        float removing = 0;
+        float removingTime = 0;
+        try {
+            if (jsonArray != null) {
+                distance = ((JSONObject) jsonArray.get(0)).getJSONObject("distance").getString("text");
+                time = ((JSONObject) jsonArray.get(0)).getJSONObject("duration").getString("text");
+                removing = Float.parseFloat(distance.replace("\"", "").replace("km", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
+                removingTime = Float.parseFloat(time.replace("\"", "").replace("mins", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        float finalRemoving = removing;
+        float finalTime = removingTime;
+        if (finalRemoving != 0) {
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    float i;
+                    try {
+                        for (i = 0; i <= 100; i++) {
+                            runOnUiThread(() -> {
+                                if (colorFlag == 0) {
+                                    firstDistance = finalRemoving;
+                                    firstTime = finalTime;
+                                } else if (colorFlag == 1) {
+                                    secondDistance = finalRemoving;
+                                    secondTime = finalTime;
+                                }
+                                if (firstDistance != 0 && secondDistance != 0 && firstTime != 0 && secondTime != 0) {
+                                    float finalDistance = firstDistance + secondDistance;
+                                    float lastTime = firstTime + secondTime;
+                                    travelDistance.setText("Distance " + getBigFloatToDecimalFloat(finalDistance) + "KM");
+                                    travelTime.setText("Time " + Math.round(lastTime) + "Mins.");
+                                }
+                            });
+                            sleep(500);
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            thread.start();
+        }
+        ActivityUtils.hideDialog();
     }
 
     @Override
