@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dotted_line_color">
+
+    <LinearLayout
+        android:id="@+id/header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/five_dp"
+        android:paddingBottom="@dimen/five_dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ten_dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_order_header"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/text_dimen_10" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="15000001234"
+                    android:textSize="@dimen/text_dimen_15"
+                    android:fontFamily="@font/roboto_bold"
+                    android:textColor="@color/colorWhite"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/map_view_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/five_dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_marginEnd="@dimen/five_dp"
+                    android:visibility="gone"
+                    android:text="@string/label_map_view"
+                    android:fontFamily="@font/roboto_bold"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/text_dimen_12" />
+
+                <ImageView
+                    android:id="@+id/close_activity_img"
+                    android:layout_width="@dimen/thirty_five_dp"
+                    android:layout_height="@dimen/thirty_five_dp"
+                    android:contentDescription="@string/app_name"
+                    android:padding="@dimen/five_dp"
+                    android:src="@drawable/icon_close"/>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/travel_info_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:padding="@dimen/five_dp"
+            android:layout_marginStart="@dimen/five_dp"
+            android:weightSum="1">
+
+            <TextView
+                android:id="@+id/travel_distance"
+                android:layout_weight="0.5"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_dimen_13"
+                android:text="Distance "
+                android:textColor="@color/colorWhite"
+                android:fontFamily="@font/roboto_regular"/>
+
+            <TextView
+                android:id="@+id/travel_time"
+                android:layout_weight="0.5"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_dimen_13"
+                android:text="Time "
+                android:textColor="@color/colorWhite"
+                android:fontFamily="@font/roboto_regular"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/map_view_child_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/header_layout"
+        android:orientation="vertical">
+
+        <fragment
+            android:id="@+id/map_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            class="com.google.android.gms.maps.SupportMapFragment"/>
+    </LinearLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_below="@+id/map_view_child_layout"
+        android:layout_height="@dimen/one_dp"
+        android:background="@color/colorBlack"/>
+
+    <Button
+        android:id="@+id/follow_google_map"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/forty_five_dp"
+        android:layout_marginTop="@dimen/minus_forty_five_dp"
+        android:layout_below="@+id/map_view_child_layout"
+        android:textColor="@color/colorWhite"
+        android:fontFamily="@font/roboto_bold"
+        android:textSize="@dimen/text_dimen_16"
+        android:textAllCaps="false"
+        android:background="@drawable/btn_complaint_ripple_effect"
+        android:text="@string/label_follow_map" />
+</RelativeLayout>

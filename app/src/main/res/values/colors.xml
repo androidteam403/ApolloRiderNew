@@ -68,4 +68,8 @@
     <color name="cart_item_color">#026816</color>
     <color name="black_transperent">#88000000</color>
     <color name="textColorPrimary">#232323</color>
+
+
+    <color name="delivery_pharmacy">#ffb300</color>
+    <color name="delivery_user">#00a550</color>
 </resources>

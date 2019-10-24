@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -28,12 +27,13 @@ import androidx.core.content.ContextCompat;
 import com.ahmadrosid.lib.drawroutemap.DirectionApiCallback;
 import com.ahmadrosid.lib.drawroutemap.DrawMarker;
 import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
-import com.ahmadrosid.lib.drawroutemap.ProgressLoadedCallback;
+import com.ahmadrosid.lib.drawroutemap.MapAnimator;
+import com.ahmadrosid.lib.drawroutemap.PiontsCallback;
+import com.ahmadrosid.lib.drawroutemap.SecondMapAnimator;
 import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.R;
 import com.apollo.epos.dialog.DialogManager;
 import com.apollo.epos.service.FloatingTouchService;
-import com.apollo.epos.service.GPSLocationService;
 import com.apollo.epos.utils.ActivityUtils;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
@@ -61,7 +61,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -72,7 +74,7 @@ import static com.apollo.epos.utils.AppConstants.LAST_ACTIVITY;
 
 public class MapViewActivity extends BaseActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, DirectionApiCallback, TaskLoadedCallback, Connectable,
-        Disconnectable, BindableInterface, ProgressLoadedCallback {
+        Disconnectable, BindableInterface, PiontsCallback {
 
     private GoogleMap mMap;
     private final int REQ_LOC_PERMISSION = 123;
@@ -96,6 +98,11 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     @BindView(R.id.travel_time)
     protected TextView travelTime;
     private float firstTime = 0, secondTime = 0, firstDistance = 0, secondDistance = 0;
+
+    private List<LatLng> piontsList;
+    private List<LatLng> piontsSecondList;
+    private boolean blackClickFlag;
+    private PolylineOptions lineOptions = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,6 +167,29 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
                 mMap.animateCamera(yourLocation);
             }
         }
+
+        mMap.setOnMapLoadedCallback(() -> {
+            if (origin != null && destination != null && other != null) {
+                LatLngBounds bounds = new LatLngBounds.Builder().include(origin).include(destination).include(other).build();
+
+                int width = getResources().getDisplayMetrics().widthPixels;
+                int height = getResources().getDisplayMetrics().heightPixels;
+                int padding = (int) (width * 0.10); // offset from edges of the map 10% of screen
+
+                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+                mMap.moveCamera(cu);
+                mMap.animateCamera(cu);
+
+
+                if (piontsList != null && piontsList.size() > 0) {
+                    MapAnimator.getInstance().animateRoute(mMap, piontsList, this, true);
+                }
+                if (piontsSecondList != null && piontsSecondList.size() > 0) {
+                    SecondMapAnimator.getInstance().animateRoute(mMap, piontsSecondList);
+                }
+            }
+
+        });
     }
 
     @Override
@@ -174,8 +204,8 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         DrawMarker.getInstance(this).draw(mMap, other, R.drawable.location_destination, "Other Location", 0, hashMap);
 
         if (!callOneTimeLocation) {
-            DrawRouteMaps.getInstance(this, this, this).draw(origin, destination, mMap, 0);
-            DrawRouteMaps.getInstance(this, this, this).draw(destination, other, mMap, 1);
+            DrawRouteMaps.getInstance(this, this, this, this).draw(origin, destination, mMap, 0);
+            DrawRouteMaps.getInstance(this, this, this, this).draw(destination, other, mMap, 1);
 
             LatLngBounds bounds = new LatLngBounds.Builder().include(origin).include(destination).include(other).build();
 
@@ -325,7 +355,9 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         if (mGoogleApiClient != null) {
             mGoogleApiClient.disconnect();
         }
-        callOneTimeLocation = false;
+//        if (!blackClickFlag) {
+//            callOneTimeLocation = false;
+//        }
         super.onStop();
     }
 
@@ -336,7 +368,7 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
-        hashMap.clear();
+//        hashMap.clear();
     }
 
     @Override
@@ -407,19 +439,31 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     }
 
     @Override
-    public Polyline onTaskDone(Object... values) {
-        if (currentPolyline != null) {
-            currentPolyline.remove();
+    public Polyline onTaskDone(boolean flag, Object... values) {
+//        if (currentPolyline != null) {
+//            currentPolyline.remove();
+//        }
+        Polyline currentPolyline;
+        if (flag) {
+            currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+        } else {
+            currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
         }
-        return currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+        return currentPolyline;
     }
 
     @Override
-    public Polyline onSecondTaskDone(Object... values) {
-        if (secondPolyline != null) {
-            secondPolyline.remove();
+    public Polyline onSecondTaskDone(boolean flag, Object... values) {
+//        if (secondPolyline != null) {
+//            secondPolyline.remove();
+//        }
+        Polyline secondPolyline;
+        if (flag) {
+            secondPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+        } else {
+            secondPolyline = mMap.addPolyline((PolylineOptions) values[0]);
         }
-        return secondPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+        return secondPolyline;
     }
 
     @OnClick(R.id.close_activity_img)
@@ -457,11 +501,6 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     }
 
     @Override
-    public void onTaskDone(boolean flag) {
-
-    }
-
-    @Override
     protected void onResume() {
         Hawk.put(LAST_ACTIVITY, getClass().getSimpleName());
         super.onResume();
@@ -493,5 +532,27 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
             }
         }
         return false;
+    }
+
+    @Override
+    public void pointsFirst(List<LatLng> pionts) {
+        if (pionts != null && pionts.size() > 0) {
+            piontsList = new ArrayList<>();
+            piontsList.addAll(pionts);
+        }
+    }
+
+    @Override
+    public void pointsSecond(List<LatLng> pionts) {
+        if (pionts != null && pionts.size() > 0) {
+            piontsSecondList = new ArrayList<>();
+            piontsSecondList.addAll(pionts);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        blackClickFlag = true;
     }
 }

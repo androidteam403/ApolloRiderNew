@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Point;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -29,6 +28,8 @@ import androidx.core.content.ContextCompat;
 import com.ahmadrosid.lib.drawroutemap.DirectionApiCallback;
 import com.ahmadrosid.lib.drawroutemap.DrawMarker;
 import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
+import com.ahmadrosid.lib.drawroutemap.MapAnimator;
+import com.ahmadrosid.lib.drawroutemap.PiontsCallback;
 import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.R;
 import com.apollo.epos.dialog.DialogManager;
@@ -60,7 +61,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -70,7 +73,7 @@ import butterknife.OnClick;
 import static com.apollo.epos.utils.AppConstants.LAST_ACTIVITY;
 
 public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener, DirectionApiCallback, TaskLoadedCallback, Connectable, Disconnectable, BindableInterface {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, DirectionApiCallback, TaskLoadedCallback, Connectable, Disconnectable, BindableInterface, PiontsCallback {
 
     private GoogleMap mMap;
     private final int REQ_LOC_PERMISSION = 123;
@@ -92,14 +95,16 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
     protected TextView travelDistance;
     @BindView(R.id.travel_time)
     protected TextView travelTime;
-    private Polyline currentPolyline, secondPolyline;
-    private LatLng origin , destination;
+    private LatLng origin, destination;
+    private boolean blackClickFlag;
+    private List<LatLng> piontsList;
+    private PolylineOptions lineOptions = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_map_view);
+        setContentView(R.layout.activity_track_map_view);
         ButterKnife.bind(this);
 
         if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
@@ -161,6 +166,28 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
                 mMap.animateCamera(yourLocation);
             }
         }
+
+        mMap.setOnMapLoadedCallback(() -> {
+            if(origin != null && destination != null) {
+                LatLngBounds bounds = new LatLngBounds.Builder()
+                        .include(origin)
+                        .include(destination).build();
+
+                int width = getResources().getDisplayMetrics().widthPixels;
+                int height = getResources().getDisplayMetrics().heightPixels;
+                int padding = (int) (width * 0.10); // offset from edges of the map 10% of screen
+
+                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+
+                mMap.moveCamera(cu);
+                mMap.animateCamera(cu);
+
+
+                if (piontsList != null && piontsList.size() > 0) {
+                    MapAnimator.getInstance().animateRoute(mMap, piontsList, this, true);
+                }
+            }
+        });
     }
 
     @Override
@@ -174,7 +201,7 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
         DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_pharmacy, "Destination Location", 0, hashMap);
 
         if (!callOneTimeLocation) {
-            DrawRouteMaps.getInstance(this, this, this).draw(origin, destination, mMap, 0);
+            DrawRouteMaps.getInstance(this, this, this, this).draw(origin, destination, mMap, 0);
 
             LatLngBounds bounds = new LatLngBounds.Builder()
                     .include(origin)
@@ -310,7 +337,7 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
 
     @Override
     public void onConnectionSuspended(int i) {
-            mGoogleApiClient.connect();
+        mGoogleApiClient.connect();
     }
 
     @Override
@@ -324,6 +351,14 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
         }
+        //        if (piontsList != null && piontsList.size() > 0) {
+//            lineOptions = new PolylineOptions();
+//            lineOptions.color(ContextCompat.getColor(DrawRouteMaps.getContext(), R.color.delivery_pharmacy));
+//            if (lineOptions != null && mMap != null) {
+//                MapAnimator.getInstance().animateRoute(mMap, piontsList, this, true);
+//            }
+//        }
+
         ActivityUtils.showDialog(TrackMapActivity.this, "Getting Location");
     }
 
@@ -332,7 +367,9 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
         if (mGoogleApiClient != null) {
             mGoogleApiClient.disconnect();
         }
-        callOneTimeLocation = false;
+//        if (!blackClickFlag) {
+//            callOneTimeLocation = false;
+//        }
         super.onStop();
     }
 
@@ -343,7 +380,7 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
-        hashMap.clear();
+//        hashMap.clear();
     }
 
     @Override
@@ -416,19 +453,31 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     @Override
-    public Polyline onTaskDone(Object... values) {
-        if (currentPolyline != null) {
-            currentPolyline.remove();
+    public Polyline onTaskDone(boolean flag, Object... values) {
+//        if (currentPolyline != null) {
+//            currentPolyline.remove();
+//        }
+        Polyline currentPolyline;
+        if (flag) {
+            currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+        } else {
+            currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
         }
-      return currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+        return currentPolyline;
     }
 
     @Override
-    public Polyline onSecondTaskDone(Object... values) {
-        if (secondPolyline != null) {
-            secondPolyline.remove();
+    public Polyline onSecondTaskDone(boolean flag, Object... values) {
+//        if (secondPolyline != null) {
+//            secondPolyline.remove();
+//        }
+        Polyline secondPolyline;
+        if (flag) {
+            secondPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+        } else {
+            secondPolyline = mMap.addPolyline((PolylineOptions) values[0]);
         }
-        return secondPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+        return secondPolyline;
     }
 
     @Override
@@ -488,5 +537,23 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
             }
         }
         return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        blackClickFlag = true;
+    }
+
+    @Override
+    public void pointsFirst(List<LatLng> pionts) {
+        if (pionts != null && pionts.size() > 0) {
+            piontsList = new ArrayList<>();
+            piontsList.addAll(pionts);
+        }
+    }
+
+    @Override
+    public void pointsSecond(List<LatLng> pionts) {
     }
 }

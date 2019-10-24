@@ -52,7 +52,7 @@ public class MapAnimator {
         return mapAnimator;
     }
 
-    public void animateRoute(GoogleMap googleMap, List<LatLng> bangaloreRoute, TaskLoadedCallback taskLoadedCallback) {
+    public void animateRoute(GoogleMap googleMap, List<LatLng> bangaloreRoute, TaskLoadedCallback taskLoadedCallback, boolean flag) {
 
         lineOptions = new PolylineOptions();
 
@@ -83,10 +83,10 @@ public class MapAnimator {
         }
 
         PolylineOptions optionsBackground = new PolylineOptions().add(bangaloreRoute.get(0)).color(GREY).width(7);
-        backgroundPolyline = taskLoadedCallback.onTaskDone(optionsBackground);
+        backgroundPolyline = taskLoadedCallback.onTaskDone(flag, optionsBackground);
 
         optionsForeground = new PolylineOptions().add(bangaloreRoute.get(0)).color(ContextCompat.getColor(DrawRouteMaps.getContext(), R.color.delivery_pharmacy)).width(7);
-        foregroundPolyline = taskLoadedCallback.onSecondTaskDone(optionsForeground);
+        foregroundPolyline = taskLoadedCallback.onSecondTaskDone(flag, optionsForeground);
 
 
         final ValueAnimator percentageCompletion = ValueAnimator.ofInt(0, 100);

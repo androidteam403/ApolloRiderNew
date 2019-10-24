@@ -3,7 +3,6 @@ package com.apollo.epos.activity;
 import android.Manifest;
 import android.animation.LayoutTransition;
 import android.app.ActivityManager;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.app.Activity;
 import android.content.Intent;
@@ -39,11 +38,11 @@ import androidx.transition.TransitionManager;
 
 import com.ahmadrosid.lib.drawroutemap.DirectionApiCallback;
 import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
+import com.ahmadrosid.lib.drawroutemap.PiontsCallback;
 import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.R;
 import com.apollo.epos.adapter.CustomReasonAdapter;
 import com.apollo.epos.dialog.DialogManager;
-import com.apollo.epos.listeners.DialogMangerCallback;
 import com.apollo.epos.model.OrderItemModel;
 import com.apollo.epos.service.FloatingTouchService;
 import com.apollo.epos.service.GPSLocationService;
@@ -80,19 +79,19 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static com.apollo.epos.utils.ActivityUtils.getBigFloatToDecimalFloat;
 import static com.apollo.epos.utils.AppConstants.LAST_ACTIVITY;
 
 public class NewOrderActivity extends BaseActivity implements DirectionApiCallback, TaskLoadedCallback, Connectable, Disconnectable, BindableInterface, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
-        ResultCallback<LocationSettingsResult> {
+        ResultCallback<LocationSettingsResult>, PiontsCallback {
     @BindView(R.id.items_view_image)
     protected ImageView itemsViewImage;
     @BindView(R.id.items_view_layout)
@@ -342,9 +341,9 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
                 LatLng destination = new LatLng(17.4410197, 78.3788463);
                 LatLng other = new LatLng(17.4411128, 78.3827845);
 
-                DrawRouteMaps.getInstance(this, this, this)
+                DrawRouteMaps.getInstance(this, this, this, this)
                         .draw(origin, destination, null, 0);
-                DrawRouteMaps.getInstance(this, this, this)
+                DrawRouteMaps.getInstance(this, this, this, this)
                         .draw(destination, other, null, 1);
 
                 isGpsDataReceived = true;
@@ -614,12 +613,12 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
     }
 
     @Override
-    public Polyline onTaskDone(Object... values) {
+    public Polyline onTaskDone(boolean flag, Object... values) {
         return null;
     }
 
     @Override
-    public Polyline onSecondTaskDone(Object... values) {
+    public Polyline onSecondTaskDone(boolean flag, Object... values) {
         return null;
     }
 
@@ -898,14 +897,14 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
     public void onStart() {
         super.onStart();
         mGoogleApiClient.connect();
-        getCurrentLocation();
+//        getCurrentLocation();
     }
 
     @Override
     public void onStop() {
         super.onStop();
         mGoogleApiClient.disconnect();
-        isGpsDataReceived = false;
+//        isGpsDataReceived = false;
     }
 
     /**
@@ -966,4 +965,13 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
         super.onSaveInstanceState(savedInstanceState);
     }
 
+    @Override
+    public void pointsFirst(List<LatLng> pionts) {
+
+    }
+
+    @Override
+    public void pointsSecond(List<LatLng> pionts) {
+
+    }
 }

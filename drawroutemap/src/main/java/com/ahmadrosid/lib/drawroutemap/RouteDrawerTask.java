@@ -1,8 +1,11 @@
 package com.ahmadrosid.lib.drawroutemap;
 
 import android.animation.ValueAnimator;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
@@ -32,15 +35,15 @@ public class RouteDrawerTask extends AsyncTask<String, Integer, List<List<HashMa
     private int colorFlag;
     private DirectionApiCallback directionApiCallback;
     private TaskLoadedCallback taskLoadedCallback;
-    private Polyline greyPolyLine, blackPolyline;
-    private ValueAnimator polylineAnimator;
+    private PiontsCallback piontsCallback;
     private ArrayList<LatLng> secondPoints = null;
 
-    public RouteDrawerTask(GoogleMap mMap, int colorFlag, DirectionApiCallback directionApiCallback, TaskLoadedCallback taskLoadedCallback) {
+    public RouteDrawerTask(GoogleMap mMap, int colorFlag, DirectionApiCallback directionApiCallback, TaskLoadedCallback taskLoadedCallback, PiontsCallback piontsCallback) {
         this.mMap = mMap;
         this.colorFlag = colorFlag;
         this.directionApiCallback = directionApiCallback;
         this.taskLoadedCallback = taskLoadedCallback;
+        this.piontsCallback = piontsCallback;
     }
 
     @Override
@@ -101,19 +104,21 @@ public class RouteDrawerTask extends AsyncTask<String, Integer, List<List<HashMa
 //            lineOptions.addAll(points);
 //            lineOptions.width(10);
             if (colorFlag == 0) {
-//                lineOptions.color(ContextCompat.getColor(DrawRouteMaps.getContext(), R.color.delivery_pharmacy));
+                lineOptions.color(ContextCompat.getColor(DrawRouteMaps.getContext(), R.color.delivery_pharmacy));
             } else {
-//                lineOptions.color(ContextCompat.getColor(DrawRouteMaps.getContext(), R.color.delivery_user));
+                lineOptions.color(ContextCompat.getColor(DrawRouteMaps.getContext(), R.color.delivery_user));
             }
 
             if (lineOptions != null && mMap != null && colorFlag == 0) {
-                MapAnimator.getInstance().animateRoute(mMap, points, taskLoadedCallback);
+                piontsCallback.pointsFirst(points);
+                MapAnimator.getInstance().animateRoute(mMap, points, taskLoadedCallback, false);
 //                taskLoadedCallback.onTaskDone(lineOptions);
+
             } else if (lineOptions != null && mMap != null && colorFlag == 1) {
+                piontsCallback.pointsSecond(secondPoints);
                 SecondMapAnimator.getInstance().animateRoute(mMap, secondPoints);
 //                mMap.addPolyline(lineOptions);
             }
         }
     }
-
 }
