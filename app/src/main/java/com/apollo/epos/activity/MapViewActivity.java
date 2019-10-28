@@ -169,26 +169,27 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         }
 
         mMap.setOnMapLoadedCallback(() -> {
-            if (origin != null && destination != null && other != null) {
-                LatLngBounds bounds = new LatLngBounds.Builder().include(origin).include(destination).include(other).build();
+            if(blackClickFlag) {
+                if (origin != null && destination != null && other != null) {
+                    LatLngBounds bounds = new LatLngBounds.Builder().include(origin).include(destination).include(other).build();
 
-                int width = getResources().getDisplayMetrics().widthPixels;
-                int height = getResources().getDisplayMetrics().heightPixels;
-                int padding = (int) (width * 0.10); // offset from edges of the map 10% of screen
+                    int width = getResources().getDisplayMetrics().widthPixels;
+                    int height = getResources().getDisplayMetrics().heightPixels;
+                    int padding = (int) (width * 0.10); // offset from edges of the map 10% of screen
 
-                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
-                mMap.moveCamera(cu);
-                mMap.animateCamera(cu);
+                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+                    mMap.moveCamera(cu);
+                    mMap.animateCamera(cu);
 
 
-                if (piontsList != null && piontsList.size() > 0) {
-                    MapAnimator.getInstance().animateRoute(mMap, piontsList, this, true);
-                }
-                if (piontsSecondList != null && piontsSecondList.size() > 0) {
-                    SecondMapAnimator.getInstance().animateRoute(mMap, piontsSecondList);
+                    if (piontsList != null && piontsList.size() > 0) {
+                        MapAnimator.getInstance().animateRoute(mMap, piontsList, this, true);
+                    }
+                    if (piontsSecondList != null && piontsSecondList.size() > 0) {
+                        SecondMapAnimator.getInstance().animateRoute(mMap, piontsSecondList);
+                    }
                 }
             }
-
         });
     }
 
@@ -358,6 +359,8 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
 //        if (!blackClickFlag) {
 //            callOneTimeLocation = false;
 //        }
+
+        blackClickFlag = true;
         super.onStop();
     }
 
@@ -553,6 +556,6 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        blackClickFlag = true;
+        blackClickFlag = false;
     }
 }

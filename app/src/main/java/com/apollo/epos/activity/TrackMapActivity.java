@@ -168,23 +168,25 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
         }
 
         mMap.setOnMapLoadedCallback(() -> {
-            if(origin != null && destination != null) {
-                LatLngBounds bounds = new LatLngBounds.Builder()
-                        .include(origin)
-                        .include(destination).build();
+            if(blackClickFlag) {
+                if (origin != null && destination != null) {
+                    LatLngBounds bounds = new LatLngBounds.Builder()
+                            .include(origin)
+                            .include(destination).build();
 
-                int width = getResources().getDisplayMetrics().widthPixels;
-                int height = getResources().getDisplayMetrics().heightPixels;
-                int padding = (int) (width * 0.10); // offset from edges of the map 10% of screen
+                    int width = getResources().getDisplayMetrics().widthPixels;
+                    int height = getResources().getDisplayMetrics().heightPixels;
+                    int padding = (int) (width * 0.10); // offset from edges of the map 10% of screen
 
-                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
 
-                mMap.moveCamera(cu);
-                mMap.animateCamera(cu);
+                    mMap.moveCamera(cu);
+                    mMap.animateCamera(cu);
 
 
-                if (piontsList != null && piontsList.size() > 0) {
-                    MapAnimator.getInstance().animateRoute(mMap, piontsList, this, true);
+                    if (piontsList != null && piontsList.size() > 0) {
+                        MapAnimator.getInstance().animateRoute(mMap, piontsList, this, true);
+                    }
                 }
             }
         });
@@ -370,6 +372,8 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
 //        if (!blackClickFlag) {
 //            callOneTimeLocation = false;
 //        }
+
+        blackClickFlag = true;
         super.onStop();
     }
 
@@ -446,9 +450,16 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
 
     @OnClick(R.id.follow_google_map)
     void onGoogleNavigationClick() {
-        String uri = "http://maps.google.com/maps?saddr=" + currentLat + "," + currentLon + "&daddr=" + latitude + "," + longitude;
-        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
-        intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+//        String uri = "http://maps.google.com/maps?saddr=" + currentLat + "," + currentLon + "&daddr=" + latitude + "," + longitude;
+//        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
+//        intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+//        startActivity(intent);
+
+        String packageName = "com.google.android.apps.maps";
+        String query = "google.navigation:q="+latitude+","+longitude;
+
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(query));
+        intent.setPackage(packageName);
         startActivity(intent);
     }
 
@@ -542,7 +553,7 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        blackClickFlag = true;
+        blackClickFlag = false;
     }
 
     @Override
