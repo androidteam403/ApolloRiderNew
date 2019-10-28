@@ -202,6 +202,21 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
         DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.location_current, "Current Location", 1, hashMap);
         DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_pharmacy, "Destination Location", 0, hashMap);
 
+
+        Location locationA = new Location("point A");
+        locationA.setLatitude(currentLat);
+        locationA.setLongitude(currentLon);
+        Location locationB = new Location("point B");
+        locationB.setLatitude(location.getLatitude());
+        locationB.setLongitude(location.getLongitude());
+
+        double distance = locationA.distanceTo(locationB);
+
+        if(Math.round(distance) > 100){
+            callOneTimeLocation = false;
+        }
+
+
         if (!callOneTimeLocation) {
             DrawRouteMaps.getInstance(this, this, this, this).draw(origin, destination, mMap, 0);
 
