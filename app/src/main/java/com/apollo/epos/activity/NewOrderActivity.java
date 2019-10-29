@@ -3,7 +3,6 @@ package com.apollo.epos.activity;
 import android.Manifest;
 import android.animation.LayoutTransition;
 import android.app.ActivityManager;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.app.Activity;
 import android.content.Intent;
@@ -27,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -38,15 +38,16 @@ import androidx.transition.TransitionManager;
 
 import com.ahmadrosid.lib.drawroutemap.DirectionApiCallback;
 import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
+import com.ahmadrosid.lib.drawroutemap.PiontsCallback;
 import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.R;
 import com.apollo.epos.adapter.CustomReasonAdapter;
 import com.apollo.epos.dialog.DialogManager;
-import com.apollo.epos.listeners.DialogMangerCallback;
 import com.apollo.epos.model.OrderItemModel;
 import com.apollo.epos.service.FloatingTouchService;
 import com.apollo.epos.service.GPSLocationService;
 import com.apollo.epos.utils.ActivityUtils;
+import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -76,19 +77,19 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static com.apollo.epos.utils.ActivityUtils.getBigFloatToDecimalFloat;
 import static com.apollo.epos.utils.AppConstants.LAST_ACTIVITY;
 
 public class NewOrderActivity extends BaseActivity implements DirectionApiCallback, TaskLoadedCallback, Connectable, Disconnectable, BindableInterface, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
-        ResultCallback<LocationSettingsResult> {
+        ResultCallback<LocationSettingsResult>, PiontsCallback {
     @BindView(R.id.items_view_image)
     protected ImageView itemsViewImage;
     @BindView(R.id.items_view_layout)
@@ -210,15 +211,6 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
         Animation RightSwipe = AnimationUtils.loadAnimation(this, R.anim.right_swipe);
         orderDeliveryTimeLayout.startAnimation(RightSwipe);
 
-        mapViewLayout.setOnClickListener(v -> {
-            if (checkForLocPermission()) {
-                startUpdatesButtonHandler(mapViewLayout);
-            } else {
-                requestForLocPermission(REQ_LOC_PERMISSION);
-                return;
-            }
-        });
-
         mRequestingLocationUpdates = false;
         mLastUpdateTime = "";
 
@@ -227,81 +219,115 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
 
         // Kick off the process of building the GoogleApiClient, LocationRequest, and
         // LocationSettingsRequest objects.
-        buildGoogleApiClient();
+
+        //show error dialog if GoolglePlayServices not available
+        if (ActivityUtils.checkPlayServices(NewOrderActivity.this)) {
+            buildGoogleApiClient();
+        }
         createLocationRequest();
+        GoogleClientBuild();
         buildLocationSettingsRequest();
 
+        mapViewLayout.setOnClickListener(v -> {
+            startUpdatesButtonHandler(mapViewLayout);
+
+        });
+
         orderDeliveryTimeLayout.setVisibility(View.INVISIBLE);
-    }
 
-    private boolean checkForLocPermission() {
-        if (android.os.Build.VERSION.SDK_INT >= 23) {
-            return ActivityCompat.checkSelfPermission(NewOrderActivity.this, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-        } else {
-            return true;
-        }
-    }
-
-
-    private void requestForLocPermission(final int reqCode) {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(NewOrderActivity.this, ACCESS_FINE_LOCATION)) {
-
-            // Show an explanation to the user *asynchronously* -- don't block
-            // this thread waiting for the user's response! After the user
-            // sees the explanation, try again to request the permission.
-            DialogManager.showSingleBtnPopup(NewOrderActivity.this, new DialogMangerCallback() {
-                @Override
-                public void onOkClick(View v) {
-                    ActivityCompat.requestPermissions(NewOrderActivity.this,
-                            new String[]{ACCESS_FINE_LOCATION},
-                            reqCode);
-                }
-
-                @Override
-                public void onCancelClick(View view) {
-
-                }
-            }, getString(R.string.app_name), getString(R.string.locationPermissionMsg), getString(R.string.ok));
-        } else {
-
-            // No explanation needed, we can request the permission.
-
-            ActivityCompat.requestPermissions(NewOrderActivity.this,
-                    new String[]{ACCESS_FINE_LOCATION},
-                    reqCode);
-
-            // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-            // app-defined int constant. The callback method gets the
-            // result of the request.
-        }
+        getCurrentLocation();
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case REQ_LOC_PERMISSION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
 
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                    startUpdatesButtonHandler(mapViewLayout);
+        for(String permission: permissions){
+            if(ActivityCompat.shouldShowRequestPermissionRationale(NewOrderActivity.this, permission)){
+                //denied
+                Log.e("denied", permission);
+            }else{
+                if(ActivityCompat.checkSelfPermission(NewOrderActivity.this, permission) == PackageManager.PERMISSION_GRANTED){
+                    //allowed
+                    Log.e("allowed", permission);
 
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    DialogManager.showToast(NewOrderActivity.this, getString(R.string.noAccessTo));
+                    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                        // permission was granted, yay! Do the
+                        // location-related task you need to do.
+                        if (ContextCompat.checkSelfPermission(NewOrderActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+                            if (mGoogleApiClient != null) {
+                                mGoogleApiClient.connect();
+                            } else {
+                                buildGoogleApiClient();
+                                mGoogleApiClient.connect();
+                            }
+                        }
+                    }
+                } else{
+                    //set to never ask again
+                    Log.e("set to never ask again", permission);
+                    //do something here.
+                    requestLocation();
                 }
             }
-            break;
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
+//        switch (requestCode) {
+//            case REQ_LOC_PERMISSION:
+//            case MY_PERMISSIONS_REQUEST_LOCATION: {
+//                // If request is cancelled, the result arrays are empty.
+//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//
+//                    // permission was granted, yay! Do the
+//                    // location-related task you need to do.
+//                    if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+//
+//                        if (mGoogleApiClient != null) {
+//                            mGoogleApiClient.connect();
+//                        } else {
+//                            buildGoogleApiClient();
+//                            mGoogleApiClient.connect();
+//                        }
+//                    }
+//                } else {
+//
+//                    // permission denied, boo! Disable the
+//                    // functionality that depends on this permission.
+////                    Toast.makeText(mActivity, "permission denied", Toast.LENGTH_LONG).show();
+//                    requestLocation();
+//
+//                }
+//                return;
+//            }
+//
+//            // other 'case' lines to check for other
+//            // permissions this app might request
+//        }
     }
 
+    public void requestLocation() {
+        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
+//        String rationale = "Please provide location permission so that you can ...";
+//        Permissions.Options options = new Permissions.Options()
+//                .setRationaleDialogTitle("Info")
+//                .setSettingsDialogTitle("Warning");
+
+//        Permiss ions.check(NewOrderActivity.this, permissions, null, null, new PermissionHandler() {
+//            @Override
+//            public void onGranted() {
+////                Toast.makeText(mActivity, "Location granted.", Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onDenied(Context context, ArrayList<String> deniedPermissions) {
+//                Toast.makeText(NewOrderActivity.this, "Location denied.", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+    }
+
+    private synchronized void GoogleClientBuild() {
+        mGoogleApiClient = new GoogleApiClient.Builder(NewOrderActivity.this).addApi(LocationServices.API).addConnectionCallbacks(this).addApi(AppIndex.API).addApi(AppIndex.API).addOnConnectionFailedListener(this).build();
+    }
 
     private void getCurrentLocation() {
         GPSLocationService gps = new GPSLocationService(this);
@@ -313,9 +339,9 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
                 LatLng destination = new LatLng(17.4410197, 78.3788463);
                 LatLng other = new LatLng(17.4411128, 78.3827845);
 
-                DrawRouteMaps.getInstance(this, this, this)
+                DrawRouteMaps.getInstance(this, this, this, this)
                         .draw(origin, destination, null, 0);
-                DrawRouteMaps.getInstance(this, this, this)
+                DrawRouteMaps.getInstance(this, this, this, this)
                         .draw(destination, other, null, 1);
 
                 isGpsDataReceived = true;
@@ -585,12 +611,12 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
     }
 
     @Override
-    public Polyline onTaskDone(Object... values) {
+    public Polyline onTaskDone(boolean flag, Object... values) {
         return null;
     }
 
     @Override
-    public Polyline onSecondTaskDone(Object... values) {
+    public Polyline onSecondTaskDone(boolean flag, Object... values) {
         return null;
     }
 
@@ -598,7 +624,7 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
     public void onConnect() {
 //        ActivityUtils.hideDialog();
 //        DialogManager.showToast(NewOrderActivity.this, "Network Connected");
-        getCurrentLocation();
+//        getCurrentLocation();
     }
 
     @Override
@@ -821,16 +847,33 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
      * Requests location updates from the FusedLocationApi.
      */
     protected void startLocationUpdates() {
-        LocationServices.FusedLocationApi.requestLocationUpdates(
-                mGoogleApiClient,
-                mLocationRequest,
-                this
-        ).setResultCallback(status -> {
-            mRequestingLocationUpdates = true;
-            Intent intent = new Intent(NewOrderActivity.this, MapViewActivity.class);
-            startActivity(intent);
-        });
+        checkPermission();
+    }
 
+
+    private void checkPermission() {
+        int checkSelf = ActivityCompat.checkSelfPermission(NewOrderActivity.this, Manifest.permission.ACCESS_FINE_LOCATION);
+        if (checkSelf != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(NewOrderActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQ_LOC_PERMISSION);
+                }
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQ_LOC_PERMISSION);
+                }
+            }
+        } else {
+            LocationServices.FusedLocationApi.requestLocationUpdates(
+                    mGoogleApiClient,
+                    mLocationRequest,
+                    this
+            ).setResultCallback(status -> {
+                mRequestingLocationUpdates = true;
+                Intent intent = new Intent(NewOrderActivity.this, MapViewActivity.class);
+                startActivity(intent);
+            });
+        }
     }
 
     /**
@@ -852,14 +895,14 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
     public void onStart() {
         super.onStart();
         mGoogleApiClient.connect();
-        getCurrentLocation();
+//        getCurrentLocation();
     }
 
     @Override
     public void onStop() {
         super.onStop();
         mGoogleApiClient.disconnect();
-        isGpsDataReceived = false;
+//        isGpsDataReceived = false;
     }
 
     /**
@@ -920,4 +963,13 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
         super.onSaveInstanceState(savedInstanceState);
     }
 
+    @Override
+    public void pointsFirst(List<LatLng> pionts) {
+
+    }
+
+    @Override
+    public void pointsSecond(List<LatLng> pionts) {
+
+    }
 }

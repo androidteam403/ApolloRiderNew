@@ -55,6 +55,7 @@ public class FloatingTouchService extends Service {
     private AlertDialog.Builder mBulider;
     private Dialog mAlertDialog;
     private Handler mHandler;
+    public boolean isAssitiveClicked = false;
 
     @Override
     public void onCreate() {
@@ -85,19 +86,31 @@ public class FloatingTouchService extends Service {
         mWindowManager = (WindowManager) this.getSystemService(WINDOW_SERVICE);
         LayoutInflater mInflater = LayoutInflater.from(this);
         mAssistiveTouchView = mInflater.inflate(R.layout.assistive_touch_layout, null);
-
-        mAssistiveTouchView.setVisibility(View.GONE);
+//        mAssistiveTouchView.setVisibility(View.GONE);
+        updateAssistiveInvisible();
+        Log.e("Assistive", "Creating Service ============ ");
         mHandler.postDelayed(new Runnable() {
             public void run() {
                 if (isAppOnForeground(FloatingTouchService.this, getApplicationContext().getPackageName())) {
-                    mAssistiveTouchView.setVisibility(View.GONE);
+                    updateAssistiveInvisible();
+//                    mAssistiveTouchView.setVisibility(View.GONE);
+                    Log.e("AssistiveTouch", "Activity On Foreground = : = : = : = : ");
                 } else {
-//                    mAssistiveTouchView.setAlpha(1);
-                    mAssistiveTouchView.setVisibility(View.VISIBLE);
+//                    mAssistiveTouchView.setVisibility(View.VISIBLE);
+                    if (!isAssitiveClicked) {
+                        Log.e("AssistiveTouch", "Activity On Background, Visible = : = : = : = : ");
+                        updateAssistiveVisible();
+                    }
                 }
                 mHandler.postDelayed(this, delay);
             }
         }, delay);
+
+        new MyHandler().postDelayed(new Runnable() {
+            public void run() {
+                isAssitiveClicked = false;
+            }
+        }, 4000);
     }
 
     private void calculateForMyPhone() {
@@ -157,14 +170,14 @@ public class FloatingTouchService extends Service {
         mAssistiveTouchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAssistiveTouchView.setAlpha(0);
+                isAssitiveClicked = true;
+//                updateAssistiveInvisible();
                 lastAssistiveTouchViewX = mParams.x;
                 lastAssistiveTouchViewY = mParams.y;
 
                 String resumeActivity = Hawk.get(LAST_ACTIVITY, "");
-                Log.e("AssistiveTouch", "Activity fetched from shared pref : = : = : = : = : = : = : = : ");
+                Log.e("AssistiveTouch", "Activity fetched from shared pref : == : == : == : == :");
                 if (resumeActivity.equalsIgnoreCase(NavigationActivity.class.getSimpleName())) {
-                    Log.e("AssistiveTouch", "Activity Calling  =========== ");
                     Intent intent = new Intent(getApplicationContext(), NavigationActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     startActivity(intent);
@@ -190,16 +203,7 @@ public class FloatingTouchService extends Service {
                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     startActivity(intent);
                 }
-
-//                Context ctx = getApplicationContext();
-//                Intent i = ctx.getPackageManager().getLaunchIntentForPackage("com.apollo.epos");
-////                i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-////                i.setAction(Intent.ACTION_MAIN);
-////                i.addCategory(Intent.CATEGORY_LAUNCHER);
-//                ctx.startActivity(i);
-
+                stopSelf();
             }
         });
     }
@@ -269,6 +273,15 @@ public class FloatingTouchService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mWindowManager.removeView(mAssistiveTouchView);
+        if (mAssistiveTouchView != null)
+            mWindowManager.removeView(mAssistiveTouchView);
+    }
+
+    private void updateAssistiveVisible() {
+        mAssistiveTouchView.setAlpha(1);
+    }
+
+    private void updateAssistiveInvisible() {
+        mAssistiveTouchView.setAlpha(0);
     }
 }

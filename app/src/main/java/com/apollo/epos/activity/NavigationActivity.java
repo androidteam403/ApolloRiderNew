@@ -399,13 +399,11 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
             if (isFinishingActivity) {
                 selectItem(3);
             }
-        }else if (requestCode == REQUEST_CODE) {
+        } else if (requestCode == REQUEST_CODE) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (Settings.canDrawOverlays(this)) {
                     Intent intent = new Intent(NavigationActivity.this, FloatingTouchService.class);
-                    if (isMyServiceRunning(FloatingTouchService.class)) {
-                        stopService(intent);
-                    } else {
+                    if (!isMyServiceRunning(FloatingTouchService.class)) {
                         startService(intent);
                     }
                 }
@@ -417,6 +415,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     protected void onResume() {
         Hawk.put(LAST_ACTIVITY, getClass().getSimpleName());
         super.onResume();
+        startService(new Intent(NavigationActivity.this, FloatingTouchService.class));
     }
 
     @Override
@@ -439,6 +438,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     }
 
     public final static int REQUEST_CODE = 1234;
+
     private void handleAssistiveTouchWindow() {
         if (Build.VERSION.SDK_INT >= 23) {
             if (!Settings.canDrawOverlays(NavigationActivity.this)) {
@@ -452,10 +452,9 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
             }
         } else {
             Intent intent = new Intent(NavigationActivity.this, FloatingTouchService.class);
-            if (isMyServiceRunning(FloatingTouchService.class))
-                stopService(intent);
-            else
+            if (!isMyServiceRunning(FloatingTouchService.class)) {
                 startService(intent);
+            }
         }
     }
 }

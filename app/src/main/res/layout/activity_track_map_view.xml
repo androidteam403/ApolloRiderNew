@@ -86,7 +86,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_dimen_13"
-                android:text="Distance: "
+                android:text="Distance "
                 android:textColor="@color/colorWhite"
                 android:fontFamily="@font/roboto_regular"/>
 
@@ -96,7 +96,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_dimen_13"
-                android:text="Time: "
+                android:text="Time "
                 android:textColor="@color/colorWhite"
                 android:fontFamily="@font/roboto_regular"/>
         </LinearLayout>

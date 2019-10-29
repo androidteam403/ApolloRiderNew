@@ -84,11 +84,13 @@ public class SecondMapAnimator {
             backgroundPolyline.remove();
         }
 
-            PolylineOptions optionsBackground = new PolylineOptions().add(bangaloreRoute.get(0)).color(GREY).width(7);
-            backgroundPolyline = googleMap.addPolyline(optionsBackground);
+        PolylineOptions optionsBackground = new PolylineOptions().add(bangaloreRoute.get(0)).color(GREY).width(7);
+        backgroundPolyline = googleMap.addPolyline(optionsBackground);
+//            backgroundPolyline = googleMap.addPolyline(optionsBackground);
 
-            optionsForeground = new PolylineOptions().add(bangaloreRoute.get(0)).color(ContextCompat.getColor(DrawRouteMaps.getContext(), R.color.delivery_user)).width(7);
-            foregroundPolyline = googleMap.addPolyline(optionsForeground);
+        optionsForeground = new PolylineOptions().add(bangaloreRoute.get(0)).color(ContextCompat.getColor(DrawRouteMaps.getContext(), R.color.delivery_user)).width(7);
+        foregroundPolyline = googleMap.addPolyline(optionsForeground);
+//            foregroundPolyline = googleMap.addPolyline(optionsForeground);
 
 
         final ValueAnimator percentageCompletion = ValueAnimator.ofInt(0, 100);
