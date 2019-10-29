@@ -197,16 +197,6 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
 
     @Override
     public void onLocationChanged(Location location) {
-        origin = new LatLng(location.getLatitude(), location.getLongitude());
-        currentLat = location.getLatitude();
-        currentLon = location.getLongitude();
-        destination = new LatLng(17.4410197, 78.3788463);
-        other = new LatLng(17.4411128, 78.3827845);
-
-
-        DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.location_current, "Current Location", 1, hashMap);
-        DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_pharmacy, "Destination Location", 0, hashMap);
-        DrawMarker.getInstance(this).draw(mMap, other, R.drawable.location_destination, "Other Location", 0, hashMap);
 
         Location locationA = new Location("point A");
         locationA.setLatitude(currentLat);
@@ -220,6 +210,19 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         if(Math.round(distance) > 100){
             callOneTimeLocation = false;
         }
+
+        origin = new LatLng(location.getLatitude(), location.getLongitude());
+        currentLat = location.getLatitude();
+        currentLon = location.getLongitude();
+        destination = new LatLng(17.4410197, 78.3788463);
+        other = new LatLng(17.4411128, 78.3827845);
+
+
+        DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.location_current, "Current Location", 1, hashMap);
+        DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_pharmacy, "Destination Location", 0, hashMap);
+        DrawMarker.getInstance(this).draw(mMap, other, R.drawable.location_destination, "Other Location", 0, hashMap);
+
+
 
         if (!callOneTimeLocation) {
             DrawRouteMaps.getInstance(this, this, this, this).draw(origin, destination, mMap, 0);

@@ -580,13 +580,10 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
             thread.start();
         }
         ActivityUtils.hideDialog();
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                orderDeliveryTimeLayout.setVisibility(View.VISIBLE);
-                Animation RightSwipe = AnimationUtils.loadAnimation(NewOrderActivity.this, R.anim.right_swipe);
-                orderDeliveryTimeLayout.startAnimation(RightSwipe);
-            }
+        runOnUiThread(() -> {
+            orderDeliveryTimeLayout.setVisibility(View.VISIBLE);
+            Animation RightSwipe = AnimationUtils.loadAnimation(NewOrderActivity.this, R.anim.right_swipe);
+            orderDeliveryTimeLayout.startAnimation(RightSwipe);
         });
     }
 
@@ -992,11 +989,6 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
 
     @Override
     public void currentLocation(Location location) {
-        LatLng origin = new LatLng(location.getLatitude(), location.getLongitude());
-        currentLat = location.getLatitude();
-        currentLon = location.getLongitude();
-        LatLng destination = new LatLng(17.4410197, 78.3788463);
-        LatLng other = new LatLng(17.4411128, 78.3827845);
 
         Location locationA = new Location("point A");
         locationA.setLatitude(currentLat);
@@ -1011,6 +1003,11 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
             isGpsDataReceived = false;
         }
 
+        LatLng origin = new LatLng(location.getLatitude(), location.getLongitude());
+        currentLat = location.getLatitude();
+        currentLon = location.getLongitude();
+        LatLng destination = new LatLng(17.4410197, 78.3788463);
+        LatLng other = new LatLng(17.4411128, 78.3827845);
 
         if (!isGpsDataReceived) {
 

@@ -194,15 +194,6 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
 
     @Override
     public void onLocationChanged(Location location) {
-        origin = new LatLng(location.getLatitude(), location.getLongitude());
-        currentLat = location.getLatitude();
-        currentLon = location.getLongitude();
-        destination = new LatLng(latitude, longitude);
-
-        DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.location_current, "Current Location", 1, hashMap);
-        DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_pharmacy, "Destination Location", 0, hashMap);
-
-
         Location locationA = new Location("point A");
         locationA.setLatitude(currentLat);
         locationA.setLongitude(currentLon);
@@ -216,6 +207,13 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
             callOneTimeLocation = false;
         }
 
+        origin = new LatLng(location.getLatitude(), location.getLongitude());
+        currentLat = location.getLatitude();
+        currentLon = location.getLongitude();
+        destination = new LatLng(latitude, longitude);
+
+        DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.location_current, "Current Location", 1, hashMap);
+        DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_pharmacy, "Destination Location", 0, hashMap);
 
         if (!callOneTimeLocation) {
             DrawRouteMaps.getInstance(this, this, this, this).draw(origin, destination, mMap, 0);
