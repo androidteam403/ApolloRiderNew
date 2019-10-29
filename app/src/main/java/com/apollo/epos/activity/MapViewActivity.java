@@ -104,6 +104,8 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     private boolean blackClickFlag;
     private PolylineOptions lineOptions = null;
 
+    private double currentLat, currentLon;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -195,7 +197,23 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
 
     @Override
     public void onLocationChanged(Location location) {
+
+        Location locationA = new Location("point A");
+        locationA.setLatitude(currentLat);
+        locationA.setLongitude(currentLon);
+        Location locationB = new Location("point B");
+        locationB.setLatitude(location.getLatitude());
+        locationB.setLongitude(location.getLongitude());
+
+        double distance = locationA.distanceTo(locationB);
+
+        if(Math.round(distance) > 100){
+            callOneTimeLocation = false;
+        }
+
         origin = new LatLng(location.getLatitude(), location.getLongitude());
+        currentLat = location.getLatitude();
+        currentLon = location.getLongitude();
         destination = new LatLng(17.4410197, 78.3788463);
         other = new LatLng(17.4411128, 78.3827845);
 
@@ -203,6 +221,8 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.location_current, "Current Location", 1, hashMap);
         DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_pharmacy, "Destination Location", 0, hashMap);
         DrawMarker.getInstance(this).draw(mMap, other, R.drawable.location_destination, "Other Location", 0, hashMap);
+
+
 
         if (!callOneTimeLocation) {
             DrawRouteMaps.getInstance(this, this, this, this).draw(origin, destination, mMap, 0);

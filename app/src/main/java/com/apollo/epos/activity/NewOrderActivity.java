@@ -47,6 +47,10 @@ import com.apollo.epos.model.OrderItemModel;
 import com.apollo.epos.service.FloatingTouchService;
 import com.apollo.epos.service.GPSLocationService;
 import com.apollo.epos.utils.ActivityUtils;
+import com.example.easywaylocation.EasyWayLocation;
+import com.example.easywaylocation.GetLocationDetail;
+import com.example.easywaylocation.Listener;
+import com.example.easywaylocation.LocationData;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -85,11 +89,12 @@ import butterknife.OnClick;
 
 import static com.apollo.epos.utils.ActivityUtils.getBigFloatToDecimalFloat;
 import static com.apollo.epos.utils.AppConstants.LAST_ACTIVITY;
+import static com.example.easywaylocation.EasyWayLocation.LOCATION_SETTING_REQUEST_CODE;
 
 public class NewOrderActivity extends BaseActivity implements DirectionApiCallback, TaskLoadedCallback, Connectable, Disconnectable, BindableInterface, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
-        ResultCallback<LocationSettingsResult>, PiontsCallback {
+        ResultCallback<LocationSettingsResult>, PiontsCallback, Listener, LocationData.AddressCallBack {
     @BindView(R.id.items_view_image)
     protected ImageView itemsViewImage;
     @BindView(R.id.items_view_layout)
@@ -117,6 +122,7 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
     protected TextView deliveryUserTxt;
     @BindView(R.id.total_distance_txt)
     protected TextView totalDistanceTxt;
+    private double currentLat, currentLon;
 
     private float firstTime = 0;
     private float secondTime = 0;
@@ -180,6 +186,8 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
 
     private final int REQ_LOC_PERMISSION = 5002;
     private boolean isGpsDataReceived = false;
+    private EasyWayLocation easyWayLocation;
+    private GetLocationDetail getLocationDetail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -235,7 +243,14 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
 
         orderDeliveryTimeLayout.setVisibility(View.INVISIBLE);
 
-        getCurrentLocation();
+        getLocationDetail = new GetLocationDetail(this, this);
+        easyWayLocation = new EasyWayLocation(this, false,this);
+        if (permissionIsGranted()) {
+            doLocationWork();
+        } else {
+            // Permission not granted, ask for it
+            //testLocationRequest.requestPermission(121);
+        }
     }
 
     @Override
@@ -327,28 +342,6 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
 
     private synchronized void GoogleClientBuild() {
         mGoogleApiClient = new GoogleApiClient.Builder(NewOrderActivity.this).addApi(LocationServices.API).addConnectionCallbacks(this).addApi(AppIndex.API).addApi(AppIndex.API).addOnConnectionFailedListener(this).build();
-    }
-
-    private void getCurrentLocation() {
-        GPSLocationService gps = new GPSLocationService(this);
-        if (gps.canGetLocation()) {
-
-            if (!isGpsDataReceived) {
-                LatLng origin = new LatLng(gps.getLatitude(), gps.getLongitude());
-
-                LatLng destination = new LatLng(17.4410197, 78.3788463);
-                LatLng other = new LatLng(17.4411128, 78.3827845);
-
-                DrawRouteMaps.getInstance(this, this, this, this)
-                        .draw(origin, destination, null, 0);
-                DrawRouteMaps.getInstance(this, this, this, this)
-                        .draw(destination, other, null, 1);
-
-                isGpsDataReceived = true;
-            }
-        } else {
-            gps.showSettingsAlert();
-        }
     }
 
     ArrayList<OrderItemModel> medicineList = new ArrayList<>();
@@ -531,6 +524,8 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
                     }
                 }
             }
+        }else if (requestCode == LOCATION_SETTING_REQUEST_CODE) {
+            easyWayLocation.onActivityResult(resultCode);
         }
     }
 
@@ -583,13 +578,10 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
             thread.start();
         }
         ActivityUtils.hideDialog();
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                orderDeliveryTimeLayout.setVisibility(View.VISIBLE);
-                Animation RightSwipe = AnimationUtils.loadAnimation(NewOrderActivity.this, R.anim.right_swipe);
-                orderDeliveryTimeLayout.startAnimation(RightSwipe);
-            }
+        runOnUiThread(() -> {
+            orderDeliveryTimeLayout.setVisibility(View.VISIBLE);
+            Animation RightSwipe = AnimationUtils.loadAnimation(NewOrderActivity.this, R.anim.right_swipe);
+            orderDeliveryTimeLayout.startAnimation(RightSwipe);
         });
     }
 
@@ -640,6 +632,8 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
         if (mGoogleApiClient.isConnected()) {
             stopLocationUpdates();
         }
+
+        easyWayLocation.endUpdates();
     }
 
     @Override
@@ -655,6 +649,7 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
         if (mGoogleApiClient.isConnected() && mRequestingLocationUpdates) {
             startLocationUpdates();
         }
+        easyWayLocation.startLocation();
     }
 
     @Override
@@ -971,5 +966,64 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
     @Override
     public void pointsSecond(List<LatLng> pionts) {
 
+    }
+
+    public boolean permissionIsGranted() {
+
+        int permissionState = ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION);
+
+        return permissionState == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void doLocationWork() {
+        easyWayLocation.startLocation();
+    }
+
+    @Override
+    public void locationOn() {
+        Toast.makeText(this, "Location On", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void currentLocation(Location location) {
+
+        Location locationA = new Location("point A");
+        locationA.setLatitude(currentLat);
+        locationA.setLongitude(currentLon);
+        Location locationB = new Location("point B");
+        locationB.setLatitude(location.getLatitude());
+        locationB.setLongitude(location.getLongitude());
+
+        double distance = locationA.distanceTo(locationB);
+
+        if(Math.round(distance) > 100){
+            isGpsDataReceived = false;
+        }
+
+        LatLng origin = new LatLng(location.getLatitude(), location.getLongitude());
+        currentLat = location.getLatitude();
+        currentLon = location.getLongitude();
+        LatLng destination = new LatLng(17.4410197, 78.3788463);
+        LatLng other = new LatLng(17.4411128, 78.3827845);
+
+        if (!isGpsDataReceived) {
+
+                DrawRouteMaps.getInstance(this, this, this, this)
+                        .draw(origin, destination, null, 0);
+                DrawRouteMaps.getInstance(this, this, this, this)
+                        .draw(destination, other, null, 1);
+
+                isGpsDataReceived = true;
+            }
+    }
+
+    @Override
+    public void locationCancelled() {
+        Toast.makeText(this, "Location Cancelled", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void locationData(LocationData locationData) {
     }
 }

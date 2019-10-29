@@ -194,6 +194,19 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
 
     @Override
     public void onLocationChanged(Location location) {
+        Location locationA = new Location("point A");
+        locationA.setLatitude(currentLat);
+        locationA.setLongitude(currentLon);
+        Location locationB = new Location("point B");
+        locationB.setLatitude(location.getLatitude());
+        locationB.setLongitude(location.getLongitude());
+
+        double distance = locationA.distanceTo(locationB);
+
+        if(Math.round(distance) > 100){
+            callOneTimeLocation = false;
+        }
+
         origin = new LatLng(location.getLatitude(), location.getLongitude());
         currentLat = location.getLatitude();
         currentLon = location.getLongitude();
