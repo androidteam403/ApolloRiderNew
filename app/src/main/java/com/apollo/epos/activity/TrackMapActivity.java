@@ -168,7 +168,7 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
         }
 
         mMap.setOnMapLoadedCallback(() -> {
-            if(blackClickFlag) {
+            if (blackClickFlag) {
                 if (origin != null && destination != null) {
                     LatLngBounds bounds = new LatLngBounds.Builder()
                             .include(origin)
@@ -203,7 +203,7 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
 
         double distance = locationA.distanceTo(locationB);
 
-        if(Math.round(distance) > 100){
+        if (Math.round(distance) > 100) {
             callOneTimeLocation = false;
         }
 
@@ -423,9 +423,10 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
         try {
             if (jsonArray != null) {
                 distance = ((JSONObject) jsonArray.get(0)).getJSONObject("distance").getString("text");
-                time = ((JSONObject) jsonArray.get(0)).getJSONObject("duration").getString("text");
+                time = ((JSONObject) jsonArray.get(0)).getJSONObject("duration").getString("value");
                 removing = Float.parseFloat(distance.replace("\"", "").replace("km", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
-                removingTime = Float.parseFloat(time.replace("\"", "").replace("mins", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
+//                removingTime = Float.parseFloat(time.replace("\"", "").replace("mins", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
+                removingTime = Float.parseFloat(time) / 60;
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -469,7 +470,7 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
 //        startActivity(intent);
 
         String packageName = "com.google.android.apps.maps";
-        String query = "google.navigation:q="+latitude+","+longitude;
+        String query = "google.navigation:q=" + latitude + "," + longitude;
 
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(query));
         intent.setPackage(packageName);

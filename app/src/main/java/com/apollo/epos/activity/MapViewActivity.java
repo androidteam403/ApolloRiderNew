@@ -171,7 +171,7 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         }
 
         mMap.setOnMapLoadedCallback(() -> {
-            if(blackClickFlag) {
+            if (blackClickFlag) {
                 if (origin != null && destination != null && other != null) {
                     LatLngBounds bounds = new LatLngBounds.Builder().include(origin).include(destination).include(other).build();
 
@@ -207,7 +207,7 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
 
         double distance = locationA.distanceTo(locationB);
 
-        if(Math.round(distance) > 100){
+        if (Math.round(distance) > 100) {
             callOneTimeLocation = false;
         }
 
@@ -221,7 +221,6 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.location_current, "Current Location", 1, hashMap);
         DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_pharmacy, "Destination Location", 0, hashMap);
         DrawMarker.getInstance(this).draw(mMap, other, R.drawable.location_destination, "Other Location", 0, hashMap);
-
 
 
         if (!callOneTimeLocation) {
@@ -417,9 +416,11 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         try {
             if (jsonArray != null) {
                 distance = ((JSONObject) jsonArray.get(0)).getJSONObject("distance").getString("text");
-                time = ((JSONObject) jsonArray.get(0)).getJSONObject("duration").getString("text");
+                time = ((JSONObject) jsonArray.get(0)).getJSONObject("duration").getString("value");
                 removing = Float.parseFloat(distance.replace("\"", "").replace("km", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
-                removingTime = Float.parseFloat(time.replace("\"", "").replace("mins", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
+//                removingTime = Float.parseFloat(time.replace("\"", "").replace("mins", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
+                removingTime = Float.parseFloat(time) / 60;
+
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -445,7 +446,8 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
                                 if (firstDistance != 0 && secondDistance != 0 && firstTime != 0 && secondTime != 0) {
                                     float finalDistance = firstDistance + secondDistance;
                                     float lastTime = firstTime + secondTime;
-                                    travelDistance.setText("Distance: " + getBigFloatToDecimalFloat(finalDistance) + "KM");
+//                                    travelDistance.setText("Distance: " + getBigFloatToDecimalFloat(finalDistance) + "KM");
+                                    travelDistance.setText("Distance: " + finalDistance + "KM");
                                     travelTime.setText("Time: " + Math.round(lastTime) + "Mins.");
                                 }
                             });

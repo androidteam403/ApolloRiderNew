@@ -212,7 +212,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         ImageView userImg = header.findViewById(R.id.user_image);
         String imageUrl = "https://www.filmibeat.com/ph-big/2019/02/mahesh-babu_155056989980.jpg";
         Glide.with(NavigationActivity.this)
-                .load(getResources().getDrawable(R.drawable.userimage))
+                .load(getResources().getDrawable(R.drawable.naveeb_circle))
                 .apply(RequestOptions.circleCropTransform())
                 .into(userImg);
 

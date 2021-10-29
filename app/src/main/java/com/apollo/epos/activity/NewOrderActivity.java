@@ -2,9 +2,9 @@ package com.apollo.epos.activity;
 
 import android.Manifest;
 import android.animation.LayoutTransition;
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -244,7 +244,7 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
         orderDeliveryTimeLayout.setVisibility(View.INVISIBLE);
 
         getLocationDetail = new GetLocationDetail(this, this);
-        easyWayLocation = new EasyWayLocation(this, false,this);
+        easyWayLocation = new EasyWayLocation(this, false, this);
         if (permissionIsGranted()) {
             doLocationWork();
         } else {
@@ -256,12 +256,12 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
 
-        for(String permission: permissions){
-            if(ActivityCompat.shouldShowRequestPermissionRationale(NewOrderActivity.this, permission)){
+        for (String permission : permissions) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(NewOrderActivity.this, permission)) {
                 //denied
                 Log.e("denied", permission);
-            }else{
-                if(ActivityCompat.checkSelfPermission(NewOrderActivity.this, permission) == PackageManager.PERMISSION_GRANTED){
+            } else {
+                if (ActivityCompat.checkSelfPermission(NewOrderActivity.this, permission) == PackageManager.PERMISSION_GRANTED) {
                     //allowed
                     Log.e("allowed", permission);
 
@@ -279,7 +279,7 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
                             }
                         }
                     }
-                } else{
+                } else {
                     //set to never ask again
                     Log.e("set to never ask again", permission);
                     //do something here.
@@ -524,7 +524,7 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
                     }
                 }
             }
-        }else if (requestCode == LOCATION_SETTING_REQUEST_CODE) {
+        } else if (requestCode == LOCATION_SETTING_REQUEST_CODE) {
             easyWayLocation.onActivityResult(resultCode);
         }
     }
@@ -533,13 +533,14 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
     public void onDirectionApi(int colorFlag, JSONArray v) {
         String distance, time;
         float removing = 0;
-        float removingTime = 0;
+        int removingTime = 0;
         try {
             if (v != null) {
                 distance = ((JSONObject) v.get(0)).getJSONObject("distance").getString("text");
-                time = ((JSONObject) v.get(0)).getJSONObject("duration").getString("text");
+                time = ((JSONObject) v.get(0)).getJSONObject("duration").getString("value");
                 removing = Float.parseFloat(distance.replace("\"", "").replace("km", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
-                removingTime = Float.parseFloat(time.replace("\"", "").replace("mins", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
+//                removingTime = Float.parseFloat(time.replace("\"", "").replace("mins", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
+                removingTime = Integer.parseInt(time) / 60;
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -565,7 +566,9 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
                                 if (!deliveryPharmTxt.getText().toString().isEmpty() && !deliveryUserTxt.getText().toString().isEmpty() && firstTime != 0 && secondTime != 0) {
                                     float finalDistance = Float.parseFloat(deliveryPharmTxt.getText().toString()) + Float.parseFloat(deliveryUserTxt.getText().toString());
                                     float lastTime = firstTime + secondTime;
-                                    totalDistanceTxt.setText("Total distance is " + getBigFloatToDecimalFloat(finalDistance)+ "KM from your location and expected time is " + Math.round(lastTime) + "mins.");
+//                                    totalDistanceTxt.setText("Total distance is " + getBigFloatToDecimalFloat(finalDistance) + "KM from your location and expected time is " + Math.round(lastTime) + "mins.");
+                                    totalDistanceTxt.setText("Total distance is " + finalDistance + "KM from your location and expected time is " + Math.round(lastTime) + "mins.");
+
                                 }
                             });
                             sleep(500);
@@ -918,6 +921,16 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
         // moves to a new location, and then changes the device orientation, the original location
         // is displayed as the activity is re-created.
         if (mCurrentLocation == null) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
             mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
         }
@@ -997,7 +1010,7 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
 
         double distance = locationA.distanceTo(locationB);
 
-        if(Math.round(distance) > 100){
+        if (Math.round(distance) > 100) {
             isGpsDataReceived = false;
         }
 
@@ -1009,13 +1022,13 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
 
         if (!isGpsDataReceived) {
 
-                DrawRouteMaps.getInstance(this, this, this, this)
-                        .draw(origin, destination, null, 0);
-                DrawRouteMaps.getInstance(this, this, this, this)
-                        .draw(destination, other, null, 1);
+            DrawRouteMaps.getInstance(this, this, this, this)
+                    .draw(origin, destination, null, 0);
+            DrawRouteMaps.getInstance(this, this, this, this)
+                    .draw(destination, other, null, 1);
 
-                isGpsDataReceived = true;
-            }
+            isGpsDataReceived = true;
+        }
     }
 
     @Override

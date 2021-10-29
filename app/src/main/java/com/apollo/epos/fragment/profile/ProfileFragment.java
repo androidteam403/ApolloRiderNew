@@ -68,9 +68,11 @@ public class ProfileFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         Glide.with(mActivity)
-                .load(getResources().getDrawable(R.drawable.userimage))
+                .load(getResources().getDrawable(R.drawable.naveeb_circle))
                 .apply(RequestOptions.circleCropTransform())
                 .into(userImage);
+
+
 //        ImageView userImage =
 //        sharedPref = new SharedPreferenceUtils(mActivity);
 //        networkCall = new NetworkCall(mActivity);

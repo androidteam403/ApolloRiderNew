@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "845803452054",
+    "project_id": "apolloepos-dfb59",
+    "storage_bucket": "apolloepos-dfb59.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:845803452054:android:dc304eed0454f76b63b4b7",
+        "android_client_info": {
+          "package_name": "com.apollo.epos"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "845803452054-gkgkuklfoitacjcb5c7bqdhs0k3eeb81.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDW36QULxO5bfh4tmjrDDrryoBXtj42yYM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "845803452054-gkgkuklfoitacjcb5c7bqdhs0k3eeb81.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

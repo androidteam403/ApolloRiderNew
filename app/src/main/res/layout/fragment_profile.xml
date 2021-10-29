@@ -55,9 +55,9 @@
 
                         <ImageView
                             android:id="@+id/user_image"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/image_circle_bg"
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
+                            android:background="@drawable/naveeb_circle"
                             android:contentDescription="@string/nav_header_desc"/>
                     </RelativeLayout>
 
@@ -98,7 +98,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/five_dp"
                             android:fontFamily="@font/roboto_bold"
-                            android:text="Raghavendra Dabbidi"
+                            android:text="Muddaraboina Naveen"
                             android:textSize="@dimen/text_dimen_14"
                             android:textColor="@color/colorBlack" />
 
@@ -107,7 +107,7 @@
                             android:layout_marginTop="@dimen/two_dp"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/roboto_bold"
-                            android:text="+91 9440012212"
+                            android:text="+91 9177551736"
                             android:textSize="@dimen/text_dimen_14"
                             android:textColor="@color/colorBlack" />
                     </LinearLayout>

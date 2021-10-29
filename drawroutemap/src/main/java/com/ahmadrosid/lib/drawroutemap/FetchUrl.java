@@ -14,9 +14,10 @@ public class FetchUrl {
     public static String getUrl(LatLng origin, LatLng dest) {
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
         String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
-        String sensor = "key=AIzaSyBY57sFc1I5c5YMmQ7AhrazAhHZ6L8ccn8";
+        String sensor = "key=AIzaSyDlqvq37mmAUE1TPHzvToOdPfQaq2W7GJk";
         String parameters = str_origin + "&" + str_dest + "&" + sensor;
         String output = "json";
         return "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters;
     }
 }
+//AIzaSyDlqvq37mmAUE1TPHzvToOdPfQaq2W7GJk

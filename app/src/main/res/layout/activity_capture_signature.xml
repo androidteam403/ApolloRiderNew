@@ -59,7 +59,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.6"
-            android:text="Raghavendra Dabbidi"
+            android:text="Muddraboina Naveen"
             android:textColor="@color/colorBlack"
             android:textSize="@dimen/text_dimen_17"
             android:fontFamily="@font/roboto_bold"/>

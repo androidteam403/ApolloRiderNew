@@ -45,6 +45,11 @@
             android:label="New Order"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.NewOrderActivity" />
@@ -98,8 +103,17 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBY57sFc1I5c5YMmQ7AhrazAhHZ6L8ccn8" />
+            android:value="AIzaSyDlqvq37mmAUE1TPHzvToOdPfQaq2W7GJk" /> //AIzaSyBY57sFc1I5c5YMmQ7AhrazAhHZ6L8ccn8
         <service android:name=".service.FloatingTouchService" />
+
+        <service
+            android:name=".service.MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
@@ -133,3 +147,4 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
 </manifest>
+
