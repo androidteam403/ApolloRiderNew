@@ -24,6 +24,5 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:fontFamily="@font/roboto_regular"
-        android:text="hello this is barcode"
-        />
+        android:text="hello this is barcode" />
 </RelativeLayout>

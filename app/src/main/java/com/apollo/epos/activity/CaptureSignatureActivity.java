@@ -1,23 +1,20 @@
 package com.apollo.epos.activity;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 
 import com.apollo.epos.R;
-import com.journeyapps.barcodescanner.CaptureManager;
-import com.journeyapps.barcodescanner.DecoratedBarcodeView;
+import com.apollo.epos.databinding.ActivityCaptureSignatureBinding;
 import com.kyanogen.signatureview.SignatureView;
+import com.novoda.merlin.Merlin;
 
 import java.io.ByteArrayOutputStream;
 
@@ -25,16 +22,21 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class CaptureSignatureActivity extends AppCompatActivity {
+public class CaptureSignatureActivity extends BaseActivity {
     @BindView(R.id.signature_view)
     protected SignatureView signatureView;
     private Bitmap bitMap;
+    private ActivityCaptureSignatureBinding captureSignatureBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_capture_signature);
+        captureSignatureBinding = DataBindingUtil.setContentView(this, R.layout.activity_capture_signature);
         ButterKnife.bind(this);
+        if (getIntent() != null) {
+            String orderNumber = (String) getIntent().getStringExtra("orderNumber");
+            captureSignatureBinding.orderNumber.setText(orderNumber);
+        }
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
             getSupportActionBar().setDisplayShowCustomEnabled(true);
@@ -56,6 +58,15 @@ public class CaptureSignatureActivity extends AppCompatActivity {
             });
             activityName.setText("CAPTURE SIGNATURE");
         }
+    }
+
+    @Override
+    protected Merlin createMerlin() {
+        return new Merlin.Builder()
+                .withConnectableCallbacks()
+                .withDisconnectableCallbacks()
+                .withBindableCallbacks()
+                .build(this);
     }
 
     @Override

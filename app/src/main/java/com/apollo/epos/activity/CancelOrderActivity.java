@@ -21,6 +21,7 @@ import com.apollo.epos.R;
 import com.apollo.epos.adapter.CancelOrderItemsAdapter;
 import com.apollo.epos.fragment.cancelorderitem.OnItemClickListener;
 import com.apollo.epos.model.OrderItemModel;
+import com.novoda.merlin.Merlin;
 
 import java.util.ArrayList;
 
@@ -28,7 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class CancelOrderActivity extends AppCompatActivity implements OnItemClickListener {
+public class CancelOrderActivity extends BaseActivity implements OnItemClickListener {
     @BindView(R.id.items_view_layout)
     protected LinearLayout itemsViewLayout;
     @BindView(R.id.cancelItemRecyclerView)
@@ -57,6 +58,15 @@ public class CancelOrderActivity extends AppCompatActivity implements OnItemClic
         }
 
         setOrderItemsList();
+    }
+
+    @Override
+    protected Merlin createMerlin() {
+        return new Merlin.Builder()
+                .withConnectableCallbacks()
+                .withDisconnectableCallbacks()
+                .withBindableCallbacks()
+                .build(this);
     }
 
     private void getMedicineList() {

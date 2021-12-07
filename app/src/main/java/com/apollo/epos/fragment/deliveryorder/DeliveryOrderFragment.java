@@ -46,6 +46,7 @@ import com.apollo.epos.activity.CaptureSignatureActivity;
 import com.apollo.epos.activity.NavigationActivity;
 import com.apollo.epos.activity.ScannerActivity;
 import com.apollo.epos.adapter.CustomReasonAdapter;
+import com.apollo.epos.base.BaseFragment;
 import com.apollo.epos.fragment.dashboard.DashboardFragment;
 import com.apollo.epos.utils.ActivityUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -65,7 +66,7 @@ import static com.apollo.epos.utils.ActivityUtils.getCurrentTime;
 import static com.apollo.epos.utils.ActivityUtils.showLayoutDownAnimation;
 import static com.apollo.epos.utils.ActivityUtils.showTextDownAnimation;
 
-public class DeliveryOrderFragment extends Fragment implements AdapterView.OnItemSelectedListener, View.OnClickListener,
+public class DeliveryOrderFragment extends BaseFragment implements AdapterView.OnItemSelectedListener, View.OnClickListener,
         View.OnFocusChangeListener, View.OnKeyListener {
     private Activity mActivity;
     @BindView(R.id.reached_store_layout)
@@ -234,7 +235,7 @@ public class DeliveryOrderFragment extends Fragment implements AdapterView.OnIte
         ButterKnife.bind(this, view);
         mActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        CustomReasonAdapter customUserListAdapter = new CustomReasonAdapter(mActivity, customerTypesList);
+        CustomReasonAdapter customUserListAdapter = new CustomReasonAdapter(mActivity, customerTypesList, null);
         customerTypeSpinner.setAdapter(customUserListAdapter);
         customerTypeSpinner.setOnItemSelectedListener(this);
     }
@@ -482,7 +483,7 @@ public class DeliveryOrderFragment extends Fragment implements AdapterView.OnIte
         });
 
         Spinner reasonSpinner = dialogView.findViewById(R.id.rejectReasonSpinner);
-        CustomReasonAdapter customAdapter = new CustomReasonAdapter(mActivity, cancelReasons);
+        CustomReasonAdapter customAdapter = new CustomReasonAdapter(mActivity, cancelReasons, null);
         reasonSpinner.setAdapter(customAdapter);
         reasonSpinner.setOnItemSelectedListener(this);
     }

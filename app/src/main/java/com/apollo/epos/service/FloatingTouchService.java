@@ -27,7 +27,7 @@ import com.apollo.epos.R;
 import com.apollo.epos.activity.MapViewActivity;
 import com.apollo.epos.activity.NavigationActivity;
 import com.apollo.epos.activity.NewOrderActivity;
-import com.apollo.epos.activity.OrderDeliveryActivity;
+import com.apollo.epos.activity.orderdelivery.OrderDeliveryActivity;
 import com.apollo.epos.activity.TrackMapActivity;
 import com.orhanobut.hawk.Hawk;
 
@@ -178,10 +178,14 @@ public class FloatingTouchService extends Service {
                 String resumeActivity = Hawk.get(LAST_ACTIVITY, "");
                 Log.e("AssistiveTouch", "Activity fetched from shared pref : == : == : == : == :");
                 if (resumeActivity.equalsIgnoreCase(NavigationActivity.class.getSimpleName())) {
-                    Intent intent = new Intent(getApplicationContext(), NavigationActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                    startActivity(intent);
+                    try {
+                        Intent intent = new Intent(getApplicationContext(), NavigationActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        startActivity(intent);
 //                    startActivity(new Intent(getApplicationContext(), NavigationActivity.class));
+                    } catch (Exception e) {
+                        System.out.println("Floating touch service:::::::::::::::::::::::::::::::" + e.getMessage());
+                    }
                 } else if (resumeActivity.equalsIgnoreCase(NewOrderActivity.class.getSimpleName())) {
                     Intent intent = new Intent(getApplicationContext(), NewOrderActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);

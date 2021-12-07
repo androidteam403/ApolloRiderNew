@@ -20,6 +20,7 @@ import com.apollo.epos.adapter.CartItemAdapter;
 import com.apollo.epos.adapter.SearchedItemAdapter;
 import com.apollo.epos.fragment.takeneworder.OnItemClickListener;
 import com.apollo.epos.model.OrderItemModel;
+import com.novoda.merlin.Merlin;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -28,7 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class CartActivity extends AppCompatActivity implements OnItemClickListener {
+public class CartActivity extends BaseActivity implements OnItemClickListener {
     @BindView(R.id.searchedItemRecyclerView)
     RecyclerView searchedItemRecyclerView;
     ArrayList<OrderItemModel> medicineList = new ArrayList<>();
@@ -44,6 +45,15 @@ public class CartActivity extends AppCompatActivity implements OnItemClickListen
         ButterKnife.bind(this);
 
         setSearchedItemsList();
+    }
+
+    @Override
+    protected Merlin createMerlin() {
+        return new Merlin.Builder()
+                .withConnectableCallbacks()
+                .withDisconnectableCallbacks()
+                .withBindableCallbacks()
+                .build(this);
     }
 
     private void setSearchedItemsList() {

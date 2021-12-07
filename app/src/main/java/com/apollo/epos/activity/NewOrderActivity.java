@@ -2,6 +2,7 @@ package com.apollo.epos.activity;
 
 import android.Manifest;
 import android.animation.LayoutTransition;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
@@ -29,7 +30,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.transition.Slide;
@@ -41,17 +41,21 @@ import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
 import com.ahmadrosid.lib.drawroutemap.PiontsCallback;
 import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.R;
+import com.apollo.epos.activity.neworder.NewOrderActivityCallback;
+import com.apollo.epos.activity.neworder.NewOrderActivityController;
+import com.apollo.epos.activity.neworder.model.OrderDetailsResponse;
+import com.apollo.epos.activity.orderdelivery.OrderDeliveryActivity;
 import com.apollo.epos.adapter.CustomReasonAdapter;
 import com.apollo.epos.dialog.DialogManager;
 import com.apollo.epos.model.OrderItemModel;
 import com.apollo.epos.service.FloatingTouchService;
 import com.apollo.epos.service.GPSLocationService;
 import com.apollo.epos.utils.ActivityUtils;
+import com.apollo.epos.utils.CommonUtils;
 import com.example.easywaylocation.EasyWayLocation;
 import com.example.easywaylocation.GetLocationDetail;
 import com.example.easywaylocation.Listener;
 import com.example.easywaylocation.LocationData;
-import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -65,7 +69,6 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.novoda.merlin.BindableInterface;
 import com.novoda.merlin.Connectable;
@@ -79,22 +82,23 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.apollo.epos.utils.ActivityUtils.getBigFloatToDecimalFloat;
 import static com.apollo.epos.utils.AppConstants.LAST_ACTIVITY;
 import static com.example.easywaylocation.EasyWayLocation.LOCATION_SETTING_REQUEST_CODE;
 
 public class NewOrderActivity extends BaseActivity implements DirectionApiCallback, TaskLoadedCallback, Connectable, Disconnectable, BindableInterface, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
-        ResultCallback<LocationSettingsResult>, PiontsCallback, Listener, LocationData.AddressCallBack {
+        ResultCallback<LocationSettingsResult>, PiontsCallback, Listener, LocationData.AddressCallBack, NewOrderActivityCallback {
     @BindView(R.id.items_view_image)
     protected ImageView itemsViewImage;
     @BindView(R.id.items_view_layout)
@@ -127,6 +131,12 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
     private float firstTime = 0;
     private float secondTime = 0;
 
+    //
+    private String pickupPhoneNumber;
+    private String customerPhoneNumber;
+    private OrderDetailsResponse orderDetailsResponse;
+    //
+    private TextView orderNumber, deliveryon, crateAmount, paymentType;
 
     /**
      * Constant used in the location settings dialog.
@@ -189,32 +199,68 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
     private EasyWayLocation easyWayLocation;
     private GetLocationDetail getLocationDetail;
 
+    public static Intent getStartIntent(Context context, String orderNumber) {
+        Intent intent = new Intent(context, NewOrderActivity.class);
+        intent.putExtra("order_number", orderNumber);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        return intent;
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_order);
         ButterKnife.bind(this);
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            try {
+                String orderNumberId = bundle.getString("uid");
+                new NewOrderActivityController(this, this).orderDetailsApiCall(getSessionManager().getLoginToken(), orderNumberId);
 
+                //bundle must contain all info sent in "data" field of the notification
+            }catch (Exception e){
+                System.out.println("push notification new order activity::::::::::::::::::::::::::::"+e.getMessage());
+            }
+
+        }
+        if (getIntent() != null) {
+            if (getIntent().getStringExtra("order_number") != null) {
+                String orderNumberId = getIntent().getStringExtra("order_number");
+                if (orderNumberId != null && !orderNumberId.isEmpty()) {
+                    new NewOrderActivityController(this, this).orderDetailsApiCall(getSessionManager().getLoginToken(), orderNumberId);
+                } else {
+                    finish();
+                    return;
+                }
+            }
+        }
         if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
             finish();
             return;
         }
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.icon_back);// Toolbar icon in Drawable folder
-        setSupportActionBar(toolbar);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        toolbar.setNavigationIcon(R.drawable.icon_back);// Toolbar icon in Drawable folder
+//        setSupportActionBar(toolbar);
 
-        ActivityUtils.showDialog(NewOrderActivity.this, "Getting Location");
-
-        toolbar.setNavigationOnClickListener(v -> {
-            onBackPressed();// Do what do you want on toolbar button
+        ImageView iconback = (ImageView) findViewById(R.id.icon_back);
+        iconback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
         });
+//        toolbar.setNavigationOnClickListener(v -> {
+//            onBackPressed();// Do what do you want on toolbar button
+//        });
 
-        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+//        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
 //        collapsingToolbarLayout.setTitle("My Toolbar Title");
-        collapsingToolbarLayout.setTitleEnabled(false);
-        toolbar.setTitle("My Title");
-        toolbar.setTitleTextAppearance(this, R.style.ToolbarTextAppearance);
+//        collapsingToolbarLayout.setTitleEnabled(false);
+//        toolbar.setTitle("My Title");
+//        toolbar.setTitleTextAppearance(this, R.style.ToolbarTextAppearance);
+//        ActivityUtils.showDialog(NewOrderActivity.this, "Getting Location");
 
         Animation RightSwipe = AnimationUtils.loadAnimation(this, R.anim.right_swipe);
         orderDeliveryTimeLayout.startAnimation(RightSwipe);
@@ -341,7 +387,16 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
     }
 
     private synchronized void GoogleClientBuild() {
-        mGoogleApiClient = new GoogleApiClient.Builder(NewOrderActivity.this).addApi(LocationServices.API).addConnectionCallbacks(this).addApi(AppIndex.API).addApi(AppIndex.API).addOnConnectionFailedListener(this).build();
+        if (mGoogleApiClient == null || !mGoogleApiClient.isConnected()) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .enableAutoManage(this, 1, this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+            mGoogleApiClient.connect();
+        }
+//        mGoogleApiClient = new GoogleApiClient.Builder(NewOrderActivity.this).addApi(LocationServices.API).addConnectionCallbacks(this).addApi(AppIndex.API).addApi(AppIndex.API).addOnConnectionFailedListener(this).build();
     }
 
     ArrayList<OrderItemModel> medicineList = new ArrayList<>();
@@ -362,22 +417,21 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
             TransitionManager.beginDelayedTransition(animParentLayout, transition);
 
             itemsViewLayout.setVisibility(View.VISIBLE);
-
             itemsViewImage.setImageDrawable(getResources().getDrawable(R.drawable.icon_eye_close));
-            orderListLayout.removeAllViews();
-            getMedicineList();
-            for (int i = 0; i < medicineList.size(); i++) {
-                LayoutInflater layoutInflater = LayoutInflater.from(this);
-                LinearLayout layout = (LinearLayout) layoutInflater.inflate(R.layout.view_order_list, null, false);
-                TextView orderName = layout.findViewById(R.id.order_name);
-                TextView orderCount = layout.findViewById(R.id.order_count);
-                TextView orderPrice = layout.findViewById(R.id.order_price);
-
-                orderName.setText(medicineList.get(i).getMedicineName());
-                orderCount.setText(medicineList.get(i).getQty());
-                orderPrice.setText(medicineList.get(i).getItemPrice());
-                orderListLayout.addView(layout);
-            }
+//            orderListLayout.removeAllViews();
+//            getMedicineList();
+//            for (int i = 0; i < medicineList.size(); i++) {
+//                LayoutInflater layoutInflater = LayoutInflater.from(this);
+//                LinearLayout layout = (LinearLayout) layoutInflater.inflate(R.layout.view_order_list, null, false);
+//                TextView orderName = layout.findViewById(R.id.order_name);
+//                TextView orderCount = layout.findViewById(R.id.order_count);
+//                TextView orderPrice = layout.findViewById(R.id.order_price);
+//
+//                orderName.setText(medicineList.get(i).getMedicineName());
+//                orderCount.setText(medicineList.get(i).getQty());
+//                orderPrice.setText(medicineList.get(i).getItemPrice());
+//                orderListLayout.addView(layout);
+//            }
         }
     }
 
@@ -410,9 +464,12 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
 
     @OnClick(R.id.btn_accept_order)
     public void onAcceptingOrder() {
-        Intent i = new Intent(this, OrderDeliveryActivity.class);
-        startActivityForResult(i, ACTIVITY_CHANGE);
-        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+//        Intent i = new Intent(this, OrderDeliveryActivity.class);
+//        startActivityForResult(i, ACTIVITY_CHANGE);
+        if (orderDetailsResponse != null) {
+            startActivityForResult(OrderDeliveryActivity.getStartIntent(this, orderDetailsResponse), ACTIVITY_CHANGE);
+            overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+        }
     }
 
     @OnClick(R.id.btn_reject_order)
@@ -429,7 +486,7 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
         });
 
         Spinner reasonSpinner = dialogView.findViewById(R.id.rejectReasonSpinner);
-        CustomReasonAdapter customAdapter = new CustomReasonAdapter(this, rejectReasons);
+        CustomReasonAdapter customAdapter = new CustomReasonAdapter(this, rejectReasons,null);
         reasonSpinner.setAdapter(customAdapter);
         reasonSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -474,10 +531,10 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
     }
 
     private void requestACall() {
-        String phonenumber = "+919440012212";
+        String phonenumber = "+919177551736";
         Intent intentcall = new Intent();
         intentcall.setAction(Intent.ACTION_CALL);
-        intentcall.setData(Uri.parse("tel:" + phonenumber)); // set the Uri
+        intentcall.setData(Uri.parse("tel:" + pickupPhoneNumber)); // set the Uri
         startActivity(intentcall);
     }
 
@@ -1038,5 +1095,134 @@ public class NewOrderActivity extends BaseActivity implements DirectionApiCallba
 
     @Override
     public void locationData(LocationData locationData) {
+    }
+
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void onSuccessOrderDetailsApiCall(OrderDetailsResponse orderDetailsResponse) {
+        if (orderDetailsResponse != null) {
+            this.orderDetailsResponse = orderDetailsResponse;
+            try {
+                orderNumber = (TextView) findViewById(R.id.order_number);
+                deliveryon = (TextView) findViewById(R.id.deliveryon_datetime);
+                crateAmount = (TextView) findViewById(R.id.crate_amount);
+                paymentType = (TextView) findViewById(R.id.payment_type);
+                if (orderDetailsResponse.getData() != null) {
+                    orderNumber.setText(orderDetailsResponse.getData().getOrderNumber());
+
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                    String orderDate = orderDetailsResponse.getData().getCreatedTime();
+                    Date orderDates = formatter.parse(orderDate);
+                    long orderDateMills = orderDates.getTime();
+                    deliveryon.setText(CommonUtils.getTimeFormatter(orderDateMills));
+
+                    crateAmount.setText(String.valueOf(orderDetailsResponse.getData().getCrateAmount()));
+                    paymentType.setText(orderDetailsResponse.getData().getPaymentType().getName());
+                    TextView pharmacyAddress = (TextView) findViewById(R.id.pharmacy_address);
+                    TextView customerAddress = (TextView) findViewById(R.id.customer_address);
+                    TextView pharmacyAddId = (TextView) findViewById(R.id.pharmacy_add_id);
+                    TextView customerName = (TextView) findViewById(R.id.customer_name);
+
+                    LinearLayout pickupInstruction = (LinearLayout) findViewById(R.id.pickup_instruction);
+                    LinearLayout deliveryInstruction = (LinearLayout) findViewById(R.id.delivery_instruction);
+                    TextView pickupInstructionText = (TextView) findViewById(R.id.pickup_instruction_text);
+                    TextView deliveryInstructionText = (TextView) findViewById(R.id.delivery_instruction_text);
+
+                    TextView pharmacyLandmark = (TextView) findViewById(R.id.pharmacy_landmark);
+                    TextView customerLandmark = (TextView) findViewById(R.id.customer_landmark);
+
+                    TextView pickupPhoneNumber = (TextView) findViewById(R.id.pickup_phone_number);
+                    TextView customerPhoneNumber = (TextView) findViewById(R.id.customer_phone_number);
+                    String pickupAddress = orderDetailsResponse.getData().getDeliverApartment() + ", " + orderDetailsResponse.getData().getDeliverStreetName() + ", " + orderDetailsResponse.getData().getDeliverCity() + ", " + orderDetailsResponse.getData().getDeliverState() + ", " + orderDetailsResponse.getData().getDelPincode() + ", " + orderDetailsResponse.getData().getDeliverCountry();
+                    String customerAddresss = orderDetailsResponse.getData().getPickupApt() + ", " + orderDetailsResponse.getData().getPickupStreetName() + ", " + orderDetailsResponse.getData().getPickupCity() + ", " + orderDetailsResponse.getData().getPickupState() + ", " + orderDetailsResponse.getData().getPickupPincode() + ", " + orderDetailsResponse.getData().getPickupCountry();
+                    if (orderDetailsResponse.getData().getOrderState().getName().equals("RETURN")) {
+                        pharmacyLandmark.setText(orderDetailsResponse.getData().getDeliverLandmark());
+                        customerLandmark.setText(orderDetailsResponse.getData().getPickupLndmrk());
+                        pharmacyAddId.setText(orderDetailsResponse.getData().getDelAddId());
+                        customerName.setText(orderDetailsResponse.getData().getPickupAddId());
+                        pharmacyAddress.setText(customerAddresss);
+                        customerAddress.setText(pickupAddress);
+                        String pickupPhoneNumbers = String.valueOf(orderDetailsResponse.getData().getDelPn());
+                        String customerPhoneNumbers = String.valueOf(orderDetailsResponse.getData().getPickupPn());
+                        pickupPhoneNumber.setText("*******" + pickupPhoneNumbers.substring(pickupPhoneNumbers.length() - 3));
+                        customerPhoneNumber.setText("*******" + customerPhoneNumbers.substring(customerPhoneNumbers.length() - 3));
+
+                        if (orderDetailsResponse.getData().getPickupNotes() != null && orderDetailsResponse.getData().getPickupNotes().isEmpty()) {
+                            deliveryInstruction.setVisibility(View.GONE);
+                        } else {
+                            deliveryInstruction.setVisibility(View.VISIBLE);
+                            deliveryInstructionText.setText(orderDetailsResponse.getData().getPickupNotes());
+                        }
+
+                        if (orderDetailsResponse.getData().getDeliverNotes() != null && orderDetailsResponse.getData().getDeliverNotes().isEmpty()) {
+                            pickupInstruction.setVisibility(View.GONE);
+                        } else {
+                            pickupInstruction.setVisibility(View.VISIBLE);
+                            pickupInstructionText.setText(orderDetailsResponse.getData().getPickupNotes());
+                        }
+                        this.pickupPhoneNumber = String.valueOf(orderDetailsResponse.getData().getDelPn());
+                        this.customerPhoneNumber = String.valueOf(orderDetailsResponse.getData().getPickupPn());
+                    } else {
+                        pharmacyLandmark.setText(orderDetailsResponse.getData().getPickupLndmrk());
+                        customerLandmark.setText(orderDetailsResponse.getData().getDeliverLandmark());
+                        pharmacyAddId.setText(orderDetailsResponse.getData().getPickupAddId());
+                        customerName.setText(orderDetailsResponse.getData().getDelAddId());
+                        pharmacyAddress.setText(pickupAddress);
+                        customerAddress.setText(customerAddresss);
+                        String pickupPhoneNumbers = String.valueOf(orderDetailsResponse.getData().getPickupPn());
+                        String customerPhoneNumbers = String.valueOf(orderDetailsResponse.getData().getDelPn());
+                        pickupPhoneNumber.setText("*******" + pickupPhoneNumbers.substring(pickupPhoneNumbers.length() - 3));
+                        customerPhoneNumber.setText("*******" + customerPhoneNumbers.substring(customerPhoneNumbers.length() - 3));
+                        if (orderDetailsResponse.getData().getPickupNotes() != null && orderDetailsResponse.getData().getPickupNotes().isEmpty()) {
+                            pickupInstruction.setVisibility(View.GONE);
+                        } else {
+                            pickupInstruction.setVisibility(View.VISIBLE);
+                            pickupInstructionText.setText(orderDetailsResponse.getData().getPickupNotes());
+                        }
+
+                        if (orderDetailsResponse.getData().getDeliverNotes() != null && orderDetailsResponse.getData().getDeliverNotes().isEmpty()) {
+                            deliveryInstruction.setVisibility(View.GONE);
+                        } else {
+                            deliveryInstruction.setVisibility(View.VISIBLE);
+                            deliveryInstructionText.setText(orderDetailsResponse.getData().getPickupNotes());
+                        }
+                        this.pickupPhoneNumber = String.valueOf(orderDetailsResponse.getData().getPickupPn());
+                        this.customerPhoneNumber = String.valueOf(orderDetailsResponse.getData().getDelPn());
+                    }
+
+                    orderListLayout.removeAllViews();
+                    if (orderDetailsResponse.getData().getItems() != null && orderDetailsResponse.getData().getItems().size() > 0) {
+                        TextView itemsCount = (TextView) findViewById(R.id.items_count);
+                        itemsCount.setText(orderDetailsResponse.getData().getItems().size() + " " + "Items");
+                        for (int i = 0; i < orderDetailsResponse.getData().getItems().size(); i++) {
+                            LayoutInflater layoutInflater = LayoutInflater.from(this);
+                            LinearLayout layout = (LinearLayout) layoutInflater.inflate(R.layout.view_order_list, null, false);
+
+                            TextView orderName = layout.findViewById(R.id.order_name);
+                            TextView orderCount = layout.findViewById(R.id.order_count);
+                            TextView orderPrice = layout.findViewById(R.id.order_price);
+
+                            orderName.setText(orderDetailsResponse.getData().getItems().get(i).getItemname());
+                            orderCount.setText(orderDetailsResponse.getData().getItems().get(i).getItemquantity());
+                            orderPrice.setText(String.valueOf(orderDetailsResponse.getData().getItems().get(i).getItemprice()));
+
+                            orderListLayout.addView(layout);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("NewOrderActivity :: :: :: :::::::::::::::::::::::::::::::::::  " + e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public void onFialureOrderDetailsApiCall() {
+
+    }
+
+    @Override
+    public void onFialureMessage(String message) {
+
     }
 }

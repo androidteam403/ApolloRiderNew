@@ -35,7 +35,6 @@ import com.apollo.epos.R;
 import com.apollo.epos.dialog.DialogManager;
 import com.apollo.epos.service.FloatingTouchService;
 import com.apollo.epos.utils.ActivityUtils;
-import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
@@ -69,7 +68,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.apollo.epos.utils.ActivityUtils.getBigFloatToDecimalFloat;
 import static com.apollo.epos.utils.AppConstants.LAST_ACTIVITY;
 
 public class MapViewActivity extends BaseActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
@@ -243,7 +241,17 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     }
 
     private synchronized void GoogleClientBuild() {
-        mGoogleApiClient = new GoogleApiClient.Builder(MapViewActivity.this).addApi(LocationServices.API).addConnectionCallbacks(this).addApi(AppIndex.API).addApi(AppIndex.API).addOnConnectionFailedListener(this).build();
+
+        if (mGoogleApiClient == null || !mGoogleApiClient.isConnected()) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .enableAutoManage(this, 1, this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+            mGoogleApiClient.connect();
+        }
+//        mGoogleApiClient = new GoogleApiClient.Builder(MapViewActivity.this).addApi(LocationServices.API).addConnectionCallbacks(this).addApi(AppIndex.API).addApi(AppIndex.API).addOnConnectionFailedListener(this).build();
     }
 
     public void createLocRequest() {

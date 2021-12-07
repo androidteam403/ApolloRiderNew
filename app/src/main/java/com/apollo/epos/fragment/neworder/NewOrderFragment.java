@@ -41,6 +41,7 @@ import com.apollo.epos.R;
 import com.apollo.epos.activity.MapViewActivity;
 import com.apollo.epos.activity.NavigationActivity;
 import com.apollo.epos.adapter.CustomReasonAdapter;
+import com.apollo.epos.base.BaseFragment;
 import com.apollo.epos.dialog.DialogManager;
 import com.apollo.epos.fragment.deliveryorder.DeliveryOrderFragment;
 import com.apollo.epos.listeners.DialogMangerCallback;
@@ -64,9 +65,9 @@ import butterknife.OnClick;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.Context.LOCATION_SERVICE;
-import static com.google.android.gms.internal.zzahn.runOnUiThread;
+//import static com.google.android.gms.internal.zzahn.runOnUiThread;
 
-public class NewOrderFragment extends Fragment implements DirectionApiCallback, TaskLoadedCallback, PiontsCallback {
+public class NewOrderFragment extends BaseFragment implements DirectionApiCallback, TaskLoadedCallback, PiontsCallback {
     private Activity mActivity;
     @BindView(R.id.items_view_image)
     protected ImageView itemsViewImage;
@@ -269,7 +270,7 @@ public class NewOrderFragment extends Fragment implements DirectionApiCallback, 
         });
 
         Spinner reasonSpinner = dialogView.findViewById(R.id.rejectReasonSpinner);
-        CustomReasonAdapter customAdapter = new CustomReasonAdapter(mActivity, rejectReasons);
+        CustomReasonAdapter customAdapter = new CustomReasonAdapter(mActivity, rejectReasons, null);
         reasonSpinner.setAdapter(customAdapter);
         reasonSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -332,7 +333,7 @@ public class NewOrderFragment extends Fragment implements DirectionApiCallback, 
     }
 
     private void requestACall() {
-        String phonenumber = "+919440012212";
+        String phonenumber = "+919177551736";
         Intent intentcall = new Intent();
         intentcall.setAction(Intent.ACTION_CALL);
         intentcall.setData(Uri.parse("tel:" + phonenumber)); // set the Uri
@@ -456,53 +457,53 @@ public class NewOrderFragment extends Fragment implements DirectionApiCallback, 
 
     @Override
     public void onDirectionApi(int colorFlag, JSONArray v) {
-        String distance, time;
-        float removing = 0;
-        float removingTime = 0;
-        try {
-            if(v != null) {
-                distance = ((JSONObject) v.get(0)).getJSONObject("distance").getString("text");
-                time = ((JSONObject) v.get(0)).getJSONObject("duration").getString("text");
-                removing = Float.parseFloat(distance.replace("\"", "").replace("km", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
-                removingTime = Float.parseFloat(time.replace("\"", "").replace("mins", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
-            }
-            } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        float finalRemoving = removing;
-        float finalTime = removingTime;
-        if(finalRemoving != 0) {
-            Thread thread = new Thread() {
-                @Override
-                public void run() {
-                    float i;
-                    try {
-                        for (i = 0; i <= 100; i++) {
-                            runOnUiThread(() -> {
-                                if (colorFlag == 0) {
-                                    deliveryPharmTxt.setText(finalRemoving + "");
-                                    firstTime = finalTime;
-                                } else if (colorFlag == 1) {
-                                    deliveryUserTxt.setText(finalRemoving + "");
-                                    secondTime = finalTime;
-                                }
-                                if (!deliveryPharmTxt.getText().toString().isEmpty() && !deliveryUserTxt.getText().toString().isEmpty() && firstTime != 0 && secondTime != 0) {
-                                    float finalDistance = Float.parseFloat(deliveryPharmTxt.getText().toString()) + Float.parseFloat(deliveryUserTxt.getText().toString());
-                                    float lastTime = firstTime + secondTime;
-                                    totalDistanceTxt.setText("Total distance is " + finalDistance + "KM from your location and expected time is " + lastTime + "mins.");
-
-                                }
-                            });
-                            sleep(500);
-                        }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            };
-            thread.start();
-        }
+//        String distance, time;
+//        float removing = 0;
+//        float removingTime = 0;
+//        try {
+//            if(v != null) {
+//                distance = ((JSONObject) v.get(0)).getJSONObject("distance").getString("text");
+//                time = ((JSONObject) v.get(0)).getJSONObject("duration").getString("text");
+//                removing = Float.parseFloat(distance.replace("\"", "").replace("km", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
+//                removingTime = Float.parseFloat(time.replace("\"", "").replace("mins", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
+//            }
+//            } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//        float finalRemoving = removing;
+//        float finalTime = removingTime;
+//        if(finalRemoving != 0) {
+//            Thread thread = new Thread() {
+//                @Override
+//                public void run() {
+//                    float i;
+//                    try {
+//                        for (i = 0; i <= 100; i++) {
+//                            runOnUiThread(() -> {
+//                                if (colorFlag == 0) {
+//                                    deliveryPharmTxt.setText(finalRemoving + "");
+//                                    firstTime = finalTime;
+//                                } else if (colorFlag == 1) {
+//                                    deliveryUserTxt.setText(finalRemoving + "");
+//                                    secondTime = finalTime;
+//                                }
+//                                if (!deliveryPharmTxt.getText().toString().isEmpty() && !deliveryUserTxt.getText().toString().isEmpty() && firstTime != 0 && secondTime != 0) {
+//                                    float finalDistance = Float.parseFloat(deliveryPharmTxt.getText().toString()) + Float.parseFloat(deliveryUserTxt.getText().toString());
+//                                    float lastTime = firstTime + secondTime;
+//                                    totalDistanceTxt.setText("Total distance is " + finalDistance + "KM from your location and expected time is " + lastTime + "mins.");
+//
+//                                }
+//                            });
+//                            sleep(500);
+//                        }
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            };
+//            thread.start();
+//        }
     }
 
     @Override

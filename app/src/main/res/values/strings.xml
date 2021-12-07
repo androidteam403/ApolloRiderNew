@@ -1,12 +1,12 @@
 <resources>
-    <string name="app_name">ApolloMPOS</string>
+    <string name="app_name">Apollo Rider </string>
     <string name="nav_header_title">Muddaraboina Naveen</string>
     <string name="nav_header_subtitle">+91 9177551736</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
     <string-array name="navigation_drawer_items_array">
-        <item>New Order</item>
+        <!--        <item>New Order</item>-->
         <item>Dashboard</item>
         <item>My Orders</item>
         <item>Notifications</item>
@@ -138,10 +138,10 @@
     <string name="label_continue_driving">Continue Driving</string>
     <string name="label_reached_delivery_address">1. Reached at delivery address</string>
     <string name="label_check_amount_details">2. Checked amount details</string>
-    <string name="label_handed_parcel_to">3. Handedover the parcel to</string>
-    <string name="label_proof_of_handover">4. Proof of handover</string>
-    <string name="label_otp_verification">5. OTP verification</string>
-    <string name="label_completed_delivery">6. Completed Delivery</string>
+    <string name="label_handed_parcel_to">1. Handedover the parcel to</string>
+    <string name="label_proof_of_handover">3. Proof of handover</string>
+    <string name="label_otp_verification">1. Pickup OTP verify</string>
+    <string name="label_completed_delivery">5. Completed Delivery</string>
     <string name="label_collected_amount">Collect Amount:</string>
     <string name="label_signature_of_receiver">Signature of the receiver</string>
     <string name="label_take_customer_signature">Touch here\nto take customer signature</string>
@@ -206,7 +206,12 @@
     <string name="cancel">Cancel</string>
 
 
-
     <string name="no_interent">Please Check Your Network Connection</string>
+    <string name="label_new_order">New Order</string>
+    <string name="label_in_trasit">In Trasit</string>
+    <string name="label_order_delivered">Order Delivered</string>
+    <string name="label_cancel_order">Cancel Order</string>
+    <string name="label_no_orders_found">No Orders Found</string>
+    <string name="label_type_return">R</string>
 
 </resources>

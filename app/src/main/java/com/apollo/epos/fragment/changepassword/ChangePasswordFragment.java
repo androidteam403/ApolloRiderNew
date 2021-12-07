@@ -6,20 +6,23 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 
 import com.apollo.epos.R;
+import com.apollo.epos.base.BaseFragment;
+import com.apollo.epos.databinding.FragmentChangePasswordBinding;
+import com.apollo.epos.utils.ActivityUtils;
 
-public class ChangePasswordFragment extends Fragment {
+import java.util.Objects;
+
+public class ChangePasswordFragment extends BaseFragment implements ChangePasswordFragmentCallback {
     private Activity mActivity;
 
-    private ChangePasswordViewModel changePasswordViewModel;
+    private FragmentChangePasswordBinding changePasswordBinding;
 
     public static ChangePasswordFragment newInstance() {
         return new ChangePasswordFragment();
@@ -34,9 +37,41 @@ public class ChangePasswordFragment extends Fragment {
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        changePasswordViewModel = ViewModelProviders.of(this).get(ChangePasswordViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_change_password, container, false);
+        changePasswordBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_change_password, container, false);
+        return changePasswordBinding.getRoot();
+    }
 
-        return root;
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        changePasswordBinding.setCallback(this);
+    }
+
+    private boolean validate() {
+        if (Objects.requireNonNull(changePasswordBinding.etOldPassword.getText()).toString().trim().isEmpty()) {
+            changePasswordBinding.etOldPassword.setError("Old password should not be empty");
+            changePasswordBinding.etOldPassword.requestFocus();
+            return false;
+        } else if (Objects.requireNonNull(changePasswordBinding.etNewPassword.getText()).toString().trim().isEmpty()) {
+            changePasswordBinding.etNewPassword.setError("New password should not be empty");
+            changePasswordBinding.etNewPassword.requestFocus();
+            return false;
+        } else if (Objects.requireNonNull(changePasswordBinding.etConfirmPassword.getText()).toString().trim().isEmpty()) {
+            changePasswordBinding.etConfirmPassword.setError("Confirm password should not be empty");
+            changePasswordBinding.etConfirmPassword.requestFocus();
+            return false;
+        } else if (!changePasswordBinding.etNewPassword.getText().toString().trim().equals(changePasswordBinding.etConfirmPassword.getText().toString().trim())) {
+            Toast.makeText(getContext(), "New password and Confirm password did not match", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void onClickUpdate() {
+        if (validate()) {
+//            ActivityUtils.customSnackbar(getView(),"New password updated");
+            Toast.makeText(mActivity, "New password updated", Toast.LENGTH_SHORT).show();
+        }
     }
 }

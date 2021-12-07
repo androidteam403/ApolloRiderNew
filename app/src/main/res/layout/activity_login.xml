@@ -1,91 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:android.support.design="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/app_theme_bg"
-    tools:context=".activity.LoginActivity">
+<layout>
 
-    <ImageView
-        android:layout_width="@dimen/one_hundred_thirty_dp"
-        android:layout_height="@dimen/one_hundred_thirty_dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/eighty_dp"
-        android:background="@drawable/app_shadow_logo"
-        android:contentDescription="@string/app_name" />
-
-    <LinearLayout
-        android:id="@+id/login_view_layout"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:android.support.design="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/login_parent_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_gravity="center"
-        android:layout_marginStart="@dimen/thirty_dp"
-        android:layout_marginEnd="@dimen/thirty_dp"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:background="@color/application_bg"
+        tools:context=".activity.login.LoginActivity">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/input_layout_email"
+
+        <LinearLayout
+            android:id="@+id/login_view_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/eighty_dp"
-            android:fontFamily="@font/roboto_regular"
-            android.support.design:hintTextAppearance="@style/EditTextInputLayout">
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/thirty_dp"
+            android:layout_marginEnd="@dimen/thirty_dp"
+            android:orientation="vertical">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_user_email"
+            <ImageView
+                android:layout_width="@dimen/one_hundred_seventy_dp"
+                android:layout_height="@dimen/one_hundred_dp"
+                android:layout_gravity="center_horizontal"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/apollo_logo_vivekagam" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/input_layout_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/colorWhite"
-                android:drawableStart="@drawable/ic_login_user"
-                android:drawablePadding="@dimen/ten_dp"
-                android:hint="@string/label_email_hint"
-                android:inputType="textEmailAddress"
-                android:singleLine="true"
+                android:layout_marginTop="@dimen/thirty_dp"
                 android:fontFamily="@font/roboto_regular"
-                android:theme="@style/EditTextTheme" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android.support.design:hintTextAppearance="@style/EditTextInputLayout">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/input_layout_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto_regular"
-            android.support.design:hintTextAppearance="@style/EditTextInputLayout">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_user_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/colorWhite"
+                    android:drawableStart="@drawable/ic_login_user"
+                    android:drawablePadding="@dimen/ten_dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:hint="@string/label_email_hint"
+                    android:inputType="textEmailAddress"
+                    android:singleLine="true"
+                    android:textColor="@color/edit_text_textcolor"
+                    android:textColorHighlight="@color/edit_text_textcolor"
+                    android:textColorHint="@color/edit_text_textcolor"
+                    android:theme="@style/EditTextTheme" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_user_password"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/input_layout_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/colorWhite"
-                android:drawableStart="@drawable/ic_login_password"
-                android:drawablePadding="@dimen/eight_dp"
-                android:hint="@string/label_password_hint"
                 android:fontFamily="@font/roboto_regular"
-                android:inputType="textPassword"
-                android:singleLine="true"
-                android:theme="@style/EditTextTheme" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android.support.design:hintTextAppearance="@style/EditTextInputLayout">
 
-        <TextView
-            android:id="@+id/forgot_password_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="@dimen/five_dp"
-            android:padding="@dimen/five_dp"
-            android:text="@string/label_forgot_password"
-            android:fontFamily="@font/roboto_regular"
-            android:textColor="@color/colorWhite" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_user_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/colorWhite"
+                    android:drawableStart="@drawable/ic_login_password"
+                    android:drawablePadding="@dimen/eight_dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:hint="@string/label_password_hint"
+                    android:inputType="textPassword"
+                    android:singleLine="true"
+                    android:textColor="@color/edit_text_textcolor"
+                    android:textColorHighlight="@color/edit_text_textcolor"
+                    android:textColorHint="@color/edit_text_textcolor"
+                    android:theme="@style/EditTextTheme" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
-            android:id="@+id/btn_signin"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/forty_five_dp"
-            android:layout_marginTop="@dimen/forty_dp"
-            android:fontFamily="@font/roboto_bold"
-            android:background="@drawable/btn_signin_ripple_effect"
-            android:text="@string/label_signin" />
-    </LinearLayout>
-</RelativeLayout>
+            <TextView
+                android:id="@+id/forgot_password_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="@dimen/five_dp"
+                android:fontFamily="@font/roboto_regular"
+                android:padding="@dimen/five_dp"
+                android:visibility="gone"
+                android:text="@string/label_forgot_password"
+                android:textColor="@color/colorWhite" />
+
+            <Button
+                android:id="@+id/btn_signin"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/forty_five_dp"
+                android:layout_marginTop="@dimen/forty_dp"
+                android:background="@drawable/btn_signin_ripple_effect"
+                android:fontFamily="@font/roboto_bold"
+                android:text="@string/label_signin" />
+        </LinearLayout>
+    </RelativeLayout>
+</layout>

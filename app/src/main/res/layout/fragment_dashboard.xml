@@ -1,530 +1,532 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/colorWhite"
-    android:orientation="vertical">
+<layout>
 
-    <ScrollView
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/one_hundred_dp"
-                android:layout_marginTop="@dimen/five_dp"
-                android:layout_marginBottom="@dimen/five_dp"
-                android:orientation="horizontal"
-                android:weightSum="1">
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.03" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="0.2"
-                    android:orientation="vertical">
-
-                    <RelativeLayout
-                        android:layout_width="@dimen/seventy_dp"
-                        android:layout_height="@dimen/seventy_dp"
-                        android:layout_gravity="center_horizontal"
-                        android:paddingTop="@dimen/eight_dp"
-                        android:paddingBottom="@dimen/eight_dp">
-
-                        <ImageView
-                            android:id="@+id/user_image"
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:background="@drawable/naveeb_circle"
-                            android:contentDescription="@string/nav_header_desc" />
-                    </RelativeLayout>
-                </LinearLayout>
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.02" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginTop="@dimen/five_dp"
-                    android:layout_marginBottom="@dimen/five_dp"
-                    android:layout_weight="0.55"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/two_dp"
-                        android:fontFamily="@font/roboto_regular"
-                        android:text="@string/label_welcome"
-                        android:textColor="@color/profile_header_color"
-                        android:textSize="@dimen/text_dimen_14" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/two_dp"
-                        android:fontFamily="@font/roboto_bold"
-                        android:text="Muddaraboina Naveen"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/text_dimen_15" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/two_dp"
-                        android:fontFamily="@font/roboto_regular"
-                        android:text="+91 9177551736"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/text_dimen_14" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:layout_weight="0.15"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/user_status"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_marginTop="@dimen/ten_dp"
-                        android:layout_marginEnd="@dimen/two_dp"
-                        android:fontFamily="@font/roboto_regular"
-                        android:text="Online" />
-
-                    <Switch
-                        android:id="@+id/switch1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_marginTop="@dimen/five_dp"
-                        android:checked="true"
-                        android:fontFamily="@font/roboto_regular"
-                        android:switchMinWidth="@dimen/fifty_five_dp" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/new_order_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/ten_dp"
-                android:layout_marginEnd="@dimen/ten_dp"
-                android:layout_marginBottom="@dimen/ten_dp"
-                android:background="@color/dashboard_pending_text_color"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/three_dp"
-                    android:background="@color/dashboard_orders_bg_color"
-                    android:orientation="horizontal"
-                    android:paddingTop="@dimen/three_dp"
-                    android:paddingBottom="@dimen/three_dp">
-
-                    <ImageView
-                        android:layout_width="@dimen/twenty_five_dp"
-                        android:layout_height="@dimen/forty_five_dp"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginStart="@dimen/ten_dp"
-                        android:layout_marginEnd="@dimen/fifteen_dp"
-                        android:contentDescription="@string/app_name"
-                        android:src="@drawable/icon_prescription" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/three_dp"
-                        android:layout_marginBottom="@dimen/three_dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/roboto_regular"
-                            android:text="@string/label_you_got"
-                            android:textColor="@color/colorBlack"
-                            android:textSize="@dimen/text_dimen_11" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/roboto_bold"
-                            android:text="@string/menu_take_order"
-                            android:textColor="@color/dashboard_pending_text_color"
-                            android:textSize="@dimen/text_dimen_16" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/roboto_regular"
-                            android:text="Today, 12:30PM"
-                            android:textColor="@color/colorBlack"
-                            android:textSize="@dimen/text_dimen_11" />
-                    </LinearLayout>
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/ten_dp"
-                android:layout_marginTop="@dimen/fifteen_dp"
-                android:layout_marginEnd="@dimen/ten_dp"
-                android:orientation="horizontal"
-                android:weightSum="1">
-
-                <TextView
-                    android:id="@+id/first_orders_list"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="0.25"
-                    android:fontFamily="@font/roboto_regular"
-                    android:gravity="center"
-                    android:text="June 15-30"
-                    android:textColor="@color/colorBlack" />
-
-                <TextView
-                    android:id="@+id/second_orders_list"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="0.25"
-                    android:fontFamily="@font/roboto_regular"
-                    android:gravity="center"
-                    android:text="Juy 01-15"
-                    android:textColor="@color/colorBlack" />
-
-                <TextView
-                    android:id="@+id/third_orders_list"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="0.25"
-                    android:fontFamily="@font/roboto_regular"
-                    android:gravity="center"
-                    android:text="Aug 15-30"
-                    android:textColor="@color/colorBlack" />
-
-                <TextView
-                    android:id="@+id/fourth_orders_list"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="0.25"
-                    android:background="@color/btn_color"
-                    android:fontFamily="@font/roboto_regular"
-                    android:gravity="center"
-                    android:text="This Week"
-                    android:textColor="@color/colorBlack" />
-            </LinearLayout>
-
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barChart"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/two_hundred_dp"
-                android:layout_marginStart="@dimen/five_dp"
-                android:layout_marginBottom="@dimen/ten_dp" />
-
-            <LinearLayout
-                android:id="@+id/orders_information_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/one_hundred_twenty_five_dp"
-                    android:layout_margin="@dimen/ten_dp"
-                    android:background="@drawable/dashboard_item_bg"
+                    android:layout_height="@dimen/one_hundred_dp"
+                    android:layout_marginTop="@dimen/five_dp"
+                    android:layout_marginBottom="@dimen/five_dp"
                     android:orientation="horizontal"
-                    android:weightSum="3">
+                    android:weightSum="1">
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.03" />
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:layout_weight="0.2"
                         android:orientation="vertical">
 
-                        <ImageView
-                            android:layout_width="@dimen/fifty_dp"
-                            android:layout_height="@dimen/forty_dp"
-                            android:contentDescription="@string/app_name"
-                            android:src="@drawable/db_total_orders" />
+                        <RelativeLayout
+                            android:layout_width="@dimen/seventy_dp"
+                            android:layout_height="@dimen/seventy_dp"
+                            android:layout_gravity="center_horizontal"
+                            android:paddingTop="@dimen/eight_dp"
+                            android:paddingBottom="@dimen/eight_dp">
+
+                            <ImageView
+                                android:id="@+id/user_image"
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:contentDescription="@string/nav_header_desc" />
+                        </RelativeLayout>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.02" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="@dimen/five_dp"
+                        android:layout_marginBottom="@dimen/five_dp"
+                        android:layout_weight="0.55"
+                        android:orientation="vertical">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/three_dp"
-                            android:fontFamily="@font/roboto_bold"
-                            android:gravity="center"
-                            android:text="@string/label_total_orders"
-                            android:textColor="@color/dashboard_text_color"
-                            android:textSize="@dimen/text_dimen_12" />
+                            android:layout_marginTop="@dimen/two_dp"
+                            android:fontFamily="@font/roboto_regular"
+                            android:text="@string/label_welcome"
+                            android:textColor="@color/profile_header_color"
+                            android:textSize="@dimen/text_dimen_14" />
 
                         <TextView
-                            android:id="@+id/total_orders_val"
+                            android:id="@+id/rider_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/two_dp"
                             android:fontFamily="@font/roboto_bold"
-                            android:text="150"
                             android:textColor="@color/colorBlack"
-                            android:textSize="@dimen/text_dimen_20" />
+                            android:textSize="@dimen/text_dimen_15" />
+
+                        <TextView
+                            android:id="@+id/rider_phone_number"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/two_dp"
+                            android:fontFamily="@font/roboto_regular"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/text_dimen_14" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
+                        android:layout_gravity="end"
+                        android:layout_weight="0.15"
                         android:orientation="vertical">
 
-                        <ImageView
-                            android:layout_width="@dimen/fifty_dp"
-                            android:layout_height="@dimen/forty_dp"
-                            android:contentDescription="@string/app_name"
-                            android:src="@drawable/db_delivered_orders" />
-
                         <TextView
+                            android:id="@+id/user_status"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/three_dp"
-                            android:fontFamily="@font/roboto_bold"
-                            android:gravity="center"
-                            android:text="@string/label_delivered_orders"
-                            android:textColor="@color/dashboard_text_color"
-                            android:textSize="@dimen/text_dimen_13" />
+                            android:layout_gravity="end"
+                            android:layout_marginTop="@dimen/ten_dp"
+                            android:layout_marginEnd="@dimen/two_dp"
+                            android:fontFamily="@font/roboto_regular"
+                            android:text="Offline" />
 
-                        <TextView
-                            android:id="@+id/delivered_orders_val"
+                        <Switch
+                            android:id="@+id/switch1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/roboto_bold"
-                            android:text="140"
-                            android:textColor="@color/colorBlack"
-                            android:textSize="@dimen/text_dimen_20" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="@dimen/fifty_dp"
-                            android:layout_height="@dimen/forty_dp"
-                            android:contentDescription="@string/app_name"
-                            android:src="@drawable/db_cancel_orders" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/three_dp"
-                            android:fontFamily="@font/roboto_bold"
-                            android:gravity="center"
-                            android:text="@string/label_cancelled_orders"
-                            android:textColor="@color/dashboard_text_color"
-                            android:textSize="@dimen/text_dimen_13" />
-
-                        <TextView
-                            android:id="@+id/cancelled_orders_val"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/roboto_bold"
-                            android:text="10"
-                            android:textColor="@color/colorBlack"
-                            android:textSize="@dimen/text_dimen_20" />
+                            android:layout_gravity="end"
+                            android:layout_marginTop="@dimen/five_dp"
+                            android:checked="false"
+                            android:fontFamily="@font/roboto_regular"
+                            android:switchMinWidth="@dimen/fifty_five_dp" />
                     </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/new_order_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/one_hundred_twenty_five_dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/ten_dp"
                     android:layout_marginEnd="@dimen/ten_dp"
                     android:layout_marginBottom="@dimen/ten_dp"
-                    android:orientation="horizontal"
-                    android:weightSum="1">
+                    android:background="@color/dashboard_pending_text_color"
+                    android:orientation="horizontal">
 
                     <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.485"
-                        android:background="@drawable/dashboard_item_bg"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="@dimen/fifty_dp"
-                            android:layout_height="@dimen/forty_dp"
-                            android:contentDescription="@string/app_name"
-                            android:src="@drawable/db_cod_received" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/three_dp"
-                            android:fontFamily="@font/roboto_bold"
-                            android:gravity="center"
-                            android:text="@string/label_cod_received"
-                            android:textColor="@color/dashboard_text_color"
-                            android:textSize="@dimen/text_dimen_12" />
-
-                        <TextView
-                            android:id="@+id/cod_received_val"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/roboto_bold"
-                            android:text="2,450"
-                            android:textColor="@color/colorBlack"
-                            android:textSize="@dimen/text_dimen_20" />
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.03" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.485"
-                        android:background="@drawable/dashboard_item_bg"
-                        android:gravity="center"
-                        android:orientation="vertical">
+                        android:layout_margin="@dimen/three_dp"
+                        android:background="@color/dashboard_orders_bg_color"
+                        android:orientation="horizontal"
+                        android:paddingTop="@dimen/three_dp"
+                        android:paddingBottom="@dimen/three_dp">
 
                         <ImageView
-                            android:layout_width="@dimen/fifty_dp"
-                            android:layout_height="@dimen/forty_dp"
+                            android:layout_width="@dimen/twenty_five_dp"
+                            android:layout_height="@dimen/forty_five_dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="@dimen/ten_dp"
+                            android:layout_marginEnd="@dimen/fifteen_dp"
                             android:contentDescription="@string/app_name"
-                            android:src="@drawable/db_cod_penging" />
+                            android:src="@drawable/icon_prescription" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/three_dp"
-                            android:fontFamily="@font/roboto_bold"
-                            android:gravity="center"
-                            android:text="@string/label_cod_pending"
-                            android:textColor="@color/dashboard_text_color"
-                            android:textSize="@dimen/text_dimen_12" />
+                            android:layout_marginBottom="@dimen/three_dp"
+                            android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/cod_pending_val"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/roboto_bold"
-                            android:text="1,050"
-                            android:textColor="@color/dashboard_pending_text_color"
-                            android:textSize="@dimen/text_dimen_20" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto_regular"
+                                android:text="@string/label_you_got"
+                                android:textColor="@color/colorBlack"
+                                android:textSize="@dimen/text_dimen_11" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto_bold"
+                                android:text="@string/menu_take_order"
+                                android:textColor="@color/dashboard_pending_text_color"
+                                android:textSize="@dimen/text_dimen_16" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto_regular"
+                                android:text="Today, 12:30PM"
+                                android:textColor="@color/colorBlack"
+                                android:textSize="@dimen/text_dimen_11" />
+                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/one_hundred_twenty_five_dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/ten_dp"
+                    android:layout_marginTop="@dimen/fifteen_dp"
                     android:layout_marginEnd="@dimen/ten_dp"
-                    android:layout_marginBottom="@dimen/fifteen_dp"
                     android:orientation="horizontal"
                     android:weightSum="1">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.485"
-                        android:background="@drawable/dashboard_item_bg"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="@dimen/fifty_dp"
-                            android:layout_height="@dimen/forty_dp"
-                            android:contentDescription="@string/app_name"
-                            android:src="@drawable/db_sales_generated" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/eight_dp"
-                            android:fontFamily="@font/roboto_bold"
-                            android:gravity="center"
-                            android:text="@string/labels_sales_generated"
-                            android:textColor="@color/dashboard_text_color"
-                            android:textSize="@dimen/text_dimen_12" />
-
-                        <TextView
-                            android:id="@+id/sales_generated_val"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/roboto_bold"
-                            android:text="50 Orders"
-                            android:textColor="@color/colorBlack"
-                            android:textSize="@dimen/text_dimen_20" />
-                    </LinearLayout>
-
-                    <View
+                    <TextView
+                        android:id="@+id/first_orders_list"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.03" />
+                        android:layout_gravity="center"
+                        android:layout_weight="0.25"
+                        android:fontFamily="@font/roboto_regular"
+                        android:gravity="center"
+                        android:text="June 15-30"
+                        android:textColor="@color/colorBlack" />
+
+                    <TextView
+                        android:id="@+id/second_orders_list"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="0.25"
+                        android:fontFamily="@font/roboto_regular"
+                        android:gravity="center"
+                        android:text="Juy 01-15"
+                        android:textColor="@color/colorBlack" />
+
+                    <TextView
+                        android:id="@+id/third_orders_list"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="0.25"
+                        android:fontFamily="@font/roboto_regular"
+                        android:gravity="center"
+                        android:text="Aug 15-30"
+                        android:textColor="@color/colorBlack" />
+
+                    <TextView
+                        android:id="@+id/fourth_orders_list"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="0.25"
+                        android:background="@color/btn_color"
+                        android:fontFamily="@font/roboto_regular"
+                        android:gravity="center"
+                        android:text="This Week"
+                        android:textColor="@color/colorBlack" />
+                </LinearLayout>
+
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/barChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/two_hundred_dp"
+                    android:layout_marginStart="@dimen/five_dp"
+                    android:layout_marginBottom="@dimen/ten_dp" />
+
+                <LinearLayout
+                    android:id="@+id/orders_information_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
                     <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.485"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/one_hundred_twenty_five_dp"
+                        android:layout_margin="@dimen/ten_dp"
                         android:background="@drawable/dashboard_item_bg"
-                        android:gravity="center"
-                        android:orientation="vertical">
+                        android:orientation="horizontal"
+                        android:weightSum="3">
 
-                        <ImageView
-                            android:layout_width="@dimen/fifty_dp"
-                            android:layout_height="@dimen/forty_dp"
-                            android:contentDescription="@string/app_name"
-                            android:src="@drawable/db_distance_travelled" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/eight_dp"
-                            android:fontFamily="@font/roboto_bold"
+                            android:layout_weight="1"
                             android:gravity="center"
-                            android:text="@string/label_distance_travelled"
-                            android:textColor="@color/dashboard_text_color"
-                            android:textSize="@dimen/text_dimen_12" />
+                            android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/travelled_distance_val"
-                            android:layout_width="wrap_content"
+                            <ImageView
+                                android:layout_width="@dimen/fifty_dp"
+                                android:layout_height="@dimen/forty_dp"
+                                android:contentDescription="@string/app_name"
+                                android:src="@drawable/db_total_orders" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/three_dp"
+                                android:fontFamily="@font/roboto_bold"
+                                android:gravity="center"
+                                android:text="@string/label_total_orders"
+                                android:textColor="@color/dashboard_text_color"
+                                android:textSize="@dimen/text_dimen_12" />
+
+                            <TextView
+                                android:id="@+id/total_orders_val"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto_bold"
+                                android:text="150"
+                                android:textColor="@color/colorBlack"
+                                android:textSize="@dimen/text_dimen_20" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/roboto_bold"
-                            android:text="1450.5 KM"
-                            android:textColor="@color/colorBlack"
-                            android:textSize="@dimen/text_dimen_20" />
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="@dimen/fifty_dp"
+                                android:layout_height="@dimen/forty_dp"
+                                android:contentDescription="@string/app_name"
+                                android:src="@drawable/db_delivered_orders" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/three_dp"
+                                android:fontFamily="@font/roboto_bold"
+                                android:gravity="center"
+                                android:text="@string/label_delivered_orders"
+                                android:textColor="@color/dashboard_text_color"
+                                android:textSize="@dimen/text_dimen_13" />
+
+                            <TextView
+                                android:id="@+id/delivered_orders_val"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto_bold"
+                                android:text="140"
+                                android:textColor="@color/colorBlack"
+                                android:textSize="@dimen/text_dimen_20" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="@dimen/fifty_dp"
+                                android:layout_height="@dimen/forty_dp"
+                                android:contentDescription="@string/app_name"
+                                android:src="@drawable/db_cancel_orders" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/three_dp"
+                                android:fontFamily="@font/roboto_bold"
+                                android:gravity="center"
+                                android:text="@string/label_cancelled_orders"
+                                android:textColor="@color/dashboard_text_color"
+                                android:textSize="@dimen/text_dimen_13" />
+
+                            <TextView
+                                android:id="@+id/cancelled_orders_val"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto_bold"
+                                android:text="10"
+                                android:textColor="@color/colorBlack"
+                                android:textSize="@dimen/text_dimen_20" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/one_hundred_twenty_five_dp"
+                        android:layout_marginStart="@dimen/ten_dp"
+                        android:layout_marginEnd="@dimen/ten_dp"
+                        android:layout_marginBottom="@dimen/ten_dp"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.485"
+                            android:background="@drawable/dashboard_item_bg"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="@dimen/fifty_dp"
+                                android:layout_height="@dimen/forty_dp"
+                                android:contentDescription="@string/app_name"
+                                android:src="@drawable/db_cod_received" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/three_dp"
+                                android:fontFamily="@font/roboto_bold"
+                                android:gravity="center"
+                                android:text="@string/label_cod_received"
+                                android:textColor="@color/dashboard_text_color"
+                                android:textSize="@dimen/text_dimen_12" />
+
+                            <TextView
+                                android:id="@+id/cod_received_val"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto_bold"
+                                android:text="2,450"
+                                android:textColor="@color/colorBlack"
+                                android:textSize="@dimen/text_dimen_20" />
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.03" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.485"
+                            android:background="@drawable/dashboard_item_bg"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="@dimen/fifty_dp"
+                                android:layout_height="@dimen/forty_dp"
+                                android:contentDescription="@string/app_name"
+                                android:src="@drawable/db_cod_penging" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/three_dp"
+                                android:fontFamily="@font/roboto_bold"
+                                android:gravity="center"
+                                android:text="@string/label_cod_pending"
+                                android:textColor="@color/dashboard_text_color"
+                                android:textSize="@dimen/text_dimen_12" />
+
+                            <TextView
+                                android:id="@+id/cod_pending_val"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto_bold"
+                                android:text="1,050"
+                                android:textColor="@color/dashboard_pending_text_color"
+                                android:textSize="@dimen/text_dimen_20" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/one_hundred_twenty_five_dp"
+                        android:layout_marginStart="@dimen/ten_dp"
+                        android:layout_marginEnd="@dimen/ten_dp"
+                        android:layout_marginBottom="@dimen/fifteen_dp"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.485"
+                            android:background="@drawable/dashboard_item_bg"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="@dimen/fifty_dp"
+                                android:layout_height="@dimen/forty_dp"
+                                android:contentDescription="@string/app_name"
+                                android:src="@drawable/db_sales_generated" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/eight_dp"
+                                android:fontFamily="@font/roboto_bold"
+                                android:gravity="center"
+                                android:text="@string/labels_sales_generated"
+                                android:textColor="@color/dashboard_text_color"
+                                android:textSize="@dimen/text_dimen_12" />
+
+                            <TextView
+                                android:id="@+id/sales_generated_val"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto_bold"
+                                android:text="50 Orders"
+                                android:textColor="@color/colorBlack"
+                                android:textSize="@dimen/text_dimen_20" />
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.03" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.485"
+                            android:background="@drawable/dashboard_item_bg"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="@dimen/fifty_dp"
+                                android:layout_height="@dimen/forty_dp"
+                                android:contentDescription="@string/app_name"
+                                android:src="@drawable/db_distance_travelled" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/eight_dp"
+                                android:fontFamily="@font/roboto_bold"
+                                android:gravity="center"
+                                android:text="@string/label_distance_travelled"
+                                android:textColor="@color/dashboard_text_color"
+                                android:textSize="@dimen/text_dimen_12" />
+
+                            <TextView
+                                android:id="@+id/travelled_distance_val"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto_bold"
+                                android:text="1450.5 KM"
+                                android:textColor="@color/colorBlack"
+                                android:textSize="@dimen/text_dimen_20" />
+                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</layout>

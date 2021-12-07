@@ -31,6 +31,7 @@ import com.apollo.epos.activity.NavigationActivity;
 import com.apollo.epos.adapter.CancelOrderItemsAdapter;
 import com.apollo.epos.adapter.CustomReasonAdapter;
 import com.apollo.epos.adapter.MyOrdersListAdapter;
+import com.apollo.epos.base.BaseFragment;
 import com.apollo.epos.fragment.deliveryorder.DeliveryOrderFragment;
 import com.apollo.epos.model.OrderItemModel;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -42,7 +43,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class CancelOrderItemFragment extends Fragment implements OnItemClickListener {
+public class CancelOrderItemFragment extends BaseFragment implements OnItemClickListener {
     private Activity mActivity;
     @BindView(R.id.items_view_image)
     protected ImageView itemsViewImage;

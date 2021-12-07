@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#01bdbe</color>
-    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorPrimary">#1f373a</color>
+    <color name="colorPrimaryDark">#0d2c2a</color>
+<!--    <color name="colorAccent">#1f373a</color>-->
     <color name="colorAccent">#00a552</color>
 
     <color name="colorBlack">#000000</color>
@@ -72,4 +73,6 @@
 
     <color name="delivery_pharmacy">#ffb300</color>
     <color name="delivery_user">#00a550</color>
+    <color name="application_bg">#1f373a</color>
+    <color name="edit_text_textcolor">#b5c3c2</color>
 </resources>

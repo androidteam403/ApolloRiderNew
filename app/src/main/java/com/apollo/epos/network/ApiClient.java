@@ -1,5 +1,7 @@
 package com.apollo.epos.network;
 
+import com.apollo.epos.BuildConfig;
+
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -8,13 +10,12 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
-    private static final String ROOT_URL = "https://jsonblob.com/api/jsonBlob/";
 
-    public static ApiInterface getApiService(String ROOT_URL) {
-        return getRetrofitInstance3().create(ApiInterface.class);
+    public static ApiInterface getApiService() {
+        return getRetrofitInstance().create(ApiInterface.class);
     }
 
-    private static Retrofit getRetrofitInstance3() {
+    private static Retrofit getRetrofitInstance() {
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(1, TimeUnit.MINUTES)
                 .writeTimeout(1, TimeUnit.MINUTES)
@@ -22,7 +23,7 @@ public class ApiClient {
                 .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 .build();
         return new Retrofit.Builder()
-                .baseUrl(ROOT_URL)
+                .baseUrl(BuildConfig.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();

@@ -1,222 +1,225 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorWhite"
-    android:orientation="vertical">
+<layout>
 
-    <LinearLayout
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/twenty_dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:weightSum="1">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginEnd="@dimen/five_dp"
-            android:layout_weight="0.4"
-            android:gravity="end"
-            android:text="@string/label_order_no"
-            android:fontFamily="@font/roboto_regular"
-            android:textColor="@color/colorBlack"
-            android:textSize="@dimen/text_dimen_12" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.6"
-            android:text="1500000456"
-            android:textColor="@color/colorBlack"
-            android:textSize="@dimen/text_dimen_17"
-            android:fontFamily="@font/roboto_bold"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/five_dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:weightSum="1">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginEnd="@dimen/five_dp"
-            android:layout_weight="0.4"
-            android:gravity="end"
-            android:fontFamily="@font/roboto_regular"
-            android:text="@string/label_customer_name"
-            android:textColor="@color/colorBlack"
-            android:textSize="@dimen/text_dimen_12" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.6"
-            android:text="Muddraboina Naveen"
-            android:textColor="@color/colorBlack"
-            android:textSize="@dimen/text_dimen_17"
-            android:fontFamily="@font/roboto_bold"/>
-    </LinearLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/four_hundred_twenty_dp"
-        android:layout_marginStart="@dimen/fifteen_dp"
-        android:layout_marginEnd="@dimen/fifteen_dp"
-        android:layout_marginBottom="@dimen/fifteen_dp">
+        android:layout_height="match_parent"
+        android:background="@color/colorWhite"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/twenty_dp"
+            android:gravity="center"
+            android:orientation="horizontal"
             android:weightSum="1">
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.05" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.95"
-                android:background="@drawable/signature_pad_view_bg" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:weightSum="1">
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.025" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_gravity="center"
-                android:layout_weight="0.05"
-                android:background="@color/colorWhite"
-                android:gravity="center"
-                android:paddingRight="@dimen/ten_dp"
-                android:paddingLeft="@dimen/ten_dp"
-                android:fontFamily="@font/roboto_bold"
-                android:text="@string/label_enter_signature"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginEnd="@dimen/five_dp"
+                android:layout_weight="0.4"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="end"
+                android:text="@string/label_order_no"
                 android:textColor="@color/colorBlack"
                 android:textSize="@dimen/text_dimen_12" />
 
+            <TextView
+                android:id="@+id/order_number"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.6"
+                android:fontFamily="@font/roboto_bold"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/text_dimen_17" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/five_dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginEnd="@dimen/five_dp"
+                android:layout_weight="0.4"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="end"
+                android:text="@string/label_customer_name"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/text_dimen_12" />
+
+            <TextView
+                android:id="@+id/customer_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.6"
+                android:fontFamily="@font/roboto_bold"
+                android:text="Muddraboina Naveen"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/text_dimen_17" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/four_hundred_twenty_dp"
+            android:layout_marginStart="@dimen/fifteen_dp"
+            android:layout_marginEnd="@dimen/fifteen_dp"
+            android:layout_marginBottom="@dimen/fifteen_dp">
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="center"
-                android:layout_weight="0.92"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:padding="@dimen/eight_dp">
+                android:weightSum="1">
 
-                <com.kyanogen.signatureview.SignatureView
-                    xmlns:sign="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/signature_view"
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    sign:penSize="@dimen/five_dp"
-                    sign:backgroundColor="#ffffff"
-                    sign:penColor="#000000"
-                    sign:enableSignature="true"/>
+                    android:layout_height="0dp"
+                    android:layout_weight="0.05" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.95"
+                    android:background="@drawable/signature_pad_view_bg" />
             </LinearLayout>
-        </LinearLayout>
-    </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/fifteen_dp"
-        android:layout_marginEnd="@dimen/fifteen_dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:weightSum="1">
 
-        <LinearLayout
-            android:id="@+id/back_layout"
-            android:layout_width="wrap_content"
-            android:background="@drawable/continue_driving_btn_bg"
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.025" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.05"
+                    android:background="@color/colorWhite"
+                    android:fontFamily="@font/roboto_bold"
+                    android:gravity="center"
+                    android:paddingLeft="@dimen/ten_dp"
+                    android:paddingRight="@dimen/ten_dp"
+                    android:text="@string/label_enter_signature"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/text_dimen_12" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.92"
+                    android:orientation="vertical"
+                    android:padding="@dimen/eight_dp">
+
+                    <com.kyanogen.signatureview.SignatureView xmlns:sign="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/signature_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        sign:backgroundColor="#ffffff"
+                        sign:enableSignature="true"
+                        sign:penColor="#000000"
+                        sign:penSize="@dimen/five_dp" />
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginStart="@dimen/fifteen_dp"
+            android:layout_marginEnd="@dimen/fifteen_dp">
 
-            <ImageView
-                android:layout_width="@dimen/eighteen_dp"
-                android:layout_height="@dimen/fifteen_dp"
-                android:contentDescription="@string/app_name"
-                android:layout_gravity="center"
-                android:src="@drawable/icon_signature_back"/>
-
-            <TextView
+            <LinearLayout
+                android:id="@+id/back_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:layout_gravity="center"
-                android:layout_marginStart="@dimen/five_dp"
-                android:textSize="@dimen/text_dimen_13"
-                android:fontFamily="@font/roboto_bold"
-                android:text="@string/label_back"/>
-        </LinearLayout>
+                android:background="@drawable/continue_driving_btn_bg"
+                android:orientation="horizontal">
 
-        <LinearLayout
-            android:id="@+id/clear_layout"
-            android:layout_width="wrap_content"
-            android:background="@drawable/continue_driving_btn_bg"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="@dimen/eighteen_dp"
+                    android:layout_height="@dimen/fifteen_dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/icon_signature_back" />
 
-            <ImageView
-                android:layout_width="@dimen/eighteen_dp"
-                android:layout_height="@dimen/fifteen_dp"
-                android:contentDescription="@string/app_name"
-                android:layout_gravity="center"
-                android:src="@drawable/icon_signature_close"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/five_dp"
+                    android:fontFamily="@font/roboto_bold"
+                    android:text="@string/label_back"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_dimen_13" />
+            </LinearLayout>
 
-            <TextView
+            <LinearLayout
+                android:id="@+id/clear_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:layout_gravity="center"
-                android:layout_marginStart="@dimen/five_dp"
-                android:textSize="@dimen/text_dimen_13"
-                android:fontFamily="@font/roboto_bold"
-                android:text="@string/label_clear"/>
-        </LinearLayout>
+                android:layout_centerInParent="true"
+                android:background="@drawable/continue_driving_btn_bg"
+                android:orientation="horizontal">
 
-        <LinearLayout
-            android:id="@+id/save_layout"
-            android:layout_width="wrap_content"
-            android:background="@drawable/continue_driving_btn_bg"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="@dimen/eighteen_dp"
+                    android:layout_height="@dimen/fifteen_dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/icon_signature_close" />
 
-            <ImageView
-                android:layout_width="@dimen/eighteen_dp"
-                android:layout_height="@dimen/fifteen_dp"
-                android:contentDescription="@string/app_name"
-                android:layout_gravity="center"
-                android:src="@drawable/icon_signature_save"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/five_dp"
+                    android:fontFamily="@font/roboto_bold"
+                    android:text="@string/label_clear"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_dimen_13" />
+            </LinearLayout>
 
-            <TextView
+            <LinearLayout
+                android:id="@+id/save_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:layout_gravity="center"
-                android:layout_marginStart="@dimen/five_dp"
-                android:textSize="@dimen/text_dimen_13"
-                android:fontFamily="@font/roboto_bold"
-                android:text="@string/label_save"/>
-        </LinearLayout>
-    </RelativeLayout>
-</LinearLayout>
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/continue_driving_btn_bg"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/eighteen_dp"
+                    android:layout_height="@dimen/fifteen_dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/icon_signature_save" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/five_dp"
+                    android:fontFamily="@font/roboto_bold"
+                    android:text="@string/label_save"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_dimen_13" />
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+</layout>

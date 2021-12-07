@@ -5,9 +5,7 @@ import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -15,7 +13,6 @@ import android.graphics.Color;
 import android.graphics.RectF;
 import android.graphics.drawable.AnimationDrawable;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,18 +31,17 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
+import androidx.databinding.DataBindingUtil;
 
 import com.apollo.epos.R;
-import com.apollo.epos.activity.MapViewActivity;
+import com.apollo.epos.activity.NavigationActivity;
 import com.apollo.epos.activity.NewOrderActivity;
-import com.apollo.epos.dialog.DialogManager;
-import com.apollo.epos.listeners.DialogMangerCallback;
-import com.apollo.epos.service.NetworkUtils;
+import com.apollo.epos.base.BaseFragment;
+import com.apollo.epos.databinding.FragmentDashboardBinding;
+import com.apollo.epos.model.GetRiderProfileResponse;
 import com.apollo.epos.utils.ActivityUtils;
 import com.apollo.epos.utils.XYMarkerView;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
@@ -62,7 +58,6 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.MPPointF;
-import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -86,14 +81,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static android.content.Context.LOCATION_SERVICE;
-
-public class DashboardFragment extends Fragment implements OnChartValueSelectedListener, DashboardView, GoogleApiClient.ConnectionCallbacks,
+public class DashboardFragment extends BaseFragment implements DashboardFragmentCallback, OnChartValueSelectedListener, DashboardView, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
         ResultCallback<LocationSettingsResult> {
     private Activity mActivity;
+    private FragmentDashboardBinding dashboardBinding;
     @BindView(R.id.user_image)
     ImageView userImage;
     @BindView(R.id.switch1)
@@ -225,7 +218,8 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_dashboard, container, false);
+        dashboardBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_dashboard, container, false);
+        return dashboardBinding.getRoot();
     }
 
     final AnimationDrawable drawable = new AnimationDrawable();
@@ -235,19 +229,26 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        if (getSessionManager().getRiderProfileResponse() != null)
+            onSuccessGetProfileDetailsApi(getSessionManager().getRiderProfileResponse());
+        else
+            new DashboardFragmentController(getContext(), this).getRiderProfileDetailsApi(getSessionManager().getLoginToken());
 
-        Glide.with(mActivity)
-                .load(getResources().getDrawable(R.drawable.naveeb_circle))
-                .apply(RequestOptions.circleCropTransform())
-                .into(userImage);
+        if (getSessionManager().getRiderActiveStatus().equals("Offline")) {
+            userStatus.setText("Offline");
+            sw.setChecked(false);
+        } else {
+            userStatus.setText("Online");
+            sw.setChecked(true);
+        }
 
         sw.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 userStatus.setText("Online");
-//                Toast.makeText(mActivity, "ON", Toast.LENGTH_SHORT).show();
+                new DashboardFragmentController(getContext(), this).riderUpdateStauts(getSessionManager().getLoginToken(), "Online");
             } else {
                 userStatus.setText("Offline");
-//                Toast.makeText(mActivity, "OFF", Toast.LENGTH_SHORT).show();
+                new DashboardFragmentController(getContext(), this).riderUpdateStauts(getSessionManager().getLoginToken(), "Offline");
             }
         });
 
@@ -299,7 +300,9 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
         buildLocationSettingsRequest();
 
         newOrderLayout.setOnClickListener(v -> {
-            startUpdatesButtonHandler(newOrderLayout);
+
+NavigationActivity.getInstance().selectItem(1);
+//            startUpdatesButtonHandler(newOrderLayout);
 
         });
     }
@@ -307,12 +310,12 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
 
-        for(String permission: permissions){
-            if(ActivityCompat.shouldShowRequestPermissionRationale(mActivity, permission)){
+        for (String permission : permissions) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(mActivity, permission)) {
                 //denied
                 Log.e("denied", permission);
-            }else{
-                if(ActivityCompat.checkSelfPermission(mActivity, permission) == PackageManager.PERMISSION_GRANTED){
+            } else {
+                if (ActivityCompat.checkSelfPermission(mActivity, permission) == PackageManager.PERMISSION_GRANTED) {
                     //allowed
                     Log.e("allowed", permission);
 
@@ -330,7 +333,7 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
                             }
                         }
                     }
-                } else{
+                } else {
                     //set to never ask again
                     Log.e("set to never ask again", permission);
                     //do something here.
@@ -392,249 +395,260 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
     }
 
     private synchronized void GoogleClientBuild() {
-        mGoogleApiClient = new GoogleApiClient.Builder(mActivity).addApi(LocationServices.API).addConnectionCallbacks(this).addApi(AppIndex.API).addApi(AppIndex.API).addOnConnectionFailedListener(this).build();
-    }
+        if (mGoogleApiClient == null || !mGoogleApiClient.isConnected()) {
+            mGoogleApiClient = new GoogleApiClient.Builder(getContext())
+                    .enableAutoManage(getActivity(), 1, this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+            mGoogleApiClient.connect();
+        }
 
-    @Override
-    public void onValueSelected(Entry e, Highlight h) {
-        if (e == null)
-            return;
-        RectF bounds = mOnValueSelectedRectF;
-        mChart.getBarBounds((BarEntry) e, bounds);
-        MPPointF position = mChart.getPosition(e, YAxis.AxisDependency.LEFT);
+//        mGoogleApiClient = new GoogleApiClient.Builder(mActivity).addApi(LocationServices.API).addConnectionCallbacks(this).addApi(AppIndex.API).addApi(AppIndex.API).addOnConnectionFailedListener(this).build();
+        }
 
-        Log.i("bounds", bounds.toString());
-        Log.i("position", position.toString());
+        @Override
+        public void onValueSelected (Entry e, Highlight h){
+            if (e == null)
+                return;
+            RectF bounds = mOnValueSelectedRectF;
+            mChart.getBarBounds((BarEntry) e, bounds);
+            MPPointF position = mChart.getPosition(e, YAxis.AxisDependency.LEFT);
 
-        Log.i("x-index",
-                "low: " + mChart.getLowestVisibleX() + ", high: "
-                        + mChart.getHighestVisibleX());
+            Log.i("bounds", bounds.toString());
+            Log.i("position", position.toString());
 
-        MPPointF.recycleInstance(position);
-    }
+            Log.i("x-index",
+                    "low: " + mChart.getLowestVisibleX() + ", high: "
+                            + mChart.getHighestVisibleX());
 
-    @Override
-    public void onNothingSelected() {
+            MPPointF.recycleInstance(position);
+        }
 
-    }
+        @Override
+        public void onNothingSelected () {
 
-    @Override
-    public void setGraphData() {
-        mChart.setOnChartValueSelectedListener(this);
-        mChart.setDrawBarShadow(false);
-        mChart.setDrawValueAboveBar(false);
-        mChart.getDescription().setEnabled(false);
-        // if more than 60 entries are displayed in the chart, no values will be
-        // drawn
-        mChart.setMaxVisibleValueCount(50);
-        // scaling can now only be done on x- and y-axis separately
-        mChart.setPinchZoom(false);
-        mChart.setScaleEnabled(false);
-        mChart.setDrawGridBackground(false);
-        // mChart.setDrawYLabels(false);
+        }
 
-        ArrayList<String> xVals = new ArrayList<>();
-        xVals.add(getResources().getString(R.string.label_monday));
-        xVals.add(getResources().getString(R.string.label_tuesday));
-        xVals.add(getResources().getString(R.string.label_wednesday));
-        xVals.add(getResources().getString(R.string.label_thursday));
-        xVals.add(getResources().getString(R.string.label_friday));
-        xVals.add(getResources().getString(R.string.label_saturday));
-        xVals.add(getResources().getString(R.string.label_sunday));
-        XAxis xAxis = mChart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setDrawGridLines(false);
-        xAxis.setGranularity(1f); // only intervals of 1 day
-        xAxis.setLabelCount(7);
-        IAxisValueFormatter xAxisFormatter = new IndexAxisValueFormatter(xVals);
-        xAxis.setValueFormatter(xAxisFormatter);
-        mChart.getAxisRight().setEnabled(false);
-        YAxis leftAxis = mChart.getAxisLeft();
-        leftAxis.setLabelCount(5, false);
-        leftAxis.setValueFormatter(new LargeValueFormatter());
-        leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
-        leftAxis.setSpaceTop(30f);
-        leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+        @Override
+        public void setGraphData () {
+            mChart.setOnChartValueSelectedListener(this);
+            mChart.setDrawBarShadow(false);
+            mChart.setDrawValueAboveBar(false);
+            mChart.getDescription().setEnabled(false);
+            // if more than 60 entries are displayed in the chart, no values will be
+            // drawn
+            mChart.setMaxVisibleValueCount(50);
+            // scaling can now only be done on x- and y-axis separately
+            mChart.setPinchZoom(false);
+            mChart.setScaleEnabled(false);
+            mChart.setDrawGridBackground(false);
+            // mChart.setDrawYLabels(false);
 
-        Legend l = mChart.getLegend();
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
-        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
-        l.setDrawInside(false);
-        l.setForm(Legend.LegendForm.NONE);
-        l.setFormSize(9f);
-        l.setTextSize(11f);
-        l.setXEntrySpace(7f);
+            ArrayList<String> xVals = new ArrayList<>();
+            xVals.add(getResources().getString(R.string.label_monday));
+            xVals.add(getResources().getString(R.string.label_tuesday));
+            xVals.add(getResources().getString(R.string.label_wednesday));
+            xVals.add(getResources().getString(R.string.label_thursday));
+            xVals.add(getResources().getString(R.string.label_friday));
+            xVals.add(getResources().getString(R.string.label_saturday));
+            xVals.add(getResources().getString(R.string.label_sunday));
+            XAxis xAxis = mChart.getXAxis();
+            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+            xAxis.setDrawGridLines(false);
+            xAxis.setGranularity(1f); // only intervals of 1 day
+            xAxis.setLabelCount(7);
+            IAxisValueFormatter xAxisFormatter = new IndexAxisValueFormatter(xVals);
+            xAxis.setValueFormatter(xAxisFormatter);
+            mChart.getAxisRight().setEnabled(false);
+            YAxis leftAxis = mChart.getAxisLeft();
+            leftAxis.setLabelCount(5, false);
+            leftAxis.setValueFormatter(new LargeValueFormatter());
+            leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
+            leftAxis.setSpaceTop(30f);
+            leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
 
-        XYMarkerView mv = new XYMarkerView(mActivity, xAxisFormatter);
-        mv.setChartView(mChart); // For bounds control
-        mChart.getLegend().setEnabled(false);   // Hide the legend
-        mChart.setMarker(mv); // Set the marker to the chart
-    }
+            Legend l = mChart.getLegend();
+            l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+            l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+            l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+            l.setDrawInside(false);
+            l.setForm(Legend.LegendForm.NONE);
+            l.setFormSize(9f);
+            l.setTextSize(11f);
+            l.setXEntrySpace(7f);
 
-    private void setData(float monCan, float monDel, float tueCan, float tueDel, float wedCan, float wedDel, float thuCan, float thuDel,
-                         float friCan, float friDel, float satCan, float satDel, float sunCan, float sunDel) {
-        mChart.invalidate();
-        ArrayList<BarEntry> yVals1 = new ArrayList<BarEntry>();
+            XYMarkerView mv = new XYMarkerView(mActivity, xAxisFormatter);
+            mv.setChartView(mChart); // For bounds control
+            mChart.getLegend().setEnabled(false);   // Hide the legend
+            mChart.setMarker(mv); // Set the marker to the chart
+        }
+
+        private void setData ( float monCan, float monDel, float tueCan, float tueDel, float wedCan,
+        float wedDel, float thuCan, float thuDel,
+        float friCan, float friDel, float satCan, float satDel, float sunCan, float sunDel){
+            mChart.invalidate();
+            ArrayList<BarEntry> yVals1 = new ArrayList<BarEntry>();
 //        yVals1.add(new BarEntry(0, (int) monVal));
 
-        yVals1.add(new BarEntry(0, new float[]{monCan, monDel}, ""));
-        yVals1.add(new BarEntry(1, new float[]{tueCan, tueDel}, ""));
-        yVals1.add(new BarEntry(2, new float[]{wedCan, wedDel}, ""));
-        yVals1.add(new BarEntry(3, new float[]{thuCan, thuDel}, ""));
-        yVals1.add(new BarEntry(4, new float[]{friCan, friDel}, ""));
-        yVals1.add(new BarEntry(5, new float[]{satCan, satDel}, ""));
-        yVals1.add(new BarEntry(6, new float[]{sunCan, sunDel}, ""));
+            yVals1.add(new BarEntry(0, new float[]{monCan, monDel}, ""));
+            yVals1.add(new BarEntry(1, new float[]{tueCan, tueDel}, ""));
+            yVals1.add(new BarEntry(2, new float[]{wedCan, wedDel}, ""));
+            yVals1.add(new BarEntry(3, new float[]{thuCan, thuDel}, ""));
+            yVals1.add(new BarEntry(4, new float[]{friCan, friDel}, ""));
+            yVals1.add(new BarEntry(5, new float[]{satCan, satDel}, ""));
+            yVals1.add(new BarEntry(6, new float[]{sunCan, sunDel}, ""));
 
-        BarDataSet set1 = new BarDataSet(yVals1, "");
+            BarDataSet set1 = new BarDataSet(yVals1, "");
 //        set1.setDrawIcons(false);
-        set1.setColors(getColors());
+            set1.setColors(getColors());
 //        set1.setColors(deliveredOrdersColour);
 
-        ArrayList<IBarDataSet> dataSets = new ArrayList<IBarDataSet>();
-        dataSets.add(set1);
+            ArrayList<IBarDataSet> dataSets = new ArrayList<IBarDataSet>();
+            dataSets.add(set1);
 
-        BarData data = new BarData(dataSets);
+            BarData data = new BarData(dataSets);
 //        data.setValueTextSize(8f);
 //             data.setValueTypeface(mTfLight);
-        data.setBarWidth(0.5f);
-        data.setValueFormatter(new StackedValueFormatter(false, "", 1));
-        data.setValueTextColor(Color.WHITE);
+            data.setBarWidth(0.5f);
+            data.setValueFormatter(new StackedValueFormatter(false, "", 1));
+            data.setValueTextColor(Color.WHITE);
 
-        mChart.setData(data);
-        mChart.animateY(2000);
+            mChart.setData(data);
+            mChart.animateY(2000);
 
 //        for (IBarDataSet iSet : dataSets) {
 //            BarDataSet set = (BarDataSet) iSet;
 //            set.setDrawValues(!set.isDrawValuesEnabled());
 //        }
 
-        for (IBarDataSet set : dataSets)
-            set.setDrawValues(!set.isDrawValuesEnabled());
-        //    }
-    }
+            for (IBarDataSet set : dataSets)
+                set.setDrawValues(!set.isDrawValuesEnabled());
+            //    }
+        }
 
-    private int[] getColors() {
-        int[] colors = {Color.rgb(255, 1, 1), Color.rgb(0, 194, 195)};
-        System.arraycopy(colors, 0, colors, 0, 2);
-        return colors;
-    }
+        private int[] getColors () {
+            int[] colors = {Color.rgb(255, 1, 1), Color.rgb(0, 194, 195)};
+            System.arraycopy(colors, 0, colors, 0, 2);
+            return colors;
+        }
 
-    @OnClick(R.id.first_orders_list)
-    void onFirstOrdersClick() {
-        if (isFirstOrdersClicked)
-            return;
+        @OnClick(R.id.first_orders_list)
+        void onFirstOrdersClick () {
+            if (isFirstOrdersClicked)
+                return;
 
-        Animation animSlideFromBottom = AnimationUtils.loadAnimation(mActivity, R.anim.slide_from_bottom);
-        ordersInformationLayout.clearAnimation();
-        ordersInformationLayout.startAnimation(animSlideFromBottom);
+            Animation animSlideFromBottom = AnimationUtils.loadAnimation(mActivity, R.anim.slide_from_bottom);
+            ordersInformationLayout.clearAnimation();
+            ordersInformationLayout.startAnimation(animSlideFromBottom);
 
-        setData(3, 10, 5, 22, 0, 20, 10, 35, 2, 20, 8, 40, 0, 10);
-        totalOrdersVal.setText("172");
-        deliveredOrdersVal.setText("147");
-        cancelledOrdersVal.setText("25");
-        codReceivedVal.setText("1580");
-        codPendingVal.setText("210");
-        salesGeneratedVal.setText("36 Orders");
-        travelledDistanceVal.setText("153.8 KM");
+            setData(3, 10, 5, 22, 0, 20, 10, 35, 2, 20, 8, 40, 0, 10);
+            totalOrdersVal.setText("172");
+            deliveredOrdersVal.setText("147");
+            cancelledOrdersVal.setText("25");
+            codReceivedVal.setText("1580");
+            codPendingVal.setText("210");
+            salesGeneratedVal.setText("36 Orders");
+            travelledDistanceVal.setText("153.8 KM");
 
-        firstOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.btn_color));
-        secondOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
-        thirdOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
-        fourthOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
+            firstOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.btn_color));
+            secondOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
+            thirdOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
+            fourthOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
 
-        isFirstOrdersClicked = true;
-        isSecondOrdersClicked = false;
-        isThirdOrdersClicked = false;
-        isFourthOrdersClicked = false;
-    }
+            isFirstOrdersClicked = true;
+            isSecondOrdersClicked = false;
+            isThirdOrdersClicked = false;
+            isFourthOrdersClicked = false;
+        }
 
-    @OnClick(R.id.second_orders_list)
-    void onSecondOrdersClick() {
-        if (isSecondOrdersClicked)
-            return;
+        @OnClick(R.id.second_orders_list)
+        void onSecondOrdersClick () {
+            if (isSecondOrdersClicked)
+                return;
 
-        Animation animSlideFromBottom = AnimationUtils.loadAnimation(mActivity, R.anim.slide_from_bottom);
-        ordersInformationLayout.clearAnimation();
-        ordersInformationLayout.startAnimation(animSlideFromBottom);
+            Animation animSlideFromBottom = AnimationUtils.loadAnimation(mActivity, R.anim.slide_from_bottom);
+            ordersInformationLayout.clearAnimation();
+            ordersInformationLayout.startAnimation(animSlideFromBottom);
 
-        setData(2, 10, 6, 26, 10, 29, 0, 10, 5, 25, 18, 30, 6, 15);
-        totalOrdersVal.setText("192");
-        deliveredOrdersVal.setText("145");
-        cancelledOrdersVal.setText("49");
-        codReceivedVal.setText("3270");
-        codPendingVal.setText("845");
-        salesGeneratedVal.setText("42 Orders");
-        travelledDistanceVal.setText("124.6 KM");
+            setData(2, 10, 6, 26, 10, 29, 0, 10, 5, 25, 18, 30, 6, 15);
+            totalOrdersVal.setText("192");
+            deliveredOrdersVal.setText("145");
+            cancelledOrdersVal.setText("49");
+            codReceivedVal.setText("3270");
+            codPendingVal.setText("845");
+            salesGeneratedVal.setText("42 Orders");
+            travelledDistanceVal.setText("124.6 KM");
 
-        firstOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
-        secondOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.btn_color));
-        thirdOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
-        fourthOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
+            firstOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
+            secondOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.btn_color));
+            thirdOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
+            fourthOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
 
-        isFirstOrdersClicked = false;
-        isSecondOrdersClicked = true;
-        isThirdOrdersClicked = false;
-        isFourthOrdersClicked = false;
-    }
+            isFirstOrdersClicked = false;
+            isSecondOrdersClicked = true;
+            isThirdOrdersClicked = false;
+            isFourthOrdersClicked = false;
+        }
 
-    @OnClick(R.id.third_orders_list)
-    void onThirdOrdersClick() {
-        if (isThirdOrdersClicked)
-            return;
+        @OnClick(R.id.third_orders_list)
+        void onThirdOrdersClick () {
+            if (isThirdOrdersClicked)
+                return;
 
-        Animation animSlideFromBottom = AnimationUtils.loadAnimation(mActivity, R.anim.slide_from_bottom);
-        ordersInformationLayout.clearAnimation();
-        ordersInformationLayout.startAnimation(animSlideFromBottom);
+            Animation animSlideFromBottom = AnimationUtils.loadAnimation(mActivity, R.anim.slide_from_bottom);
+            ordersInformationLayout.clearAnimation();
+            ordersInformationLayout.startAnimation(animSlideFromBottom);
 
-        setData(5, 20, 0, 10, 8, 30, 2, 15, 3, 12, 8, 26, 2, 30);
-        totalOrdersVal.setText("171");
-        deliveredOrdersVal.setText("143");
-        cancelledOrdersVal.setText("28");
-        codReceivedVal.setText("2930");
-        codPendingVal.setText("675");
-        salesGeneratedVal.setText("33 Orders");
-        travelledDistanceVal.setText("99.3 KM");
+            setData(5, 20, 0, 10, 8, 30, 2, 15, 3, 12, 8, 26, 2, 30);
+            totalOrdersVal.setText("171");
+            deliveredOrdersVal.setText("143");
+            cancelledOrdersVal.setText("28");
+            codReceivedVal.setText("2930");
+            codPendingVal.setText("675");
+            salesGeneratedVal.setText("33 Orders");
+            travelledDistanceVal.setText("99.3 KM");
 
-        firstOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
-        secondOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
-        thirdOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.btn_color));
-        fourthOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
+            firstOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
+            secondOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
+            thirdOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.btn_color));
+            fourthOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
 
-        isFirstOrdersClicked = false;
-        isSecondOrdersClicked = false;
-        isThirdOrdersClicked = true;
-        isFourthOrdersClicked = false;
-    }
+            isFirstOrdersClicked = false;
+            isSecondOrdersClicked = false;
+            isThirdOrdersClicked = true;
+            isFourthOrdersClicked = false;
+        }
 
-    @OnClick(R.id.fourth_orders_list)
-    void onFourthOrdersClick() {
-        if (isFourthOrdersClicked)
-            return;
+        @OnClick(R.id.fourth_orders_list)
+        void onFourthOrdersClick () {
+            if (isFourthOrdersClicked)
+                return;
 
-        Animation animSlideFromBottom = AnimationUtils.loadAnimation(mActivity, R.anim.slide_from_bottom);
-        ordersInformationLayout.clearAnimation();
-        ordersInformationLayout.startAnimation(animSlideFromBottom);
+            Animation animSlideFromBottom = AnimationUtils.loadAnimation(mActivity, R.anim.slide_from_bottom);
+            ordersInformationLayout.clearAnimation();
+            ordersInformationLayout.startAnimation(animSlideFromBottom);
 
-        firstOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
-        secondOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
-        thirdOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
-        fourthOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.btn_color));
+            firstOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
+            secondOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
+            thirdOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.colorWhite));
+            fourthOrdersList.setBackgroundColor(mActivity.getResources().getColor(R.color.btn_color));
 
-        setData(5, 15, 0, 12, 8, 22, 10, 45, 3, 15, 0, 28, 5, 15);
-        totalOrdersVal.setText("183");
-        deliveredOrdersVal.setText("152");
-        cancelledOrdersVal.setText("31");
-        codReceivedVal.setText("2050");
-        codPendingVal.setText("560");
-        salesGeneratedVal.setText("24 Orders");
-        travelledDistanceVal.setText("110.4 KM");
+            setData(5, 15, 0, 12, 8, 22, 10, 45, 3, 15, 0, 28, 5, 15);
+            totalOrdersVal.setText("183");
+            deliveredOrdersVal.setText("152");
+            cancelledOrdersVal.setText("31");
+            codReceivedVal.setText("2050");
+            codPendingVal.setText("560");
+            salesGeneratedVal.setText("24 Orders");
+            travelledDistanceVal.setText("110.4 KM");
 
-        isFirstOrdersClicked = false;
-        isSecondOrdersClicked = false;
-        isThirdOrdersClicked = false;
-        isFourthOrdersClicked = true;
-    }
+            isFirstOrdersClicked = false;
+            isSecondOrdersClicked = false;
+            isThirdOrdersClicked = false;
+            isFourthOrdersClicked = true;
+        }
 
 //    @Override
 //    public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -649,314 +663,332 @@ public class DashboardFragment extends Fragment implements OnChartValueSelectedL
 //        }
 //    }
 
-    /**
-     * Updates fields based on data stored in the bundle.
-     *
-     * @param savedInstanceState The activity state saved in the Bundle.
-     */
-    private void updateValuesFromBundle(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            // Update the value of mRequestingLocationUpdates from the Bundle, and make sure that
-            // the Start Updates and Stop Updates buttons are correctly enabled or disabled.
-            if (savedInstanceState.keySet().contains(KEY_REQUESTING_LOCATION_UPDATES)) {
-                mRequestingLocationUpdates = savedInstanceState.getBoolean(
-                        KEY_REQUESTING_LOCATION_UPDATES);
-            }
+        /**
+         * Updates fields based on data stored in the bundle.
+         *
+         * @param savedInstanceState The activity state saved in the Bundle.
+         */
+        private void updateValuesFromBundle (Bundle savedInstanceState){
+            if (savedInstanceState != null) {
+                // Update the value of mRequestingLocationUpdates from the Bundle, and make sure that
+                // the Start Updates and Stop Updates buttons are correctly enabled or disabled.
+                if (savedInstanceState.keySet().contains(KEY_REQUESTING_LOCATION_UPDATES)) {
+                    mRequestingLocationUpdates = savedInstanceState.getBoolean(
+                            KEY_REQUESTING_LOCATION_UPDATES);
+                }
 
-            // Update the value of mCurrentLocation from the Bundle and update the UI to show the
-            // correct latitude and longitude.
-            if (savedInstanceState.keySet().contains(KEY_LOCATION)) {
-                // Since KEY_LOCATION was found in the Bundle, we can be sure that mCurrentLocation
-                // is not null.
-                mCurrentLocation = savedInstanceState.getParcelable(KEY_LOCATION);
-            }
+                // Update the value of mCurrentLocation from the Bundle and update the UI to show the
+                // correct latitude and longitude.
+                if (savedInstanceState.keySet().contains(KEY_LOCATION)) {
+                    // Since KEY_LOCATION was found in the Bundle, we can be sure that mCurrentLocation
+                    // is not null.
+                    mCurrentLocation = savedInstanceState.getParcelable(KEY_LOCATION);
+                }
 
-            // Update the value of mLastUpdateTime from the Bundle and update the UI.
-            if (savedInstanceState.keySet().contains(KEY_LAST_UPDATED_TIME_STRING)) {
-                mLastUpdateTime = savedInstanceState.getString(KEY_LAST_UPDATED_TIME_STRING);
+                // Update the value of mLastUpdateTime from the Bundle and update the UI.
+                if (savedInstanceState.keySet().contains(KEY_LAST_UPDATED_TIME_STRING)) {
+                    mLastUpdateTime = savedInstanceState.getString(KEY_LAST_UPDATED_TIME_STRING);
+                }
             }
         }
-    }
 
-    /**
-     * Builds a GoogleApiClient. Uses the {@code #addApi} method to request the
-     * LocationServices API.
-     */
-    protected synchronized void buildGoogleApiClient() {
+        /**
+         * Builds a GoogleApiClient. Uses the {@code #addApi} method to request the
+         * LocationServices API.
+         */
+        protected synchronized void buildGoogleApiClient () {
 //        Log.i(TAG, "Building GoogleApiClient");
-        mGoogleApiClient = new GoogleApiClient.Builder(mActivity)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-    }
-
-    /**
-     * Sets up the location request. Android has two location request settings:
-     * {@code ACCESS_COARSE_LOCATION} and {@code ACCESS_FINE_LOCATION}. These settings control
-     * the accuracy of the current location. This sample uses ACCESS_FINE_LOCATION, as defined in
-     * the AndroidManifest.xml.
-     * <p/>
-     * When the ACCESS_FINE_LOCATION setting is specified, combined with a fast update
-     * interval (5 seconds), the Fused Location Provider API returns location updates that are
-     * accurate to within a few feet.
-     * <p/>
-     * These settings are appropriate for mapping applications that show real-time location
-     * updates.
-     */
-    protected void createLocationRequest() {
-        mLocationRequest = new LocationRequest();
-
-        // Sets the desired interval for active location updates. This interval is
-        // inexact. You may not receive updates at all if no location sources are available, or
-        // you may receive them slower than requested. You may also receive updates faster than
-        // requested if other applications are requesting location at a faster interval.
-        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
-
-        // Sets the fastest rate for active location updates. This interval is exact, and your
-        // application will never receive updates faster than this value.
-        mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
-
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-    }
-
-    /**
-     * Uses a {@link com.google.android.gms.location.LocationSettingsRequest.Builder} to build
-     * a {@link com.google.android.gms.location.LocationSettingsRequest} that is used for checking
-     * if a device has the needed location settings.
-     */
-    protected void buildLocationSettingsRequest() {
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
-        builder.addLocationRequest(mLocationRequest);
-        mLocationSettingsRequest = builder.build();
-    }
-
-    /**
-     * Check if the device's location settings are adequate for the app's needs using the
-     * {@link com.google.android.gms.location.SettingsApi#checkLocationSettings(GoogleApiClient,
-     * LocationSettingsRequest)} method, with the results provided through a {@code PendingResult}.
-     */
-    protected void checkLocationSettings() {
-        PendingResult<LocationSettingsResult> result =
-                LocationServices.SettingsApi.checkLocationSettings(
-                        mGoogleApiClient,
-                        mLocationSettingsRequest
-                );
-        result.setResultCallback(this);
-    }
-
-    /**
-     * The callback invoked when
-     * {@link com.google.android.gms.location.SettingsApi#checkLocationSettings(GoogleApiClient,
-     * LocationSettingsRequest)} is called. Examines the
-     * {@link com.google.android.gms.location.LocationSettingsResult} object and determines if
-     * location settings are adequate. If they are not, begins the process of presenting a location
-     * settings dialog to the user.
-     */
-    @Override
-    public void onResult(LocationSettingsResult locationSettingsResult) {
-        final Status status = locationSettingsResult.getStatus();
-        switch (status.getStatusCode()) {
-            case LocationSettingsStatusCodes.SUCCESS:
-                Log.i(TAG, "All location settings are satisfied.");
-                startLocationUpdates();
-                break;
-            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                Log.i(TAG, "Location settings are not satisfied. Show the user a dialog to" +
-                        "upgrade location settings ");
-
-                try {
-                    // Show the dialog by calling startResolutionForResult(), and check the result
-                    // in onActivityResult().
-                    status.startResolutionForResult(mActivity, REQUEST_CHECK_SETTINGS);
-                } catch (IntentSender.SendIntentException e) {
-                    Log.i(TAG, "PendingIntent unable to execute request.");
-                }
-                break;
-            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                Log.i(TAG, "Location settings are inadequate, and cannot be fixed here. Dialog " +
-                        "not created.");
-                break;
+            mGoogleApiClient = new GoogleApiClient.Builder(mActivity)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
         }
-    }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            // Check for the integer request code originally supplied to startResolutionForResult().
-            case REQUEST_CHECK_SETTINGS:
-                switch (resultCode) {
-                    case Activity.RESULT_OK:
-                        Log.i(TAG, "User agreed to make required location settings changes.");
-                        startLocationUpdates();
-                        break;
-                    case Activity.RESULT_CANCELED:
-                        Log.i(TAG, "User chose not to make required location settings changes.");
-                        break;
-                }
-                break;
+        /**
+         * Sets up the location request. Android has two location request settings:
+         * {@code ACCESS_COARSE_LOCATION} and {@code ACCESS_FINE_LOCATION}. These settings control
+         * the accuracy of the current location. This sample uses ACCESS_FINE_LOCATION, as defined in
+         * the AndroidManifest.xml.
+         * <p/>
+         * When the ACCESS_FINE_LOCATION setting is specified, combined with a fast update
+         * interval (5 seconds), the Fused Location Provider API returns location updates that are
+         * accurate to within a few feet.
+         * <p/>
+         * These settings are appropriate for mapping applications that show real-time location
+         * updates.
+         */
+        protected void createLocationRequest () {
+            mLocationRequest = new LocationRequest();
 
-            case ACTIVITY_CHANGE:
-                if (data != null) {
-                    boolean isOrderCompleted = Boolean.parseBoolean(data.getStringExtra("OrderCompleted"));
-                    if (isOrderCompleted) {
-                        Log.e("DashboardFrag", "Order Completed Successful");
+            // Sets the desired interval for active location updates. This interval is
+            // inexact. You may not receive updates at all if no location sources are available, or
+            // you may receive them slower than requested. You may also receive updates faster than
+            // requested if other applications are requesting location at a faster interval.
+            mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
+
+            // Sets the fastest rate for active location updates. This interval is exact, and your
+            // application will never receive updates faster than this value.
+            mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
+
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        }
+
+        /**
+         * Uses a {@link com.google.android.gms.location.LocationSettingsRequest.Builder} to build
+         * a {@link com.google.android.gms.location.LocationSettingsRequest} that is used for checking
+         * if a device has the needed location settings.
+         */
+        protected void buildLocationSettingsRequest () {
+            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+            builder.addLocationRequest(mLocationRequest);
+            mLocationSettingsRequest = builder.build();
+        }
+
+        /**
+         * Check if the device's location settings are adequate for the app's needs using the
+         * {@link com.google.android.gms.location.SettingsApi#checkLocationSettings(GoogleApiClient,
+         * LocationSettingsRequest)} method, with the results provided through a {@code PendingResult}.
+         */
+        protected void checkLocationSettings () {
+            PendingResult<LocationSettingsResult> result =
+                    LocationServices.SettingsApi.checkLocationSettings(
+                            mGoogleApiClient,
+                            mLocationSettingsRequest
+                    );
+            result.setResultCallback(this);
+        }
+
+        /**
+         * The callback invoked when
+         * {@link com.google.android.gms.location.SettingsApi#checkLocationSettings(GoogleApiClient,
+         * LocationSettingsRequest)} is called. Examines the
+         * {@link com.google.android.gms.location.LocationSettingsResult} object and determines if
+         * location settings are adequate. If they are not, begins the process of presenting a location
+         * settings dialog to the user.
+         */
+        @Override
+        public void onResult (LocationSettingsResult locationSettingsResult){
+            final Status status = locationSettingsResult.getStatus();
+            switch (status.getStatusCode()) {
+                case LocationSettingsStatusCodes.SUCCESS:
+                    Log.i(TAG, "All location settings are satisfied.");
+                    startLocationUpdates();
+                    break;
+                case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                    Log.i(TAG, "Location settings are not satisfied. Show the user a dialog to" +
+                            "upgrade location settings ");
+
+                    try {
+                        // Show the dialog by calling startResolutionForResult(), and check the result
+                        // in onActivityResult().
+                        status.startResolutionForResult(mActivity, REQUEST_CHECK_SETTINGS);
+                    } catch (IntentSender.SendIntentException e) {
+                        Log.i(TAG, "PendingIntent unable to execute request.");
                     }
-                }
-                break;
-        }
-    }
-
-    /**
-     * Handles the Start Updates button and requests start of location updates. Does nothing if
-     * updates have already been requested.
-     */
-    public void startUpdatesButtonHandler(View view) {
-        checkLocationSettings();
-    }
-
-    /**
-     * Handles the Stop Updates button, and requests removal of location updates.
-     */
-    public void stopUpdatesButtonHandler(View view) {
-        // It is a good practice to remove location requests when the activity is in a paused or
-        // stopped state. Doing so helps battery performance and is especially
-        // recommended in applications that request frequent location updates.
-        stopLocationUpdates();
-    }
-
-    /**
-     * Requests location updates from the FusedLocationApi.
-     */
-    protected void startLocationUpdates() {
-        checkPermission();
-    }
-
-    private void checkPermission() {
-        int checkSelf = ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION);
-        if (checkSelf != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(mActivity, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQ_LOC_PERMISSION);
-                }
-            } else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQ_LOC_PERMISSION);
-                }
+                    break;
+                case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                    Log.i(TAG, "Location settings are inadequate, and cannot be fixed here. Dialog " +
+                            "not created.");
+                    break;
             }
-        } else {
-            LocationServices.FusedLocationApi.requestLocationUpdates(
-                    mGoogleApiClient,
-                    mLocationRequest,
-                    this
-            ).setResultCallback(status -> {
-                mRequestingLocationUpdates = true;
-                Intent intent = new Intent(mActivity, NewOrderActivity.class);
-                startActivityForResult(intent, ACTIVITY_CHANGE);
-            });
         }
-    }
 
-    /**
-     * Removes location updates from the FusedLocationApi.
-     */
-    protected void stopLocationUpdates() {
-        // It is a good practice to remove location requests when the activity is in a paused or
-        // stopped state. Doing so helps battery performance and is especially
-        // recommended in applications that request frequent location updates.
-        LocationServices.FusedLocationApi.removeLocationUpdates(
-                mGoogleApiClient,
-                this
-        ).setResultCallback(status -> {
-            mRequestingLocationUpdates = false;
-        });
-    }
+        @Override
+        public void onActivityResult ( int requestCode, int resultCode, Intent data){
+            switch (requestCode) {
+                // Check for the integer request code originally supplied to startResolutionForResult().
+                case REQUEST_CHECK_SETTINGS:
+                    switch (resultCode) {
+                        case Activity.RESULT_OK:
+                            Log.i(TAG, "User agreed to make required location settings changes.");
+                            startLocationUpdates();
+                            break;
+                        case Activity.RESULT_CANCELED:
+                            Log.i(TAG, "User chose not to make required location settings changes.");
+                            break;
+                    }
+                    break;
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Within {@code onPause()}, we pause location updates, but leave the
-        // connection to GoogleApiClient intact.  Here, we resume receiving
-        // location updates if the user has requested them.
-        if (mGoogleApiClient.isConnected() && mRequestingLocationUpdates) {
-            startLocationUpdates();
+                case ACTIVITY_CHANGE:
+                    if (data != null) {
+                        boolean isOrderCompleted = Boolean.parseBoolean(data.getStringExtra("OrderCompleted"));
+                        if (isOrderCompleted) {
+                            Log.e("DashboardFrag", "Order Completed Successful");
+                        }
+                    }
+                    break;
+            }
         }
-    }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        // Stop location updates to save battery, but don't disconnect the GoogleApiClient object.
-        if (mGoogleApiClient.isConnected()) {
+        /**
+         * Handles the Start Updates button and requests start of location updates. Does nothing if
+         * updates have already been requested.
+         */
+        public void startUpdatesButtonHandler (View view){
+            checkLocationSettings();
+        }
+
+        /**
+         * Handles the Stop Updates button, and requests removal of location updates.
+         */
+        public void stopUpdatesButtonHandler (View view){
+            // It is a good practice to remove location requests when the activity is in a paused or
+            // stopped state. Doing so helps battery performance and is especially
+            // recommended in applications that request frequent location updates.
             stopLocationUpdates();
         }
-    }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        mGoogleApiClient.disconnect();
-    }
+        /**
+         * Requests location updates from the FusedLocationApi.
+         */
+        protected void startLocationUpdates () {
+            checkPermission();
+        }
 
-    /**
-     * Runs when a GoogleApiClient object successfully connects.
-     */
-    @Override
-    public void onConnected(Bundle connectionHint) {
-        Log.i("Location", "Connected to GoogleApiClient");
-        // If the initial location was never previously requested, we use
-        // FusedLocationApi.getLastLocation() to get it. If it was previously requested, we store
-        // its value in the Bundle and check for it in onCreate(). We
-        // do not request it again unless the user specifically requests location updates by pressing
-        // the Start Updates button.
-        //
-        // Because we cache the value of the initial location in the Bundle, it means that if the
-        // user launches the activity,
-        // moves to a new location, and then changes the device orientation, the original location
-        // is displayed as the activity is re-created.
-        if (mCurrentLocation == null) {
-            mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        private void checkPermission () {
+            int checkSelf = ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION);
+            if (checkSelf != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(mActivity, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQ_LOC_PERMISSION);
+                    }
+                } else {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQ_LOC_PERMISSION);
+                    }
+                }
+            } else {
+                LocationServices.FusedLocationApi.requestLocationUpdates(
+                        mGoogleApiClient,
+                        mLocationRequest,
+                        this
+                ).setResultCallback(status -> {
+                    mRequestingLocationUpdates = true;
+                    Intent intent = new Intent(mActivity, NewOrderActivity.class);
+                    startActivityForResult(intent, ACTIVITY_CHANGE);
+                });
+            }
+        }
+
+        /**
+         * Removes location updates from the FusedLocationApi.
+         */
+        protected void stopLocationUpdates () {
+            // It is a good practice to remove location requests when the activity is in a paused or
+            // stopped state. Doing so helps battery performance and is especially
+            // recommended in applications that request frequent location updates.
+            LocationServices.FusedLocationApi.removeLocationUpdates(
+                    mGoogleApiClient,
+                    this
+            ).setResultCallback(status -> {
+                mRequestingLocationUpdates = false;
+            });
+        }
+
+        @Override
+        public void onStart () {
+            super.onStart();
+            mGoogleApiClient.connect();
+        }
+
+        @Override
+        public void onResume () {
+            super.onResume();
+            // Within {@code onPause()}, we pause location updates, but leave the
+            // connection to GoogleApiClient intact.  Here, we resume receiving
+            // location updates if the user has requested them.
+            if (mGoogleApiClient.isConnected() && mRequestingLocationUpdates) {
+                startLocationUpdates();
+            }
+        }
+
+        @Override
+        public void onPause () {
+            super.onPause();
+            // Stop location updates to save battery, but don't disconnect the GoogleApiClient object.
+            if (mGoogleApiClient.isConnected()) {
+                stopLocationUpdates();
+                mGoogleApiClient.stopAutoManage(getActivity());
+                mGoogleApiClient.disconnect();
+            }
+        }
+
+        @Override
+        public void onStop () {
+            super.onStop();
+            mGoogleApiClient.disconnect();
+        }
+
+        /**
+         * Runs when a GoogleApiClient object successfully connects.
+         */
+        @Override
+        public void onConnected (Bundle connectionHint){
+            Log.i("Location", "Connected to GoogleApiClient");
+            // If the initial location was never previously requested, we use
+            // FusedLocationApi.getLastLocation() to get it. If it was previously requested, we store
+            // its value in the Bundle and check for it in onCreate(). We
+            // do not request it again unless the user specifically requests location updates by pressing
+            // the Start Updates button.
+            //
+            // Because we cache the value of the initial location in the Bundle, it means that if the
+            // user launches the activity,
+            // moves to a new location, and then changes the device orientation, the original location
+            // is displayed as the activity is re-created.
+            if (mCurrentLocation == null) {
+                mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+            }
+        }
+
+        /**
+         * Callback that fires when the location changes.
+         */
+        @Override
+        public void onLocationChanged (Location location){
+            mCurrentLocation = location;
             mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
         }
+
+        @Override
+        public void onConnectionSuspended ( int cause){
+
+            Log.i("Location", "Connection suspended");
+        }
+
+        @Override
+        public void onConnectionFailed (ConnectionResult result){
+            // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
+            // onConnectionFailed.
+            Log.i("Location", "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
+        }
+
+        /**
+         * Stores activity data in the Bundle.
+         */
+        @Override
+        public void onSaveInstanceState (Bundle savedInstanceState){
+            super.onSaveInstanceState(savedInstanceState);
+            savedInstanceState.putBoolean(KEY_REQUESTING_LOCATION_UPDATES, mRequestingLocationUpdates);
+            savedInstanceState.putParcelable(KEY_LOCATION, mCurrentLocation);
+            savedInstanceState.putString(KEY_LAST_UPDATED_TIME_STRING, mLastUpdateTime);
+        }
+
+        @Override
+        public void onSuccessGetProfileDetailsApi (GetRiderProfileResponse getRiderProfileResponse){
+            if (getRiderProfileResponse != null) {
+                getSessionManager().setRiderProfileDetails(getRiderProfileResponse);
+                NavigationActivity.getInstance().setProfileData();
+                if (getRiderProfileResponse != null && getRiderProfileResponse.getData() != null && getRiderProfileResponse.getData().getPic() != null && getRiderProfileResponse.getData().getPic().size() > 0)
+                    Glide.with(getContext()).load(getSessionManager().getrRiderIconUrl()).circleCrop().error(R.drawable.apollo_app_logo).into(dashboardBinding.userImage);
+                dashboardBinding.riderName.setText(getRiderProfileResponse.getData().getFirstName() + " " + getRiderProfileResponse.getData().getLastName());
+                dashboardBinding.riderPhoneNumber.setText(getRiderProfileResponse.getData().getPhone());
+            }
+        }
+
+        @Override
+        public void onFialureMessage (String message){
+            Toast.makeText(mActivity, message, Toast.LENGTH_SHORT).show();
+        }
     }
-
-    /**
-     * Callback that fires when the location changes.
-     */
-    @Override
-    public void onLocationChanged(Location location) {
-        mCurrentLocation = location;
-        mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-    }
-
-    @Override
-    public void onConnectionSuspended(int cause) {
-
-        Log.i("Location", "Connection suspended");
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult result) {
-        // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
-        // onConnectionFailed.
-        Log.i("Location", "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
-    }
-
-    /**
-     * Stores activity data in the Bundle.
-     */
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putBoolean(KEY_REQUESTING_LOCATION_UPDATES, mRequestingLocationUpdates);
-        savedInstanceState.putParcelable(KEY_LOCATION, mCurrentLocation);
-        savedInstanceState.putString(KEY_LAST_UPDATED_TIME_STRING, mLastUpdateTime);
-    }
-
-}

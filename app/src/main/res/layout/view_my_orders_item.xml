@@ -22,8 +22,9 @@
                 android:id="@+id/order_id_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/label_order"
+                android:layout_centerHorizontal="true"
                 android:fontFamily="@font/roboto_regular"
+                android:text="@string/label_order"
                 android:textColor="@color/dashboard_text_color"
                 android:textSize="@dimen/text_dimen_12" />
 
@@ -31,11 +32,12 @@
                 android:id="@+id/order_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto_regular"
                 android:layout_below="@+id/order_id_text"
+                android:layout_centerHorizontal="true"
+                android:fontFamily="@font/roboto_regular"
                 android:text="38478"
                 android:textColor="@color/colorBlack"
-                android:textSize="@dimen/text_dimen_13" />
+                android:textSize="@dimen/text_dimen_10" />
         </RelativeLayout>
 
         <View
@@ -66,8 +68,8 @@
                 android:id="@+id/order_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto_regular"
                 android:layout_below="@+id/order_amount_text"
+                android:fontFamily="@font/roboto_regular"
                 android:text="1250.00"
                 android:textColor="@color/colorBlack"
                 android:textSize="@dimen/text_dimen_13" />
@@ -92,8 +94,8 @@
                 android:id="@+id/order_payment_type_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/label_payment_type"
                 android:fontFamily="@font/roboto_regular"
+                android:text="@string/label_payment_type"
                 android:textColor="@color/dashboard_text_color"
                 android:textSize="@dimen/text_dimen_12" />
 
@@ -101,8 +103,8 @@
                 android:id="@+id/order_payment_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto_regular"
                 android:layout_below="@+id/order_payment_type_text"
+                android:fontFamily="@font/roboto_regular"
                 android:text="COD"
                 android:textColor="@color/colorBlack"
                 android:textSize="@dimen/text_dimen_13" />
@@ -113,22 +115,22 @@
         android:id="@+id/divider_view_three"
         android:layout_width="match_parent"
         android:layout_height="@dimen/one_dp"
-        android:background="@color/order_item_header_divider_color"/>
+        android:background="@color/order_item_header_divider_color" />
 
     <LinearLayout
         android:id="@+id/pharma_user_address_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorWhite"
+        android:orientation="vertical"
         android:padding="@dimen/fifteen_dp"
-        android:visibility="visible"
-        android:orientation="vertical">
+        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
             android:baselineAligned="false"
+            android:orientation="horizontal"
             android:weightSum="1">
 
             <LinearLayout
@@ -144,19 +146,19 @@
                     android:layout_height="@dimen/twenty_dp"
                     android:layout_gravity="end"
                     android:background="@drawable/pharmacy_item_bg"
+                    android:fontFamily="@font/roboto_bold"
                     android:gravity="center"
                     android:text="P"
                     android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/text_dimen_12"
-                    android:fontFamily="@font/roboto_bold" />
+                    android:textSize="@dimen/text_dimen_12" />
 
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_marginStart="@dimen/two_dp"
-                    android:contentDescription="@string/app_name"
                     android:background="@drawable/progress_dotted_line"
+                    android:contentDescription="@string/app_name"
                     android:hardwareAccelerated="false"
                     android:layerType="software" />
             </LinearLayout>
@@ -168,11 +170,12 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/apollo_phamrmacy"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_regular"
                     android:paddingStart="@dimen/ten_dp"
                     android:paddingEnd="@dimen/ten_dp"
-                    android:fontFamily="@font/roboto_regular"
                     android:text="@string/label_apollo_pharmacy"
                     android:textColor="@color/colorBlack"
                     android:textSize="@dimen/text_dimen_13" />
@@ -182,13 +185,25 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/three_dp"
-                    android:paddingStart="@dimen/ten_dp"
-                    android:layout_marginBottom="@dimen/ten_dp"
                     android:fontFamily="@font/roboto_regular"
+                    android:paddingStart="@dimen/ten_dp"
                     android:paddingEnd="@dimen/ten_dp"
                     android:text="7-1-488, beside Sonabai temple, Near Satyam Theater, Balkampet road, Ameerpet, Hyderabad"
                     android:textColor="@color/colorBlack"
                     android:textSize="@dimen/text_dimen_11" />
+
+                <TextView
+                    android:id="@+id/pickup_landmark"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/three_dp"
+                    android:layout_marginBottom="@dimen/ten_dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:paddingStart="@dimen/ten_dp"
+                    android:paddingEnd="@dimen/ten_dp"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/text_dimen_11" />
+
             </LinearLayout>
         </LinearLayout>
 
@@ -210,11 +225,11 @@
                     android:layout_height="@dimen/twenty_dp"
                     android:layout_gravity="end"
                     android:background="@drawable/delivery_item_bg"
+                    android:fontFamily="@font/roboto_bold"
                     android:gravity="center"
                     android:text="D"
                     android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/text_dimen_12"
-                    android:fontFamily="@font/roboto_bold" />
+                    android:textSize="@dimen/text_dimen_12" />
             </LinearLayout>
 
             <LinearLayout
@@ -228,10 +243,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="Vijay Bhaskar"
+                    android:fontFamily="@font/roboto_regular"
                     android:paddingStart="@dimen/ten_dp"
                     android:paddingEnd="@dimen/ten_dp"
-                    android:fontFamily="@font/roboto_regular"
+                    android:text="Vijay Bhaskar"
                     android:textColor="@color/colorBlack"
                     android:textSize="@dimen/text_dimen_13" />
 
@@ -240,12 +255,25 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/three_dp"
-                    android:paddingStart="@dimen/ten_dp"
                     android:fontFamily="@font/roboto_regular"
+                    android:paddingStart="@dimen/ten_dp"
+                    android:paddingEnd="@dimen/ten_dp"
                     android:text="8-2-43, beside Ratna Super Market, SR Nagar, Hyderabad"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/text_dimen_11" />
+
+                <TextView
+                    android:id="@+id/customer_landmark"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/three_dp"
+                    android:layout_marginBottom="@dimen/ten_dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:paddingStart="@dimen/ten_dp"
                     android:paddingEnd="@dimen/ten_dp"
                     android:textColor="@color/colorBlack"
                     android:textSize="@dimen/text_dimen_11" />
+
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -255,12 +283,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorWhite"
-        android:visibility="gone"
+        android:orientation="vertical"
         android:paddingStart="@dimen/fifteen_dp"
-        android:paddingEnd="@dimen/fifteen_dp"
         android:paddingTop="@dimen/eight_dp"
+        android:paddingEnd="@dimen/fifteen_dp"
         android:paddingBottom="@dimen/eight_dp"
-        android:orientation="vertical">
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -271,8 +299,8 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="0.1"
                 android:layout_gravity="center"
+                android:layout_weight="0.1"
                 android:gravity="center_vertical"
                 android:orientation="vertical">
 
@@ -281,11 +309,11 @@
                     android:layout_height="@dimen/twenty_dp"
                     android:layout_gravity="center"
                     android:background="@drawable/new_order_delivery_item_bg"
+                    android:fontFamily="@font/roboto_bold"
                     android:gravity="center"
                     android:text="D"
                     android:textColor="@color/colorWhite"
-                    android:textSize="@dimen/text_dimen_12"
-                    android:fontFamily="@font/roboto_bold" />
+                    android:textSize="@dimen/text_dimen_12" />
             </LinearLayout>
 
             <LinearLayout
@@ -299,10 +327,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="Vijay Bhaskar"
+                    android:fontFamily="@font/roboto_regular"
                     android:paddingStart="@dimen/ten_dp"
                     android:paddingEnd="@dimen/ten_dp"
-                    android:fontFamily="@font/roboto_regular"
+                    android:text="Vijay Bhaskar"
                     android:textColor="@color/new_order_bg"
                     android:textSize="@dimen/text_dimen_13" />
 
@@ -311,10 +339,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/three_dp"
-                    android:paddingStart="@dimen/ten_dp"
                     android:fontFamily="@font/roboto_regular"
-                    android:text="8-2-43, beside Ratna Super Market, SR Nagar, Hyderabad"
+                    android:paddingStart="@dimen/ten_dp"
                     android:paddingEnd="@dimen/ten_dp"
+                    android:text="8-2-43, beside Ratna Super Market, SR Nagar, Hyderabad"
                     android:textColor="@color/new_order_bg"
                     android:textSize="@dimen/text_dimen_11" />
             </LinearLayout>
@@ -325,7 +353,7 @@
         android:id="@+id/divider_view_four"
         android:layout_width="match_parent"
         android:layout_height="@dimen/one_dp"
-        android:background="@color/order_item_header_divider_color"/>
+        android:background="@color/order_item_header_divider_color" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -337,19 +365,19 @@
         <LinearLayout
             android:id="@+id/order_status_layout"
             android:layout_width="0dp"
-            android:gravity="center_vertical"
-            android:layout_gravity="start"
             android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_gravity="start"
+            android:layout_weight="1.5"
+            android:gravity="center_vertical">
 
             <ImageView
                 android:id="@+id/status_type_icon"
                 android:layout_width="@dimen/twenty_two_dp"
                 android:layout_height="@dimen/eighteen_dp"
-                android:layout_marginEnd="@dimen/five_dp"
                 android:layout_marginStart="@dimen/ten_dp"
+                android:layout_marginEnd="@dimen/five_dp"
                 android:contentDescription="@string/app_name"
-                android:src="@drawable/icon_signature_save"/>
+                android:src="@drawable/icon_signature_save" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -360,8 +388,8 @@
                     android:id="@+id/order_status_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/label_status"
                     android:fontFamily="@font/roboto_regular"
+                    android:text="@string/label_status"
                     android:textColor="@color/colorWhite"
                     android:textSize="@dimen/text_dimen_12" />
 
@@ -369,10 +397,10 @@
                     android:id="@+id/order_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Delivered"
                     android:fontFamily="@font/roboto_regular"
+                    android:text="Delivered"
                     android:textColor="@color/colorWhite"
-                    android:textSize="@dimen/text_dimen_13" />
+                    android:textSize="@dimen/text_dimen_10" />
             </LinearLayout>
         </LinearLayout>
 
@@ -388,7 +416,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="1"
+            android:layout_weight="1.5"
             android:gravity="center">
 
             <TextView
@@ -396,7 +424,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/roboto_regular"
-                android:text="@string/label_delivered_on"
+                android:text="Delivery by"
                 android:textColor="@color/dashboard_text_color"
                 android:textSize="@dimen/text_dimen_12" />
 
@@ -405,10 +433,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/order_date_text"
-                android:text="12-08-19, 10:35"
+                android:layout_marginTop="0dp"
                 android:fontFamily="@font/roboto_regular"
+                android:gravity="center"
                 android:textColor="@color/colorBlack"
-                android:textSize="@dimen/text_dimen_13" />
+                android:textSize="@dimen/text_dimen_10" />
         </RelativeLayout>
 
         <View
@@ -417,6 +446,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/eight_dp"
             android:layout_marginBottom="@dimen/eight_dp"
+            android:visibility="gone"
             android:background="@color/order_item_divider_color" />
 
         <RelativeLayout
@@ -424,6 +454,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
+            android:visibility="gone"
             android:gravity="center">
 
             <TextView
@@ -451,9 +482,9 @@
         android:id="@+id/cancelled_reason_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:background="@color/dashboard_pending_text_color"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -461,17 +492,17 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/five_dp"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/icon_cancelled_img"/>
+            android:src="@drawable/icon_cancelled_img" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/five_dp"
             android:layout_gravity="center_vertical"
             android:fontFamily="@font/roboto_regular"
+            android:padding="@dimen/five_dp"
+            android:text="Customer house door locked"
             android:textColor="@color/colorWhite"
-            android:textSize="@dimen/text_dimen_13"
-            android:text="Customer house door locked"/>
+            android:textSize="@dimen/text_dimen_13" />
     </LinearLayout>
 
     <View

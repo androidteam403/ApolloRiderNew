@@ -20,4 +20,3 @@ public class FetchUrl {
         return "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters;
     }
 }
-//AIzaSyDlqvq37mmAUE1TPHzvToOdPfQaq2W7GJk

@@ -24,5 +24,5 @@
         android:layout_below="@id/textViewName"
         android:layout_alignParentBottom="true"
         android:layout_gravity="center"
-        android:background="@color/nav_divider_color" />
+        android:background="@color/colorBlack" />
 </RelativeLayout>

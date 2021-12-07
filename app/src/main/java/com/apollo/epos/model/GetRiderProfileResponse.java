@@ -5,7 +5,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-
 public class GetRiderProfileResponse {
 
     @SerializedName("message")
@@ -17,6 +16,15 @@ public class GetRiderProfileResponse {
     @SerializedName("data")
     @Expose
     private Data data;
+    @SerializedName("zcServerDateTime")
+    @Expose
+    private String zcServerDateTime;
+    @SerializedName("zcServerIp")
+    @Expose
+    private String zcServerIp;
+    @SerializedName("zcServerHost")
+    @Expose
+    private String zcServerHost;
 
     public Object getMessage() {
         return message;
@@ -41,6 +49,31 @@ public class GetRiderProfileResponse {
     public void setData(Data data) {
         this.data = data;
     }
+
+    public String getZcServerDateTime() {
+        return zcServerDateTime;
+    }
+
+    public void setZcServerDateTime(String zcServerDateTime) {
+        this.zcServerDateTime = zcServerDateTime;
+    }
+
+    public String getZcServerIp() {
+        return zcServerIp;
+    }
+
+    public void setZcServerIp(String zcServerIp) {
+        this.zcServerIp = zcServerIp;
+    }
+
+    public String getZcServerHost() {
+        return zcServerHost;
+    }
+
+    public void setZcServerHost(String zcServerHost) {
+        this.zcServerHost = zcServerHost;
+    }
+
     public class CaCountry {
 
         @SerializedName("uid")
@@ -67,6 +100,7 @@ public class GetRiderProfileResponse {
         }
 
     }
+
     public class CaState {
 
         @SerializedName("uid")
@@ -93,32 +127,264 @@ public class GetRiderProfileResponse {
         }
 
     }
+
     public class Cluster {
 
         @SerializedName("uid")
         @Expose
-        private Object uid;
+        private String uid;
         @SerializedName("name")
         @Expose
-        private Object name;
+        private String name;
 
-        public Object getUid() {
+        public String getUid() {
             return uid;
         }
 
-        public void setUid(Object uid) {
+        public void setUid(String uid) {
             this.uid = uid;
         }
 
-        public Object getName() {
+        public String getName() {
             return name;
         }
 
-        public void setName(Object name) {
+        public void setName(String name) {
             this.name = name;
         }
 
     }
+
+    public class CreatedInfo {
+
+        @SerializedName("created_on")
+        @Expose
+        private Long createdOn;
+        @SerializedName("user_id")
+        @Expose
+        private String userId;
+        @SerializedName("app_user_id")
+        @Expose
+        private String appUserId;
+        @SerializedName("user_code")
+        @Expose
+        private String userCode;
+        @SerializedName("user_name")
+        @Expose
+        private String userName;
+        @SerializedName("login_unique")
+        @Expose
+        private String loginUnique;
+        @SerializedName("email")
+        @Expose
+        private String email;
+        @SerializedName("phone")
+        @Expose
+        private String phone;
+        @SerializedName("role_code")
+        @Expose
+        private String roleCode;
+        @SerializedName("role_name")
+        @Expose
+        private String roleName;
+
+        public Long getCreatedOn() {
+            return createdOn;
+        }
+
+        public void setCreatedOn(Long createdOn) {
+            this.createdOn = createdOn;
+        }
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+
+        public String getAppUserId() {
+            return appUserId;
+        }
+
+        public void setAppUserId(String appUserId) {
+            this.appUserId = appUserId;
+        }
+
+        public String getUserCode() {
+            return userCode;
+        }
+
+        public void setUserCode(String userCode) {
+            this.userCode = userCode;
+        }
+
+        public String getUserName() {
+            return userName;
+        }
+
+        public void setUserName(String userName) {
+            this.userName = userName;
+        }
+
+        public String getLoginUnique() {
+            return loginUnique;
+        }
+
+        public void setLoginUnique(String loginUnique) {
+            this.loginUnique = loginUnique;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getPhone() {
+            return phone;
+        }
+
+        public void setPhone(String phone) {
+            this.phone = phone;
+        }
+
+        public String getRoleCode() {
+            return roleCode;
+        }
+
+        public void setRoleCode(String roleCode) {
+            this.roleCode = roleCode;
+        }
+
+        public String getRoleName() {
+            return roleName;
+        }
+
+        public void setRoleName(String roleName) {
+            this.roleName = roleName;
+        }
+
+    }
+
+    public class CreatedInfo__1 {
+
+        @SerializedName("created_on")
+        @Expose
+        private Long createdOn;
+        @SerializedName("user_id")
+        @Expose
+        private String userId;
+        @SerializedName("app_user_id")
+        @Expose
+        private String appUserId;
+        @SerializedName("user_code")
+        @Expose
+        private String userCode;
+        @SerializedName("user_name")
+        @Expose
+        private String userName;
+        @SerializedName("login_unique")
+        @Expose
+        private String loginUnique;
+        @SerializedName("email")
+        @Expose
+        private String email;
+        @SerializedName("phone")
+        @Expose
+        private String phone;
+        @SerializedName("role_code")
+        @Expose
+        private String roleCode;
+        @SerializedName("role_name")
+        @Expose
+        private String roleName;
+
+        public Long getCreatedOn() {
+            return createdOn;
+        }
+
+        public void setCreatedOn(Long createdOn) {
+            this.createdOn = createdOn;
+        }
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+
+        public String getAppUserId() {
+            return appUserId;
+        }
+
+        public void setAppUserId(String appUserId) {
+            this.appUserId = appUserId;
+        }
+
+        public String getUserCode() {
+            return userCode;
+        }
+
+        public void setUserCode(String userCode) {
+            this.userCode = userCode;
+        }
+
+        public String getUserName() {
+            return userName;
+        }
+
+        public void setUserName(String userName) {
+            this.userName = userName;
+        }
+
+        public String getLoginUnique() {
+            return loginUnique;
+        }
+
+        public void setLoginUnique(String loginUnique) {
+            this.loginUnique = loginUnique;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getPhone() {
+            return phone;
+        }
+
+        public void setPhone(String phone) {
+            this.phone = phone;
+        }
+
+        public String getRoleCode() {
+            return roleCode;
+        }
+
+        public void setRoleCode(String roleCode) {
+            this.roleCode = roleCode;
+        }
+
+        public String getRoleName() {
+            return roleName;
+        }
+
+        public void setRoleName(String roleName) {
+            this.roleName = roleName;
+        }
+
+    }
+
     public class Data {
 
         @SerializedName("uid")
@@ -127,24 +393,15 @@ public class GetRiderProfileResponse {
         @SerializedName("phone")
         @Expose
         private String phone;
-        @SerializedName("email")
-        @Expose
-        private String email;
         @SerializedName("first_name")
         @Expose
         private String firstName;
         @SerializedName("last_name")
         @Expose
         private String lastName;
-        @SerializedName("status")
-        @Expose
-        private Status status;
         @SerializedName("login_unique")
         @Expose
         private String loginUnique;
-        @SerializedName("role")
-        @Expose
-        private Role role;
         @SerializedName("user_add_info")
         @Expose
         private UserAddInfo userAddInfo;
@@ -154,6 +411,9 @@ public class GetRiderProfileResponse {
         @SerializedName("dob")
         @Expose
         private String dob;
+        @SerializedName("pic")
+        @Expose
+        private List<Pic> pic = null;
 
         public String getUid() {
             return uid;
@@ -169,14 +429,6 @@ public class GetRiderProfileResponse {
 
         public void setPhone(String phone) {
             this.phone = phone;
-        }
-
-        public String getEmail() {
-            return email;
-        }
-
-        public void setEmail(String email) {
-            this.email = email;
         }
 
         public String getFirstName() {
@@ -195,28 +447,12 @@ public class GetRiderProfileResponse {
             this.lastName = lastName;
         }
 
-        public Status getStatus() {
-            return status;
-        }
-
-        public void setStatus(Status status) {
-            this.status = status;
-        }
-
         public String getLoginUnique() {
             return loginUnique;
         }
 
         public void setLoginUnique(String loginUnique) {
             this.loginUnique = loginUnique;
-        }
-
-        public Role getRole() {
-            return role;
-        }
-
-        public void setRole(Role role) {
-            this.role = role;
         }
 
         public UserAddInfo getUserAddInfo() {
@@ -243,28 +479,110 @@ public class GetRiderProfileResponse {
             this.dob = dob;
         }
 
-    }
-    public class DocType {
+        public List<Pic> getPic() {
+            return pic;
+        }
 
-        @SerializedName("uid")
+        public void setPic(List<Pic> pic) {
+            this.pic = pic;
+        }
+    }
+
+    public class Dimenesions {
+
+        @SerializedName("300_300")
         @Expose
-        private String uid;
+        private String _300300;
+        @SerializedName("300_300_fullPath")
+        @Expose
+        private String _300300FullPath;
+
+        public String get300300() {
+            return _300300;
+        }
+
+        public void set300300(String _300300) {
+            this._300300 = _300300;
+        }
+
+        public String get300300FullPath() {
+            return _300300FullPath;
+        }
+
+        public void set300300FullPath(String _300300FullPath) {
+            this._300300FullPath = _300300FullPath;
+        }
+
+    }
+
+    public class Dimenesions__1 {
+
+        @SerializedName("200_200")
+        @Expose
+        private String _200200;
+        @SerializedName("200_200_fullPath")
+        @Expose
+        private String _200200FullPath;
+
+        public String get200200() {
+            return _200200;
+        }
+
+        public void set200200(String _200200) {
+            this._200200 = _200200;
+        }
+
+        public String get200200FullPath() {
+            return _200200FullPath;
+        }
+
+        public void set200200FullPath(String _200200FullPath) {
+            this._200200FullPath = _200200FullPath;
+        }
+
+    }
+
+    public class Doc {
+
+        @SerializedName("size")
+        @Expose
+        private Integer size;
+        @SerializedName("saved")
+        @Expose
+        private Boolean saved;
         @SerializedName("name")
         @Expose
         private String name;
-        @SerializedName("other")
+        @SerializedName("contentType")
         @Expose
-        private Other__3 other;
-        @SerializedName("icon")
+        private String contentType;
+        @SerializedName("dimenesions")
         @Expose
-        private Object icon;
+        private Dimenesions dimenesions;
+        @SerializedName("path")
+        @Expose
+        private String path;
+        @SerializedName("created_info")
+        @Expose
+        private CreatedInfo createdInfo;
+        @SerializedName("fullPath")
+        @Expose
+        private String fullPath;
 
-        public String getUid() {
-            return uid;
+        public Integer getSize() {
+            return size;
         }
 
-        public void setUid(String uid) {
-            this.uid = uid;
+        public void setSize(Integer size) {
+            this.size = size;
+        }
+
+        public Boolean getSaved() {
+            return saved;
+        }
+
+        public void setSaved(Boolean saved) {
+            this.saved = saved;
         }
 
         public String getName() {
@@ -275,72 +593,49 @@ public class GetRiderProfileResponse {
             this.name = name;
         }
 
-        public Other__3 getOther() {
-            return other;
+        public String getContentType() {
+            return contentType;
         }
 
-        public void setOther(Other__3 other) {
-            this.other = other;
+        public void setContentType(String contentType) {
+            this.contentType = contentType;
         }
 
-        public Object getIcon() {
-            return icon;
+        public Dimenesions getDimenesions() {
+            return dimenesions;
         }
 
-        public void setIcon(Object icon) {
-            this.icon = icon;
+        public void setDimenesions(Dimenesions dimenesions) {
+            this.dimenesions = dimenesions;
         }
 
-    }
-    public class IdentificationProof {
-
-        @SerializedName("uid")
-        @Expose
-        private String uid;
-        @SerializedName("doc_no")
-        @Expose
-        private String docNo;
-        @SerializedName("doc_type")
-        @Expose
-        private DocType docType;
-        @SerializedName("doc")
-        @Expose
-        private List<Object> doc = null;
-
-        public String getUid() {
-            return uid;
+        public String getPath() {
+            return path;
         }
 
-        public void setUid(String uid) {
-            this.uid = uid;
+        public void setPath(String path) {
+            this.path = path;
         }
 
-        public String getDocNo() {
-            return docNo;
+        public CreatedInfo getCreatedInfo() {
+            return createdInfo;
         }
 
-        public void setDocNo(String docNo) {
-            this.docNo = docNo;
+        public void setCreatedInfo(CreatedInfo createdInfo) {
+            this.createdInfo = createdInfo;
         }
 
-        public DocType getDocType() {
-            return docType;
+        public String getFullPath() {
+            return fullPath;
         }
 
-        public void setDocType(DocType docType) {
-            this.docType = docType;
-        }
-
-        public List<Object> getDoc() {
-            return doc;
-        }
-
-        public void setDoc(List<Object> doc) {
-            this.doc = doc;
+        public void setFullPath(String fullPath) {
+            this.fullPath = fullPath;
         }
 
     }
-    public class Language {
+
+    public class DocType {
 
         @SerializedName("uid")
         @Expose
@@ -388,6 +683,105 @@ public class GetRiderProfileResponse {
         }
 
     }
+
+    public class IdentificationProof {
+
+        @SerializedName("uid")
+        @Expose
+        private String uid;
+        @SerializedName("doc_no")
+        @Expose
+        private String docNo;
+        @SerializedName("doc_type")
+        @Expose
+        private DocType docType;
+        @SerializedName("doc")
+        @Expose
+        private List<Doc> doc = null;
+
+        public String getUid() {
+            return uid;
+        }
+
+        public void setUid(String uid) {
+            this.uid = uid;
+        }
+
+        public String getDocNo() {
+            return docNo;
+        }
+
+        public void setDocNo(String docNo) {
+            this.docNo = docNo;
+        }
+
+        public DocType getDocType() {
+            return docType;
+        }
+
+        public void setDocType(DocType docType) {
+            this.docType = docType;
+        }
+
+        public List<Doc> getDoc() {
+            return doc;
+        }
+
+        public void setDoc(List<Doc> doc) {
+            this.doc = doc;
+        }
+
+    }
+
+    public class Language {
+
+        @SerializedName("uid")
+        @Expose
+        private String uid;
+        @SerializedName("name")
+        @Expose
+        private String name;
+        @SerializedName("other")
+        @Expose
+        private Other__1 other;
+        @SerializedName("icon")
+        @Expose
+        private Object icon;
+
+        public String getUid() {
+            return uid;
+        }
+
+        public void setUid(String uid) {
+            this.uid = uid;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Other__1 getOther() {
+            return other;
+        }
+
+        public void setOther(Other__1 other) {
+            this.other = other;
+        }
+
+        public Object getIcon() {
+            return icon;
+        }
+
+        public void setIcon(Object icon) {
+            this.icon = icon;
+        }
+
+    }
+
     public class Other {
 
         @SerializedName("color")
@@ -403,6 +797,7 @@ public class GetRiderProfileResponse {
         }
 
     }
+
     public class Other__1 {
 
         @SerializedName("color")
@@ -418,6 +813,7 @@ public class GetRiderProfileResponse {
         }
 
     }
+
     public class Other__2 {
 
         @SerializedName("color")
@@ -433,21 +829,7 @@ public class GetRiderProfileResponse {
         }
 
     }
-    public class Other__3 {
 
-        @SerializedName("color")
-        @Expose
-        private Object color;
-
-        public Object getColor() {
-            return color;
-        }
-
-        public void setColor(Object color) {
-            this.color = color;
-        }
-
-    }
     public class PaCountry {
 
         @SerializedName("uid")
@@ -474,6 +856,7 @@ public class GetRiderProfileResponse {
         }
 
     }
+
     public class PaState {
 
         @SerializedName("uid")
@@ -500,6 +883,100 @@ public class GetRiderProfileResponse {
         }
 
     }
+
+    public class Pic {
+
+        @SerializedName("size")
+        @Expose
+        private Integer size;
+        @SerializedName("saved")
+        @Expose
+        private Boolean saved;
+        @SerializedName("name")
+        @Expose
+        private String name;
+        @SerializedName("contentType")
+        @Expose
+        private String contentType;
+        @SerializedName("dimenesions")
+        @Expose
+        private Dimenesions__1 dimenesions;
+        @SerializedName("path")
+        @Expose
+        private String path;
+        @SerializedName("created_info")
+        @Expose
+        private CreatedInfo__1 createdInfo;
+        @SerializedName("fullPath")
+        @Expose
+        private String fullPath;
+
+        public Integer getSize() {
+            return size;
+        }
+
+        public void setSize(Integer size) {
+            this.size = size;
+        }
+
+        public Boolean getSaved() {
+            return saved;
+        }
+
+        public void setSaved(Boolean saved) {
+            this.saved = saved;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getContentType() {
+            return contentType;
+        }
+
+        public void setContentType(String contentType) {
+            this.contentType = contentType;
+        }
+
+        public Dimenesions__1 getDimenesions() {
+            return dimenesions;
+        }
+
+        public void setDimenesions(Dimenesions__1 dimenesions) {
+            this.dimenesions = dimenesions;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
+        }
+
+        public CreatedInfo__1 getCreatedInfo() {
+            return createdInfo;
+        }
+
+        public void setCreatedInfo(CreatedInfo__1 createdInfo) {
+            this.createdInfo = createdInfo;
+        }
+
+        public String getFullPath() {
+            return fullPath;
+        }
+
+        public void setFullPath(String fullPath) {
+            this.fullPath = fullPath;
+        }
+
+    }
+
     public class RiderPostalCode {
 
         @SerializedName("uid")
@@ -526,32 +1003,7 @@ public class GetRiderProfileResponse {
         }
 
     }
-    public class Role {
 
-        @SerializedName("uid")
-        @Expose
-        private String uid;
-        @SerializedName("name")
-        @Expose
-        private String name;
-
-        public String getUid() {
-            return uid;
-        }
-
-        public void setUid(String uid) {
-            this.uid = uid;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-    }
     public class SkillSet {
 
         @SerializedName("uid")
@@ -578,54 +1030,7 @@ public class GetRiderProfileResponse {
         }
 
     }
-    public class Status {
 
-        @SerializedName("uid")
-        @Expose
-        private String uid;
-        @SerializedName("name")
-        @Expose
-        private String name;
-        @SerializedName("other")
-        @Expose
-        private Other other;
-        @SerializedName("icon")
-        @Expose
-        private Object icon;
-
-        public String getUid() {
-            return uid;
-        }
-
-        public void setUid(String uid) {
-            this.uid = uid;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public Other getOther() {
-            return other;
-        }
-
-        public void setOther(Other other) {
-            this.other = other;
-        }
-
-        public Object getIcon() {
-            return icon;
-        }
-
-        public void setIcon(Object icon) {
-            this.icon = icon;
-        }
-
-    }
     public class Store {
 
         @SerializedName("uid")
@@ -652,11 +1057,15 @@ public class GetRiderProfileResponse {
         }
 
     }
+
     public class UserAddInfo {
 
         @SerializedName("uid")
         @Expose
         private String uid;
+        @SerializedName("area_of_op")
+        @Expose
+        private Object areaOfOp;
         @SerializedName("capacity_units")
         @Expose
         private Integer capacityUnits;
@@ -668,7 +1077,7 @@ public class GetRiderProfileResponse {
         private String manufacturer;
         @SerializedName("max_cod_amount")
         @Expose
-        private Integer maxCodAmount;
+        private double maxCodAmount;
         @SerializedName("max_orders_per_day")
         @Expose
         private Integer maxOrdersPerDay;
@@ -720,6 +1129,14 @@ public class GetRiderProfileResponse {
             this.uid = uid;
         }
 
+        public Object getAreaOfOp() {
+            return areaOfOp;
+        }
+
+        public void setAreaOfOp(Object areaOfOp) {
+            this.areaOfOp = areaOfOp;
+        }
+
         public Integer getCapacityUnits() {
             return capacityUnits;
         }
@@ -744,11 +1161,11 @@ public class GetRiderProfileResponse {
             this.manufacturer = manufacturer;
         }
 
-        public Integer getMaxCodAmount() {
+        public double getMaxCodAmount() {
             return maxCodAmount;
         }
 
-        public void setMaxCodAmount(Integer maxCodAmount) {
+        public void setMaxCodAmount(double maxCodAmount) {
             this.maxCodAmount = maxCodAmount;
         }
 
@@ -865,6 +1282,7 @@ public class GetRiderProfileResponse {
         }
 
     }
+
     public class UserAddress {
 
         @SerializedName("uid")
@@ -897,12 +1315,12 @@ public class GetRiderProfileResponse {
         @SerializedName("ca_state")
         @Expose
         private CaState caState;
-        @SerializedName("pa_state")
-        @Expose
-        private PaState paState;
         @SerializedName("pa_country")
         @Expose
         private PaCountry paCountry;
+        @SerializedName("pa_state")
+        @Expose
+        private PaState paState;
 
         public String getUid() {
             return uid;
@@ -984,14 +1402,6 @@ public class GetRiderProfileResponse {
             this.caState = caState;
         }
 
-        public PaState getPaState() {
-            return paState;
-        }
-
-        public void setPaState(PaState paState) {
-            this.paState = paState;
-        }
-
         public PaCountry getPaCountry() {
             return paCountry;
         }
@@ -1000,7 +1410,16 @@ public class GetRiderProfileResponse {
             this.paCountry = paCountry;
         }
 
+        public PaState getPaState() {
+            return paState;
+        }
+
+        public void setPaState(PaState paState) {
+            this.paState = paState;
+        }
+
     }
+
     public class VehicleType {
 
         @SerializedName("uid")
@@ -1011,7 +1430,7 @@ public class GetRiderProfileResponse {
         private String name;
         @SerializedName("other")
         @Expose
-        private Other__1 other;
+        private Other other;
         @SerializedName("icon")
         @Expose
         private Object icon;
@@ -1032,11 +1451,11 @@ public class GetRiderProfileResponse {
             this.name = name;
         }
 
-        public Other__1 getOther() {
+        public Other getOther() {
             return other;
         }
 
-        public void setOther(Other__1 other) {
+        public void setOther(Other other) {
             this.other = other;
         }
 
@@ -1050,4 +1469,5 @@ public class GetRiderProfileResponse {
 
     }
 }
+
 
