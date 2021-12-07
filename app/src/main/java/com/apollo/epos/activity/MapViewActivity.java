@@ -35,7 +35,6 @@ import com.apollo.epos.R;
 import com.apollo.epos.dialog.DialogManager;
 import com.apollo.epos.service.FloatingTouchService;
 import com.apollo.epos.utils.ActivityUtils;
-import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
@@ -69,7 +68,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.apollo.epos.utils.ActivityUtils.getBigFloatToDecimalFloat;
 import static com.apollo.epos.utils.AppConstants.LAST_ACTIVITY;
 
 public class MapViewActivity extends BaseActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
@@ -171,7 +169,7 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         }
 
         mMap.setOnMapLoadedCallback(() -> {
-            if(blackClickFlag) {
+            if (blackClickFlag) {
                 if (origin != null && destination != null && other != null) {
                     LatLngBounds bounds = new LatLngBounds.Builder().include(origin).include(destination).include(other).build();
 
@@ -207,7 +205,7 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
 
         double distance = locationA.distanceTo(locationB);
 
-        if(Math.round(distance) > 100){
+        if (Math.round(distance) > 100) {
             callOneTimeLocation = false;
         }
 
@@ -221,7 +219,6 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.location_current, "Current Location", 1, hashMap);
         DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_pharmacy, "Destination Location", 0, hashMap);
         DrawMarker.getInstance(this).draw(mMap, other, R.drawable.location_destination, "Other Location", 0, hashMap);
-
 
 
         if (!callOneTimeLocation) {
@@ -244,7 +241,17 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
     }
 
     private synchronized void GoogleClientBuild() {
-        mGoogleApiClient = new GoogleApiClient.Builder(MapViewActivity.this).addApi(LocationServices.API).addConnectionCallbacks(this).addApi(AppIndex.API).addApi(AppIndex.API).addOnConnectionFailedListener(this).build();
+
+        if (mGoogleApiClient == null || !mGoogleApiClient.isConnected()) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .enableAutoManage(this, 1, this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+            mGoogleApiClient.connect();
+        }
+//        mGoogleApiClient = new GoogleApiClient.Builder(MapViewActivity.this).addApi(LocationServices.API).addConnectionCallbacks(this).addApi(AppIndex.API).addApi(AppIndex.API).addOnConnectionFailedListener(this).build();
     }
 
     public void createLocRequest() {
@@ -417,9 +424,11 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
         try {
             if (jsonArray != null) {
                 distance = ((JSONObject) jsonArray.get(0)).getJSONObject("distance").getString("text");
-                time = ((JSONObject) jsonArray.get(0)).getJSONObject("duration").getString("text");
+                time = ((JSONObject) jsonArray.get(0)).getJSONObject("duration").getString("value");
                 removing = Float.parseFloat(distance.replace("\"", "").replace("km", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
-                removingTime = Float.parseFloat(time.replace("\"", "").replace("mins", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
+//                removingTime = Float.parseFloat(time.replace("\"", "").replace("mins", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
+                removingTime = Float.parseFloat(time) / 60;
+
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -445,7 +454,8 @@ public class MapViewActivity extends BaseActivity implements OnMapReadyCallback,
                                 if (firstDistance != 0 && secondDistance != 0 && firstTime != 0 && secondTime != 0) {
                                     float finalDistance = firstDistance + secondDistance;
                                     float lastTime = firstTime + secondTime;
-                                    travelDistance.setText("Distance: " + getBigFloatToDecimalFloat(finalDistance) + "KM");
+//                                    travelDistance.setText("Distance: " + getBigFloatToDecimalFloat(finalDistance) + "KM");
+                                    travelDistance.setText("Distance: " + finalDistance + "KM");
                                     travelTime.setText("Time: " + Math.round(lastTime) + "Mins.");
                                 }
                             });

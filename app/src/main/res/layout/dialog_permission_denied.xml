@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/location_denied"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="@dimen/twenty_dp">
+
+            <TextView
+                android:id="@+id/location_permission_denied_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_medium"
+                android:gravity="center"
+                android:text="Location permission must be required to access application" />
+
+            <Button
+                android:id="@+id/location_permission_btn"
+                android:layout_width="@dimen/one_hundred_fifty_dp"
+                android:layout_height="@dimen/forty_five_dp"
+                android:layout_marginTop="@dimen/forty_dp"
+                android:background="@drawable/btn_signin_ripple_effect"
+                android:fontFamily="@font/roboto_bold"
+                android:text="Location permission" />
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</layout>

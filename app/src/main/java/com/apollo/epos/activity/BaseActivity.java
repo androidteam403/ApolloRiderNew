@@ -7,9 +7,12 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.apollo.epos.db.SessionManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -268,6 +271,19 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
         @Override
         public void e(Throwable throwable, Object... message) {
             Log.e(TAG, message[0].toString(), throwable);
+        }
+    }
+
+    public SessionManager getSessionManager() {
+        return new SessionManager(this);
+    }
+
+    public void hideKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)
+                    getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 }

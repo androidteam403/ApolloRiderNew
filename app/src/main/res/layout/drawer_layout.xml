@@ -56,7 +56,7 @@
                 android:id="@+id/left_drawer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/nav_theme_bg"
+                android:background="@color/application_bg"
                 android:choiceMode="singleChoice"
                 android:divider="@null"
                 android:dividerHeight="1dp" />

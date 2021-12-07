@@ -1,12 +1,9 @@
 package com.apollo.epos.fragment.profile;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
+import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,21 +11,24 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.apollo.epos.R;
-import com.apollo.epos.activity.NavigationActivity;
 import com.apollo.epos.adapter.CustomReasonAdapter;
+import com.apollo.epos.base.BaseFragment;
+import com.apollo.epos.databinding.DialogZoomImageBinding;
+import com.apollo.epos.databinding.FragmentProfileBinding;
+import com.apollo.epos.fragment.profile.adapter.IdentityProofsAdapter;
+import com.apollo.epos.model.GetRiderProfileResponse;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-
-import org.json.JSONObject;
 
 import java.util.Objects;
 
@@ -36,13 +36,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends BaseFragment implements ProfileFragmentCallback {
     private Activity mActivity;
+    private FragmentProfileBinding profileBinding;
     @BindView(R.id.user_image)
     ImageView userImage;
     String[] complaintReasons = {"Wrong phone number", "Vehicle registration number is wrong", "Update RC", "Wrong bank account number"};
-
-    private ProfileViewModel profileViewModel;
 
     public static ProfileFragment newInstance() {
         return new ProfileFragment();
@@ -59,48 +58,23 @@ public class ProfileFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        profileBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_profile, container, false);
+        return profileBinding.getRoot();
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        setup();
+    }
 
-        Glide.with(mActivity)
-                .load(getResources().getDrawable(R.drawable.userimage))
-                .apply(RequestOptions.circleCropTransform())
-                .into(userImage);
-//        ImageView userImage =
-//        sharedPref = new SharedPreferenceUtils(mActivity);
-//        networkCall = new NetworkCall(mActivity);
-//        appIcon.setVisibility(View.GONE);
-//        bottomLayout.setVisibility(View.VISIBLE);
-//        mReceiver = new MyResultReceiver(new Handler());
-//        mReceiver.setReceiver(ChangePasswordFragment.this);
-//        if (Constants.IS_REMOTE_SUPPORT_REQUIRED) {
-//            if (Boolean.parseBoolean(sharedPref.getKeyValue(Constants.IS_MANUAL_ONLINE_MODE))) {
-//                try {
-//                    ChatApplication app = (ChatApplication) Objects.requireNonNull(mActivity).getApplication();
-//                    mSocket = app.getSocket();
-//                    mSocket.on("notification-count-response", onNotificationCountResponse);
-//                    JSONObject obj1 = new JSONObject();
-//                    obj1.put("userId", Integer.parseInt(sharedPref.getKeyValue(Constants.CHAT_LOGIN_USER_ID)));
-//                    mSocket.emit("lastSeenUpdate", obj1);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                mRegistrationBroadcastReceiver = new BroadcastReceiver() {
-//                    @SuppressLint("NewApi")
-//                    @Override
-//                    public void onReceive(Context context, Intent intent) {
-//                        if (Objects.equals(intent.getAction(), Constants.PUSH_NOTIFICATION)) {
-//                            handleNotificationMethod();
-//                        }
-//                    }
-//                };
-//            }
-//        }
+    private void setup() {
+        if (getSessionManager().getRiderProfileResponse() != null) {
+            onSuccessGetProfileDetailsApi(getSessionManager().getRiderProfileResponse());
+        } else {
+            new ProfileFragmentController(mActivity, this).getRiderProfileDetailsApi();
+        }
     }
 
     @OnClick(R.id.btn_complaint_box)
@@ -121,7 +95,7 @@ public class ProfileFragment extends Fragment {
         });
 
         Spinner reasonSpinner = dialogView.findViewById(R.id.rejectReasonSpinner);
-        CustomReasonAdapter customAdapter = new CustomReasonAdapter(mActivity, complaintReasons);
+        CustomReasonAdapter customAdapter = new CustomReasonAdapter(mActivity, complaintReasons, null);
         reasonSpinner.setAdapter(customAdapter);
         reasonSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -134,5 +108,66 @@ public class ProfileFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onSuccessGetProfileDetailsApi(GetRiderProfileResponse getRiderProfileResponse) {
+        if (getRiderProfileResponse != null) {
+            if (getRiderProfileResponse != null && getRiderProfileResponse.getData() != null && getRiderProfileResponse.getData().getPic() != null && getRiderProfileResponse.getData().getPic().size() > 0)
+                Glide.with(getContext()).load(getSessionManager().getrRiderIconUrl()).circleCrop().error(R.drawable.apollo_app_logo).into(profileBinding.userImage);
+            profileBinding.employeeId.setText(getRiderProfileResponse.getData().getLoginUnique());
+            profileBinding.riderName.setText(getRiderProfileResponse.getData().getFirstName() + " " + getRiderProfileResponse.getData().getLastName());
+            profileBinding.riderPhoneNumber.setText("+91 " + getRiderProfileResponse.getData().getPhone());
+            profileBinding.riderDob.setText(getRiderProfileResponse.getData().getDob());
+//            profileBinding.areaofOperation.setText(getRiderProfileResponse.getData().getUserAddInfo().getAreaOfOp());
+            profileBinding.address.setText(getRiderProfileResponse.getData().getUserAddress().getCurrentAddress());
+            profileBinding.vehicleModel.setText(getRiderProfileResponse.getData().getUserAddInfo().getManufacturer());
+            profileBinding.vehicleMakingYear.setText(getRiderProfileResponse.getData().getUserAddInfo().getModel());
+            profileBinding.vehicleRegistrationNumber.setText(getRiderProfileResponse.getData().getUserAddInfo().getVehicleNo());
+
+            if (getRiderProfileResponse.getData().getUserAddInfo() != null
+                    && getRiderProfileResponse.getData().getUserAddInfo().getIdentificationProofs() != null
+                    && getRiderProfileResponse.getData().getUserAddInfo().getIdentificationProofs().size() > 0) {
+                profileBinding.documentInfoText.setVisibility(View.VISIBLE);
+                IdentityProofsAdapter identityProofsAdapter = new IdentityProofsAdapter(getContext(), getRiderProfileResponse.getData().getUserAddInfo().getIdentificationProofs(), this);
+                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+                profileBinding.identityProofsList.setLayoutManager(mLayoutManager);
+                profileBinding.identityProofsList.setItemAnimator(new DefaultItemAnimator());
+                profileBinding.identityProofsList.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+                profileBinding.identityProofsList.setItemAnimator(new DefaultItemAnimator());
+                profileBinding.identityProofsList.setAdapter(identityProofsAdapter);
+
+            } else {
+                profileBinding.documentInfoText.setVisibility(View.GONE);
+            }
+            StringBuilder language = new StringBuilder();
+            if (getRiderProfileResponse.getData().getUserAddInfo() != null && getRiderProfileResponse.getData().getUserAddInfo().getLanguage() != null)
+                for (GetRiderProfileResponse.Language lng : getRiderProfileResponse.getData().getUserAddInfo().getLanguage()) {
+                    language.append(lng.getName()).append(", ");
+                }
+            profileBinding.languages.setText((language.length() == 0) ? "--" : new StringBuilder(language.substring(0, language.length() - 2)).append("."));
+        }
+    }
+
+    @Override
+    public void onFailureGetProfileDetailsApi(String message) {
+        Toast.makeText(mActivity, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onItemClickIdentityProof(GetRiderProfileResponse.IdentificationProof identificationProof) {
+        Dialog dialog = new Dialog(getContext(), R.style.fadeinandoutcustomDialog);
+        DialogZoomImageBinding dialogZoomImageBinding = DataBindingUtil.inflate(LayoutInflater.from(getContext()),
+                R.layout.dialog_zoom_image, null, false);
+        dialog.setContentView(dialogZoomImageBinding.getRoot());
+        dialogZoomImageBinding.headerNameText.setText(identificationProof.getDocType().getName().substring(0, 1).toUpperCase() + identificationProof.getDocType().getName().substring(1, identificationProof.getDocType().getName().length()).toLowerCase());
+        Glide.with(getContext())
+                .load(identificationProof.getDoc().get(0).getFullPath())
+                .error(R.drawable.drivinglicense)
+                .into(dialogZoomImageBinding.zoomingImg);
+        dialogZoomImageBinding.backArrow.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+        dialog.show();
     }
 }

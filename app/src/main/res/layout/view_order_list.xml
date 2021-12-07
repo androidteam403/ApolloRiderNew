@@ -29,7 +29,7 @@
             android:id="@+id/order_count"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.25"
+            android:layout_weight="0.5"
             android:fontFamily="@font/roboto_regular"
             android:gravity="center"
             android:text="1"
@@ -44,6 +44,7 @@
             android:fontFamily="@font/roboto_regular"
             android:gravity="end"
             android:text="78.00"
+            android:visibility="gone"
             android:textColor="@color/colorBlack"
             android:textSize="@dimen/text_dimen_12" />
     </LinearLayout>

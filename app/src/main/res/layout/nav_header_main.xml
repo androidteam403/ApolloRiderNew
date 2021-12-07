@@ -3,7 +3,7 @@
     android:id="@+id/headerView"
     android:layout_width="match_parent"
     android:layout_height="@dimen/one_hundred_seventy_dp"
-    android:background="@color/nav_header_color"
+    android:background="@color/application_bg"
     android:gravity="bottom"
     android:orientation="vertical"
     android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -17,23 +17,23 @@
         android:layout_width="@dimen/seventy_dp"
         android:layout_height="@dimen/seventy_dp"
         android:layout_gravity="center_horizontal"
-        android:background="@drawable/image_circle_bg"
-        android:padding="@dimen/one_dp"
-        android:contentDescription="@string/nav_header_desc" />
+        android:contentDescription="@string/nav_header_desc"
+        android:padding="@dimen/one_dp" />
 
     <TextView
+        android:id="@+id/nav_header_rider_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:fontFamily="@font/roboto_bold"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:text="@string/nav_header_title"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="@color/colorWhite"
-        android:textSize="@dimen/text_dimen_16"
-        android:fontFamily="@font/roboto_bold" />
+        android:textSize="@dimen/text_dimen_16" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/nav_header_rider_phone_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"

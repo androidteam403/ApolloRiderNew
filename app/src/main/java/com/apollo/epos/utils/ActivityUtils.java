@@ -15,7 +15,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
@@ -23,6 +22,7 @@ import android.text.style.StyleSpan;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -43,6 +43,7 @@ import com.apollo.epos.R;
 import com.apollo.epos.dialog.DialogManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -308,9 +309,9 @@ public class ActivityUtils {
         return false;
     }
 
-    public static DisplayMetrics getScreenSize(Context context){
+    public static DisplayMetrics getScreenSize(Context context) {
         DisplayMetrics displayMetrics = new DisplayMetrics();
-        WindowManager mWindowManager =  (WindowManager)context.getSystemService(context.WINDOW_SERVICE);
+        WindowManager mWindowManager = (WindowManager) context.getSystemService(context.WINDOW_SERVICE);
         mWindowManager.getDefaultDisplay().getMetrics(displayMetrics);
         return displayMetrics;
     }
@@ -324,9 +325,20 @@ public class ActivityUtils {
         return result;
     }
 
-    public static float getBigFloatToDecimalFloat(float inputNum){
+    public static float getBigFloatToDecimalFloat(float inputNum) {
         inputNum /= Math.pow(10, (int) Math.log10(inputNum));
         inputNum = ((int) (inputNum * 10)) / 10.0f; // <-- performs one digit floor
         return inputNum;
+    }
+
+    public static void customSnackbar(View view, String message) {
+        Snackbar mSnackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT);
+        View mSnackbarView = mSnackbar.getView();
+        (mSnackbar.getView()).getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
+        mSnackbar.show();
+    }
+
+    public static String getCurrentTimeDate() {
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
     }
 }

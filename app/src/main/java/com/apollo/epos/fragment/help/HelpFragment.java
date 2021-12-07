@@ -24,11 +24,12 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.apollo.epos.R;
+import com.apollo.epos.base.BaseFragment;
 
 import static com.apollo.epos.utils.ActivityUtils.hideDialog;
 import static com.apollo.epos.utils.ActivityUtils.showDialog;
 
-public class HelpFragment extends Fragment {
+public class HelpFragment extends BaseFragment {
     private HelpViewModel helpViewModel;
     private WebView mWebView;
     private Activity mActivity;

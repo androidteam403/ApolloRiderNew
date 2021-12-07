@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.apollo.epos.R;
 import com.apollo.epos.activity.NavigationActivity;
 import com.apollo.epos.adapter.NotificationsListAdapter;
+import com.apollo.epos.base.BaseFragment;
 import com.apollo.epos.fragment.neworder.NewOrderFragment;
 import com.apollo.epos.model.NotificationItemModel;
 
@@ -29,7 +30,7 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class NotificationsFragment extends Fragment implements OnItemClickListener{
+public class NotificationsFragment extends BaseFragment implements OnItemClickListener{
     private Activity mActivity;
     private NotificationsListAdapter mNotificationListAdapter;
     @BindView(R.id.notificationRecyclerView)
@@ -139,9 +140,9 @@ public class NotificationsFragment extends Fragment implements OnItemClickListen
 
     @Override
     public void OnItemClick(NotificationItemModel model) {
-        if (model.getItemHeader().equalsIgnoreCase("NEW ORDER")) {
-            ((NavigationActivity) Objects.requireNonNull(mActivity)).showFragment(new NewOrderFragment(), R.string.menu_take_order);
-            ((NavigationActivity) Objects.requireNonNull(mActivity)).updateSelection(-1);
-        }
+//        if (model.getItemHeader().equalsIgnoreCase("NEW ORDER")) {
+//            ((NavigationActivity) Objects.requireNonNull(mActivity)).showFragment(new NewOrderFragment(), R.string.menu_take_order);
+//            ((NavigationActivity) Objects.requireNonNull(mActivity)).updateSelection(-1);
+//        }
     }
 }

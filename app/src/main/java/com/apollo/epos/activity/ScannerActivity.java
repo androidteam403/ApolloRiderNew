@@ -21,10 +21,11 @@ import androidx.core.view.MenuItemCompat;
 import com.apollo.epos.R;
 import com.journeyapps.barcodescanner.CaptureManager;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
+import com.novoda.merlin.Merlin;
 
 import java.util.Objects;
 
-public class ScannerActivity extends AppCompatActivity implements DecoratedBarcodeView.TorchListener {
+public class ScannerActivity extends BaseActivity implements DecoratedBarcodeView.TorchListener {
     private CaptureManager capture;
     private DecoratedBarcodeView barcodeScannerView;
     private Button switchFlashlightButton;
@@ -53,6 +54,15 @@ public class ScannerActivity extends AppCompatActivity implements DecoratedBarco
         capture = new CaptureManager(this, barcodeScannerView);
         capture.initializeFromIntent(getIntent(), savedInstanceState);
         capture.decode();
+    }
+
+    @Override
+    protected Merlin createMerlin() {
+        return new Merlin.Builder()
+                .withConnectableCallbacks()
+                .withDisconnectableCallbacks()
+                .withBindableCallbacks()
+                .build(this);
     }
 
     /**

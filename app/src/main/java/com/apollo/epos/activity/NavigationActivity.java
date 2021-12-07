@@ -1,12 +1,16 @@
 package com.apollo.epos.activity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -29,17 +34,24 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.MenuItemCompat;
+import androidx.databinding.DataBindingUtil;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.apollo.epos.R;
+import com.apollo.epos.activity.login.LoginActivity;
 import com.apollo.epos.adapter.NavigationDrawerAdapter;
+import com.apollo.epos.databinding.DialogPermissionDeniedBinding;
+import com.apollo.epos.db.SessionManager;
 import com.apollo.epos.fragment.changepassword.ChangePasswordFragment;
 import com.apollo.epos.fragment.dashboard.DashboardFragment;
 import com.apollo.epos.fragment.help.HelpFragment;
@@ -48,10 +60,10 @@ import com.apollo.epos.fragment.notifications.NotificationsFragment;
 import com.apollo.epos.fragment.profile.ProfileFragment;
 import com.apollo.epos.fragment.takeneworder.TakeNewOrderFragment;
 import com.apollo.epos.model.NavDrawerModel;
+import com.apollo.epos.service.BatteryLevelLocationService;
 import com.apollo.epos.service.FloatingTouchService;
 import com.apollo.epos.utils.FragmentUtils;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.navigation.NavigationView;
 import com.novoda.merlin.Merlin;
 import com.orhanobut.hawk.Hawk;
@@ -68,6 +80,9 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     private String mCurrentFrag;
     private static TextView cartCount;
     private static NavigationActivity instance;
+    private ViewGroup header;
+    private LocationManager locationManager;
+    private final static int GPS_REQUEST_CODE = 2;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,14 +90,110 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         setContentView(R.layout.activity_navigation);
         instance = this;
 
+        LinearLayout locationDeniedLayout = (LinearLayout) findViewById(R.id.location_denied);
+        locationDeniedLayout.setVisibility(View.GONE);
+
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (isGpsEnambled()) {
+            checkLocationPermission();
+        } else {
+            buildAlertMessageNoGps();
+        }
+        setUp();
+    }
+
+    private void setUp() {
         if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
             finish();
             return;
         }
-
         initCustomNavigationDrawer();
-        handleAssistiveTouchWindow();
+        // handleAssistiveTouchWindow();
     }
+
+    private void checkLocationPermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 10);
+            return;
+        }
+        startService();
+    }
+
+    private boolean isGpsEnambled() {
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
+    private void buildAlertMessageNoGps() {
+        new AlertDialog.Builder(this)
+                .setMessage("Your GPS seems to be disabled, do you want to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", (dialog, id) -> startActivityForResult(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS), GPS_REQUEST_CODE))
+                .setNegativeButton("No", (dialog, id) -> {
+                    dialog.dismiss();
+                    dialog.cancel();
+                    Dialog dialog1 = new Dialog(this, R.style.fadeinandoutcustomDialog);
+                    DialogPermissionDeniedBinding permissionDeniedBinding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.dialog_permission_denied, null, false);
+                    dialog1.setContentView(permissionDeniedBinding.getRoot());
+                    permissionDeniedBinding.locationPermissionDeniedText.setText("GPS enable to access application");
+                    permissionDeniedBinding.locationPermissionBtn.setText("GPS permission");
+                    permissionDeniedBinding.locationPermissionBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (isGpsEnambled()) {
+                                checkLocationPermission();
+                            } else {
+                                buildAlertMessageNoGps();
+                            }
+                            dialog1.dismiss();
+                        }
+                    });
+                    dialog1.show();
+
+                }).create().show();
+    }
+
+    public void startService() {
+        startService(new Intent(getBaseContext(), BatteryLevelLocationService.class));
+    }
+
+    // Method to stop the myServiceExample
+    public void stopService() {
+        stopService(new Intent(getBaseContext(), BatteryLevelLocationService.class));
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 10) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (isGpsEnambled()) {
+                    checkLocationPermission();
+                } else {
+                    buildAlertMessageNoGps();
+                }
+            } else {
+                Dialog dialog1 = new Dialog(this, R.style.fadeinandoutcustomDialog);
+                DialogPermissionDeniedBinding permissionDeniedBinding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.dialog_permission_denied, null, false);
+                dialog1.setContentView(permissionDeniedBinding.getRoot());
+                permissionDeniedBinding.locationPermissionDeniedText.setText("Location permission must be required to access application");
+                permissionDeniedBinding.locationPermissionBtn.setText("Location permission");
+                permissionDeniedBinding.locationPermissionBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (isGpsEnambled()) {
+                            checkLocationPermission();
+                        } else {
+                            buildAlertMessageNoGps();
+                        }
+                        dialog1.dismiss();
+                    }
+                });
+                dialog1.show();
+            }
+        }
+    }
+
 
     @Override
     protected Merlin createMerlin() {
@@ -97,17 +208,18 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 
     @Override
     public void onBackPressed() {
-        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            if (doubleBackToExitPressedOnce) {
-                super.onBackPressed();
-                return;
-            }
-            this.doubleBackToExitPressedOnce = true;
-            Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
-            new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
+//        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+//            mDrawerLayout.closeDrawer(GravityCompat.START);
+//        } else {
+        if (doubleBackToExitPressedOnce) {
+//                super.onBackPressed();
+            finish();
+            return;
         }
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+        new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
+//        }
     }
 
     @SuppressLint("WrongConstant")
@@ -155,7 +267,8 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        mDrawerToggle.syncState();
+        if (mDrawerToggle != null)
+            mDrawerToggle.syncState();
     }
 
     @Override
@@ -196,25 +309,18 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         setupToolbar();
 
         LayoutInflater inflater = getLayoutInflater();
-        ViewGroup header = (ViewGroup) inflater.inflate(R.layout.nav_header_main, mDrawerList, false);
+        header = (ViewGroup) inflater.inflate(R.layout.nav_header_main, mDrawerList, false);
         mDrawerList.addHeaderView(header);
 
-        NavDrawerModel[] drawerItem = new NavDrawerModel[7];
+        NavDrawerModel[] drawerItem = new NavDrawerModel[6];
         drawerItem[0] = new NavDrawerModel(mNavigationDrawerItemTitles[0], false, true);
         drawerItem[1] = new NavDrawerModel(mNavigationDrawerItemTitles[1], false, false);
         drawerItem[2] = new NavDrawerModel(mNavigationDrawerItemTitles[2], false, false);
         drawerItem[3] = new NavDrawerModel(mNavigationDrawerItemTitles[3], false, false);
         drawerItem[4] = new NavDrawerModel(mNavigationDrawerItemTitles[4], false, false);
         drawerItem[5] = new NavDrawerModel(mNavigationDrawerItemTitles[5], false, false);
-        drawerItem[6] = new NavDrawerModel(mNavigationDrawerItemTitles[6], false, false);
+//        drawerItem[6] = new NavDrawerModel(mNavigationDrawerItemTitles[6], false, false);
         adapter = new NavigationDrawerAdapter(this, R.layout.nav_item_row, drawerItem);
-
-        ImageView userImg = header.findViewById(R.id.user_image);
-        String imageUrl = "https://www.filmibeat.com/ph-big/2019/02/mahesh-babu_155056989980.jpg";
-        Glide.with(NavigationActivity.this)
-                .load(getResources().getDrawable(R.drawable.userimage))
-                .apply(RequestOptions.circleCropTransform())
-                .into(userImg);
 
         mDrawerList.setAdapter(adapter);
         mDrawerList.setOnItemClickListener(new NavigationActivity.DrawerItemClickListener());
@@ -222,13 +328,16 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         setupDrawerToggle();
-        selectItem(1);
+        selectItem(0);
 //        ((NavigationDrawerAdapter) ((HeaderViewListAdapter) mDrawerList.getAdapter()).getWrappedAdapter()).notifyDataSetChanged();
         adapter.notifyDataSetChanged();
 
         TextView logoutText = findViewById(R.id.logout_btn);
         logoutText.setOnClickListener(v -> {
             mDrawerLayout.closeDrawer(GravityCompat.START);
+            new SessionManager(this).clearAllSharedPreferences();
+            Intent intent = new Intent(NavigationActivity.this, LoginActivity.class);
+            startActivity(intent);
             finish();
             overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
         });
@@ -268,45 +377,47 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     }
 
     public void selectItem(int position) {
-        mDrawerLayout.closeDrawer(GravityCompat.START);
-        adapter.onSelection(position);
-        if (selectedItemPos != position) {
-            selectedItemPos = position;
-            switch (position) {
-                case 0:
-                    mCurrentFrag = getString(R.string.menu_take_order);
-                    showFragment(TakeNewOrderFragment.newInstance(), R.string.menu_take_order);
-                    break;
-                case 1:
-                    mCurrentFrag = getString(R.string.menu_dashboard);
-                    showFragment(DashboardFragment.newInstance(), R.string.menu_dashboard);
-                    break;
-                case 2:
-                    mCurrentFrag = getString(R.string.menu_my_orders);
-                    showFragment(MyOrdersFragment.newInstance(), R.string.menu_my_orders);
-                    break;
-                case 3:
-                    mCurrentFrag = getString(R.string.menu_notifications);
-                    showFragment(NotificationsFragment.newInstance(), R.string.menu_notifications);
-                    break;
-                case 4:
-                    mCurrentFrag = getString(R.string.menu_profile);
-                    showFragment(ProfileFragment.newInstance(), R.string.menu_profile);
-                    break;
-                case 5:
-                    mCurrentFrag = getString(R.string.menu_change_password);
-                    showFragment(ChangePasswordFragment.newInstance(), R.string.menu_change_password);
-                    break;
-                case 6:
-                    mCurrentFrag = getString(R.string.menu_help);
-                    showFragment(HelpFragment.newInstance(), R.string.menu_help);
-                    break;
-                default:
-                    break;
-            }
-            mDrawerList.setItemChecked(position, true);
-            mDrawerList.setSelection(position);
+        if (position != -1) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+            adapter.onSelection(position);
+            if (selectedItemPos != position) {
+                selectedItemPos = position;
+                switch (position) {
+//                case 0:
+//                    mCurrentFrag = getString(R.string.menu_take_order);
+//                    showFragment(TakeNewOrderFragment.newInstance(), R.string.menu_take_order);
+//                    break;
+                    case 0:
+                        mCurrentFrag = getString(R.string.menu_dashboard);
+                        showFragment(DashboardFragment.newInstance(), R.string.menu_dashboard);
+                        break;
+                    case 1:
+                        mCurrentFrag = getString(R.string.menu_my_orders);
+                        showFragment(MyOrdersFragment.newInstance(), R.string.menu_my_orders);
+                        break;
+                    case 2:
+                        mCurrentFrag = getString(R.string.menu_notifications);
+                        showFragment(NotificationsFragment.newInstance(), R.string.menu_notifications);
+                        break;
+                    case 3:
+                        mCurrentFrag = getString(R.string.menu_profile);
+                        showFragment(ProfileFragment.newInstance(), R.string.menu_profile);
+                        break;
+                    case 4:
+                        mCurrentFrag = getString(R.string.menu_change_password);
+                        showFragment(ChangePasswordFragment.newInstance(), R.string.menu_change_password);
+                        break;
+                    case 5:
+                        mCurrentFrag = getString(R.string.menu_help);
+                        showFragment(HelpFragment.newInstance(), R.string.menu_help);
+                        break;
+                    default:
+                        break;
+                }
+                mDrawerList.setItemChecked(position, true);
+                mDrawerList.setSelection(position);
 //            setTitle(mNavigationDrawerItemTitles[position]);
+            }
         }
     }
 
@@ -374,7 +485,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                 overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
                 return true;
             case R.id.action_setting_icon:
-                selectItem(3);
+                selectItem(2);
                 return true;
             case R.id.action_cart_icon:
                 Intent i = new Intent(this, CartActivity.class);
@@ -388,6 +499,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
 
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             fragment.onActivityResult(requestCode, resultCode, data);
@@ -408,6 +520,25 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                     }
                 }
             }
+        } else if (requestCode == GPS_REQUEST_CODE) {
+            if (isGpsEnambled()) {
+                LinearLayout locationDeniedLayout = (LinearLayout) findViewById(R.id.location_denied);
+                locationDeniedLayout.setVisibility(View.GONE);
+
+                locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                if (isGpsEnambled()) {
+                    checkLocationPermission();
+                } else {
+                    buildAlertMessageNoGps();
+                }
+            } else {
+                LinearLayout locationDeniedLayout = (LinearLayout) findViewById(R.id.location_denied);
+                TextView locationPermissionDeniedText = (TextView) findViewById(R.id.location_permission_denied_text);
+                locationPermissionDeniedText.setText("GPS enable to access application");
+                Button locationPermissionBtn = (Button) findViewById(R.id.location_permission_btn);
+                locationPermissionBtn.setText("GPS permission");
+                locationDeniedLayout.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -424,6 +555,10 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         Intent intent = new Intent(NavigationActivity.this, FloatingTouchService.class);
         if (isMyServiceRunning(FloatingTouchService.class)) {
             stopService(intent);
+        }
+        Intent i = new Intent(NavigationActivity.this, BatteryLevelLocationService.class);
+        if (isMyServiceRunning(BatteryLevelLocationService.class)) {
+            startService(i);
         }
     }
 
@@ -456,5 +591,22 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                 startService(intent);
             }
         }
+    }
+
+    public void setProfileData() {
+        if (getSessionManager().getRiderProfileResponse() != null) {
+            ImageView userImg = header.findViewById(R.id.user_image);
+            String imageUrl = "https://www.filmibeat.com/ph-big/2019/02/mahesh-babu_155056989980.jpg";
+            if (getSessionManager().getRiderProfileResponse() != null && getSessionManager().getRiderProfileResponse().getData() != null && getSessionManager().getRiderProfileResponse().getData().getPic() != null && getSessionManager().getRiderProfileResponse().getData().getPic().size() > 0)
+                Glide.with(this).load(getSessionManager().getrRiderIconUrl()).circleCrop().error(R.drawable.apollo_app_logo).into(userImg);
+            TextView riderName = header.findViewById(R.id.nav_header_rider_name);
+            riderName.setText(getSessionManager().getRiderProfileResponse().getData().getFirstName() + " " + getSessionManager().getRiderProfileResponse().getData().getLastName());
+            TextView riderPhoneNumber = header.findViewById(R.id.nav_header_rider_phone_number);
+            riderPhoneNumber.setText(getSessionManager().getRiderProfileResponse().getData().getPhone());
+        }
+    }
+
+    public void selectFragment(int pos) {
+        selectItem(pos);
     }
 }

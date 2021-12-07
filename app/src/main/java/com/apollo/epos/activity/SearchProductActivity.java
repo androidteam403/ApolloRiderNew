@@ -4,13 +4,11 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
-import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,13 +17,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuItemCompat;
@@ -38,10 +31,8 @@ import com.apollo.epos.adapter.SearchedItemAdapter;
 import com.apollo.epos.fragment.profile.ProfileViewModel;
 import com.apollo.epos.fragment.takeneworder.OnItemClickListener;
 import com.apollo.epos.model.OrderItemModel;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
+import com.novoda.merlin.Merlin;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -50,9 +41,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.apollo.epos.utils.ActivityUtils.decodeImageUri;
-
-public class SearchProductActivity extends AppCompatActivity implements OnItemClickListener {
+public class SearchProductActivity extends BaseActivity implements OnItemClickListener {
     @BindView(R.id.searched_product_name)
     protected TextView searchedProductName;
     @BindView(R.id.searchedItemRecyclerView)
@@ -102,6 +91,15 @@ public class SearchProductActivity extends AppCompatActivity implements OnItemCl
 //        }
 
         setSearchedItemsList();
+    }
+
+    @Override
+    protected Merlin createMerlin() {
+        return new Merlin.Builder()
+                .withConnectableCallbacks()
+                .withDisconnectableCallbacks()
+                .withBindableCallbacks()
+                .build(this);
     }
 
     private void setSearchedItemsList() {

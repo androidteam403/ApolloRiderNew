@@ -141,31 +141,30 @@ public class EasyWayLocation {
     /**
      * Constructs a new instance
      *
-     * @param context     the Context reference to get the system service from
+     * @param context the Context reference to get the system service from
      */
-    public EasyWayLocation(final Context context,final boolean requireLastLocation,final Listener listener) {
-        this(context, null, requireLastLocation,listener);
+    public EasyWayLocation(final Context context, final boolean requireLastLocation, final Listener listener) {
+        this(context, null, requireLastLocation, listener);
     }
 
     /**
      * Constructs a new instance
-     * @param context Context reference to get the system service from
-     * @param locationRequest
-     * location request
+     *
+     * @param context             Context reference to get the system service from
+     * @param locationRequest     location request
      * @param requireLastLocation require last location or not
-
      */
-    public EasyWayLocation(Context context, final LocationRequest locationRequest, final boolean requireLastLocation,final Listener listener) {
-       // mLocationManager = (LocationManager) context.getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+    public EasyWayLocation(Context context, final LocationRequest locationRequest, final boolean requireLastLocation, final Listener listener) {
+        // mLocationManager = (LocationManager) context.getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
         this.context = context;
         this.mListener = listener;
-        if (locationRequest != null){
+        if (locationRequest != null) {
             this.locationRequest = locationRequest;
-        }else {
+        } else {
             this.locationRequest = new LocationRequest();
             this.locationRequest.setInterval(10000);
-           // locationRequest.setSmallestDisplacement(10F);
+            // locationRequest.setSmallestDisplacement(10F);
             this.locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         }
         this.mRequireLastLocation = requireLastLocation;
@@ -320,7 +319,7 @@ public class EasyWayLocation {
             int locationMode = 0;
             String locationProviders;
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 try {
                     locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
 
@@ -329,17 +328,17 @@ public class EasyWayLocation {
                     return false;
                 }
                 return locationMode != Settings.Secure.LOCATION_MODE_OFF;
-            }else{
+            } else {
                 locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
                 return !TextUtils.isEmpty(locationProviders);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
 
-    public void startLocation(){
+    public void startLocation() {
         checkLocationSetting();
     }
 
@@ -348,17 +347,16 @@ public class EasyWayLocation {
      */
     @SuppressLint("MissingPermission")
     private void beginUpdates() {
-        locationCallback = new LocationCallback(){
+        locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 if (locationResult == null) {
                     mListener.locationCancelled();
-                }else {
+                } else {
                     for (Location location : locationResult.getLocations()) {
                         mListener.currentLocation(location);
                     }
                 }
-
             }
         };
 
@@ -372,7 +370,7 @@ public class EasyWayLocation {
      */
     @SuppressLint("MissingPermission")
     public void endUpdates() {
-        if (locationCallback != null){
+        if (locationCallback != null) {
             fusedLocationClient.removeLocationUpdates(locationCallback);
         }
     }
@@ -477,9 +475,6 @@ public class EasyWayLocation {
     }
 
 
-
-
-
     /**
      * Returns the name of the location provider that matches the specified settings and depends on the given granularity
      *
@@ -525,7 +520,6 @@ public class EasyWayLocation {
 //            }
 //        }
 //    }
-
     @SuppressLint("MissingPermission")
     private void getCachedPosition() {
         fusedLocationClient.getLastLocation()
@@ -535,7 +529,7 @@ public class EasyWayLocation {
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
                             mListener.currentLocation(location);
-                        }else {
+                        } else {
                             checkLocationSetting();
                             beginUpdates();
                             endUpdates();
@@ -709,7 +703,7 @@ public class EasyWayLocation {
         return add.replaceAll(",null", "");
     }
 
-    private void checkLocationSetting(){
+    private void checkLocationSetting() {
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
         builder.setAlwaysShow(true);
         builder.addLocationRequest(locationRequest);
@@ -717,10 +711,10 @@ public class EasyWayLocation {
         Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
 
         task.addOnSuccessListener(locationSettingsResponse -> {
-            if (mRequireLastLocation){
+            if (mRequireLastLocation) {
                 beginUpdates();
                 endUpdates();
-            }else {
+            } else {
                 beginUpdates();
             }
 
@@ -734,10 +728,10 @@ public class EasyWayLocation {
                     // Show the dialog by calling startResolutionForResult(),
                     // and check the result in onActivityResult().
                     ResolvableApiException resolvable = (ResolvableApiException) e;
-                    resolvable.startResolutionForResult((Activity)context,
+                    resolvable.startResolutionForResult((Activity) context,
                             LOCATION_SETTING_REQUEST_CODE);
                 } catch (IntentSender.SendIntentException sendEx) {
-                        sendEx.printStackTrace();
+                    sendEx.printStackTrace();
                 }
             }
         });

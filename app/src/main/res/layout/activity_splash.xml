@@ -1,16 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/splash_bg_img"
-    tools:context=".activity.SplashScreen">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
-        android:id="@+id/image_app_logo"
-        android:layout_width="@dimen/one_hundred_seventy_dp"
-        android:layout_height="@dimen/one_hundred_seventy_dp"
-        android:layout_centerInParent="true"
-        android:background="@drawable/app_shadow_logo"
-        android:contentDescription="@string/app_name" />
-</RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_fullhd"
+        tools:context=".activity.SplashScreen">
+
+        <ImageView
+            android:id="@+id/image_app_logo"
+            android:layout_width="@dimen/one_hundred_seventy_dp"
+            android:layout_height="@dimen/one_hundred_seventy_dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/one_hundred_fifty_dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/apollo_logo_vivekagam" />
+
+        <RelativeLayout
+            android:id="@+id/rider_icon"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:visibility="invisible"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_marginStart="@dimen/twenty_dp"
+                android:layout_marginBottom="5dp"
+                android:layout_alignParentEnd="true"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/rider" />
+        </RelativeLayout>
+    </RelativeLayout>
+</layout>
