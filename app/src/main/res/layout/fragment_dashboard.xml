@@ -110,6 +110,7 @@
                             android:fontFamily="@font/roboto_regular"
                             android:text="Offline" />
 
+
                         <Switch
                             android:id="@+id/switch1"
                             android:layout_width="wrap_content"
@@ -123,6 +124,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:visibility="gone"
                     android:id="@+id/new_order_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
