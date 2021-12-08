@@ -266,7 +266,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
     //    @BindView(R.id.finish_activity_img)
 //    protected ImageView finishActivityImg;
     private boolean isOrderDelivered = false;
-    String[] cancelReasons = {"",""};
+    String[] cancelReasons = {"Customer not availale","Door locked"};
     String[] customerTypesList = {"Customer", "Other"};
     private int selectionTag = 0;
     public static final int CAM_REQUEST = 1;
