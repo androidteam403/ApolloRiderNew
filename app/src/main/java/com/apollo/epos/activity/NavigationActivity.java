@@ -24,6 +24,8 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -78,7 +80,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     private String TAG = "MainActivity";
     private int selectedItemPos = -1;
     private String mCurrentFrag;
-    private static TextView cartCount;
+    private static TextView cartCount, notificationText;
     private static NavigationActivity instance;
     private ViewGroup header;
     private LocationManager locationManager;
@@ -447,11 +449,16 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 
         final MenuItem menuNotificationItem = menu.findItem(R.id.action_setting_icon);
         View actionNotificationView = MenuItemCompat.getActionView(menuNotificationItem);
-        TextView notificationText = actionNotificationView.findViewById(R.id.notification_text);
+        notificationText = actionNotificationView.findViewById(R.id.notification_text);
         actionNotificationView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 onOptionsItemSelected(menuNotificationItem);
+                notificationText.setVisibility(View.GONE);
+                notificationText.clearAnimation();
+                DashboardFragment.newOrderViewVisibility(false);
+                getSessionManager().setNotificationStatus(false);
             }
         });
 
@@ -475,6 +482,22 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 
     public static void updateCartCount(String cartCnt) {
 //        cartCount.setText(cartCnt);
+    }
+
+    static Animation anim;
+
+    public static void notificationDotVisibility(boolean show) {
+        if (show) {
+            notificationText.setVisibility(View.VISIBLE);
+            anim = new AlphaAnimation(0.0f, 1.0f);
+            anim.setDuration(350); //You can manage the blinking time with this parameter
+            anim.setStartOffset(20);
+            anim.setRepeatMode(Animation.REVERSE);
+            anim.setRepeatCount(Animation.INFINITE);
+            notificationText.startAnimation(anim);
+        } else {
+            notificationText.setVisibility(View.GONE);
+        }
     }
 
     @Override

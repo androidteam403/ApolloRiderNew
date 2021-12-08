@@ -1,11 +1,16 @@
 package com.apollo.epos.service;
 
-import android.content.Intent;
+import android.media.MediaPlayer;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.apollo.epos.activity.NewOrderActivity;
+import com.apollo.epos.R;
+import com.apollo.epos.activity.NavigationActivity;
+import com.apollo.epos.db.SessionManager;
+import com.apollo.epos.fragment.dashboard.DashboardFragment;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -18,12 +23,30 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         getSharedPreferences("_", MODE_PRIVATE).edit().putString("fb", s).apply();
     }
 
+    public SessionManager getSessionManager() {
+        return new SessionManager(getApplicationContext());
+    }
+
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
         if (remoteMessage.getNotification() != null) {
             try {
                 if (remoteMessage.getData() != null && remoteMessage.getData().get("uid") != null) {
+
+                    Handler handler = new Handler(Looper.getMainLooper());
+
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            NavigationActivity.notificationDotVisibility(true);
+                            DashboardFragment.newOrderViewVisibility(true);
+                            getSessionManager().setNotificationStatus(true);
+                            MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.notify_sound); // sound is inside res/raw/mysound
+                            mp.start();
+                        }
+                    }, 1000);
+
 //                    String orderNumber = remoteMessage.getData().get("uid");
 //                    Intent intent = new Intent(this, NewOrderActivity.class);
 //                    intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES |
