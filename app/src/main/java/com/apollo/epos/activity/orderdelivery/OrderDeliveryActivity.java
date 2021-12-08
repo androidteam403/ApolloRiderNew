@@ -55,6 +55,7 @@ import com.apollo.epos.activity.CaptureSignatureActivity;
 import com.apollo.epos.activity.ScannerActivity;
 import com.apollo.epos.activity.TrackMapActivity;
 import com.apollo.epos.activity.neworder.model.OrderDetailsResponse;
+import com.apollo.epos.activity.orderdelivery.model.DeliveryFailreReasonsResponse;
 import com.apollo.epos.activity.orderdelivery.model.OrderStatusHitoryListResponse;
 import com.apollo.epos.adapter.CustomReasonAdapter;
 import com.apollo.epos.databinding.ActivityOrderDeliveryBinding;
@@ -265,7 +266,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
     //    @BindView(R.id.finish_activity_img)
 //    protected ImageView finishActivityImg;
     private boolean isOrderDelivered = false;
-    String[] cancelReasons = {"Customer not available.", "Door locked.", "Customer postponed delivery.", "Other."};
+    String[] cancelReasons = {"",""};
     String[] customerTypesList = {"Customer", "Other"};
     private int selectionTag = 0;
     public static final int CAM_REQUEST = 1;
@@ -385,25 +386,6 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
         toolbar.setTitleTextAppearance(this, R.style.ToolbarTextAppearance);
 
 
-        CustomReasonAdapter customUserListAdapter = new CustomReasonAdapter(this, customerTypesList, this);
-        customerTypeSpinner.setAdapter(customUserListAdapter);
-//        customerTypeSpinner.setOnItemSelectedListener(this);
-        customerTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                OrderDeliveryActivity.this.customerNameTypeSinner = customerTypesList[position];
-                if (customerTypesList[position].equals("Other")) {
-                    orderDeliveryBinding.handoverUserName.setVisibility(View.VISIBLE);
-                } else {
-                    orderDeliveryBinding.handoverUserName.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
         RadioGroup rg = (RadioGroup) findViewById(R.id.cash_card_radiogroup);
 
         rg.setOnCheckedChangeListener((group, checkedId) -> {
@@ -696,6 +678,46 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
         checkCallPermissionSetting(orderNotDeliveredPhoneNumber);
     }
 
+    @Override
+    public void onClickNotificationIcon() {
+        onBackPressed();
+    }
+
+    @Override
+    public void onSuccessDeliveryReasonApiCall(DeliveryFailreReasonsResponse deliveryFailreReasonsResponse) {
+        try {
+            cancelReasons = new String[deliveryFailreReasonsResponse.getData().getListData().getRows().size()];
+            for (DeliveryFailreReasonsResponse.Row row : deliveryFailreReasonsResponse.getData().getListData().getRows())
+                cancelReasons[deliveryFailreReasonsResponse.getData().getListData().getRows().indexOf(row)] = row.getName();
+            CustomReasonAdapter customUserListAdapter = new CustomReasonAdapter(this, customerTypesList, this);
+            customerTypeSpinner.setAdapter(customUserListAdapter);
+//        customerTypeSpinner.setOnItemSelectedListener(this);
+            customerTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    OrderDeliveryActivity.this.customerNameTypeSinner = customerTypesList[position];
+                    if (customerTypesList[position].equals("Other")) {
+                        orderDeliveryBinding.handoverUserName.setVisibility(View.VISIBLE);
+                    } else {
+                        orderDeliveryBinding.handoverUserName.setVisibility(View.GONE);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+        } catch (Exception e) {
+            System.out.println("onSuccessDeliveryReasonApiCall:::::::::::::::::::::::::::::::" + e.getMessage());
+        }
+    }
+
+    @Override
+    public void onFailureDeliveryFailureApiCall() {
+
+    }
+
     @OnClick(R.id.signature_pad_parent_layout)
     void onSignaturePadParentLayoutClick() {
         if (selectionTag == 4) {
@@ -710,6 +732,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
         if (selectionTag != 10) {
             Intent intent = new Intent(this, CaptureSignatureActivity.class);
             intent.putExtra("order_number", orderNumber);
+            intent.putExtra("customer_name", this.customerNameTypeSinner.equals("Other") ? orderDeliveryBinding.handoverUserName.getText().toString().trim() : this.customerNameTypeSinner);
             startActivityForResult(intent, SIGNATURE_REQUEST_CODE);
             overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
         }
@@ -731,7 +754,6 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
     @OnClick(R.id.otp_verification_parent_layout)
     void onOtpVerificationParentLayoutClick() {
         if (selectionTag == 3) {
-            selectionTag = 4;
             otpVerificationParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_pending_color));
             otpVerificationImg.setImageDrawable(getDrawable(R.drawable.icon_status_completed));
             otpVerificationChildLayout.setVisibility(View.VISIBLE);
@@ -741,6 +763,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 
     @OnClick(R.id.verify_otp_btn)
     void onVerifyOtpBtnClick() {
+        selectionTag = 4;
         if (pinHiddenEditText.getText().toString().equalsIgnoreCase("0000") || pinHiddenEditText.getText().toString().equalsIgnoreCase(cusPickupVerificationCode)) {
             otpEditTextLayout.setVisibility(View.GONE);
             verifyOtpBtn.setVisibility(View.GONE);
@@ -1429,6 +1452,13 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent != null)
+            orderDeliveryBinding.notificationDot.setVisibility(View.VISIBLE);
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -1463,6 +1493,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 
     @Override
     protected void onResume() {
+        CommonUtils.CURRENT_SCREEN = "OrderDeliveryActivity";
         Hawk.put(LAST_ACTIVITY, getClass().getSimpleName());
         super.onResume();
         if (GPSLocationService.isFromSetting == true) {
@@ -1504,13 +1535,13 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                     this.orderNumber = this.orderDetailsResponse.getData().getOrderNumber();
                     orderDeliveryBinding.orderStatusHeader.setText(this.orderDetailsResponse.getData().getOrderStatus().getName());
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                    String orderDate = orderDetailsResponse.getData().getCreatedTime();
+                    String orderDate = orderDetailsResponse.getData().getDelEtWindo();
                     Date orderDates = formatter.parse(orderDate);
                     long orderDateMills = orderDates.getTime();
                     orderDeliveryBinding.deliveryonDatetime.setText(CommonUtils.getTimeFormatter(orderDateMills));
-                    orderDeliveryBinding.orderNumber.setText(String.valueOf(this.orderDetailsResponse.getData().getOrderNumber()));
-                    orderDeliveryBinding.crateAmount.setText(String.valueOf(this.orderDetailsResponse.getData().getCrateAmount()));
-                    orderDeliveryBinding.paymentType.setText(this.orderDetailsResponse.getData().getPaymentType().getName());
+                    orderDeliveryBinding.orderNumber.setText("#" + String.valueOf(this.orderDetailsResponse.getData().getOrderNumber()));
+//                    orderDeliveryBinding.crateAmount.setText(String.valueOf(this.orderDetailsResponse.getData().getCrateAmount()));
+//                    orderDeliveryBinding.paymentType.setText(this.orderDetailsResponse.getData().getPaymentType().getName());
                     String pickupAddress = orderDetailsResponse.getData().getDeliverApartment() + ", " + orderDetailsResponse.getData().getDeliverStreetName() + ", " + orderDetailsResponse.getData().getDeliverCity() + ", " + orderDetailsResponse.getData().getDeliverState() + ", " + orderDetailsResponse.getData().getDelPincode() + ", " + orderDetailsResponse.getData().getDeliverCountry();
                     String customerAddresss = orderDetailsResponse.getData().getPickupApt() + ", " + orderDetailsResponse.getData().getPickupStreetName() + ", " + orderDetailsResponse.getData().getPickupCity() + ", " + orderDetailsResponse.getData().getPickupState() + ", " + orderDetailsResponse.getData().getPickupPincode() + ", " + orderDetailsResponse.getData().getPickupCountry();
                     this.branPickupVerificationCode = orderDetailsResponse.getData().getBranpickupVerCode();
@@ -1565,12 +1596,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                         orderDeliveryBinding.orderNotDeliveryAddress.setText(customerAddresss);
                         String orderNotDeliveredPhoneNubmber = String.valueOf(this.orderDetailsResponse.getData().getDelPn());
                         orderDeliveryBinding.pickupPhoneNumber.setText("*******" + orderNotDeliveredPhoneNubmber.substring(orderNotDeliveredPhoneNubmber.length() - 3));
-                        if (orderDetailsResponse.getData().getDeliverNotes() != null && orderDetailsResponse.getData().getDeliverNotes().isEmpty()) {
-                            orderDeliveryBinding.orderNotDeliveredInstruction.setVisibility(View.GONE);
-                        } else {
-                            orderDeliveryBinding.orderNotDeliveredInstruction.setVisibility(View.VISIBLE);
-                            orderDeliveryBinding.orderNotDeliveredInstructionText.setText(orderDetailsResponse.getData().getDeliverNotes());
-                        }
+
                         this.pickupPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getDelPn());
                     } else {
                         //pickup address and details
@@ -1607,12 +1633,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                         orderDeliveryBinding.orderNotDeliveryAddress.setText(pickupAddress);
                         String orderNotDeliveredPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getPickupPn());
                         orderDeliveryBinding.orderNotDeliveredPhoneNumber.setText("*******" + orderNotDeliveredPhoneNumber.substring(orderNotDeliveredPhoneNumber.length() - 3));
-                        if (orderDetailsResponse.getData().getPickupNotes() != null && orderDetailsResponse.getData().getPickupNotes().isEmpty()) {
-                            orderDeliveryBinding.orderNotDeliveredInstruction.setVisibility(View.GONE);
-                        } else {
-                            orderDeliveryBinding.orderNotDeliveredInstruction.setVisibility(View.VISIBLE);
-                            orderDeliveryBinding.orderNotDeliveredInstructionText.setText(orderDetailsResponse.getData().getPickupNotes());
-                        }
+
                         this.orderNotDeliveredPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getPickupPn());
                     }
                     orderDeliveryBinding.orderListLayout.removeAllViews();
@@ -1720,8 +1741,13 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                     overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
                 }, 1000);
             } else if (status.equals("order_not_delivered")) {
-                finish();
-                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+                ActivityUtils.hideDialog();
+                orderDeliveryBinding.orderDeliveryProcessImg.setVisibility(View.VISIBLE);
+                orderDeliveryBinding.orderNotDeliveredParentLayout.setVisibility(View.VISIBLE);
+
+
+//                finish();
+//                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
             }
         } catch (Exception e) {
 

@@ -153,7 +153,6 @@
                         android:layout_weight="1"
                         android:fontFamily="@font/roboto_regular"
                         android:gravity="center"
-                        android:text="@string/label_in_trasit"
                         android:textSize="@dimen/text_dimen_12" />
 
                     <TextView
@@ -163,7 +162,6 @@
                         android:layout_weight="1"
                         android:fontFamily="@font/roboto_regular"
                         android:gravity="center"
-                        android:text="@string/label_order_delivered"
                         android:textSize="@dimen/text_dimen_12" />
 
                     <TextView
@@ -173,7 +171,6 @@
                         android:layout_weight="1"
                         android:fontFamily="@font/roboto_regular"
                         android:gravity="center"
-                        android:text="@string/label_cancel_order"
                         android:textSize="@dimen/text_dimen_12"/>
 
                 </LinearLayout>

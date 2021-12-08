@@ -451,13 +451,13 @@ public class OrderDetailsResponse implements Serializable {
         private String pickupLndmrk;
         @SerializedName("pickup_latitude")
         @Expose
-        private Integer pickupLatitude;
+        private double pickupLatitude;
         @SerializedName("pickup_locality")
         @Expose
         private String pickupLocality;
         @SerializedName("pickup_longitude")
         @Expose
-        private Integer pickupLongitude;
+        private double pickupLongitude;
         @SerializedName("pickup_notes")
         @Expose
         private String pickupNotes;
@@ -1007,11 +1007,11 @@ public class OrderDetailsResponse implements Serializable {
             this.pickupLndmrk = pickupLndmrk;
         }
 
-        public Integer getPickupLatitude() {
+        public double getPickupLatitude() {
             return pickupLatitude;
         }
 
-        public void setPickupLatitude(Integer pickupLatitude) {
+        public void setPickupLatitude(double pickupLatitude) {
             this.pickupLatitude = pickupLatitude;
         }
 
@@ -1023,11 +1023,11 @@ public class OrderDetailsResponse implements Serializable {
             this.pickupLocality = pickupLocality;
         }
 
-        public Integer getPickupLongitude() {
+        public double getPickupLongitude() {
             return pickupLongitude;
         }
 
-        public void setPickupLongitude(Integer pickupLongitude) {
+        public void setPickupLongitude(double pickupLongitude) {
             this.pickupLongitude = pickupLongitude;
         }
 

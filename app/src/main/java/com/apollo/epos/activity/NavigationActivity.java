@@ -62,6 +62,7 @@ import com.apollo.epos.fragment.takeneworder.TakeNewOrderFragment;
 import com.apollo.epos.model.NavDrawerModel;
 import com.apollo.epos.service.BatteryLevelLocationService;
 import com.apollo.epos.service.FloatingTouchService;
+import com.apollo.epos.utils.CommonUtils;
 import com.apollo.epos.utils.FragmentUtils;
 import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
@@ -312,13 +313,13 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         header = (ViewGroup) inflater.inflate(R.layout.nav_header_main, mDrawerList, false);
         mDrawerList.addHeaderView(header);
 
-        NavDrawerModel[] drawerItem = new NavDrawerModel[6];
+        NavDrawerModel[] drawerItem = new NavDrawerModel[5];
         drawerItem[0] = new NavDrawerModel(mNavigationDrawerItemTitles[0], false, true);
         drawerItem[1] = new NavDrawerModel(mNavigationDrawerItemTitles[1], false, false);
+//        drawerItem[2] = new NavDrawerModel(mNavigationDrawerItemTitles[2], false, false);
         drawerItem[2] = new NavDrawerModel(mNavigationDrawerItemTitles[2], false, false);
         drawerItem[3] = new NavDrawerModel(mNavigationDrawerItemTitles[3], false, false);
         drawerItem[4] = new NavDrawerModel(mNavigationDrawerItemTitles[4], false, false);
-        drawerItem[5] = new NavDrawerModel(mNavigationDrawerItemTitles[5], false, false);
 //        drawerItem[6] = new NavDrawerModel(mNavigationDrawerItemTitles[6], false, false);
         adapter = new NavigationDrawerAdapter(this, R.layout.nav_item_row, drawerItem);
 
@@ -395,19 +396,19 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                         mCurrentFrag = getString(R.string.menu_my_orders);
                         showFragment(MyOrdersFragment.newInstance(), R.string.menu_my_orders);
                         break;
+//                    case 2:
+//                        mCurrentFrag = getString(R.string.menu_notifications);
+//                        showFragment(NotificationsFragment.newInstance(), R.string.menu_notifications);
+//                        break;
                     case 2:
-                        mCurrentFrag = getString(R.string.menu_notifications);
-                        showFragment(NotificationsFragment.newInstance(), R.string.menu_notifications);
-                        break;
-                    case 3:
                         mCurrentFrag = getString(R.string.menu_profile);
                         showFragment(ProfileFragment.newInstance(), R.string.menu_profile);
                         break;
-                    case 4:
+                    case 3:
                         mCurrentFrag = getString(R.string.menu_change_password);
                         showFragment(ChangePasswordFragment.newInstance(), R.string.menu_change_password);
                         break;
-                    case 5:
+                    case 4:
                         mCurrentFrag = getString(R.string.menu_help);
                         showFragment(HelpFragment.newInstance(), R.string.menu_help);
                         break;
@@ -544,6 +545,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 
     @Override
     protected void onResume() {
+        CommonUtils.CURRENT_SCREEN = "NavigationActivity";
         Hawk.put(LAST_ACTIVITY, getClass().getSimpleName());
         super.onResume();
         startService(new Intent(NavigationActivity.this, FloatingTouchService.class));

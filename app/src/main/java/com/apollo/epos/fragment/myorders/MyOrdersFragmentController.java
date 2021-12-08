@@ -52,7 +52,6 @@ public class MyOrdersFragmentController {
                     ActivityUtils.hideDialog();
                     if (response.body() != null && response.body().getSuccess()) {
                         mListener.onSuccessMyOrdersListApi(response.body());
-
                     } else {
                         mListener.onFailureMyOrdersListApi();
                     }

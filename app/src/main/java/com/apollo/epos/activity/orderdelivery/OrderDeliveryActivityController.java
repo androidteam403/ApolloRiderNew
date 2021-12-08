@@ -7,6 +7,7 @@ import android.util.Log;
 import com.apollo.epos.BuildConfig;
 import com.apollo.epos.activity.neworder.model.OrderDetailsRequest;
 import com.apollo.epos.activity.neworder.model.OrderDetailsResponse;
+import com.apollo.epos.activity.orderdelivery.model.DeliveryFailreReasonsResponse;
 import com.apollo.epos.activity.orderdelivery.model.FileDataResponse;
 import com.apollo.epos.activity.orderdelivery.model.OrderHandoverSaveUpdateRequest;
 import com.apollo.epos.activity.orderdelivery.model.OrderHandoverSaveUpdateResponse;
@@ -66,16 +67,44 @@ public class OrderDeliveryActivityController {
             call.enqueue(new Callback<OrderDetailsResponse>() {
                 @Override
                 public void onResponse(@NotNull Call<OrderDetailsResponse> call, @NotNull Response<OrderDetailsResponse> response) {
-                    ActivityUtils.hideDialog();
                     if (response.body() != null && response.body().getSuccess()) {
                         mListener.onSuccessOrderDetailsApiCall(response.body());
+                        deliveryFailureReasonApiCall();
                     } else {
+                        ActivityUtils.hideDialog();
                         mListener.onFialureMessage("No data found.");
                     }
                 }
 
                 @Override
                 public void onFailure(@NotNull Call<OrderDetailsResponse> call, @NotNull Throwable t) {
+                    ActivityUtils.hideDialog();
+                    mListener.onFialureMessage(t.getMessage());
+                }
+            });
+        } else {
+            mListener.onFialureMessage("Something went wrong.");
+        }
+    }
+
+    public void deliveryFailureReasonApiCall() {
+        if (NetworkUtils.isNetworkConnected(context)) {
+
+            ApiInterface apiInterface = ApiClient.getApiService();
+            Call<DeliveryFailreReasonsResponse> call = apiInterface.DELIVERY_FAILURE_REASONS_API_CALL("Bearer " + new SessionManager(context).getLoginToken());
+            call.enqueue(new Callback<DeliveryFailreReasonsResponse>() {
+                @Override
+                public void onResponse(@NotNull Call<DeliveryFailreReasonsResponse> call, @NotNull Response<DeliveryFailreReasonsResponse> response) {
+                    ActivityUtils.hideDialog();
+                    if (response.body() != null && response.body().isSuccess()) {
+                        mListener.onSuccessDeliveryReasonApiCall(response.body());
+                    } else {
+                        mListener.onFialureMessage("No data found.");
+                    }
+                }
+
+                @Override
+                public void onFailure(@NotNull Call<DeliveryFailreReasonsResponse> call, @NotNull Throwable t) {
                     ActivityUtils.hideDialog();
                     mListener.onFialureMessage(t.getMessage());
                 }

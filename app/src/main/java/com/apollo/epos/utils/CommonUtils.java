@@ -16,6 +16,7 @@ import java.util.Locale;
  */
 public class CommonUtils {
     public static String ORDER_DETAILS_RESPONSE = "ORDER_DETAILS_RESPONSE";
+    public static String CURRENT_SCREEN = null;
 
     public static String getCurrentTimeDate() {
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
@@ -76,7 +77,7 @@ public class CommonUtils {
 
                 } else {
                     //here return like "May 31, 12:00"
-                    String time = String.valueOf( DateFormat.format("MMMM d, HH:mm aa", neededTime));
+                    String time = String.valueOf(DateFormat.format("MMMM d, HH:mm aa", neededTime));
                     String ampm = null;
                     if (time.substring(time.length() - 4).equals("a.m."))
                         ampm = "AM";

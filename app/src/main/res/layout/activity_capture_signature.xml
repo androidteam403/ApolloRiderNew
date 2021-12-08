@@ -8,49 +8,43 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/twenty_dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:weightSum="1">
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal">
 
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:layout_marginEnd="@dimen/five_dp"
-                android:layout_weight="0.4"
                 android:fontFamily="@font/roboto_regular"
-                android:gravity="end"
                 android:text="@string/label_order_no"
                 android:textColor="@color/colorBlack"
                 android:textSize="@dimen/text_dimen_12" />
 
             <TextView
                 android:id="@+id/order_number"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.6"
                 android:fontFamily="@font/roboto_bold"
                 android:textColor="@color/colorBlack"
                 android:textSize="@dimen/text_dimen_17" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/five_dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:weightSum="1">
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal">
 
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:layout_marginEnd="@dimen/five_dp"
-                android:layout_weight="0.4"
                 android:fontFamily="@font/roboto_regular"
                 android:gravity="end"
                 android:text="@string/label_customer_name"
@@ -59,11 +53,9 @@
 
             <TextView
                 android:id="@+id/customer_name"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.6"
                 android:fontFamily="@font/roboto_bold"
-                android:text="Muddraboina Naveen"
                 android:textColor="@color/colorBlack"
                 android:textSize="@dimen/text_dimen_17" />
         </LinearLayout>

@@ -7,6 +7,7 @@ import com.apollo.epos.activity.login.model.SaveUserDeviceInfoRequest;
 import com.apollo.epos.activity.login.model.SaveUserDeviceInfoResponse;
 import com.apollo.epos.activity.neworder.model.OrderDetailsRequest;
 import com.apollo.epos.activity.neworder.model.OrderDetailsResponse;
+import com.apollo.epos.activity.orderdelivery.model.DeliveryFailreReasonsResponse;
 import com.apollo.epos.activity.orderdelivery.model.FileDataResponse;
 import com.apollo.epos.activity.orderdelivery.model.OrderHandoverSaveUpdateRequest;
 import com.apollo.epos.activity.orderdelivery.model.OrderHandoverSaveUpdateResponse;
@@ -54,6 +55,9 @@ public interface ApiInterface {
 
     @POST("api/orders/select/my-order-select")
     Call<OrderDetailsResponse> ORDER_DETAILS_API_CALL(@Header("authorization") String token, @Body OrderDetailsRequest orderDetailsRequest);
+
+    @POST("api/choose-data/delivery_failure_reasons")
+    Call<DeliveryFailreReasonsResponse> DELIVERY_FAILURE_REASONS_API_CALL(@Header("authorization") String token);
 
     @POST("api/order_status_his/list/order-status-history-list")
     Call<OrderStatusHitoryListResponse> ORDER_STATUS_HISTORY_LIST_API_CALL(@Header("authorization") String token, @Body OrderStatusHistoryListRequest orderStatusHistoryListRequest);

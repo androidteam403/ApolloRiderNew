@@ -9,7 +9,7 @@
         <!--        <item>New Order</item>-->
         <item>Dashboard</item>
         <item>My Orders</item>
-        <item>Notifications</item>
+<!--        <item>Notifications</item>-->
         <item>Profile</item>
         <item>Change Password</item>
         <item>Help</item>
@@ -213,5 +213,8 @@
     <string name="label_cancel_order">Cancel Order</string>
     <string name="label_no_orders_found">No Orders Found</string>
     <string name="label_type_return">R</string>
+    <string name="label_customer_name_">Customer Name</string>
+    <string name="label_pickup_instructions">Pickup Instructions</string>
+    <string name="label_delivery_instruction">Delivery Instructions</string>
 
 </resources>

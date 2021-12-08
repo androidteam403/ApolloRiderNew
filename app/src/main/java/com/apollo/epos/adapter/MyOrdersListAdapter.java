@@ -2,7 +2,6 @@ package com.apollo.epos.adapter;
 
 import android.app.Activity;
 import android.os.Build;
-import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,6 @@ import com.apollo.epos.utils.CommonUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -45,28 +43,28 @@ public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapte
     public class MyViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.order_id)
         TextView orderId;
-        @BindView(R.id.order_amount)
-        TextView orderAmount;
-        @BindView(R.id.order_payment_type)
-        TextView orderPaymentType;
+//        @BindView(R.id.order_amount)
+//        TextView orderAmount;
+//        @BindView(R.id.order_payment_type)
+//        TextView orderPaymentType;
         @BindView(R.id.pharmacy_address)
         TextView pharmacyAddress;
         @BindView(R.id.customer_name)
         TextView customerName;
         @BindView(R.id.customer_address)
         TextView customerAddress;
-        @BindView(R.id.order_status)
-        TextView orderStatus;
-        @BindView(R.id.order_date_text)
-        TextView orderDateText;
+//        @BindView(R.id.order_status)
+//        TextView orderStatus;
+//        @BindView(R.id.order_date_text)
+//        TextView orderDateText;
         @BindView(R.id.order_date)
         TextView orderDate;
-        @BindView(R.id.travelled_distance)
-        TextView travelledDistance;
-        @BindView(R.id.status_type_icon)
-        ImageView statusTypeIcon;
-        @BindView(R.id.order_status_layout)
-        LinearLayout orderStatusLayout;
+//        @BindView(R.id.travelled_distance)
+//        TextView travelledDistance;
+//        @BindView(R.id.status_type_icon)
+//        ImageView statusTypeIcon;
+//        @BindView(R.id.order_status_layout)
+//        LinearLayout orderStatusLayout;
         @BindView(R.id.cancelled_reason_layout)
         LinearLayout cancelledReasonLayout;
         @BindView(R.id.pharma_user_address_layout)
@@ -77,18 +75,18 @@ public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapte
         TextView newOrderCustomerName;
         @BindView(R.id.new_order_customer_address)
         TextView newOrderCustomerAddress;
-        @BindView(R.id.divider_view_one)
-        View dividerViewOne;
-        @BindView(R.id.divider_view_two)
-        View dividerViewTwo;
-        @BindView(R.id.divider_view_three)
-        View dividerViewThree;
+//        @BindView(R.id.divider_view_one)
+//        View dividerViewOne;
+//        @BindView(R.id.divider_view_two)
+//        View dividerViewTwo;
+//        @BindView(R.id.divider_view_three)
+//        View dividerViewThree;
         @BindView(R.id.divider_view_four)
         View dividerViewFour;
-        @BindView(R.id.divider_view_five)
-        View dividerViewFive;
-        @BindView(R.id.divider_view_six)
-        View dividerViewSix;
+//        @BindView(R.id.divider_view_five)
+//        View dividerViewFive;
+//        @BindView(R.id.divider_view_six)
+//        View dividerViewSix;
         @BindView(R.id.apollo_phamrmacy)
         TextView apolloPharmacyName;
         @BindView(R.id.pickup_landmark)
@@ -113,9 +111,9 @@ public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapte
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         MyOrdersListResponse.Row item = myOrdersList.get(position);
-        holder.orderId.setText(item.getOrderNumber());
-        holder.orderAmount.setText(String.valueOf(item.getCrateAmount()));
-        holder.orderPaymentType.setText(item.getPaymentType().getName());
+        holder.orderId.setText("#" + item.getOrderNumber());
+//        holder.orderAmount.setText(String.valueOf(item.getCrateAmount()));
+//        holder.orderPaymentType.setText(item.getPaymentType().getName());
         String pickupAddress = item.getDeliverApartment() + ", " + item.getDeliverStreetName() + ", " + item.getDeliverCity() + ", " + item.getDeliverState() + ", " + item.getDelPincode() + ", " + item.getDeliverCountry();
         String customerAddress = item.getPickupApt() + ", " + item.getPickupStreetName() + ", " + item.getPickupCity() + ", " + item.getPickupState() + ", " + item.getPickupPincode() + ", " + item.getPickupCountry();
         if (item.getOrderState().getName().equals("RETURN")) {
@@ -138,21 +136,21 @@ public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapte
 
 //        holder.newOrderCustomerName.setText(item.getCustomerName());
 //        holder.newOrderCustomerAddress.setText(item.getCustomerAddress());
-        holder.orderStatus.setText(item.getOrderStatus().getName());
+//        holder.orderStatus.setText(item.getOrderStatus().getName());
 //        if (item.getDeliveryStatus().equalsIgnoreCase("Delivered")) {
         holder.pharmaUserAddressLayout.setVisibility(View.VISIBLE);
         holder.userAddressLayout.setVisibility(View.GONE);
-        holder.orderStatusLayout.setClickable(false);
+//        holder.orderStatusLayout.setClickable(false);
 //        holder.orderDateText.setText(activity.getResources().getString(R.string.label_delivered_on));
-        holder.orderStatusLayout.setBackgroundColor(activity.getColor(R.color.order_delivered_bg));
+//        holder.orderStatusLayout.setBackgroundColor(activity.getColor(R.color.order_delivered_bg));
         holder.cancelledReasonLayout.setVisibility(View.GONE);
-        holder.dividerViewOne.setBackgroundColor(activity.getColor(R.color.order_item_divider_color));
-        holder.dividerViewTwo.setBackgroundColor(activity.getColor(R.color.order_item_divider_color));
-        holder.dividerViewThree.setBackgroundColor(activity.getColor(R.color.order_item_divider_color));
+//        holder.dividerViewOne.setBackgroundColor(activity.getColor(R.color.order_item_divider_color));
+//        holder.dividerViewTwo.setBackgroundColor(activity.getColor(R.color.order_item_divider_color));
+//        holder.dividerViewThree.setBackgroundColor(activity.getColor(R.color.order_item_divider_color));
         holder.dividerViewFour.setBackgroundColor(activity.getColor(R.color.order_item_divider_color));
-        holder.dividerViewFive.setBackgroundColor(activity.getColor(R.color.order_item_divider_color));
-        holder.dividerViewSix.setBackgroundColor(activity.getColor(R.color.order_item_divider_color));
-        holder.statusTypeIcon.setImageDrawable(activity.getDrawable(R.drawable.icon_delivered_order));
+//        holder.dividerViewFive.setBackgroundColor(activity.getColor(R.color.order_item_divider_color));
+//        holder.dividerViewSix.setBackgroundColor(activity.getColor(R.color.order_item_divider_color));
+//        holder.statusTypeIcon.setImageDrawable(activity.getDrawable(R.drawable.icon_delivered_order));
 //        } else if (item.getDeliveryStatus().equalsIgnoreCase("New Order")) {
 //            holder.pharmaUserAddressLayout.setVisibility(View.GONE);
 //            holder.userAddressLayout.setVisibility(View.VISIBLE);
@@ -197,7 +195,7 @@ public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapte
             String currentDate = CommonUtils.getCurrentTimeDate();
             Date currentDates = formatter.parse(currentDate);
 
-            String orderDate = item.getCreatedTime();
+            String orderDate = item.getDelEtWindo();
             Date orderDates = formatter.parse(orderDate);
             long orderDateMills = orderDates.getTime();
             holder.orderDate.setText(CommonUtils.getTimeFormatter(orderDateMills));

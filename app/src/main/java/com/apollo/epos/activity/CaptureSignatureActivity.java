@@ -34,8 +34,10 @@ public class CaptureSignatureActivity extends BaseActivity {
         captureSignatureBinding = DataBindingUtil.setContentView(this, R.layout.activity_capture_signature);
         ButterKnife.bind(this);
         if (getIntent() != null) {
-            String orderNumber = (String) getIntent().getStringExtra("orderNumber");
+            String orderNumber = (String) getIntent().getStringExtra("order_number");
             captureSignatureBinding.orderNumber.setText(orderNumber);
+            String customerName = (String) getIntent().getStringExtra("customer_name");
+            captureSignatureBinding.customerName.setText(customerName);
         }
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);

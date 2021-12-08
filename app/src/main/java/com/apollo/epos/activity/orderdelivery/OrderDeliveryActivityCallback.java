@@ -3,6 +3,7 @@ package com.apollo.epos.activity.orderdelivery;
 import android.graphics.Bitmap;
 
 import com.apollo.epos.activity.neworder.model.OrderDetailsResponse;
+import com.apollo.epos.activity.orderdelivery.model.DeliveryFailreReasonsResponse;
 import com.apollo.epos.activity.orderdelivery.model.OrderStatusHitoryListResponse;
 
 public interface OrderDeliveryActivityCallback {
@@ -44,4 +45,10 @@ public interface OrderDeliveryActivityCallback {
     void onFailureOrderStatusHistoryListApiCall(String message);
 
     void onClickOrderNotDeliveredCallIcon();
+
+    void onClickNotificationIcon();
+
+    void onSuccessDeliveryReasonApiCall(DeliveryFailreReasonsResponse deliveryFailreReasonsResponse);
+
+    void onFailureDeliveryFailureApiCall();
 }

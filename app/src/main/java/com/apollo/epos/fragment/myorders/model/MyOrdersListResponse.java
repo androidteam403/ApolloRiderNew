@@ -578,6 +578,22 @@ public class MyOrdersListResponse {
         @SerializedName("created_time")
         @Expose
         private String createdTime;
+        @SerializedName("pickup_st_windo")
+        @Expose
+        private String pickupStWindo;
+        @SerializedName("del_st_windo")
+        @Expose
+        private String delStWindo;
+        @SerializedName("del_et_windo")
+        @Expose
+        private String delEtWindo;
+        @SerializedName("pickup_et_windo")
+        @Expose
+        private String pickupEtWindo;
+
+
+
+
 
         public String getUid() {
             return uid;
@@ -907,5 +923,36 @@ public class MyOrdersListResponse {
             this.createdTime = createdTime;
         }
 
+        public String getPickupStWindo() {
+            return pickupStWindo;
+        }
+
+        public void setPickupStWindo(String pickupStWindo) {
+            this.pickupStWindo = pickupStWindo;
+        }
+
+        public String getDelStWindo() {
+            return delStWindo;
+        }
+
+        public void setDelStWindo(String delStWindo) {
+            this.delStWindo = delStWindo;
+        }
+
+        public String getDelEtWindo() {
+            return delEtWindo;
+        }
+
+        public void setDelEtWindo(String delEtWindo) {
+            this.delEtWindo = delEtWindo;
+        }
+
+        public String getPickupEtWindo() {
+            return pickupEtWindo;
+        }
+
+        public void setPickupEtWindo(String pickupEtWindo) {
+            this.pickupEtWindo = pickupEtWindo;
+        }
     }
 }
