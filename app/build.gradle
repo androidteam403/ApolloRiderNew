@@ -137,10 +137,10 @@ dependencies {
 }
 
 /**
- * prod base url          :::   https://apis.v35.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider
+ * prod base url          :::   https://apis.v35.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/
  * prod upload base url   :::   https://apis.v35.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/
  *
- * dev base url           :::  https://apis.v35.dev.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider
+ * dev base url           :::   https://apis.v35.dev.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/
  * dev upload base url    :::   https://apis.v35.dev.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/
  *
  */

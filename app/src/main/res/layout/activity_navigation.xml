@@ -59,19 +59,34 @@
             android:choiceMode="singleChoice"
             android:divider="@null" />
 
-        <TextView
-            android:id="@+id/logout_btn"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/forty_five_dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_gravity="bottom|center"
-            android:background="@drawable/btn_logout_ripple_effect"
-            android:fontFamily="@font/roboto_bold"
-            android:gravity="center"
-            android:text="@string/menu_logout"
-            android:textAllCaps="true"
-            android:textColor="@color/colorWhite"
-            android:textSize="@dimen/text_dimen_14" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/app_version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_regular"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/logout_btn"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/forty_five_dp"
+                android:layout_gravity="bottom|center"
+                android:layout_marginTop="@dimen/twenty_dp"
+                android:background="@drawable/btn_logout_ripple_effect"
+                android:fontFamily="@font/roboto_bold"
+                android:gravity="center"
+                android:text="@string/menu_logout"
+                android:textAllCaps="true"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_dimen_14" />
+        </LinearLayout>
     </RelativeLayout>
 
     <LinearLayout
@@ -100,7 +115,6 @@
             android:background="@drawable/btn_signin_ripple_effect"
             android:fontFamily="@font/roboto_bold"
             android:text="Location permission" />
-
 
 
     </LinearLayout>

@@ -49,6 +49,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import com.apollo.epos.BuildConfig;
 import com.apollo.epos.R;
 import com.apollo.epos.activity.login.LoginActivity;
 import com.apollo.epos.adapter.NavigationDrawerAdapter;
@@ -340,7 +341,8 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
             selectItem(0);
 //        ((NavigationDrawerAdapter) ((HeaderViewListAdapter) mDrawerList.getAdapter()).getWrappedAdapter()).notifyDataSetChanged();
         adapter.notifyDataSetChanged();
-
+        TextView appVersion = findViewById(R.id.app_version);
+        appVersion.setText("V "+BuildConfig.VERSION_NAME);
         TextView logoutText = findViewById(R.id.logout_btn);
         logoutText.setOnClickListener(v -> {
             mDrawerLayout.closeDrawer(GravityCompat.START);

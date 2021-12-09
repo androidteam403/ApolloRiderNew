@@ -248,9 +248,12 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
         if (getSessionManager().getRiderActiveStatus().equals("Offline")) {
             userStatus.setText("Offline");
             sw.setChecked(false);
+            new DashboardFragmentController(getContext(), this).riderUpdateStauts(getSessionManager().getLoginToken(), "Offline");
+
         } else {
             userStatus.setText("Online");
             sw.setChecked(true);
+            new DashboardFragmentController(getContext(), this).riderUpdateStauts(getSessionManager().getLoginToken(), "Online");
         }
 
         sw.setOnCheckedChangeListener((buttonView, isChecked) -> {
