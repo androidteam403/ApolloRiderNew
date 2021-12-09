@@ -9,8 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -23,14 +21,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.apollo.epos.R;
 import com.apollo.epos.adapter.CustomReasonAdapter;
 import com.apollo.epos.base.BaseFragment;
+import com.apollo.epos.databinding.BottomSheetBinding;
 import com.apollo.epos.databinding.DialogZoomImageBinding;
 import com.apollo.epos.databinding.FragmentProfileBinding;
 import com.apollo.epos.fragment.profile.adapter.IdentityProofsAdapter;
+import com.apollo.epos.fragment.profile.model.ComplaintReasonsListResponse;
 import com.apollo.epos.model.GetRiderProfileResponse;
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,6 +43,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentCall
     @BindView(R.id.user_image)
     ImageView userImage;
     String[] complaintReasons = {"Wrong phone number", "Vehicle registration number is wrong", "Update RC", "Wrong bank account number"};
+    List<ComplaintReasonsListResponse.Row> complaintReasonsList = new ArrayList<>();
 
     public static ProfileFragment newInstance() {
         return new ProfileFragment();
@@ -70,6 +72,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentCall
     }
 
     private void setup() {
+        new ProfileFragmentController(mActivity, this).getComplaintReasonsListApiCall();
         if (getSessionManager().getRiderProfileResponse() != null) {
             onSuccessGetProfileDetailsApi(getSessionManager().getRiderProfileResponse());
         } else {
@@ -77,30 +80,39 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentCall
         }
     }
 
+    private String complaintReason;
+
     @OnClick(R.id.btn_complaint_box)
     void onComplaintClick() {
-        View dialogView = getLayoutInflater().inflate(R.layout.bottom_sheet, null);
         BottomSheetDialog dialog = new BottomSheetDialog(mActivity);
-        dialog.setContentView(dialogView);
+        BottomSheetBinding bottomSheetBinding = DataBindingUtil.inflate(LayoutInflater.from(mActivity), R.layout.bottom_sheet, null, false);
+        dialog.setContentView(bottomSheetBinding.getRoot());
         dialog.setCancelable(false);
         dialog.show();
 
-        TextView headerText = dialogView.findViewById(R.id.sheet_header);
-        headerText.setText(getResources().getString(R.string.label_order_complaint));
-        TextView cancelHeaderText = dialogView.findViewById(R.id.cancel_order_header);
-        cancelHeaderText.setText(getResources().getString(R.string.label_complaint_reason_header));
-        ImageView closeDialog = dialogView.findViewById(R.id.close_icon);
-        closeDialog.setOnClickListener(v -> {
+        bottomSheetBinding.sheetHeader.setText(getResources().getString(R.string.label_order_complaint));
+        bottomSheetBinding.cancelOrderHeader.setText(getResources().getString(R.string.label_complaint_reason_header));
+        bottomSheetBinding.closeIcon.setOnClickListener(v -> {
             dialog.dismiss();
         });
+        bottomSheetBinding.cancelOrderSendBtn.setOnClickListener(v -> {
+            if (complaintReasonsList != null && complaintReasonsList.size() > 0) {
+                for (ComplaintReasonsListResponse.Row row : complaintReasonsList) {
+                    if (row.getName().equals(complaintReason)) {
+                        new ProfileFragmentController(mActivity, ProfileFragment.this).riderComplaintSaveUpdateApiCall(row.getUid(), bottomSheetBinding.comment.getText().toString().trim());
+                        dialog.dismiss();
+                        break;
+                    }
+                }
+            }
 
-        Spinner reasonSpinner = dialogView.findViewById(R.id.rejectReasonSpinner);
+        });
         CustomReasonAdapter customAdapter = new CustomReasonAdapter(mActivity, complaintReasons, null);
-        reasonSpinner.setAdapter(customAdapter);
-        reasonSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        bottomSheetBinding.rejectReasonSpinner.setAdapter(customAdapter);
+        bottomSheetBinding.rejectReasonSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                Toast.makeText(mActivity," "+reasonSpinner[position])
+                complaintReason = complaintReasons[position];
             }
 
             @Override
@@ -108,6 +120,11 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentCall
 
             }
         });
+    }
+
+    @Override
+    public void onFialureMessage(String message) {
+        Toast.makeText(mActivity, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -169,5 +186,23 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentCall
             dialog.dismiss();
         });
         dialog.show();
+    }
+
+    @Override
+    public void onSuccessComplaintSaveUpdate(String message) {
+        Toast.makeText(mActivity, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSuccessComplaintReasonsListApiCall(ComplaintReasonsListResponse complaintReasonsListResponse) {
+        try {
+            complaintReasons = new String[complaintReasonsListResponse.getData().getListData().getRows().size()];
+            this.complaintReasonsList = complaintReasonsListResponse.getData().getListData().getRows();
+            for (ComplaintReasonsListResponse.Row row : complaintReasonsListResponse.getData().getListData().getRows())
+                complaintReasons[complaintReasonsListResponse.getData().getListData().getRows().indexOf(row)] = row.getName();
+
+        } catch (Exception e) {
+            System.out.println("onSuccessDeliveryReasonApiCall:::::::::::::::::::::::::::::::" + e.getMessage());
+        }
     }
 }

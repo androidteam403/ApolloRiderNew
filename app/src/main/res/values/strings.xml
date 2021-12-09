@@ -9,7 +9,7 @@
         <!--        <item>New Order</item>-->
         <item>Dashboard</item>
         <item>My Orders</item>
-<!--        <item>Notifications</item>-->
+        <!--        <item>Notifications</item>-->
         <item>Profile</item>
         <item>Change Password</item>
         <item>Help</item>
@@ -21,7 +21,7 @@
         <item>New Order</item>
         <item>Cancelled</item>
     </string-array>
-
+    <string name="label_rupee_symbol">\u20B9</string>
     <string name="menu_take_order">New Order</string>
     <string name="menu_dashboard">Dashboard</string>
     <string name="menu_my_orders">My Orders</string>
@@ -159,7 +159,7 @@
     <string name="label_resend_otp">Resend OTP</string>
     <string name="label_invalid_otp">Invalid OTP, try again</string>
     <string name="label_otp_verification_completed">OTP Verification completed\nSuccessfully</string>
-    <string name="label_order_completed_successfully">Order Completed\nSuccessfully</string>
+    <string name="label_order_completed_successfully">Order Completed Successfully</string>
     <string name="label_item_name">Item Name</string>
     <string name="label_total">Total</string>
     <string name="label_total_text">total:</string>

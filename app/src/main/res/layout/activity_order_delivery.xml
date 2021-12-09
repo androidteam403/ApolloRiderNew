@@ -68,8 +68,8 @@
                             android:id="@+id/icon_back"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:contentDescription="@string/app_name"
                             android:layout_centerVertical="true"
+                            android:contentDescription="@string/app_name"
                             android:onClick="@{()-> callback.onClickBackIcon()}"
                             android:src="@drawable/icon_back" />
 
@@ -94,10 +94,12 @@
                                     android:textSize="@dimen/text_dimen_12" />
 
                             </LinearLayout>
+
                             <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:orientation="horizontal">
+
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -105,6 +107,7 @@
                                     android:text="Delivery by: "
                                     android:textColor="@color/colorWhite"
                                     android:textSize="@dimen/text_dimen_10" />
+
                                 <TextView
                                     android:id="@+id/deliveryon_datetime"
                                     android:layout_width="wrap_content"
@@ -119,6 +122,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:orientation="horizontal">
+
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -126,6 +130,7 @@
                                     android:text="Status: "
                                     android:textColor="@color/colorWhite"
                                     android:textSize="@dimen/text_dimen_10" />
+
                                 <TextView
                                     android:id="@+id/order_status_header"
                                     android:layout_width="wrap_content"
@@ -1333,7 +1338,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/five_dp"
-                        android:layout_marginTop="@dimen/ten_dp"
                         android:layout_marginEnd="@dimen/fifteen_dp"
                         android:baselineAligned="false"
                         android:orientation="horizontal"
@@ -1383,6 +1387,7 @@
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/ten_dp"
                             android:layout_weight="0.9"
                             android:orientation="vertical">
 
@@ -2201,6 +2206,7 @@
 
 
                                 <LinearLayout
+                                    android:id="@+id/collect_payment"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="@dimen/eight_dp"
@@ -2238,15 +2244,32 @@
                                                 android:contentDescription="@string/app_name"
                                                 android:src="@drawable/icon_status_pending" />
 
-                                            <TextView
-                                                android:layout_width="wrap_content"
+                                            <LinearLayout
+                                                android:layout_width="match_parent"
                                                 android:layout_height="wrap_content"
-                                                android:layout_centerVertical="true"
-                                                android:fontFamily="@font/roboto_bold"
-                                                android:text="4. Collect Payment"
-                                                android:textColor="@color/colorWhite"
-                                                android:textSize="@dimen/text_dimen_13"
-                                                tools:ignore="RelativeOverlap" />
+                                                android:orientation="horizontal">
+
+                                                <TextView
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:layout_centerVertical="true"
+                                                    android:fontFamily="@font/roboto_bold"
+                                                    android:text="4. Collect Payment"
+                                                    android:textColor="@color/colorWhite"
+                                                    android:textSize="@dimen/text_dimen_13"
+                                                    tools:ignore="RelativeOverlap" />
+
+                                                <TextView
+                                                    android:id="@+id/total_amount"
+                                                    android:layout_width="match_parent"
+                                                    android:layout_height="wrap_content"
+                                                    android:layout_marginEnd="@dimen/fifty_five_dp"
+                                                    android:fontFamily="@font/roboto_bold"
+                                                    android:gravity="end"
+                                                    android:text="555.00"
+                                                    android:textColor="@color/colorWhite"
+                                                    android:textSize="@dimen/text_dimen_13" />
+                                            </LinearLayout>
                                         </RelativeLayout>
 
                                         <LinearLayout
@@ -2351,6 +2374,7 @@
                                                 android:src="@drawable/icon_status_pending" />
 
                                             <TextView
+                                                android:id="@+id/completed_delivery_text"
                                                 android:layout_width="wrap_content"
                                                 android:layout_height="wrap_content"
                                                 android:layout_centerVertical="true"
@@ -2368,25 +2392,42 @@
                                             android:layout_marginTop="@dimen/ten_dp"
                                             android:layout_marginBottom="@dimen/ten_dp"
                                             android:gravity="center"
-                                            android:orientation="horizontal"
+                                            android:orientation="vertical"
                                             android:visibility="gone">
 
-                                            <ImageView
-                                                android:layout_width="@dimen/thirty_five_dp"
-                                                android:layout_height="@dimen/thirty_five_dp"
-                                                android:layout_gravity="center"
-                                                android:layout_marginEnd="@dimen/ten_dp"
-                                                android:contentDescription="@string/app_name"
-                                                android:src="@drawable/icon_order_delivered" />
+                                            <LinearLayout
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:gravity="center"
+                                                android:orientation="horizontal">
+
+                                                <ImageView
+                                                    android:layout_width="@dimen/twenty_five_dp"
+                                                    android:layout_height="@dimen/twenty_five_dp"
+                                                    android:layout_gravity="center"
+                                                    android:layout_marginEnd="@dimen/ten_dp"
+                                                    android:contentDescription="@string/app_name"
+                                                    android:src="@drawable/icon_order_delivered" />
+
+                                                <TextView
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:layout_gravity="center"
+                                                    android:fontFamily="@font/roboto_bold"
+                                                    android:text="@string/label_order_completed_successfully"
+                                                    android:textColor="@color/colorWhite"
+                                                    android:textSize="@dimen/text_dimen_13" />
+                                            </LinearLayout>
 
                                             <TextView
+                                                android:id="@+id/order_completed_successfully_date_and_time"
                                                 android:layout_width="wrap_content"
                                                 android:layout_height="wrap_content"
                                                 android:layout_gravity="center"
                                                 android:fontFamily="@font/roboto_bold"
-                                                android:text="@string/label_order_completed_successfully"
                                                 android:textColor="@color/colorWhite"
-                                                android:textSize="@dimen/text_dimen_15" />
+                                                android:textSize="@dimen/text_dimen_12" />
+
                                         </LinearLayout>
                                     </LinearLayout>
                                 </LinearLayout>
@@ -2550,6 +2591,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:background="@color/order_status_pending_color"
+                                    android:onClick="@{()-> callback.onClickCancelledReachedtheStore()}"
                                     android:orientation="vertical"
                                     android:padding="@dimen/seven_dp">
 
@@ -2597,6 +2639,273 @@
                                     </LinearLayout>
                                 </LinearLayout>
                             </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/cancelled_otp_verification_parent_layout_parent"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/eight_dp"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="@dimen/fifteen_dp"
+                                    android:layout_height="@dimen/thirty_two_dp"
+                                    android:background="@drawable/horizontal_dotted_line"
+                                    android:contentDescription="@string/app_name"
+                                    android:hardwareAccelerated="false"
+                                    android:layerType="software" />
+
+                                <LinearLayout
+                                    android:id="@+id/cancelled_otp_verification_parent_layout"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:background="@color/order_status_pending_color"
+                                    android:onClick="@{()-> callback.onClickCancelledOtpVerificationParentLayout()}"
+                                    android:orientation="vertical"
+                                    android:padding="@dimen/seven_dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content">
+
+                                        <ImageView
+                                            android:id="@+id/cancelled_otp_verification_img"
+                                            android:layout_width="@dimen/eighteen_dp"
+                                            android:layout_height="@dimen/fifteen_dp"
+                                            android:layout_alignParentEnd="true"
+                                            android:layout_centerVertical="true"
+                                            android:layout_gravity="end"
+                                            android:contentDescription="@string/app_name"
+                                            android:src="@drawable/icon_status_pending" />
+
+                                        <TextView
+                                            android:id="@+id/cancelled_otp_verify_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerVertical="true"
+                                            android:fontFamily="@font/roboto_bold"
+                                            android:text="2. Return otp verify"
+                                            android:textColor="@color/colorWhite"
+                                            android:textSize="@dimen/text_dimen_13" />
+                                    </RelativeLayout>
+
+                                    <LinearLayout
+                                        android:id="@+id/cancelled_otp_verification_child_layout_edge"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:animateLayoutChanges="true"
+                                        android:orientation="vertical">
+
+                                        <LinearLayout
+                                            android:id="@+id/cancelled_otp_verification_child_layout"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="@dimen/fifteen_dp"
+                                            android:layout_marginTop="@dimen/five_dp"
+                                            android:layout_marginEnd="@dimen/ten_dp"
+                                            android:layout_marginBottom="@dimen/five_dp"
+                                            android:orientation="vertical"
+                                            android:visibility="gone">
+
+                                            <LinearLayout
+                                                android:id="@+id/cancelled_otp_editText_layout"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="@dimen/forty_five_dp"
+                                                android:layout_gravity="center"
+                                                android:layout_marginStart="@dimen/twenty_five_dp"
+                                                android:layout_marginTop="@dimen/five_dp"
+                                                android:layout_marginEnd="@dimen/thirty_dp"
+                                                android:background="@drawable/otp_bg"
+                                                android:gravity="center"
+                                                android:orientation="horizontal"
+                                                android:visibility="visible"
+                                                android:weightSum="1.5">
+
+                                                <EditText
+                                                    android:id="@+id/cancelled_opt_num1"
+                                                    style="@style/otp_editText_style"
+                                                    android:layout_width="0dp"
+                                                    android:layout_height="wrap_content"
+                                                    android:layout_weight="0.25"
+                                                    android:backgroundTint="@color/dashboard_text_color"
+                                                    android:fontFamily="@font/roboto_regular"
+                                                    android:text=""
+                                                    android:textColorHint="@color/colorWhite" />
+
+                                                <EditText
+                                                    android:id="@+id/cancelled_opt_num2"
+                                                    style="@style/otp_editText_style"
+                                                    android:layout_width="0dp"
+                                                    android:layout_height="wrap_content"
+                                                    android:layout_weight="0.25"
+                                                    android:backgroundTint="@color/dashboard_text_color"
+                                                    android:fontFamily="@font/roboto_regular"
+                                                    android:text=""
+                                                    android:textColorHint="@color/colorWhite" />
+
+                                                <EditText
+                                                    android:id="@+id/cancelled_opt_num3"
+                                                    style="@style/otp_editText_style"
+                                                    android:layout_width="0dp"
+                                                    android:layout_height="wrap_content"
+                                                    android:layout_weight="0.25"
+                                                    android:backgroundTint="@color/dashboard_text_color"
+                                                    android:fontFamily="@font/roboto_regular"
+                                                    android:text=""
+                                                    android:textColorHint="@color/colorWhite" />
+
+                                                <EditText
+                                                    android:id="@+id/cancelled_opt_num4"
+                                                    style="@style/otp_editText_style"
+                                                    android:layout_width="0dp"
+                                                    android:layout_height="wrap_content"
+                                                    android:layout_weight="0.25"
+                                                    android:backgroundTint="@color/dashboard_text_color"
+                                                    android:fontFamily="@font/roboto_regular"
+                                                    android:text=""
+                                                    android:textColorHint="@color/colorWhite" />
+
+                                            </LinearLayout>
+
+                                            <EditText
+                                                android:id="@+id/cancelled_pin_hidden_edittext"
+                                                android:layout_width="@dimen/one_dp"
+                                                android:layout_height="@dimen/one_dp"
+                                                android:layout_gravity="center_horizontal"
+                                                android:background="@null"
+                                                android:cursorVisible="false"
+                                                android:fontFamily="@font/roboto_regular"
+                                                android:gravity="center_horizontal"
+                                                android:inputType="number"
+                                                android:maxLength="4"
+                                                android:password="true"
+                                                android:textColor="#00000000" />
+
+                                            <TextView
+                                                android:id="@+id/cancelled_verify_otp_btn"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_gravity="center"
+                                                android:layout_marginTop="@dimen/ten_dp"
+                                                android:background="@drawable/verify_otp_error_bg"
+                                                android:fontFamily="@font/roboto_bold"
+                                                android:onClick="@{()-> callback.onClickCancelledVerifyOtp()}"
+                                                android:text="@string/label_verify_otp"
+                                                android:textColor="@color/colorWhite"
+                                                android:textSize="@dimen/text_dimen_13"
+                                                android:visibility="visible" />
+
+                                            <TextView
+                                                android:id="@+id/cancelled_verified_otp_text"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_marginTop="@dimen/four_dp"
+                                                android:fontFamily="@font/roboto_bold"
+                                                android:text="@string/label_otp_verification_completed"
+                                                android:textColor="@color/colorWhite"
+                                                android:textSize="@dimen/text_dimen_15"
+                                                android:visibility="gone" />
+                                        </LinearLayout>
+                                    </LinearLayout>
+                                </LinearLayout>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/eight_dp"
+                                android:layout_marginBottom="@dimen/fifteen_dp"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="@dimen/fifteen_dp"
+                                    android:layout_height="@dimen/thirty_two_dp"
+                                    android:background="@drawable/horizontal_dotted_line"
+                                    android:contentDescription="@string/app_name"
+                                    android:hardwareAccelerated="false"
+                                    android:layerType="software" />
+
+                                <LinearLayout
+                                    android:id="@+id/cancelled_order_handover_parent_layout"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:background="@color/order_status_pending_color"
+                                    android:orientation="vertical"
+                                    android:padding="@dimen/seven_dp">
+
+                                    <RelativeLayout
+                                        android:id="@+id/cancelled_order_handover_child_one_layout"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:visibility="visible">
+
+                                        <ImageView
+                                            android:layout_width="@dimen/eighteen_dp"
+                                            android:layout_height="@dimen/fifteen_dp"
+                                            android:layout_alignParentEnd="true"
+                                            android:layout_centerVertical="true"
+                                            android:layout_gravity="end"
+                                            android:contentDescription="@string/app_name"
+                                            android:src="@drawable/icon_status_pending" />
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerVertical="true"
+                                            android:fontFamily="@font/roboto_bold"
+                                            android:text="3. Handedover to pharmacy"
+                                            android:textColor="@color/colorWhite"
+                                            android:textSize="@dimen/text_dimen_13" />
+                                    </RelativeLayout>
+
+                                    <LinearLayout
+                                        android:id="@+id/cancelled_order_handover_child_two_layout"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:layout_marginTop="@dimen/ten_dp"
+                                        android:layout_marginBottom="@dimen/ten_dp"
+                                        android:gravity="center"
+                                        android:orientation="vertical"
+                                        android:visibility="gone">
+
+                                        <LinearLayout
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center"
+                                            android:orientation="horizontal">
+
+                                            <ImageView
+                                                android:layout_width="@dimen/thirty_five_dp"
+                                                android:layout_height="@dimen/thirty_five_dp"
+                                                android:layout_gravity="center"
+                                                android:layout_marginEnd="@dimen/ten_dp"
+                                                android:contentDescription="@string/app_name"
+                                                android:src="@drawable/icon_order_delivered" />
+
+                                            <TextView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_gravity="center"
+                                                android:fontFamily="@font/roboto_bold"
+                                                android:text="Order handed over to pharmacy successfully"
+                                                android:textColor="@color/colorWhite"
+                                                android:textSize="@dimen/text_dimen_15" />
+                                        </LinearLayout>
+
+                                        <TextView
+                                            android:id="@+id/cancelled_order_handedover_to_pharmacy_time"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:fontFamily="@font/roboto_bold"
+                                            android:textColor="@color/colorWhite"
+                                            android:textSize="@dimen/text_dimen_12" />
+
+                                    </LinearLayout>
+                                </LinearLayout>
+                            </LinearLayout>
+
 
                         </LinearLayout>
                     </LinearLayout>

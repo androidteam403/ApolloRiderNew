@@ -86,13 +86,16 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     private ViewGroup header;
     private LocationManager locationManager;
     private final static int GPS_REQUEST_CODE = 2;
+    private boolean isLanchedByPushNotification;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
         instance = this;
-
+        if (getIntent() != null) {
+            isLanchedByPushNotification = (Boolean) getIntent().getBooleanExtra("isPushNotfication", false);
+        }
         LinearLayout locationDeniedLayout = (LinearLayout) findViewById(R.id.location_denied);
         locationDeniedLayout.setVisibility(View.GONE);
 
@@ -331,7 +334,10 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         setupDrawerToggle();
-        selectItem(0);
+        if (isLanchedByPushNotification)
+            selectItem(1);
+        else
+            selectItem(0);
 //        ((NavigationDrawerAdapter) ((HeaderViewListAdapter) mDrawerList.getAdapter()).getWrappedAdapter()).notifyDataSetChanged();
         adapter.notifyDataSetChanged();
 
@@ -509,7 +515,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                 overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
                 return true;
             case R.id.action_setting_icon:
-                selectItem(2);
+                selectItem(1);
                 return true;
             case R.id.action_cart_icon:
                 Intent i = new Intent(this, CartActivity.class);

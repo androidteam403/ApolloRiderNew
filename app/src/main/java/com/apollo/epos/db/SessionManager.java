@@ -61,7 +61,7 @@ public class SessionManager {
     }
 
     public String getRiderActiveStatus() {
-        return preferences.getString(PREF_KEY_RIDER_ACTIVE_STATUS, "Offline");
+        return preferences.getString(PREF_KEY_RIDER_ACTIVE_STATUS, "Online");
     }
 
     public void setNotificationStatus(boolean notificationStatus) {

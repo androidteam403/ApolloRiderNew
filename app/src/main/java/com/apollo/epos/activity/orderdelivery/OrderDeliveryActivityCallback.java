@@ -51,4 +51,12 @@ public interface OrderDeliveryActivityCallback {
     void onSuccessDeliveryReasonApiCall(DeliveryFailreReasonsResponse deliveryFailreReasonsResponse);
 
     void onFailureDeliveryFailureApiCall();
+
+    void onClickCancelledReachedtheStore();
+
+    void onClickCancelledOtpVerificationParentLayout();
+
+    void onClickCancelledVerifyOtp();
+
+
 }

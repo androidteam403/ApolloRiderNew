@@ -40,6 +40,7 @@ import com.apollo.epos.base.BaseFragment;
 import com.apollo.epos.databinding.FragmentDashboardBinding;
 import com.apollo.epos.model.GetRiderProfileResponse;
 import com.apollo.epos.utils.ActivityUtils;
+import com.apollo.epos.utils.CommonUtils;
 import com.apollo.epos.utils.XYMarkerView;
 import com.bumptech.glide.Glide;
 import com.github.mikephil.charting.charts.BarChart;

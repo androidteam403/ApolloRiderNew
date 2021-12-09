@@ -91,7 +91,7 @@ public class OrderDeliveryActivityController {
         if (NetworkUtils.isNetworkConnected(context)) {
 
             ApiInterface apiInterface = ApiClient.getApiService();
-            Call<DeliveryFailreReasonsResponse> call = apiInterface.DELIVERY_FAILURE_REASONS_API_CALL("Bearer " + new SessionManager(context).getLoginToken());
+            Call<DeliveryFailreReasonsResponse> call = apiInterface.DELIVERY_FAILURE_REASONS_API_CALL("Bearer " + new SessionManager(context).getLoginToken(),"application/json");
             call.enqueue(new Callback<DeliveryFailreReasonsResponse>() {
                 @Override
                 public void onResponse(@NotNull Call<DeliveryFailreReasonsResponse> call, @NotNull Response<DeliveryFailreReasonsResponse> response) {

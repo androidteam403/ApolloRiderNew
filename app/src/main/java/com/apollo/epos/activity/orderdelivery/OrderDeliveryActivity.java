@@ -52,6 +52,7 @@ import com.apollo.epos.R;
 import com.apollo.epos.activity.BaseActivity;
 import com.apollo.epos.activity.CancelOrderActivity;
 import com.apollo.epos.activity.CaptureSignatureActivity;
+import com.apollo.epos.activity.NavigationActivity;
 import com.apollo.epos.activity.ScannerActivity;
 import com.apollo.epos.activity.TrackMapActivity;
 import com.apollo.epos.activity.neworder.model.OrderDetailsResponse;
@@ -78,7 +79,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -266,7 +269,8 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
     //    @BindView(R.id.finish_activity_img)
 //    protected ImageView finishActivityImg;
     private boolean isOrderDelivered = false;
-    String[] cancelReasons = {"Customer not availale","Door locked"};
+    String[] cancelReasons = {"Customer not availale", "Door locked"};
+    List<DeliveryFailreReasonsResponse.Row> cancelReasonsList = new ArrayList<>();
     String[] customerTypesList = {"Customer", "Other"};
     private int selectionTag = 0;
     public static final int CAM_REQUEST = 1;
@@ -294,6 +298,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
     private String orderNumber;
     private String customerNameTypeSinner;
     private String orderCancelReason;
+    private String paymentType;
 
     public static Intent getStartIntent(Context context, OrderDetailsResponse orderDetailsResponse) {
         Intent intent = new Intent(context, OrderDeliveryActivity.class);
@@ -310,6 +315,8 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 
     }
 
+    private boolean isLaunchedByPushNotification;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -320,11 +327,12 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             try {
-                String orderNumberId = bundle.getString("uid");
-                if (getIntent().getStringExtra("order_number") == null)
-                    new OrderDeliveryActivityController(this, this).orderDetailsApiCall(getSessionManager().getLoginToken(), orderNumberId);
-
                 //bundle must contain all info sent in "data" field of the notification
+                String orderNumberId = bundle.getString("uid");
+                if (getIntent().getStringExtra("order_number") == null) {
+                    isLaunchedByPushNotification = true;
+                    new OrderDeliveryActivityController(this, this).orderDetailsApiCall(getSessionManager().getLoginToken(), orderNumberId);
+                }
             } catch (Exception e) {
                 System.out.println("push notification new order activity::::::::::::::::::::::::::::" + e.getMessage());
             }
@@ -401,7 +409,25 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 
             }
         });
+        CustomReasonAdapter customUserListAdapter = new CustomReasonAdapter(this, customerTypesList, this);
+        customerTypeSpinner.setAdapter(customUserListAdapter);
+//        customerTypeSpinner.setOnItemSelectedListener(this);
+        customerTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                OrderDeliveryActivity.this.customerNameTypeSinner = customerTypesList[position];
+                if (customerTypesList[position].equals("Other")) {
+                    orderDeliveryBinding.handoverUserName.setVisibility(View.VISIBLE);
+                } else {
+                    orderDeliveryBinding.handoverUserName.setVisibility(View.GONE);
+                }
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     @OnClick(R.id.reached_store_layout)
@@ -584,6 +610,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                         pickupOtpVerificationChildLayoutEdge.setLayoutTransition(null);
                         pickupOtpVerificationChildLayout.setVisibility(View.GONE);
                         pickupOtpVerificationParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
+                        break;
                     }
 
                 }
@@ -600,6 +627,10 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 
                 if (isOrderDelivered) {
                     selectionTag = 10;
+
+                    //Continue process layout
+                    orderDeliveryBinding.continueProcessLayout.setVisibility(View.GONE);
+
                     //handover the parcel to
                     orderDeliveryBinding.handoverParcelChildLayoutAnim.setLayoutTransition(null);
                     handoverParcelChildLayout.setVisibility(View.GONE);
@@ -645,6 +676,16 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                     verifiedOtpText.setVisibility(View.VISIBLE);
                     otpVerificationParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
                     orderDeliveredParentLayout.setBackground(getResources().getDrawable(R.drawable.order_delivered_layout_bg));
+                    for (OrderStatusHitoryListResponse.Row row : orderStatusHitoryListResponse.getData().getListData().getRows()) {
+                        if (row.getOrderStatus().getUid().equals("order_delivered")) {
+                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                            String orderDate = row.getCreatedTime();
+                            Date orderDates = formatter.parse(orderDate);
+                            long orderDateMills = orderDates.getTime();
+                            orderDeliveryBinding.orderCompletedSuccessfullyDateAndTime.setText(CommonUtils.getTimeFormatter(orderDateMills));
+                            break;
+                        }
+                    }
                     orderDeliveredChildOneLayout.setVisibility(View.GONE);
                     orderDeliveredChildTwoLayout.setVisibility(View.VISIBLE);
 
@@ -687,27 +728,10 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
     public void onSuccessDeliveryReasonApiCall(DeliveryFailreReasonsResponse deliveryFailreReasonsResponse) {
         try {
             cancelReasons = new String[deliveryFailreReasonsResponse.getData().getListData().getRows().size()];
+            this.cancelReasonsList = deliveryFailreReasonsResponse.getData().getListData().getRows();
             for (DeliveryFailreReasonsResponse.Row row : deliveryFailreReasonsResponse.getData().getListData().getRows())
                 cancelReasons[deliveryFailreReasonsResponse.getData().getListData().getRows().indexOf(row)] = row.getName();
-            CustomReasonAdapter customUserListAdapter = new CustomReasonAdapter(this, customerTypesList, this);
-            customerTypeSpinner.setAdapter(customUserListAdapter);
-//        customerTypeSpinner.setOnItemSelectedListener(this);
-            customerTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    OrderDeliveryActivity.this.customerNameTypeSinner = customerTypesList[position];
-                    if (customerTypesList[position].equals("Other")) {
-                        orderDeliveryBinding.handoverUserName.setVisibility(View.VISIBLE);
-                    } else {
-                        orderDeliveryBinding.handoverUserName.setVisibility(View.GONE);
-                    }
-                }
 
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
-                }
-            });
         } catch (Exception e) {
             System.out.println("onSuccessDeliveryReasonApiCall:::::::::::::::::::::::::::::::" + e.getMessage());
         }
@@ -717,6 +741,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
     public void onFailureDeliveryFailureApiCall() {
 
     }
+
 
     @OnClick(R.id.signature_pad_parent_layout)
     void onSignaturePadParentLayoutClick() {
@@ -857,8 +882,15 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
         });
         bottomSheetBinding.cancelOrderSendBtn.setOnClickListener(v -> {
             ActivityUtils.showDialog(this, "Please wait.");
-            new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("order_not_delivered", orderUid, OrderDeliveryActivity.this.orderCancelReason, bottomSheetBinding.comment.getText().toString().trim());
-            dialog.dismiss();
+            if (cancelReasonsList != null && cancelReasonsList.size() > 0) {
+                for (DeliveryFailreReasonsResponse.Row row : cancelReasonsList) {
+                    if (row.getName().equals(orderCancelReason)) {
+                        new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("order_not_delivered", orderUid, row.getUid(), bottomSheetBinding.comment.getText().toString().trim());
+                        dialog.dismiss();
+                        break;
+                    }
+                }
+            }
         });
 //        Spinner reasonSpinner = dialogView.findViewById(R.id.rejectReasonSpinner);
         CustomReasonAdapter customAdapter = new CustomReasonAdapter(this, cancelReasons, null);
@@ -990,6 +1022,67 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
         }
         return null;
     }
+
+    private void setCancelledPINListeners() {
+        orderDeliveryBinding.cancelledPinHiddenEdittext.addTextChangedListener(cancelledVendorWatcher);
+
+        orderDeliveryBinding.cancelledOptNum1.setOnFocusChangeListener(this);
+        orderDeliveryBinding.cancelledOptNum2.setOnFocusChangeListener(this);
+        orderDeliveryBinding.cancelledOptNum3.setOnFocusChangeListener(this);
+        orderDeliveryBinding.cancelledOptNum4.setOnFocusChangeListener(this);
+
+        orderDeliveryBinding.cancelledOptNum1.setOnKeyListener(this);
+        orderDeliveryBinding.cancelledOptNum2.setOnKeyListener(this);
+        orderDeliveryBinding.cancelledOptNum3.setOnKeyListener(this);
+        orderDeliveryBinding.cancelledOptNum4.setOnKeyListener(this);
+        orderDeliveryBinding.cancelledPinHiddenEdittext.setOnKeyListener(this);
+    }
+
+    TextWatcher cancelledVendorWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            setDefaultPinBackground(orderDeliveryBinding.cancelledOptNum1);
+            setDefaultPinBackground(orderDeliveryBinding.cancelledOptNum2);
+            setDefaultPinBackground(orderDeliveryBinding.cancelledOptNum3);
+            setDefaultPinBackground(orderDeliveryBinding.cancelledOptNum4);
+            if (s.length() == 0) {
+                orderDeliveryBinding.cancelledOptNum1.setText("");
+                orderDeliveryBinding.cancelledOptNum2.setText("");
+                orderDeliveryBinding.cancelledOptNum3.setText("");
+                orderDeliveryBinding.cancelledOptNum4.setText("");
+                orderDeliveryBinding.cancelledVerifyOtpBtn.setBackground(getResources().getDrawable(R.drawable.verify_otp_error_bg));
+            } else if (s.length() == 1) {
+                orderDeliveryBinding.cancelledOptNum1.setText(s.charAt(0) + "");
+                orderDeliveryBinding.cancelledOptNum2.setText("");
+                orderDeliveryBinding.cancelledOptNum3.setText("");
+                orderDeliveryBinding.cancelledOptNum4.setText("");
+                orderDeliveryBinding.cancelledVerifyOtpBtn.setBackground(getResources().getDrawable(R.drawable.verify_otp_error_bg));
+            } else if (s.length() == 2) {
+                orderDeliveryBinding.cancelledOptNum2.setText(s.charAt(1) + "");
+                orderDeliveryBinding.cancelledOptNum3.setText("");
+                orderDeliveryBinding.cancelledOptNum4.setText("");
+                orderDeliveryBinding.cancelledVerifyOtpBtn.setBackground(getResources().getDrawable(R.drawable.verify_otp_error_bg));
+            } else if (s.length() == 3) {
+                orderDeliveryBinding.cancelledOptNum3.setText(s.charAt(2) + "");
+                orderDeliveryBinding.cancelledOptNum4.setText("");
+                orderDeliveryBinding.cancelledVerifyOtpBtn.setBackground(getResources().getDrawable(R.drawable.verify_otp_error_bg));
+            } else if (s.length() == 4) {
+                orderDeliveryBinding.cancelledOptNum4.setText(s.charAt(3) + "");
+                orderDeliveryBinding.cancelledVerifyOtpBtn.setBackground(getResources().getDrawable(R.drawable.continue_driving_btn_bg));
+                ActivityUtils.hideKeyboardFrom(OrderDeliveryActivity.this, orderDeliveryBinding.cancelledOptNum4);
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
 
     private void setpickupPINListeners() {
         pickupPinHiddenEditText.addTextChangedListener(pickupVendorWatcher);
@@ -1208,6 +1301,30 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                     showSoftKeyboard(pickupPinHiddenEditText);
                 }
                 break;
+            case R.id.cancelled_opt_num1:
+                if (hasFocus) {
+                    setFocus(orderDeliveryBinding.cancelledPinHiddenEdittext);
+                    showSoftKeyboard(orderDeliveryBinding.cancelledPinHiddenEdittext);
+                }
+                break;
+            case R.id.cancelled_opt_num2:
+                if (hasFocus) {
+                    setFocus(orderDeliveryBinding.cancelledPinHiddenEdittext);
+                    showSoftKeyboard(orderDeliveryBinding.cancelledPinHiddenEdittext);
+                }
+                break;
+            case R.id.cancelled_opt_num3:
+                if (hasFocus) {
+                    setFocus(orderDeliveryBinding.cancelledPinHiddenEdittext);
+                    showSoftKeyboard(orderDeliveryBinding.cancelledPinHiddenEdittext);
+                }
+                break;
+            case R.id.cancelled_opt_num4:
+                if (hasFocus) {
+                    setFocus(orderDeliveryBinding.cancelledPinHiddenEdittext);
+                    showSoftKeyboard(orderDeliveryBinding.cancelledPinHiddenEdittext);
+                }
+                break;
             default:
                 break;
         }
@@ -1271,6 +1388,35 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                 case R.id.pickup_opt_num2:
                 case R.id.pickup_opt_num3:
                 case R.id.pickup_opt_num4:
+                    if (keyCode == KeyEvent.KEYCODE_0 || keyCode == KeyEvent.KEYCODE_1 ||
+                            keyCode == KeyEvent.KEYCODE_2 || keyCode == KeyEvent.KEYCODE_3 ||
+                            keyCode == KeyEvent.KEYCODE_4 || keyCode == KeyEvent.KEYCODE_5 ||
+                            keyCode == KeyEvent.KEYCODE_6 || keyCode == KeyEvent.KEYCODE_7 ||
+                            keyCode == KeyEvent.KEYCODE_8 || keyCode == KeyEvent.KEYCODE_9) {
+                    }
+                    break;
+
+
+                case R.id.cancelled_pin_hidden_edittext:
+                    if (keyCode == KeyEvent.KEYCODE_DEL) {
+                        if (orderDeliveryBinding.cancelledPinHiddenEdittext.getText().length() == 4)
+                            orderDeliveryBinding.cancelledOptNum4.setText("");
+                        else if (orderDeliveryBinding.cancelledPinHiddenEdittext.getText().length() == 3)
+                            orderDeliveryBinding.cancelledOptNum3.setText("");
+                        else if (orderDeliveryBinding.cancelledPinHiddenEdittext.getText().length() == 2)
+                            orderDeliveryBinding.cancelledOptNum2.setText("");
+                        else if (orderDeliveryBinding.cancelledPinHiddenEdittext.getText().length() == 1)
+                            orderDeliveryBinding.cancelledOptNum1.setText("");
+                        if (orderDeliveryBinding.cancelledPinHiddenEdittext.length() > 0) {
+                            orderDeliveryBinding.cancelledPinHiddenEdittext.setText(orderDeliveryBinding.cancelledPinHiddenEdittext.getText().subSequence(0, orderDeliveryBinding.cancelledPinHiddenEdittext.length() - 1));
+                            orderDeliveryBinding.cancelledPinHiddenEdittext.post(() -> orderDeliveryBinding.cancelledPinHiddenEdittext.setSelection(orderDeliveryBinding.cancelledPinHiddenEdittext.getText().toString().length()));
+                        }
+                        return true;
+                    }
+                case R.id.cancelled_opt_num1:
+                case R.id.cancelled_opt_num2:
+                case R.id.cancelled_opt_num3:
+                case R.id.cancelled_opt_num4:
                     if (keyCode == KeyEvent.KEYCODE_0 || keyCode == KeyEvent.KEYCODE_1 ||
                             keyCode == KeyEvent.KEYCODE_2 || keyCode == KeyEvent.KEYCODE_3 ||
                             keyCode == KeyEvent.KEYCODE_4 || keyCode == KeyEvent.KEYCODE_5 ||
@@ -1531,6 +1677,20 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
             this.orderDetailsResponse = orderDetailsResponse;
             if (this.orderDetailsResponse != null) {
                 if (this.orderDetailsResponse.getData() != null) {
+                    this.paymentType = this.orderDetailsResponse.getData().getPaymentType().getName();
+                    if (!this.paymentType.equals("COD")) {
+                        orderDeliveryBinding.collectPayment.setVisibility(View.GONE);
+                        orderDeliveryBinding.completedDeliveryText.setText("4. Completed delivery");
+                    } else {
+                        orderDeliveryBinding.collectPayment.setVisibility(View.VISIBLE);
+                        orderDeliveryBinding.completedDeliveryText.setText("5. Completed delivery");
+                        orderDeliveryBinding.totalAmount.setText(getResources().getString(R.string.label_rupee_symbol) + " " + String.valueOf(this.orderDetailsResponse.getData().getPakgValue()));
+                    }
+                    if (this.orderDetailsResponse.getData().getCancelAllowed() != null && this.orderDetailsResponse.getData().getCancelAllowed().getName().equals("Yes")) {
+                        cancelOrderBtn.setVisibility(View.VISIBLE);
+                    } else {
+                        cancelOrderBtn.setVisibility(View.GONE);
+                    }
                     this.orderUid = this.orderDetailsResponse.getData().getUid();
                     this.orderNumber = this.orderDetailsResponse.getData().getOrderNumber();
                     orderDeliveryBinding.orderStatusHeader.setText(this.orderDetailsResponse.getData().getOrderStatus().getName());
@@ -1558,6 +1718,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                         new OrderDeliveryActivityController(this, this).orderStatusHistoryListApiCall(this.orderDetailsResponse.getData().getUid());
                         orderDeliveryBinding.returnItToStoreText.setVisibility(View.VISIBLE);
                         orderDeliveryBinding.cancelOrderBtn.setVisibility(View.GONE);
+                        orderDeliveryBinding.orderDeliveryProcessImg.setVisibility(View.VISIBLE);
                     }
                     if (this.orderDetailsResponse.getData().getOrderState().getName().equals("RETURN")) {
 
@@ -1714,6 +1875,13 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                 verifiedOtpText.setVisibility(View.VISIBLE);
                 otpVerificationParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
                 orderDeliveredParentLayout.setBackground(getResources().getDrawable(R.drawable.order_delivered_layout_bg));
+
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                String orderDate = CommonUtils.getCurrentTimeDate();
+                Date orderDates = formatter.parse(orderDate);
+                long orderDateMills = orderDates.getTime();
+                orderDeliveryBinding.orderCompletedSuccessfullyDateAndTime.setText(CommonUtils.getTimeFormatter(orderDateMills));
+
                 orderDeliveredChildOneLayout.setVisibility(View.GONE);
                 orderDeliveredChildTwoLayout.setVisibility(View.VISIBLE);
 
@@ -1744,10 +1912,32 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                 ActivityUtils.hideDialog();
                 orderDeliveryBinding.orderDeliveryProcessImg.setVisibility(View.VISIBLE);
                 orderDeliveryBinding.orderNotDeliveredParentLayout.setVisibility(View.VISIBLE);
+                cancelItemBtn.setVisibility(View.GONE);
+                cancelOrderBtn.setVisibility(View.GONE);
 
 
 //                finish();
 //                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+            } else if (status.equals("order_handover_to_pharmacy")) {
+                ActivityUtils.hideDialog();
+                orderDeliveryBinding.cancelledOtpEditTextLayout.setVisibility(View.GONE);
+                orderDeliveryBinding.cancelledVerifyOtpBtn.setVisibility(View.GONE);
+                orderDeliveryBinding.cancelledOtpEditTextLayout.setBackground(getResources().getDrawable(R.drawable.otp_bg));
+                orderDeliveryBinding.cancelledVerifiedOtpText.setVisibility(View.VISIBLE);
+                orderDeliveryBinding.cancelledOtpVerificationParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
+
+                orderDeliveryBinding.cancelledVerifyOtpBtn.setBackground(getResources().getDrawable(R.drawable.continue_driving_btn_bg));
+                cancelItemBtn.setVisibility(View.GONE);
+                cancelOrderBtn.setVisibility(View.GONE);
+
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                String orderDate = CommonUtils.getCurrentTimeDate();
+                Date orderDates = formatter.parse(orderDate);
+                long orderDateMills = orderDates.getTime();
+                orderDeliveryBinding.cancelledOrderHandedoverToPharmacyTime.setText(CommonUtils.getTimeFormatter(orderDateMills));
+                orderDeliveryBinding.cancelledOrderHandoverParentLayout.setBackground(getResources().getDrawable(R.drawable.order_delivered_layout_bg));
+                orderDeliveryBinding.cancelledOrderHandoverChildOneLayout.setVisibility(View.GONE);
+                orderDeliveryBinding.cancelledOrderHandoverChildTwoLayout.setVisibility(View.VISIBLE);
             }
         } catch (Exception e) {
 
@@ -1775,10 +1965,73 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
         customerSignatureView.setImageBitmap(bmp);
         signaturePadParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
         selectionTag = 5;
+        if (!paymentType.equals("COD")) {
+            ActivityUtils.showDialog(this, "Please Wait.");
+            new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("order_delivered", orderUid, "", "");
+        }
     }
 
     @Override
     public void onFailureOrderHandoverSaveUpdateApi(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+
+    // cancelled order return to store flow
+    private int orderHandoverToPharmacy = 0;
+
+    @Override
+    public void onClickCancelledReachedtheStore() {
+        if (orderHandoverToPharmacy == 0) {
+            try {
+                orderDeliveryBinding.cancelledReachedStoreLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
+                orderDeliveryBinding.cancelledReachedStoreImg.setImageDrawable(getDrawable(R.drawable.icon_status_completed));
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                String orderDate = CommonUtils.getCurrentTimeDate();
+                Date orderDates = formatter.parse(orderDate);
+                long orderDateMills = orderDates.getTime();
+                orderDeliveryBinding.cancelledStoreReachedTime.setText(CommonUtils.getTimeFormatter(orderDateMills));
+                orderDeliveryBinding.cancelledStoreReachedTime.setVisibility(View.VISIBLE);
+                orderHandoverToPharmacy = 1;
+            } catch (Exception e) {
+                System.out.println("onClickCancelledReachedtheStore :::::::::::::::::::::::::::::::::::::" + e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public void onClickCancelledOtpVerificationParentLayout() {
+        if (orderHandoverToPharmacy == 1) {
+            orderHandoverToPharmacy = 2;
+            orderDeliveryBinding.cancelledOtpVerificationParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_pending_color));
+            orderDeliveryBinding.cancelledOtpVerificationImg.setImageDrawable(getDrawable(R.drawable.icon_status_completed));
+            orderDeliveryBinding.cancelledOtpVerificationChildLayout.setVisibility(View.VISIBLE);
+            setCancelledPINListeners();
+        }
+    }
+
+    @Override
+    public void onClickCancelledVerifyOtp() {
+        if (orderDeliveryBinding.cancelledPinHiddenEdittext.getText().toString().equalsIgnoreCase("0000") || orderDeliveryBinding.cancelledPinHiddenEdittext.getText().toString().equalsIgnoreCase(branReturnVerificatonCode)) {
+            ActivityUtils.showDialog(this, "Please Wait.");
+            new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("order_handover_to_pharmacy", orderUid, "", "");
+        } else {
+            orderDeliveryBinding.cancelledOtpEditTextLayout.setVisibility(View.VISIBLE);
+            orderDeliveryBinding.cancelledVerifyOtpBtn.setVisibility(View.VISIBLE);
+            orderDeliveryBinding.cancelledOtpEditTextLayout.setBackground(getResources().getDrawable(R.drawable.otp_error_bg));
+            orderDeliveryBinding.cancelledVerifiedOtpText.setVisibility(View.GONE);
+            orderDeliveryBinding.cancelledVerifyOtpBtn.setBackground(getResources().getDrawable(R.drawable.verify_otp_error_bg));
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isLaunchedByPushNotification) {
+            startActivity(new Intent(OrderDeliveryActivity.this, NavigationActivity.class).putExtra("isPushNotfication", true));
+            overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+            finish();
+        } else {
+            super.onBackPressed();
+        }
     }
 }

@@ -20,8 +20,11 @@ import com.apollo.epos.fragment.dashboard.model.RiderActiveStatusRequest;
 import com.apollo.epos.fragment.dashboard.model.RiderActiveStatusResponse;
 import com.apollo.epos.fragment.dashboard.model.RiderLalangBatteryStatusResponse;
 import com.apollo.epos.fragment.dashboard.model.RiderLatlangBatteryStatusRequest;
+import com.apollo.epos.fragment.profile.model.ComplaintSaveUpdateRequest;
+import com.apollo.epos.fragment.profile.model.ComplaintSaveUpdateResponse;
 import com.apollo.epos.fragment.myorders.model.MyOrdersListRequest;
 import com.apollo.epos.fragment.myorders.model.MyOrdersListResponse;
+import com.apollo.epos.fragment.profile.model.ComplaintReasonsListResponse;
 import com.apollo.epos.model.GetRiderProfileResponse;
 
 import okhttp3.RequestBody;
@@ -44,6 +47,12 @@ public interface ApiInterface {
     @POST("api/user/select/rider-profile-select")
     Call<GetRiderProfileResponse> GET_RIDER_PROFILE_API_CALL(@Header("authorization") String token);
 
+    @POST("api/choose-data/complaint_reason")
+    Call<ComplaintReasonsListResponse> GET_COMPLAINT_REASONS_LIST_API_CALL(@Header("authorization") String token, @Header("Content-Type") String contentType);
+
+    @POST("api/rider_complaint/save-update")
+    Call<ComplaintSaveUpdateResponse> COMPLAINT_SAVE_UPDATE_API_CALL(@Header("authorization") String token, @Body ComplaintSaveUpdateRequest complaintSaveUpdateRequest);
+
     @POST("api/user/save-update/update-rider-available-status")
     Call<RiderActiveStatusResponse> RIDER_ACTIVE_STATUS_API_CALL(@Header("authorization") String token, @Body RiderActiveStatusRequest riderActiveStatusRequest);
 
@@ -57,7 +66,7 @@ public interface ApiInterface {
     Call<OrderDetailsResponse> ORDER_DETAILS_API_CALL(@Header("authorization") String token, @Body OrderDetailsRequest orderDetailsRequest);
 
     @POST("api/choose-data/delivery_failure_reasons")
-    Call<DeliveryFailreReasonsResponse> DELIVERY_FAILURE_REASONS_API_CALL(@Header("authorization") String token);
+    Call<DeliveryFailreReasonsResponse> DELIVERY_FAILURE_REASONS_API_CALL(@Header("authorization") String token, @Header("Content-Type") String contentType);
 
     @POST("api/order_status_his/list/order-status-history-list")
     Call<OrderStatusHitoryListResponse> ORDER_STATUS_HISTORY_LIST_API_CALL(@Header("authorization") String token, @Body OrderStatusHistoryListRequest orderStatusHistoryListRequest);

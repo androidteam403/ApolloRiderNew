@@ -289,7 +289,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
                     myOrdersLists = orderNotDeliveredList;
                 myOrdersBinding.newOrder.setText("New (" + myNewOrdersList.size() + ")");
                 myOrdersBinding.intTransit.setText("In Transit (" + myInTransitOrdersList.size() + ")");
-                myOrdersBinding.orderDelivered.setText("delivered (" + deliveredOrdersList.size() + ")");
+                myOrdersBinding.orderDelivered.setText("Delivered (" + deliveredOrdersList.size() + ")");
                 myOrdersBinding.cancelOrder.setText("Cancelled (" + orderNotDeliveredList.size() + ")");
                 if (myOrdersLists.size() > 0) {
                     myOrdersListAdapter = new MyOrdersListAdapter(mActivity, myOrdersLists, this);

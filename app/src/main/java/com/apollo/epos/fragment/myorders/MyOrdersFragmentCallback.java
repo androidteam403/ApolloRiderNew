@@ -11,4 +11,6 @@ public interface MyOrdersFragmentCallback {
     void onFailureMyOrdersListApi();
 
     void onStatusClick(MyOrdersListResponse.Row item);
+
+
 }
