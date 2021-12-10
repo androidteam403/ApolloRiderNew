@@ -31,7 +31,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/roboto_regular"
-                android:text="Delivery by : "
+                android:text="Deliver by : "
                 android:textColor="@color/dashboard_text_color"
                 android:textSize="@dimen/text_dimen_10" />
             <TextView

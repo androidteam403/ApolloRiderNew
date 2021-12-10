@@ -18,7 +18,7 @@ public class OrderSaveUpdateStausRequest {
 
     @SerializedName("delivery_failure_reason")
     @Expose
-    private String deliveryFailureReason;
+    private DeliveryFailureReason deliveryFailureReason;
 
     public String getUid() {
         return uid;
@@ -44,11 +44,11 @@ public class OrderSaveUpdateStausRequest {
         this.comment = comment;
     }
 
-    public String getDeliveryFailureReason() {
+    public DeliveryFailureReason getDeliveryFailureReason() {
         return deliveryFailureReason;
     }
 
-    public void setDeliveryFailureReason(String deliveryFailureReason) {
+    public void setDeliveryFailureReason(DeliveryFailureReason deliveryFailureReason) {
         this.deliveryFailureReason = deliveryFailureReason;
     }
 
@@ -68,4 +68,17 @@ public class OrderSaveUpdateStausRequest {
 
     }
 
+    public static class DeliveryFailureReason {
+        @SerializedName("uid")
+        @Expose
+        private String uid;
+
+        public String getUid() {
+            return uid;
+        }
+
+        public void setUid(String uid) {
+            this.uid = uid;
+        }
+    }
 }

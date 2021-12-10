@@ -39,7 +39,7 @@ public class CommonUtils {
             if ((neededTime.get(Calendar.MONTH) == nowTime.get(Calendar.MONTH))) {
                 if (neededTime.get(Calendar.DATE) - nowTime.get(Calendar.DATE) == 1) {
                     //here return like "Tomorrow at 12:00"
-                    return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(neededTime.getTime());
+                    return new SimpleDateFormat("MMM dd, yyyy hh:mm aa", Locale.getDefault()).format(neededTime.getTime());//new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(neededTime.getTime());
                 } else if (nowTime.get(Calendar.DATE) == neededTime.get(Calendar.DATE)) {
                     //here return like "Today at 12:00"
                     String time = new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(neededTime.getTime());
@@ -58,21 +58,21 @@ public class CommonUtils {
                         else
                             times = time.substring(0, time.length() - 4) + ampm;
                     }
-                    return "Today at  " + times;
+                    return "Today at  " + new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(neededTime.getTime());//times;
                 } else if (nowTime.get(Calendar.DATE) - neededTime.get(Calendar.DATE) == 1) {
                     //here return like "Yesterday at 12:00"
-                    return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(neededTime.getTime());
+                    return new SimpleDateFormat("MMM dd, yyyy hh:mm aa", Locale.getDefault()).format(neededTime.getTime()); //new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(neededTime.getTime());
                 } else {
                     //here return like "May 31, 12:00"
-                    return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(neededTime.getTime());
+                    return new SimpleDateFormat("MMM dd, yyyy hh:mm aa", Locale.getDefault()).format(neededTime.getTime());// new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(neededTime.getTime());
                 }
             } else {
                 //here return like "May 31, 12:00"
-                return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(neededTime.getTime());
+                return new SimpleDateFormat("MMM dd, yyyy hh:mm aa", Locale.getDefault()).format(neededTime.getTime());//new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(neededTime.getTime());
             }
         } else {
             //here return like "May 31 2010, 12:00" - it's a different year we need to show it
-            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(neededTime.getTime());
+            return new SimpleDateFormat("MMM dd, yyyy hh:mm aa", Locale.getDefault()).format(neededTime.getTime());//new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(neededTime.getTime());
         }
     }
 }

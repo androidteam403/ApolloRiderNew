@@ -7,7 +7,7 @@ import com.apollo.epos.activity.orderdelivery.model.DeliveryFailreReasonsRespons
 import com.apollo.epos.activity.orderdelivery.model.OrderStatusHitoryListResponse;
 
 public interface OrderDeliveryActivityCallback {
-// test
+    // test
     void onClickBackIcon();
 
     void onSuccessOrderDetailsApiCall(OrderDetailsResponse orderDetailsResponse);
@@ -58,5 +58,5 @@ public interface OrderDeliveryActivityCallback {
 
     void onClickCancelledVerifyOtp();
 
-
+    void onClickProofofHandoverSkip();
 }

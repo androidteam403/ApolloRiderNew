@@ -104,7 +104,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/roboto_regular"
-                                    android:text="Delivery by: "
+                                    android:text="Deliver by: "
                                     android:textColor="@color/colorWhite"
                                     android:textSize="@dimen/text_dimen_10" />
 
@@ -1003,7 +1003,7 @@
                                             android:layout_height="wrap_content"
                                             android:layout_centerVertical="true"
                                             android:fontFamily="@font/roboto_bold"
-                                            android:text="@string/label_otp_verification"
+                                            android:text="1. Pickup otp verification"
                                             android:textColor="@color/colorWhite"
                                             android:textSize="@dimen/text_dimen_13" />
                                     </RelativeLayout>
@@ -1304,11 +1304,12 @@
                                     android:textSize="@dimen/text_dimen_16" />
 
                                 <LinearLayout
-                                    android:id="@+id/map_view_layout"
+                                    android:id="@+id/map_view_layou"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentEnd="true"
                                     android:layout_centerVertical="true"
+                                    android:visibility="gone"
                                     android:orientation="horizontal">
 
                                     <ImageView
@@ -1401,16 +1402,52 @@
                                     android:layout_height="wrap_content"
                                     android:orientation="vertical">
 
-                                    <TextView
-                                        android:id="@+id/customer_name"
+                                    <RelativeLayout
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:layout_gravity="center"
-                                        android:fontFamily="@font/roboto_bold"
-                                        android:paddingStart="@dimen/ten_dp"
-                                        android:paddingEnd="@dimen/ten_dp"
-                                        android:textColor="@color/colorBlack"
-                                        android:textSize="@dimen/text_dimen_11" />
+                                        android:gravity="center_vertical">
+
+                                        <TextView
+                                            android:id="@+id/customer_name"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center_vertical"
+                                            android:fontFamily="@font/roboto_bold"
+                                            android:paddingStart="@dimen/ten_dp"
+                                            android:paddingEnd="@dimen/ten_dp"
+                                            android:text="1hdehj55n"
+                                            android:textColor="@color/colorBlack"
+                                            android:textSize="@dimen/text_dimen_11" />
+
+                                        <LinearLayout
+                                            android:id="@+id/map_view_layout"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentEnd="true"
+                                            android:layout_centerVertical="true"
+                                            android:orientation="horizontal">
+
+                                            <ImageView
+                                                android:layout_width="@dimen/twenty_seven_dp"
+                                                android:layout_height="@dimen/twenty_seven_dp"
+                                                android:contentDescription="@string/app_name"
+                                                android:padding="@dimen/three_dp"
+                                                android:src="@drawable/icon_map_view" />
+
+                                            <TextView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_gravity="center"
+                                                android:layout_marginStart="@dimen/five_dp"
+                                                android:fontFamily="@font/roboto_bold"
+                                                android:gravity="center"
+                                                android:text="@string/label_map_view"
+                                                android:textColor="@color/colorBlack"
+                                                android:textSize="@dimen/text_dimen_11"
+                                                android:visibility="gone" />
+                                        </LinearLayout>
+
+                                    </RelativeLayout>
 
                                     <TextView
                                         android:id="@+id/customer_address"
@@ -1805,7 +1842,7 @@
                                                     android:background="@drawable/continue_driving_btn_bg"
                                                     android:fontFamily="@font/roboto_bold"
                                                     android:onClick="@{()-> callback.onClickHandoverTheParcelBtn()}"
-                                                    android:text="@string/label_save"
+                                                    android:text="@string/ok"
                                                     android:textColor="@color/colorWhite"
                                                     android:textSize="@dimen/text_dimen_13"
                                                     android:visibility="visible" />
@@ -1857,7 +1894,7 @@
                                                 android:layout_height="wrap_content"
                                                 android:layout_centerVertical="true"
                                                 android:fontFamily="@font/roboto_bold"
-                                                android:text="2. OTP verification"
+                                                android:text="2. Delivery otp verification"
                                                 android:textColor="@color/colorWhite"
                                                 android:textSize="@dimen/text_dimen_13" />
                                         </RelativeLayout>
@@ -2038,17 +2075,41 @@
                                                 android:contentDescription="@string/app_name"
                                                 android:src="@drawable/icon_status_pending" />
 
-                                            <TextView
-                                                android:layout_width="wrap_content"
+                                            <RelativeLayout
+                                                android:layout_width="match_parent"
                                                 android:layout_height="wrap_content"
-                                                android:layout_centerVertical="true"
-                                                android:fontFamily="@font/roboto_bold"
-                                                android:text="@string/label_proof_of_handover"
-                                                android:textColor="@color/colorWhite"
-                                                android:textSize="@dimen/text_dimen_13" />
+                                                android:gravity="center_vertical">
+
+                                                <TextView
+                                                    android:id="@+id/proof_of_handover"
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:layout_centerVertical="true"
+                                                    android:fontFamily="@font/roboto_bold"
+                                                    android:text="@string/label_proof_of_handover"
+                                                    android:textColor="@color/colorWhite"
+                                                    android:textSize="@dimen/text_dimen_13" />
+
+                                                <TextView
+                                                    android:id="@+id/proofof_handover_skip"
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:layout_alignParentEnd="true"
+                                                    android:layout_gravity="center"
+                                                    android:layout_marginEnd="@dimen/fifty_five_dp"
+                                                    android:background="@drawable/continue_driving_btn_bg"
+                                                    android:fontFamily="@font/roboto_bold"
+                                                    android:onClick="@{()-> callback.onClickProofofHandoverSkip()}"
+                                                    android:text="Skip"
+                                                    android:textColor="@color/colorWhite"
+                                                    android:textSize="@dimen/text_dimen_13"
+                                                    android:visibility="gone" />
+
+                                            </RelativeLayout>
                                         </RelativeLayout>
 
                                         <LinearLayout
+                                            android:id="@+id/proofof_handover_anim_layout"
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
                                             android:animateLayoutChanges="true"
@@ -2108,6 +2169,7 @@
                                                             android:src="@drawable/filename" />
 
                                                         <TextView
+                                                            android:id="@+id/touch_here_for_new_sign"
                                                             android:layout_width="wrap_content"
                                                             android:layout_height="wrap_content"
                                                             android:layout_alignParentEnd="true"
@@ -2324,7 +2386,7 @@
                                                 android:background="@drawable/continue_driving_btn_bg"
                                                 android:fontFamily="@font/roboto_bold"
                                                 android:onClick="@{()-> callback.onClickCollectPaymentSave()}"
-                                                android:text="Save"
+                                                android:text="@string/ok"
                                                 android:textColor="@color/colorWhite"
                                                 android:textSize="@dimen/text_dimen_13" />
 
@@ -2684,7 +2746,7 @@
                                             android:layout_height="wrap_content"
                                             android:layout_centerVertical="true"
                                             android:fontFamily="@font/roboto_bold"
-                                            android:text="2. Return otp verify"
+                                            android:text="2. Return otp verification"
                                             android:textColor="@color/colorWhite"
                                             android:textSize="@dimen/text_dimen_13" />
                                     </RelativeLayout>

@@ -91,7 +91,7 @@ public class OrderDeliveryActivityController {
         if (NetworkUtils.isNetworkConnected(context)) {
 
             ApiInterface apiInterface = ApiClient.getApiService();
-            Call<DeliveryFailreReasonsResponse> call = apiInterface.DELIVERY_FAILURE_REASONS_API_CALL("Bearer " + new SessionManager(context).getLoginToken(),"application/json");
+            Call<DeliveryFailreReasonsResponse> call = apiInterface.DELIVERY_FAILURE_REASONS_API_CALL("Bearer " + new SessionManager(context).getLoginToken(), "application/json");
             call.enqueue(new Callback<DeliveryFailreReasonsResponse>() {
                 @Override
                 public void onResponse(@NotNull Call<DeliveryFailreReasonsResponse> call, @NotNull Response<DeliveryFailreReasonsResponse> response) {
@@ -119,6 +119,7 @@ public class OrderDeliveryActivityController {
             ActivityUtils.showDialog(context, "Please wait.");
             OrderStatusHistoryListRequest orderStatusHistoryListRequest = new OrderStatusHistoryListRequest();
             orderStatusHistoryListRequest.setUid(uid);
+
             ApiInterface apiInterface = ApiClient.getApiService();
             Call<OrderStatusHitoryListResponse> call = apiInterface.ORDER_STATUS_HISTORY_LIST_API_CALL("Bearer " + new SessionManager(context).getLoginToken(), orderStatusHistoryListRequest);
             call.enqueue(new Callback<OrderStatusHitoryListResponse>() {
@@ -150,9 +151,12 @@ public class OrderDeliveryActivityController {
             OrderSaveUpdateStausRequest.OrderStatus orderStatus1 = new OrderSaveUpdateStausRequest.OrderStatus();
             orderStatus1.setUid(orderStatus);
             orderSaveUpdateStausRequest.setOrderStatus(orderStatus1);
-            orderSaveUpdateStausRequest.setDeliveryFailureReason(orderCancelReason);
+            OrderSaveUpdateStausRequest.DeliveryFailureReason deliveryFailureReason = new OrderSaveUpdateStausRequest.DeliveryFailureReason();
+            deliveryFailureReason.setUid(orderCancelReason);
+            orderSaveUpdateStausRequest.setDeliveryFailureReason(deliveryFailureReason);
             orderSaveUpdateStausRequest.setComment(comment);
             ApiInterface apiInterface = ApiClient.getApiService();
+
             Call<OrderSaveUpdateStausResponse> call = apiInterface.ORDER_SAVE_UPDATE_STATUS_API_CALL("Bearer " + new SessionManager(context).getLoginToken(), orderSaveUpdateStausRequest);
             call.enqueue(new Callback<OrderSaveUpdateStausResponse>() {
                 @Override

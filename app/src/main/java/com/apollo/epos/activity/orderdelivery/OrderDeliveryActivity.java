@@ -4,6 +4,7 @@ import android.Manifest;
 import android.animation.LayoutTransition;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -61,6 +62,7 @@ import com.apollo.epos.activity.orderdelivery.model.OrderStatusHitoryListRespons
 import com.apollo.epos.adapter.CustomReasonAdapter;
 import com.apollo.epos.databinding.ActivityOrderDeliveryBinding;
 import com.apollo.epos.databinding.BottomSheetBinding;
+import com.apollo.epos.databinding.DialogAlertCustomBinding;
 import com.apollo.epos.dialog.DialogManager;
 import com.apollo.epos.listeners.DialogMangerCallback;
 import com.apollo.epos.service.FloatingTouchService;
@@ -661,6 +663,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                     signaturePadImg.setImageDrawable(getDrawable(R.drawable.icon_status_completed));
                     signaturePadChildLayout.setVisibility(View.VISIBLE);
                     hintSignatureText.setVisibility(View.GONE);
+                    orderDeliveryBinding.touchHereForNewSign.setVisibility(View.GONE);
                     signatureViewLayout.setVisibility(View.VISIBLE);
                     Glide.with(this).load(this.orderDetailsResponse.getData().getOrderHandover().getSignature().get(0).getFullPath()).into(customerSignatureView);
 //                    customerSignatureView.setImageBitmap(bmp);
@@ -749,6 +752,21 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
             signaturePadParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_pending_color));
             signaturePadImg.setImageDrawable(getDrawable(R.drawable.icon_status_completed));
             signaturePadChildLayout.setVisibility(View.VISIBLE);
+            orderDeliveryBinding.proofofHandoverSkip.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onClickProofofHandoverSkip() {
+        orderDeliveryBinding.proofofHandoverAnimLayout.setLayoutTransition(null);
+        orderDeliveryBinding.proofOfHandover.setText("3. Proof of handover skipped");
+        orderDeliveryBinding.proofofHandoverSkip.setVisibility(View.GONE);
+        orderDeliveryBinding.signaturePadChildLayout.setVisibility(View.GONE);
+        signaturePadParentLayout.setBackgroundColor(getResources().getColor(R.color.alert_header_bg));
+        selectionTag = 5;
+        if (!paymentType.equals("COD")) {
+            ActivityUtils.showDialog(this, "Please Wait.");
+            new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("order_delivered", orderUid, "", "");
         }
     }
 
@@ -802,7 +820,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 
             verifyOtpBtn.setBackground(getResources().getDrawable(R.drawable.continue_driving_btn_bg));
             cancelItemBtn.setVisibility(View.GONE);
-            cancelOrderBtn.setVisibility(View.GONE);
+//            cancelOrderBtn.setVisibility(View.GONE);
 
 //            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
 //                    LinearLayout.LayoutParams.MATCH_PARENT);
@@ -1960,6 +1978,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 
     @Override
     public void onSuccessOrderHandoverSaveUpdateApi(Bitmap bmp) {
+        orderDeliveryBinding.proofofHandoverSkip.setVisibility(View.GONE);
         hintSignatureText.setVisibility(View.GONE);
         signatureViewLayout.setVisibility(View.VISIBLE);
         customerSignatureView.setImageBitmap(bmp);
@@ -2026,6 +2045,24 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 
     @Override
     public void onBackPressed() {
+        if (!isOrderDelivered) {
+            Dialog alertDialog = new Dialog(this);
+            DialogAlertCustomBinding alertCustomBinding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.dialog_alert_custom, null, false);
+            alertDialog.setContentView(alertCustomBinding.getRoot());
+            alertCustomBinding.title.setText("Alert!");
+            alertCustomBinding.subtitle.setText("Are sure want to leave this page?");
+            alertCustomBinding.dialogButtonNO.setText("No");
+            alertCustomBinding.dialogButtonOK.setText("Yes");
+            alertCustomBinding.dialogButtonOK.setOnClickListener(v -> onBackPress());
+            alertCustomBinding.dialogButtonNO.setOnClickListener(v -> alertDialog.dismiss());
+            alertDialog.show();
+        } else {
+            super.onBackPressed();
+        }
+
+    }
+
+    private void onBackPress() {
         if (isLaunchedByPushNotification) {
             startActivity(new Intent(OrderDeliveryActivity.this, NavigationActivity.class).putExtra("isPushNotfication", true));
             overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
@@ -2035,4 +2072,3 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
         }
     }
 }
-//comment
