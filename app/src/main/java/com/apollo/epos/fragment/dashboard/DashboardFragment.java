@@ -40,7 +40,6 @@ import com.apollo.epos.base.BaseFragment;
 import com.apollo.epos.databinding.FragmentDashboardBinding;
 import com.apollo.epos.model.GetRiderProfileResponse;
 import com.apollo.epos.utils.ActivityUtils;
-import com.apollo.epos.utils.CommonUtils;
 import com.apollo.epos.utils.XYMarkerView;
 import com.bumptech.glide.Glide;
 import com.github.mikephil.charting.charts.BarChart;
@@ -74,7 +73,9 @@ import com.nabinbhandari.android.permissions.PermissionHandler;
 import com.nabinbhandari.android.permissions.Permissions;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import butterknife.BindColor;
@@ -206,6 +207,9 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
 
     private final int REQ_LOC_PERMISSION = 5002;
 
+    private static TextView timeView;
+
+
     public static DashboardFragment newInstance() {
         return new DashboardFragment();
     }
@@ -234,8 +238,10 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
         ButterKnife.bind(this, view);
 
         newOrderLayoutView = view.findViewById(R.id.new_order_layout);
+        timeView = view.findViewById(R.id.time);
         if (getSessionManager().getNotificationStatus()) {
             dashboardBinding.newOrderLayout.setVisibility(View.VISIBLE);
+            dashboardBinding.time.setText(getSessionManager().getNotificationArrivedTime());
         } else {
             dashboardBinding.newOrderLayout.setVisibility(View.GONE);
         }
@@ -1009,6 +1015,11 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
     public static void newOrderViewVisibility(boolean show) {
         if (show) {
             newOrderLayoutView.setVisibility(View.VISIBLE);
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat mdformat = new SimpleDateFormat("HH:mm");
+            String strDate = mdformat.format(calendar.getTime());
+            timeView.setText("Today," + strDate);
+
         } else {
             newOrderLayoutView.setVisibility(View.GONE);
         }

@@ -30,6 +30,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -64,6 +66,7 @@ import com.apollo.epos.databinding.ActivityOrderDeliveryBinding;
 import com.apollo.epos.databinding.BottomSheetBinding;
 import com.apollo.epos.databinding.DialogAlertCustomBinding;
 import com.apollo.epos.dialog.DialogManager;
+import com.apollo.epos.fragment.dashboard.DashboardFragment;
 import com.apollo.epos.listeners.DialogMangerCallback;
 import com.apollo.epos.service.FloatingTouchService;
 import com.apollo.epos.service.GPSLocationService;
@@ -125,9 +128,9 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
     @BindView(R.id.continue_driving_btn)
     protected TextView continueDrivingBtn;
     @BindView(R.id.order_delivery_process_img)
-    protected ImageView orderDeliveryProcessImg;
+    protected View orderDeliveryProcessImg;
     @BindView(R.id.delivery_items_view)
-    protected TextView deliveryItemsView;
+    protected View deliveryItemsView;
     @BindView(R.id.user_mobile_number_header)
     protected TextView userMobileNumberHeader;
     @BindView(R.id.user_mobile_number)
@@ -302,6 +305,9 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
     private String orderCancelReason;
     private String paymentType;
 
+    private static TextView notificationText;
+
+
     public static Intent getStartIntent(Context context, OrderDetailsResponse orderDetailsResponse) {
         Intent intent = new Intent(context, OrderDeliveryActivity.class);
         intent.putExtra(CommonUtils.ORDER_DETAILS_RESPONSE, orderDetailsResponse);
@@ -326,6 +332,21 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
         orderDeliveryBinding = DataBindingUtil.setContentView(this, R.layout.activity_order_delivery);
         orderDeliveryBinding.setCallback(this);
         ButterKnife.bind(this);
+
+        notificationText = (TextView) findViewById(R.id.notification_dot);
+        isScreen = true;
+        if (getSessionManager().getNotificationStatus()) {
+            orderDeliveryBinding.notificationDot.setVisibility(View.VISIBLE);
+            anim = new AlphaAnimation(0.0f, 1.0f);
+            anim.setDuration(350); //You can manage the blinking time with this parameter
+            anim.setStartOffset(20);
+            anim.setRepeatMode(Animation.REVERSE);
+            anim.setRepeatCount(Animation.INFINITE);
+            orderDeliveryBinding.notificationDot.startAnimation(anim);
+        } else {
+            orderDeliveryBinding.notificationDot.setVisibility(View.GONE);
+        }
+
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             try {
@@ -724,7 +745,30 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 
     @Override
     public void onClickNotificationIcon() {
+        notificationText.clearAnimation();
+        NavigationActivity.notificationDotVisibility(false);
+        DashboardFragment.newOrderViewVisibility(false);
+        getSessionManager().setNotificationStatus(false);
         onBackPressed();
+    }
+
+    static Animation anim;
+    private static boolean isScreen;
+
+    public static void notificationDotVisibility(boolean show) {
+        if (isScreen) {
+            if (show) {
+                notificationText.setVisibility(View.VISIBLE);
+                anim = new AlphaAnimation(0.0f, 1.0f);
+                anim.setDuration(350); //You can manage the blinking time with this parameter
+                anim.setStartOffset(20);
+                anim.setRepeatMode(Animation.REVERSE);
+                anim.setRepeatCount(Animation.INFINITE);
+                notificationText.startAnimation(anim);
+            } else {
+                notificationText.setVisibility(View.GONE);
+            }
+        }
     }
 
     @Override
@@ -767,6 +811,115 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
         if (!paymentType.equals("COD")) {
             ActivityUtils.showDialog(this, "Please Wait.");
             new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("order_delivered", orderUid, "", "");
+        }
+    }
+
+    @Override
+    public void onClickReturnLabel() {
+        orderDeliveryBinding.orderNotDeliveredParentLayout.setVisibility(View.VISIBLE);
+        orderDeliveryBinding.returnLabel.setVisibility(View.GONE);
+    }
+
+
+    @Override
+    public void onClickOrderNotDelivered() {
+        orderDeliveryBinding.returnLabel.setVisibility(View.VISIBLE);
+        orderDeliveryBinding.orderNotDeliveredParentLayout.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onClickPickedLabel() {
+        expanded = true;
+        orderDeliveryBinding.packedLabel.setVisibility(View.GONE);
+        orderDeliveryBinding.packed.setVisibility(View.VISIBLE);
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(0, 0, 0, 0);
+        orderDeliveryBinding.deliveredLabel.setLayoutParams(params);
+
+        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params1.setMargins(0, 0, 0, 0);
+        orderDeliveryBinding.delivered.setLayoutParams(params1);
+    }
+
+    private boolean expanded;
+
+    @Override
+    public void onClickPicked() {
+        expanded = false;
+        orderDeliveryBinding.packedLabel.setVisibility(View.VISIBLE);
+        orderDeliveryBinding.packed.setVisibility(View.GONE);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(0, 20, 0, 0);
+        orderDeliveryBinding.deliveredLabel.setLayoutParams(params);
+        if (orderDeliveryBinding.delivered.getVisibility() == View.VISIBLE) {
+            LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params1.setMargins(0, 20, 0, 0);
+            orderDeliveryBinding.delivered.setLayoutParams(params1);
+        }
+    }
+
+    @Override
+    public void onClickDeliveredLabel() {
+        orderDeliveryBinding.deliveredLabel.setVisibility(View.GONE);
+        orderDeliveryBinding.delivered.setVisibility(View.VISIBLE);
+
+        if (!expanded) {
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(0, 20, 0, 0);
+            orderDeliveryBinding.delivered.setLayoutParams(params);
+        }
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(0, 0, 0, 0);
+        orderDeliveryBinding.returnLabel.setLayoutParams(params);
+
+        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params1.setMargins(0, 0, 0, 0);
+        orderDeliveryBinding.orderDeliveredParentLayout.setLayoutParams(params1);
+    }
+
+    @Override
+    public void onClickDelivered() {
+
+        orderDeliveryBinding.deliveredLabel.setVisibility(View.VISIBLE);
+        orderDeliveryBinding.delivered.setVisibility(View.GONE);
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(0, 20, 0, 0);
+        orderDeliveryBinding.returnLabel.setLayoutParams(params);
+
+        if (orderDeliveryBinding.orderDeliveredParentLayout.getVisibility() == View.VISIBLE) {
+            LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params1.setMargins(0, 20, 0, 0);
+            orderDeliveryBinding.orderDeliveredParentLayout.setLayoutParams(params1);
         }
     }
 
@@ -1742,6 +1895,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 
                         //pickup address and details
                         orderDeliveryBinding.apolloPhamrmacyAddId.setText(this.orderDetailsResponse.getData().getDelAddId());
+                        orderDeliveryBinding.apolloPhamrmacyAddHeadId.setText(this.orderDetailsResponse.getData().getDelAddId());
                         orderDeliveryBinding.pharmacyLandmark.setText(this.orderDetailsResponse.getData().getDeliverLandmark());
                         orderDeliveryBinding.pharmacyAddress.setText(customerAddresss);
                         String pickupPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getDelPn());
@@ -1756,6 +1910,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 
                         //delivery address and details
                         orderDeliveryBinding.customerName.setText(this.orderDetailsResponse.getData().getPickupAddId());
+                        orderDeliveryBinding.customerheadName.setText(this.orderDetailsResponse.getData().getPickupAddId());
                         orderDeliveryBinding.customerLandmark.setText(this.orderDetailsResponse.getData().getPickupLndmrk());
                         orderDeliveryBinding.customerAddress.setText(pickupAddress);
                         String userMobileNumber = String.valueOf(this.orderDetailsResponse.getData().getPickupPn());
@@ -1771,6 +1926,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 
                         // order not delivered address and details
                         orderDeliveryBinding.orderNotDeliveredAddId.setText(this.orderDetailsResponse.getData().getDelAddId());
+                        orderDeliveryBinding.orderNotDeliveredAddHeadId.setText(this.orderDetailsResponse.getData().getDelAddId());
                         orderDeliveryBinding.orderNotDeliveryLandmark.setText(this.orderDetailsResponse.getData().getDeliverLandmark());
                         orderDeliveryBinding.orderNotDeliveryAddress.setText(customerAddresss);
                         String orderNotDeliveredPhoneNubmber = String.valueOf(this.orderDetailsResponse.getData().getDelPn());
@@ -1780,6 +1936,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                     } else {
                         //pickup address and details
                         orderDeliveryBinding.apolloPhamrmacyAddId.setText(this.orderDetailsResponse.getData().getPickupAddId());
+                        orderDeliveryBinding.apolloPhamrmacyAddHeadId.setText(this.orderDetailsResponse.getData().getPickupAddId());
                         orderDeliveryBinding.pharmacyLandmark.setText(this.orderDetailsResponse.getData().getPickupLndmrk());
                         orderDeliveryBinding.pharmacyAddress.setText(pickupAddress);
                         String pickupPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getPickupPn());
@@ -1794,6 +1951,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 
                         //delivery address and details
                         orderDeliveryBinding.customerName.setText(this.orderDetailsResponse.getData().getDelAddId());
+                        orderDeliveryBinding.customerheadName.setText(this.orderDetailsResponse.getData().getDelAddId());
                         orderDeliveryBinding.customerLandmark.setText(this.orderDetailsResponse.getData().getDeliverLandmark());
                         orderDeliveryBinding.customerAddress.setText(customerAddresss);
                         String userMobileNumber = String.valueOf(this.orderDetailsResponse.getData().getDelPn());
@@ -1808,6 +1966,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 
                         //order not delivery address and details
                         orderDeliveryBinding.orderNotDeliveredAddId.setText(this.orderDetailsResponse.getData().getPickupAddId());
+                        orderDeliveryBinding.orderNotDeliveredAddHeadId.setText(this.orderDetailsResponse.getData().getPickupAddId());
                         orderDeliveryBinding.orderNotDeliveryLandmark.setText(this.orderDetailsResponse.getData().getPickupLndmrk());
                         orderDeliveryBinding.orderNotDeliveryAddress.setText(pickupAddress);
                         String orderNotDeliveredPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getPickupPn());

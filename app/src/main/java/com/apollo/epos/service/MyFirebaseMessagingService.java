@@ -42,12 +42,29 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         @Override
                         public void run() {
                             NavigationActivity.notificationDotVisibility(true);
+                            OrderDeliveryActivity.notificationDotVisibility(true);
                             DashboardFragment.newOrderViewVisibility(true);
                             getSessionManager().setNotificationStatus(true);
                             MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.notify_sound); // sound is inside res/raw/mysound
                             mp.start();
                         }
                     }, 1000);
+
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.notify_sound); // sound is inside res/raw/mysound
+                            mp.start();
+                        }
+                    }, 2000);
+
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.notify_sound); // sound is inside res/raw/mysound
+                            mp.start();
+                        }
+                    }, 3000);
 
 //                    String orderNumber = remoteMessage.getData().get("uid");
 //                    Intent intent = new Intent(this, NewOrderActivity.class);

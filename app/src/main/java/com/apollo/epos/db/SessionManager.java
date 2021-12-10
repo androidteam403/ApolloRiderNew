@@ -20,6 +20,7 @@ public class SessionManager {
     private static final String PREF_KEY_USER_ICON = "PREF_KEY_USER_ICON";
     private static final String PREF_KEY_RIDER_ACTIVE_STATUS = "PREF_KEY_RIDER_ACTIVE_STATUS";
     private static final String PREF_KEY_NOTIFICATION_STATUS = "PREF_KEY_NOTIFICATION_STATUS";
+    private static final String PREF_KEY_NOTIFICATION_ARRIVED_TIME = "PREF_KEY_NOTIFICATION_ARRIVED_TIME";
 
     public SessionManager(Context context) {
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -71,4 +72,13 @@ public class SessionManager {
     public boolean getNotificationStatus() {
         return preferences.getBoolean(PREF_KEY_NOTIFICATION_STATUS, false);
     }
+
+    public void setNotificationArrivedTime(String arrivedTime) {
+        preferences.edit().putString(PREF_KEY_NOTIFICATION_ARRIVED_TIME, arrivedTime).apply();
+    }
+
+    public String getNotificationArrivedTime() {
+        return preferences.getString(PREF_KEY_NOTIFICATION_ARRIVED_TIME, "Offline");
+    }
+
 }

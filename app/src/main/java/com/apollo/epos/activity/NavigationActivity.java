@@ -72,6 +72,9 @@ import com.google.android.material.navigation.NavigationView;
 import com.novoda.merlin.Merlin;
 import com.orhanobut.hawk.Hawk;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import static com.apollo.epos.utils.AppConstants.LAST_ACTIVITY;
 import static com.apollo.epos.utils.FragmentUtils.TRANSITION_FROM_LEFT_TO_RIGHT;
 
@@ -459,6 +462,12 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         final MenuItem menuNotificationItem = menu.findItem(R.id.action_setting_icon);
         View actionNotificationView = MenuItemCompat.getActionView(menuNotificationItem);
         notificationText = actionNotificationView.findViewById(R.id.notification_text);
+        if (!getSessionManager().getNotificationStatus()) {
+            notificationText.setVisibility(View.GONE);
+            notificationText.clearAnimation();
+            DashboardFragment.newOrderViewVisibility(false);
+            getSessionManager().setNotificationStatus(false);
+        }
         actionNotificationView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -504,6 +513,13 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
             anim.setRepeatMode(Animation.REVERSE);
             anim.setRepeatCount(Animation.INFINITE);
             notificationText.startAnimation(anim);
+
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat mdformat = new SimpleDateFormat("HH:mm");
+            String strDate = mdformat.format(calendar.getTime());
+            getInstance().getSessionManager().setNotificationArrivedTime("Today," + strDate);
+
+
         } else {
             notificationText.setVisibility(View.GONE);
         }

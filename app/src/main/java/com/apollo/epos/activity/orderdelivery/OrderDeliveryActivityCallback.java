@@ -59,4 +59,16 @@ public interface OrderDeliveryActivityCallback {
     void onClickCancelledVerifyOtp();
 
     void onClickProofofHandoverSkip();
+
+    void onClickReturnLabel();
+
+    void onClickOrderNotDelivered();
+
+    void onClickPickedLabel();
+
+    void onClickPicked();
+
+    void onClickDeliveredLabel();
+
+    void onClickDelivered();
 }
