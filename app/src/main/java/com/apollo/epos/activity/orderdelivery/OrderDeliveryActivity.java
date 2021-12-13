@@ -724,7 +724,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                     int marginEnd = (int) ActivityUtils.convertDpToPixel(rightDp, this);
                     int marginBottom = (int) ActivityUtils.convertDpToPixel(bottomDp, this);
                     params.setMargins(0, 0, marginEnd, marginBottom);
-                    deliveryItemsView.setLayoutParams(params);
+//                    deliveryItemsView.setLayoutParams(params);
                 }
             }
 
@@ -1996,7 +1996,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                 }
             }
         } catch (Exception e) {
-
+            System.out.println("onSuccessOrderSelectApi call:::::::::::::::::::::::::::" + e);
         }
     }
 
@@ -2073,7 +2073,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                 int marginEnd = (int) ActivityUtils.convertDpToPixel(rightDp, this);
                 int marginBottom = (int) ActivityUtils.convertDpToPixel(bottomDp, this);
                 params.setMargins(0, 0, marginEnd, marginBottom);
-                deliveryItemsView.setLayoutParams(params);
+//                deliveryItemsView.setLayoutParams(params);
 
                 new Handler().postDelayed(() -> {
 //                NavigationActivity.getInstance().showFragment(new DashboardFragment(), R.string.menu_dashboard);

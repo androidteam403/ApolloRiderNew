@@ -40,6 +40,7 @@ import com.apollo.epos.base.BaseFragment;
 import com.apollo.epos.databinding.FragmentDashboardBinding;
 import com.apollo.epos.model.GetRiderProfileResponse;
 import com.apollo.epos.utils.ActivityUtils;
+import com.apollo.epos.utils.CommonUtils;
 import com.apollo.epos.utils.XYMarkerView;
 import com.bumptech.glide.Glide;
 import com.github.mikephil.charting.charts.BarChart;
@@ -77,6 +78,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import butterknife.BindColor;
 import butterknife.BindView;
@@ -320,6 +322,9 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
         buildLocationSettingsRequest();
 
         newOrderLayout.setOnClickListener(v -> {
+            dashboardBinding.newOrderLayout.setVisibility(View.GONE);
+            NavigationActivity.notificationDotVisibility(false);
+            getSessionManager().setNotificationStatus(false);
 
             NavigationActivity.getInstance().selectItem(1);
 //            startUpdatesButtonHandler(newOrderLayout);
@@ -1013,15 +1018,20 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
     }
 
     public static void newOrderViewVisibility(boolean show) {
-        if (show) {
-            newOrderLayoutView.setVisibility(View.VISIBLE);
-            Calendar calendar = Calendar.getInstance();
-            SimpleDateFormat mdformat = new SimpleDateFormat("HH:mm");
-            String strDate = mdformat.format(calendar.getTime());
-            timeView.setText("Today," + strDate);
+        try{
+            if (show) {
+                newOrderLayoutView.setVisibility(View.VISIBLE);
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                String orderDate = CommonUtils.getCurrentTimeDate();
+                Date orderDates = formatter.parse(orderDate);
+                long orderDateMills = orderDates.getTime();
+                timeView.setText(CommonUtils.getTimeFormatter(orderDateMills));
 
-        } else {
-            newOrderLayoutView.setVisibility(View.GONE);
+            } else {
+                newOrderLayoutView.setVisibility(View.GONE);
+            }
+        }catch (Exception e){
+
         }
     }
 

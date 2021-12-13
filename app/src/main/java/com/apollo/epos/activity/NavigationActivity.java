@@ -74,6 +74,8 @@ import com.orhanobut.hawk.Hawk;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import static com.apollo.epos.utils.AppConstants.LAST_ACTIVITY;
 import static com.apollo.epos.utils.FragmentUtils.TRANSITION_FROM_LEFT_TO_RIGHT;
@@ -506,22 +508,29 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 
     public static void notificationDotVisibility(boolean show) {
         if (show) {
-            notificationText.setVisibility(View.VISIBLE);
-            anim = new AlphaAnimation(0.0f, 1.0f);
-            anim.setDuration(350); //You can manage the blinking time with this parameter
-            anim.setStartOffset(20);
-            anim.setRepeatMode(Animation.REVERSE);
-            anim.setRepeatCount(Animation.INFINITE);
-            notificationText.startAnimation(anim);
+            try {
+                notificationText.setVisibility(View.VISIBLE);
+                anim = new AlphaAnimation(0.0f, 1.0f);
+                anim.setDuration(350); //You can manage the blinking time with this parameter
+                anim.setStartOffset(20);
+                anim.setRepeatMode(Animation.REVERSE);
+                anim.setRepeatCount(Animation.INFINITE);
+                notificationText.startAnimation(anim);
 
-            Calendar calendar = Calendar.getInstance();
-            SimpleDateFormat mdformat = new SimpleDateFormat("HH:mm");
-            String strDate = mdformat.format(calendar.getTime());
-            getInstance().getSessionManager().setNotificationArrivedTime("Today," + strDate);
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                String orderDate = CommonUtils.getCurrentTimeDate();
+                Date orderDates = formatter.parse(orderDate);
+                long orderDateMills = orderDates.getTime();
 
+                getInstance().getSessionManager().setNotificationArrivedTime(CommonUtils.getTimeFormatter(orderDateMills));
+            }catch (Exception e){
+
+            }
 
         } else {
             notificationText.setVisibility(View.GONE);
+            notificationText.clearAnimation();
+
         }
     }
 

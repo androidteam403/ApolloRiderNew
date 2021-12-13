@@ -2553,51 +2553,55 @@
                                                         android:textSize="@dimen/text_dimen_13" />
                                                 </RelativeLayout>
 
-                                                <LinearLayout
-                                                    android:id="@+id/order_delivered_child_two_layout"
+                                                <RelativeLayout
                                                     android:layout_width="match_parent"
-                                                    android:layout_height="wrap_content"
-                                                    android:layout_gravity="center"
-                                                    android:layout_marginTop="@dimen/ten_dp"
-                                                    android:layout_marginBottom="@dimen/ten_dp"
-                                                    android:gravity="center"
-                                                    android:orientation="vertical"
-                                                    android:visibility="gone">
-
+                                                    android:layout_height="wrap_content">
                                                     <LinearLayout
+                                                        android:id="@+id/order_delivered_child_two_layout"
                                                         android:layout_width="match_parent"
                                                         android:layout_height="wrap_content"
-                                                        android:gravity="center"
-                                                        android:orientation="horizontal">
+                                                        android:layout_marginTop="@dimen/ten_dp"
+                                                        android:layout_marginBottom="@dimen/ten_dp"
+                                                        android:orientation="vertical"
+                                                        android:visibility="gone">
 
-                                                        <ImageView
-                                                            android:layout_width="@dimen/twenty_five_dp"
-                                                            android:layout_height="@dimen/twenty_five_dp"
-                                                            android:layout_gravity="center"
-                                                            android:layout_marginEnd="@dimen/ten_dp"
-                                                            android:contentDescription="@string/app_name"
-                                                            android:src="@drawable/icon_order_delivered" />
+                                                        <LinearLayout
+                                                            android:layout_width="match_parent"
+                                                            android:layout_height="wrap_content"
+                                                            android:gravity="center"
+                                                            android:orientation="horizontal">
+
+                                                            <ImageView
+                                                                android:layout_width="@dimen/twenty_five_dp"
+                                                                android:layout_height="@dimen/twenty_five_dp"
+                                                                android:layout_gravity="center"
+                                                                android:layout_marginEnd="@dimen/ten_dp"
+                                                                android:contentDescription="@string/app_name"
+                                                                android:src="@drawable/icon_order_delivered" />
+
+                                                            <TextView
+                                                                android:layout_width="match_parent"
+                                                                android:layout_height="wrap_content"
+                                                                android:layout_gravity="center"
+                                                                android:paddingEnd="@dimen/fifteen_dp"
+                                                                android:fontFamily="@font/roboto_bold"
+                                                                android:text="@string/label_order_completed_successfully"
+                                                                android:textColor="@color/colorWhite"
+                                                                android:textSize="@dimen/text_dimen_13" />
+                                                        </LinearLayout>
 
                                                         <TextView
-                                                            android:layout_width="wrap_content"
+                                                            android:id="@+id/order_completed_successfully_date_and_time"
+                                                            android:layout_width="match_parent"
                                                             android:layout_height="wrap_content"
                                                             android:layout_gravity="center"
+                                                            android:layout_marginStart="@dimen/twenty_five_dp"
                                                             android:fontFamily="@font/roboto_bold"
-                                                            android:text="@string/label_order_completed_successfully"
                                                             android:textColor="@color/colorWhite"
-                                                            android:textSize="@dimen/text_dimen_13" />
+                                                            android:textSize="@dimen/text_dimen_12" />
+
                                                     </LinearLayout>
-
-                                                    <TextView
-                                                        android:id="@+id/order_completed_successfully_date_and_time"
-                                                        android:layout_width="wrap_content"
-                                                        android:layout_height="wrap_content"
-                                                        android:layout_gravity="center"
-                                                        android:fontFamily="@font/roboto_bold"
-                                                        android:textColor="@color/colorWhite"
-                                                        android:textSize="@dimen/text_dimen_12" />
-
-                                                </LinearLayout>
+                                                </RelativeLayout>
                                             </LinearLayout>
                                         </LinearLayout>
                                     </LinearLayout>

@@ -1,0 +1,49 @@
+<changelist name="Uncommitted_changes_before_Checkout_at_13-12-2021_10_13_AM_[Default_Changelist]" date="1639370640095" recycled="true" deleted="true">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_13-12-2021_10_13_AM_[Default_Changelist]/shelved.patch" />
+  <option name="DESCRIPTION" value="Uncommitted changes before Checkout at 13-12-2021 10:13 AM [Default Changelist]" />
+  <binary>
+    <option name="BEFORE_PATH" value="cusotmloader/build/.transforms/60d25e58332731fe05b4760f92c1efaa.bin" />
+    <option name="AFTER_PATH" />
+    <option name="SHELVED_PATH" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="core/build/.transforms/7e0d23f553108e59ffc7d1c487167e98.bin" />
+    <option name="AFTER_PATH" />
+    <option name="SHELVED_PATH" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="core/build/.transforms/7e0d23f553108e59ffc7d1c487167e98/classes/classes.dex" />
+    <option name="AFTER_PATH" />
+    <option name="SHELVED_PATH" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="cusotmloader/build/intermediates/compiled_local_resources/debug/out/drawable_apollo_circle_logo.png.flat" />
+    <option name="AFTER_PATH" />
+    <option name="SHELVED_PATH" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="cusotmloader/build/intermediates/compiled_local_resources/debug/out/drawable-v21_dmax_spots_spot.xml.flat" />
+    <option name="AFTER_PATH" />
+    <option name="SHELVED_PATH" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="cusotmloader/build/intermediates/compiled_local_resources/debug/out/layout_dmax_spots_dialog.xml.flat" />
+    <option name="AFTER_PATH" />
+    <option name="SHELVED_PATH" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="cusotmloader/build/.transforms/60d25e58332731fe05b4760f92c1efaa/classes/classes.dex" />
+    <option name="AFTER_PATH" />
+    <option name="SHELVED_PATH" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="cusotmloader/build/intermediates/compiled_local_resources/debug/out/drawable-v21_ic_launcher.png.flat" />
+    <option name="AFTER_PATH" />
+    <option name="SHELVED_PATH" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="cusotmloader/build/intermediates/compiled_local_resources/debug/out/drawable_dmax_spots_spot.xml.flat" />
+    <option name="AFTER_PATH" />
+    <option name="SHELVED_PATH" />
+  </binary>
+</changelist>
