@@ -6,6 +6,9 @@ android {
     dataBinding {
         enabled = true
     }
+    lintOptions {
+      abortOnError false
+    }    
     defaultConfig {
         applicationId "com.apollo.epos"
         minSdkVersion 21
