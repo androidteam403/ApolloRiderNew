@@ -71,7 +71,7 @@ public interface ApiInterface {
     @POST("api/order_status_his/list/order-status-history-list")
     Call<OrderStatusHitoryListResponse> ORDER_STATUS_HISTORY_LIST_API_CALL(@Header("authorization") String token, @Body OrderStatusHistoryListRequest orderStatusHistoryListRequest);
 
-    @PUT("api/orders/save-update")
+    @POST("api/orders/save-update/order-status-update")//api/orders/save-update
     Call<OrderSaveUpdateStausResponse> ORDER_SAVE_UPDATE_STATUS_API_CALL(@Header("authorization") String token, @Body OrderSaveUpdateStausRequest orderSaveUpdateStausRequest);
 
     @POST("upload")
