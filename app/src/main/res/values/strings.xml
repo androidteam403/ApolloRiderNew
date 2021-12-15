@@ -188,7 +188,7 @@
 
     <string name="permission_location_need_body">This app needs the Location permission, please allow to access the location</string>
     <string name="permission_location_need_title">Location Permission Needed</string>
-    <string name="ok">ok</string>
+    <string name="ok">OK</string>
 
     <string name="title_activity_maps">Map</string>
     <string name="permission_refused">Permission was not granted</string>

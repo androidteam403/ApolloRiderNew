@@ -6,7 +6,7 @@
         android:left="@dimen/ten_dp"
         android:right="@dimen/ten_dp"
         android:top="@dimen/three_dp" />
-    <solid android:color="@color/notification_clear_bg" />
+    <solid android:color="@color/pharmacy_circle_color" />
     <corners
         android:radius="@dimen/fifteen_dp"/>
 </shape>

@@ -136,7 +136,7 @@ public class LoginActivityController {
             FirebaseTokenRequest o = new FirebaseTokenRequest();
             o.setFirebaseToken(firebaseToken);
 
-            Call<Object> call = apiInterface.dummy("Bearer " + new SessionManager(context).getLoginToken(), o);
+            Call<Object> call = apiInterface.UPDATE_FIREBASE_TOKEN_API_CALL("Bearer " + new SessionManager(context).getLoginToken(), o);
             call.enqueue(new Callback<Object>() {
                 @Override
                 public void onResponse(@NotNull Call<Object> call, @NotNull Response<Object> response) {

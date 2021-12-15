@@ -308,9 +308,9 @@ public class OrderStatusHitoryListResponse {
         @SerializedName("order_status")
         @Expose
         private OrderStatus orderStatus;
-        @SerializedName("is_deleted")
-        @Expose
-        private Boolean isDeleted;
+//        @SerializedName("is_deleted")
+//        @Expose
+//        private Boolean isDeleted;
         @SerializedName("created_id")
         @Expose
         private CreatedId createdId;
@@ -337,13 +337,13 @@ public class OrderStatusHitoryListResponse {
             this.orderStatus = orderStatus;
         }
 
-        public Boolean getIsDeleted() {
-            return isDeleted;
-        }
-
-        public void setIsDeleted(Boolean isDeleted) {
-            this.isDeleted = isDeleted;
-        }
+//        public Boolean getIsDeleted() {
+//            return isDeleted;
+//        }
+//
+//        public void setIsDeleted(Boolean isDeleted) {
+//            this.isDeleted = isDeleted;
+//        }
 
         public CreatedId getCreatedId() {
             return createdId;

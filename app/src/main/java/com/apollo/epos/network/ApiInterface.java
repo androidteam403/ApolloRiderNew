@@ -42,7 +42,7 @@ public interface ApiInterface {
     Call<SaveUserDeviceInfoResponse> SAVE_USER_DEVICE_INFO_API_CALL(@Header("authorization") String token, @Body SaveUserDeviceInfoRequest saveUserDeviceInfoRequest);
 
     @POST("updateFirebaseToken")
-    Call<Object> dummy(@Header("authorization") String token, @Body FirebaseTokenRequest o);
+    Call<Object> UPDATE_FIREBASE_TOKEN_API_CALL(@Header("authorization") String token, @Body FirebaseTokenRequest o);
 
     @POST("api/user/select/rider-profile-select")
     Call<GetRiderProfileResponse> GET_RIDER_PROFILE_API_CALL(@Header("authorization") String token);
