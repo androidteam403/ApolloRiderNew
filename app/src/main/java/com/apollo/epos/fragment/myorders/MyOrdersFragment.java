@@ -7,11 +7,13 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -98,9 +100,18 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
         orderTypeSpinner.setOnItemSelectedListener(this);
     }
 
+//    private float x1,x2;
+//    static final int MIN_DISTANCE = 150;
+
+    private int min_distance = 100;
+    private float downX, downY, upX, upY;
+
+    private int swiping = 0;
+
     private void orderStatusTabviews() {
         myOrdersBinding.newOrder.setOnClickListener(v -> {
             selectedStatus = 1;
+            swiping = 0;
             myOrdersBinding.select.animate().x(0).setDuration(100);
             myOrdersBinding.newOrder.setTextColor(Color.WHITE);
             myOrdersBinding.intTransit.setTextColor(getResources().getColor(R.color.colorPrimary));
@@ -126,6 +137,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
         });
         myOrdersBinding.intTransit.setOnClickListener(v -> {
             selectedStatus = 2;
+            swiping = 1;
             myOrdersBinding.newOrder.setTextColor(getResources().getColor(R.color.colorPrimary));
             myOrdersBinding.intTransit.setTextColor(Color.WHITE);
             myOrdersBinding.orderDelivered.setTextColor(getResources().getColor(R.color.colorPrimary));
@@ -152,6 +164,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
         });
         myOrdersBinding.orderDelivered.setOnClickListener(v -> {
             selectedStatus = 3;
+            swiping = 2;
             myOrdersBinding.newOrder.setTextColor(getResources().getColor(R.color.colorPrimary));
             myOrdersBinding.orderDelivered.setTextColor(Color.WHITE);
             myOrdersBinding.intTransit.setTextColor(getResources().getColor(R.color.colorPrimary));
@@ -178,6 +191,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
         });
         myOrdersBinding.cancelOrder.setOnClickListener(v -> {
             selectedStatus = 4;
+            swiping = 3;
             myOrdersBinding.newOrder.setTextColor(getResources().getColor(R.color.colorPrimary));
             myOrdersBinding.orderDelivered.setTextColor(getResources().getColor(R.color.colorPrimary));
             myOrdersBinding.intTransit.setTextColor(getResources().getColor(R.color.colorPrimary));
@@ -202,6 +216,336 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
                 ordersRecyclerView.setVisibility(View.GONE);
             }
         });
+
+        myOrdersBinding.ordersRecyclerView.setOnTouchListener(new View.OnTouchListener() {
+            View v;
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                this.v = v;
+                switch(event.getAction()) { // Check vertical and horizontal touches
+                    case MotionEvent.ACTION_DOWN: {
+                        downX = event.getX();
+                        downY = event.getY();
+                        return true;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        upX = event.getX();
+                        upY = event.getY();
+
+                        float deltaX = downX - upX;
+                        float deltaY = downY - upY;
+
+                        //HORIZONTAL SCROLL
+                        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                            if (Math.abs(deltaX) > min_distance) {
+                                // left or right
+                                if (deltaX < 0) {
+                                    this.onLeftToRightSwipe();
+                                    return true;
+                                }
+                                if (deltaX > 0) {
+                                    this.onRightToLeftSwipe();
+                                    return true;
+                                }
+                            } else {
+                                //not long enough swipe...
+                                return false;
+                            }
+                        }
+                        //VERTICAL SCROLL
+                        else {
+                            if (Math.abs(deltaY) > min_distance) {
+                                // top or down
+                                if (deltaY < 0) {
+                                    this.onTopToBottomSwipe();
+                                    return true;
+                                }
+                                if (deltaY > 0) {
+                                    this.onBottomToTopSwipe();
+                                    return true;
+                                }
+                            } else {
+                                //not long enough swipe...
+                                return false;
+                            }
+                        }
+                        return false;
+                    }
+                }
+                return false;
+            }
+
+            public void onLeftToRightSwipe(){
+                leftToRight();
+            }
+
+            public void onRightToLeftSwipe() {
+                rightToLeft();
+            }
+
+            public void onTopToBottomSwipe() {
+//                Toast.makeText(v.getContext(),"top to bottom",
+//                        Toast.LENGTH_SHORT).show();
+            }
+
+            public void onBottomToTopSwipe() {
+//                Toast.makeText(v.getContext(),"bottom to top",
+//                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        myOrdersBinding.noOrderFoundLayout.setOnTouchListener(new View.OnTouchListener() {
+            View v;
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                this.v = v;
+                switch(event.getAction()) { // Check vertical and horizontal touches
+                    case MotionEvent.ACTION_DOWN: {
+                        downX = event.getX();
+                        downY = event.getY();
+                        return true;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        upX = event.getX();
+                        upY = event.getY();
+
+                        float deltaX = downX - upX;
+                        float deltaY = downY - upY;
+
+                        //HORIZONTAL SCROLL
+                        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                            if (Math.abs(deltaX) > min_distance) {
+                                // left or right
+                                if (deltaX < 0) {
+                                    this.onLeftToRightSwipe();
+                                    return true;
+                                }
+                                if (deltaX > 0) {
+                                    this.onRightToLeftSwipe();
+                                    return true;
+                                }
+                            } else {
+                                //not long enough swipe...
+                                return false;
+                            }
+                        }
+                        //VERTICAL SCROLL
+                        else {
+                            if (Math.abs(deltaY) > min_distance) {
+                                // top or down
+                                if (deltaY < 0) {
+                                    this.onTopToBottomSwipe();
+                                    return true;
+                                }
+                                if (deltaY > 0) {
+                                    this.onBottomToTopSwipe();
+                                    return true;
+                                }
+                            } else {
+                                //not long enough swipe...
+                                return false;
+                            }
+                        }
+                        return false;
+                    }
+                }
+                return false;
+            }
+
+            public void onLeftToRightSwipe(){
+               leftToRight();
+            }
+
+            public void onRightToLeftSwipe() {
+               rightToLeft();
+            }
+
+            public void onTopToBottomSwipe() {
+//                Toast.makeText(v.getContext(),"top to bottom",
+//                        Toast.LENGTH_SHORT).show();
+            }
+
+            public void onBottomToTopSwipe() {
+//                Toast.makeText(v.getContext(),"bottom to top",
+//                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    private void leftToRight(){
+//        Toast.makeText(getContext(),"left to right",
+//                Toast.LENGTH_SHORT).show();
+
+        if (swiping > 0) {
+            swiping = swiping - 1;
+        }
+
+        if (swiping == 2) {
+            selectedStatus = 3;
+            myOrdersBinding.newOrder.setTextColor(getResources().getColor(R.color.colorPrimary));
+            myOrdersBinding.orderDelivered.setTextColor(Color.WHITE);
+            myOrdersBinding.intTransit.setTextColor(getResources().getColor(R.color.colorPrimary));
+            myOrdersBinding.cancelOrder.setTextColor(getResources().getColor(R.color.colorPrimary));
+
+            int size = myOrdersBinding.intTransit.getWidth() * 2;
+            myOrdersBinding.select.animate().x(size).setDuration(100);
+            List<MyOrdersListResponse.Row> deliveredOrdersList = new ArrayList<>();
+            for (MyOrdersListResponse.Row deliveredOrder : myOrdersList)
+                if (deliveredOrder.getOrderStatus().getUid().equals("order_delivered"))
+                    deliveredOrdersList.add(deliveredOrder);
+            if (deliveredOrdersList.size() > 0) {
+                myOrdersBinding.noOrderFoundLayout.setVisibility(View.GONE);
+                ordersRecyclerView.setVisibility(View.VISIBLE);
+                myOrdersListAdapter = new MyOrdersListAdapter(mActivity, deliveredOrdersList, MyOrdersFragment.this);
+                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mActivity);
+                ordersRecyclerView.setLayoutManager(mLayoutManager);
+                ordersRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                ordersRecyclerView.setAdapter(myOrdersListAdapter);
+            } else {
+                myOrdersBinding.noOrderFoundLayout.setVisibility(View.VISIBLE);
+                ordersRecyclerView.setVisibility(View.GONE);
+            }
+        }
+        if (swiping == 1) {
+            selectedStatus = 2;
+            myOrdersBinding.newOrder.setTextColor(getResources().getColor(R.color.colorPrimary));
+            myOrdersBinding.intTransit.setTextColor(Color.WHITE);
+            myOrdersBinding.orderDelivered.setTextColor(getResources().getColor(R.color.colorPrimary));
+            myOrdersBinding.cancelOrder.setTextColor(getResources().getColor(R.color.colorPrimary));
+
+            int size = myOrdersBinding.intTransit.getWidth();
+            myOrdersBinding.select.animate().x(size).setDuration(100);
+            List<MyOrdersListResponse.Row> myInTransitOrdersList = new ArrayList<>();
+            for (MyOrdersListResponse.Row inTransitOrder : myOrdersList)
+                if (inTransitOrder.getOrderStatus().getUid().equals("order_picked") || inTransitOrder.getOrderStatus().getUid().equals("order_transit"))
+                    myInTransitOrdersList.add(inTransitOrder);
+            if (myInTransitOrdersList.size() > 0) {
+                myOrdersBinding.noOrderFoundLayout.setVisibility(View.GONE);
+                ordersRecyclerView.setVisibility(View.VISIBLE);
+                myOrdersListAdapter = new MyOrdersListAdapter(mActivity, myInTransitOrdersList, MyOrdersFragment.this);
+                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mActivity);
+                ordersRecyclerView.setLayoutManager(mLayoutManager);
+                ordersRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                ordersRecyclerView.setAdapter(myOrdersListAdapter);
+            } else {
+                myOrdersBinding.noOrderFoundLayout.setVisibility(View.VISIBLE);
+                ordersRecyclerView.setVisibility(View.GONE);
+            }
+        }
+        if (swiping == 0) {
+            selectedStatus = 1;
+            myOrdersBinding.select.animate().x(0).setDuration(100);
+            myOrdersBinding.newOrder.setTextColor(Color.WHITE);
+            myOrdersBinding.intTransit.setTextColor(getResources().getColor(R.color.colorPrimary));
+            myOrdersBinding.orderDelivered.setTextColor(getResources().getColor(R.color.colorPrimary));
+            myOrdersBinding.cancelOrder.setTextColor(getResources().getColor(R.color.colorPrimary));
+
+            List<MyOrdersListResponse.Row> myNewOrdersList = new ArrayList<>();
+            for (MyOrdersListResponse.Row newOrder : myOrdersList)
+                if (newOrder.getOrderStatus().getUid().equals("order_assigned"))
+                    myNewOrdersList.add(newOrder);
+            if (myNewOrdersList.size() > 0) {
+                myOrdersBinding.noOrderFoundLayout.setVisibility(View.GONE);
+                ordersRecyclerView.setVisibility(View.VISIBLE);
+                myOrdersListAdapter = new MyOrdersListAdapter(mActivity, myNewOrdersList, MyOrdersFragment.this);
+                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mActivity);
+                ordersRecyclerView.setLayoutManager(mLayoutManager);
+                ordersRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                ordersRecyclerView.setAdapter(myOrdersListAdapter);
+            } else {
+                myOrdersBinding.noOrderFoundLayout.setVisibility(View.VISIBLE);
+                ordersRecyclerView.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void rightToLeft(){
+//        Toast.makeText(getContext(),"right to left",
+//                Toast.LENGTH_SHORT).show();
+
+
+        if (swiping < 3) {
+            swiping = swiping + 1;
+        }
+        if (swiping == 1) {
+            selectedStatus = 2;
+            myOrdersBinding.newOrder.setTextColor(getResources().getColor(R.color.colorPrimary));
+            myOrdersBinding.intTransit.setTextColor(Color.WHITE);
+            myOrdersBinding.orderDelivered.setTextColor(getResources().getColor(R.color.colorPrimary));
+            myOrdersBinding.cancelOrder.setTextColor(getResources().getColor(R.color.colorPrimary));
+
+            int size = myOrdersBinding.intTransit.getWidth();
+            myOrdersBinding.select.animate().x(size).setDuration(100);
+            List<MyOrdersListResponse.Row> myInTransitOrdersList = new ArrayList<>();
+            for (MyOrdersListResponse.Row inTransitOrder : myOrdersList)
+                if (inTransitOrder.getOrderStatus().getUid().equals("order_picked") || inTransitOrder.getOrderStatus().getUid().equals("order_transit"))
+                    myInTransitOrdersList.add(inTransitOrder);
+            if (myInTransitOrdersList.size() > 0) {
+                myOrdersBinding.noOrderFoundLayout.setVisibility(View.GONE);
+                ordersRecyclerView.setVisibility(View.VISIBLE);
+                myOrdersListAdapter = new MyOrdersListAdapter(mActivity, myInTransitOrdersList, MyOrdersFragment.this);
+                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mActivity);
+                ordersRecyclerView.setLayoutManager(mLayoutManager);
+                ordersRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                ordersRecyclerView.setAdapter(myOrdersListAdapter);
+            } else {
+                myOrdersBinding.noOrderFoundLayout.setVisibility(View.VISIBLE);
+                ordersRecyclerView.setVisibility(View.GONE);
+            }
+        }
+        if (swiping == 2) {
+            selectedStatus = 3;
+            myOrdersBinding.newOrder.setTextColor(getResources().getColor(R.color.colorPrimary));
+            myOrdersBinding.orderDelivered.setTextColor(Color.WHITE);
+            myOrdersBinding.intTransit.setTextColor(getResources().getColor(R.color.colorPrimary));
+            myOrdersBinding.cancelOrder.setTextColor(getResources().getColor(R.color.colorPrimary));
+
+            int size = myOrdersBinding.intTransit.getWidth() * 2;
+            myOrdersBinding.select.animate().x(size).setDuration(100);
+            List<MyOrdersListResponse.Row> deliveredOrdersList = new ArrayList<>();
+            for (MyOrdersListResponse.Row deliveredOrder : myOrdersList)
+                if (deliveredOrder.getOrderStatus().getUid().equals("order_delivered"))
+                    deliveredOrdersList.add(deliveredOrder);
+            if (deliveredOrdersList.size() > 0) {
+                myOrdersBinding.noOrderFoundLayout.setVisibility(View.GONE);
+                ordersRecyclerView.setVisibility(View.VISIBLE);
+                myOrdersListAdapter = new MyOrdersListAdapter(mActivity, deliveredOrdersList, MyOrdersFragment.this);
+                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mActivity);
+                ordersRecyclerView.setLayoutManager(mLayoutManager);
+                ordersRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                ordersRecyclerView.setAdapter(myOrdersListAdapter);
+            } else {
+                myOrdersBinding.noOrderFoundLayout.setVisibility(View.VISIBLE);
+                ordersRecyclerView.setVisibility(View.GONE);
+            }
+        }
+        if (swiping == 3) {
+            selectedStatus = 4;
+            myOrdersBinding.newOrder.setTextColor(getResources().getColor(R.color.colorPrimary));
+            myOrdersBinding.orderDelivered.setTextColor(getResources().getColor(R.color.colorPrimary));
+            myOrdersBinding.intTransit.setTextColor(getResources().getColor(R.color.colorPrimary));
+            myOrdersBinding.cancelOrder.setTextColor(Color.WHITE);
+
+            int size = myOrdersBinding.intTransit.getWidth() * 3;
+            myOrdersBinding.select.animate().x(size).setDuration(100);
+            List<MyOrdersListResponse.Row> orderNotDeliveredList = new ArrayList<>();
+            for (MyOrdersListResponse.Row deliveredOrder : myOrdersList)
+                if (deliveredOrder.getOrderStatus().getUid().equals("order_not_delivered"))
+                    orderNotDeliveredList.add(deliveredOrder);
+            if (orderNotDeliveredList.size() > 0) {
+                myOrdersBinding.noOrderFoundLayout.setVisibility(View.GONE);
+                ordersRecyclerView.setVisibility(View.VISIBLE);
+                myOrdersListAdapter = new MyOrdersListAdapter(mActivity, orderNotDeliveredList, MyOrdersFragment.this);
+                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mActivity);
+                ordersRecyclerView.setLayoutManager(mLayoutManager);
+                ordersRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                ordersRecyclerView.setAdapter(myOrdersListAdapter);
+            } else {
+                myOrdersBinding.noOrderFoundLayout.setVisibility(View.VISIBLE);
+                ordersRecyclerView.setVisibility(View.GONE);
+            }
+        }
     }
 
     @OnClick(R.id.date_filter_text)
