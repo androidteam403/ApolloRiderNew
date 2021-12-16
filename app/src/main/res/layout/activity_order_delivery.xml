@@ -2004,11 +2004,11 @@
                                                         android:id="@+id/handedover_parcelto_customer_name"
                                                         android:layout_width="wrap_content"
                                                         android:layout_height="wrap_content"
+                                                        android:layout_alignParentRight="true"
                                                         android:layout_centerVertical="true"
+                                                        android:layout_marginEnd="@dimen/twenty_five_dp"
                                                         android:fontFamily="@font/roboto_bold"
                                                         android:textColor="@color/colorWhite"
-                                                        android:layout_marginEnd="@dimen/twenty_five_dp"
-                                                        android:layout_alignParentRight="true"
                                                         android:textSize="@dimen/text_dimen_13"
                                                         android:visibility="gone" />
 
@@ -2799,7 +2799,7 @@
                                     android:layout_marginEnd="@dimen/ten_dp"
                                     android:layout_toEndOf="@+id/order_not_delivered_add_head_id"
                                     android:contentDescription="@string/app_name"
-                                    android:src="@drawable/icon_status_completed"
+                                    android:src="@drawable/tick_icon_green"
                                     android:visibility="gone" />
                             </RelativeLayout>
                         </LinearLayout>

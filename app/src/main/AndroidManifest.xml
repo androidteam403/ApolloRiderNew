@@ -110,10 +110,10 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDlqvq37mmAUE1TPHzvToOdPfQaq2W7GJk" />
+            android:value="AIzaSyCIfiXJzjIsYegXANaoSXbifkoK-ROb0oM" />
         <!--        AIzaSyBY57sFc1I5c5YMmQ7AhrazAhHZ6L8ccn8-->
         <!--        <service android:name=".service.FloatingTouchService" />-->
-
+<!--        AIzaSyDlqvq37mmAUE1TPHzvToOdPfQaq2W7GJk-->
         <service android:name=".service.MyFirebaseMessagingService">
 
             <intent-filter>
