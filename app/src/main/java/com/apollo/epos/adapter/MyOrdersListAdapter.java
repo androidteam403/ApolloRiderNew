@@ -28,9 +28,7 @@ import butterknife.ButterKnife;
 
 public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapter.MyViewHolder> {
     private Activity activity;
-    //    private ArrayList<MyOrdersItemModel> myOrdersList;
     private List<MyOrdersListResponse.Row> myOrdersList;
-//    private OnItemClickListener listener;
 
     private MyOrdersFragmentCallback listener;
 
@@ -93,7 +91,8 @@ public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapte
         TextView pickupLandmark;
         @BindView(R.id.customer_landmark)
         TextView customerLandmark;
-
+        @BindView(R.id.delivery_txt)
+        TextView deliveryText;
 
         public MyViewHolder(View view) {
             super(view);
@@ -116,20 +115,30 @@ public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapte
 //        holder.orderPaymentType.setText(item.getPaymentType().getName());
         String pickupAddress = item.getDeliverApartment() + ", " + item.getDeliverStreetName() + ", " + item.getDeliverCity() + ", " + item.getDeliverState() + ", " + item.getDelPincode() + ", " + item.getDeliverCountry();
         String customerAddress = item.getPickupApt() + ", " + item.getPickupStreetName() + ", " + item.getPickupCity() + ", " + item.getPickupState() + ", " + item.getPickupPincode() + ", " + item.getPickupCountry();
+        String returnAddress = item.getReturnApartment() + ", " + item.getReturnStreetName() + ", " + item.getReturnCity() + ", " + item.getReturnState() + ", " + item.getReturnPincode() + ", " + item.getReturnCountry();
+
+
         if (item.getOrderState().getName().equals("RETURN")) {
-            holder.apolloPharmacyName.setText(item.getDelAddId());
-            holder.customerName.setText(item.getPickupAddId());
-            holder.pickupLandmark.setText(item.getDeliverLandmark());
-            holder.customerLandmark.setText(item.getPickupLndmrk());
-            holder.pharmacyAddress.setText(customerAddress);
-            holder.customerAddress.setText(pickupAddress);
-        } else {
+            // Pickup Address
             holder.apolloPharmacyName.setText(item.getPickupAddId());
-            holder.customerName.setText(item.getDelAddId());
-            holder.pickupLandmark.setText(item.getPickupLndmrk());
-            holder.customerLandmark.setText(item.getDeliverLandmark());
             holder.pharmacyAddress.setText(pickupAddress);
+            holder.pickupLandmark.setText(item.getPickupLndmrk());
+
+            // Delivery Address
+            holder.deliveryText.setText("R");
+            holder.customerName.setText(item.getReturnAddId());
+            holder.customerAddress.setText(returnAddress);
+            holder.customerLandmark.setText(item.getReturnLandmark());
+        } else {
+            // Pickup Address
+            holder.apolloPharmacyName.setText(item.getPickupAddId());
+            holder.pharmacyAddress.setText(pickupAddress);
+            holder.pickupLandmark.setText(item.getPickupLndmrk());
+
+            // Delivery Address
+            holder.customerName.setText(item.getDelAddId());
             holder.customerAddress.setText(customerAddress);
+            holder.customerLandmark.setText(item.getDeliverLandmark());
         }
 
 //        holder.customerName.setText(item.getCustomerName());

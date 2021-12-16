@@ -556,6 +556,12 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
         selectionTag = 3;
         if (isCutomerNameSlected()) {
             orderDeliveryBinding.handoverParcelChildLayoutAnim.setLayoutTransition(null);
+            orderDeliveryBinding.handedoverParceltoCustomerName.setVisibility(View.VISIBLE);
+            if (this.customerNameTypeSinner.equals("Other"))
+                orderDeliveryBinding.handedoverParceltoCustomerName.setText("- " + orderDeliveryBinding.handoverUserName.getText().toString().trim());
+            else
+                orderDeliveryBinding.handedoverParceltoCustomerName.setText("- " + this.customerNameTypeSinner);
+
             handoverParcelChildLayout.setVisibility(View.GONE);
             handoverParcelParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
             handoverParcelImg.setImageDrawable(getDrawable(R.drawable.icon_status_completed));
@@ -880,8 +886,10 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 
     @Override
     public void onClickReturnLabel() {
-        orderDeliveryBinding.orderNotDeliveredParentLayout.setVisibility(View.VISIBLE);
-        orderDeliveryBinding.returnLabel.setVisibility(View.GONE);
+        if (orderCurrentStatus != 1) {
+            orderDeliveryBinding.orderNotDeliveredParentLayout.setVisibility(View.VISIBLE);
+            orderDeliveryBinding.returnLabel.setVisibility(View.GONE);
+        }
     }
 
 
@@ -1950,6 +1958,8 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 //                    orderDeliveryBinding.paymentType.setText(this.orderDetailsResponse.getData().getPaymentType().getName());
                     String pickupAddress = orderDetailsResponse.getData().getDeliverApartment() + ", " + orderDetailsResponse.getData().getDeliverStreetName() + ", " + orderDetailsResponse.getData().getDeliverCity() + ", " + orderDetailsResponse.getData().getDeliverState() + ", " + orderDetailsResponse.getData().getDelPincode() + ", " + orderDetailsResponse.getData().getDeliverCountry();
                     String customerAddresss = orderDetailsResponse.getData().getPickupApt() + ", " + orderDetailsResponse.getData().getPickupStreetName() + ", " + orderDetailsResponse.getData().getPickupCity() + ", " + orderDetailsResponse.getData().getPickupState() + ", " + orderDetailsResponse.getData().getPickupPincode() + ", " + orderDetailsResponse.getData().getPickupCountry();
+                    String returnAddress = orderDetailsResponse.getData().getReturnApartment() + ", " + orderDetailsResponse.getData().getReturnStreetName() + ", " + orderDetailsResponse.getData().getReturnCity() + ", " + orderDetailsResponse.getData().getReturnState() + ", " + orderDetailsResponse.getData().getReturnPincode() + ", " + orderDetailsResponse.getData().getReturnCountry();
+
                     this.branPickupVerificationCode = orderDetailsResponse.getData().getBranpickupVerCode();
                     this.branReturnVerificatonCode = orderDetailsResponse.getData().getBranreturnVerCode();
                     this.cusPickupVerificationCode = orderDetailsResponse.getData().getCusPickupVerCode();
@@ -1962,16 +1972,29 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                         orderDeliveryBinding.customerHeadTxt.setBackground(getResources().getDrawable(R.drawable.order_active_circle_bg));
                         orderDeliveryBinding.customerTxt.setTextColor(getResources().getColor(R.color.colorBlack));
                         orderDeliveryBinding.customerTxt.setBackground(getResources().getDrawable(R.drawable.order_active_circle_bg));
-
-                        orderDeliveryBinding.deliveryheadTxt.setBackground(getResources().getDrawable(R.drawable.order_disable_circle_bg));
-                        orderDeliveryBinding.deliveryheadTxt.setTextColor(getResources().getColor(R.color.colorGrey));
-                        orderDeliveryBinding.customerheadName.setTextColor(getResources().getColor(R.color.colorGrey));
-
-
                         orderDeliveryBinding.apolloPhamrmacyAddHeadIdLayout.setBackground(getResources().getDrawable(R.drawable.status_processing_curves_bg));
                         orderDeliveryBinding.pickupDetailsInnerHeadIdLayout.setBackground(getResources().getDrawable(R.drawable.status_processing_curves_bg));
-                        orderDeliveryBinding.deliverNameHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_disable_curves_bg));
-                        orderDeliveryBinding.deliverNameInnerHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_disable_curves_bg));
+                        if (this.orderDetailsResponse.getData().getOrderState().getName().equals("RETURN")) {
+                            orderDeliveryBinding.deliveredLabel.setVisibility(View.GONE);
+                            orderDeliveryBinding.returnLabel.setVisibility(View.VISIBLE);
+
+                            orderDeliveryBinding.orderNotDeliveredHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_disable_curves_bg));
+                            orderDeliveryBinding.orderCancelHeadTxt.setTextColor(getResources().getColor(R.color.colorGrey));
+                            orderDeliveryBinding.orderCancelHeadTxt.setBackground(getResources().getDrawable(R.drawable.order_disable_circle_bg));
+                            orderDeliveryBinding.orderNotDeliveredAddInnerHeadId.setTextColor(getResources().getColor(R.color.colorGrey));
+                            orderDeliveryBinding.orderNotDeliveredAddHeadId.setTextColor(getResources().getColor(R.color.colorGrey));
+                            orderDeliveryBinding.orderNotDeliveredInnerHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_disable_curves_bg));
+                            orderDeliveryBinding.orderCancelTxt.setTextColor(getResources().getColor(R.color.colorGrey));
+                            orderDeliveryBinding.orderCancelTxt.setBackground(getResources().getDrawable(R.drawable.order_disable_circle_bg));
+
+                        } else {
+                            orderDeliveryBinding.deliveryheadTxt.setBackground(getResources().getDrawable(R.drawable.order_disable_circle_bg));
+                            orderDeliveryBinding.deliveryheadTxt.setTextColor(getResources().getColor(R.color.colorGrey));
+                            orderDeliveryBinding.customerheadName.setTextColor(getResources().getColor(R.color.colorGrey));
+                            orderDeliveryBinding.deliverNameHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_disable_curves_bg));
+                            orderDeliveryBinding.deliverNameInnerHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_disable_curves_bg));
+                        }
+
 
                     } else if (this.orderDetailsResponse.getData().getOrderStatus().getUid().equals("order_transit")) {
                         orderDeliveryBinding.apolloPhamrmacyAddHeadId.setTextColor(getResources().getColor(R.color.order_header_bg));
@@ -1979,6 +2002,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                         orderDeliveryBinding.customerHeadTxt.setTextColor(getResources().getColor(R.color.colorBlack));
                         orderDeliveryBinding.customerheadName.setTextColor(getResources().getColor(R.color.colorBlack));
                         orderCurrentStatus = 2;
+
                         onClickDeliveredLabel();
                         selectionTag = 1;
                         onContinueDrivingClick();
@@ -1992,55 +2016,55 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                         new OrderDeliveryActivityController(this, this).orderStatusHistoryListApiCall(this.orderDetailsResponse.getData().getUid());
                     } else if (this.orderDetailsResponse.getData().getOrderStatus().getUid().equals("order_not_delivered")) {
 
+                        orderDeliveryBinding.deliveredLabel.setVisibility(View.GONE);
+
+
                         new OrderDeliveryActivityController(this, this).orderStatusHistoryListApiCall(this.orderDetailsResponse.getData().getUid());
                         orderDeliveryBinding.cancelOrderBtn.setVisibility(View.GONE);
                         orderDeliveryBinding.orderDeliveryProcessImg.setVisibility(View.VISIBLE);
                     }
                     if (this.orderDetailsResponse.getData().getOrderState().getName().equals("RETURN")) {
 
-                        //pickup address and details
-                        orderDeliveryBinding.apolloPhamrmacyAddId.setText(this.orderDetailsResponse.getData().getDelAddId());
-//                        orderDeliveryBinding.apolloPhamrmacyAddHeadId.setText(this.orderDetailsResponse.getData().getDelAddId());
-                        orderDeliveryBinding.pharmacyLandmark.setText(this.orderDetailsResponse.getData().getDeliverLandmark());
-                        orderDeliveryBinding.pharmacyAddress.setText(customerAddresss);
-                        String pickupPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getDelPn());
+                        //pickup address and details*******************************************
+                        orderDeliveryBinding.apolloPhamrmacyAddId.setText(this.orderDetailsResponse.getData().getPickupAccName());
+//                        orderDeliveryBinding.apolloPhamrmacyAddHeadId.setText(this.orderDetailsResponse.getData().getPickupAddId());
+                        orderDeliveryBinding.pharmacyLandmark.setText(this.orderDetailsResponse.getData().getPickupLndmrk());
+                        orderDeliveryBinding.pharmacyAddress.setText(pickupAddress);
+                        String pickupPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getPickupPn());
                         orderDeliveryBinding.pickupPhoneNumber.setText("*******" + pickupPhoneNumber.substring(pickupPhoneNumber.length() - 3));
-                        if (orderDetailsResponse.getData().getDeliverNotes() != null && orderDetailsResponse.getData().getDeliverNotes().isEmpty()) {
+                        if (orderDetailsResponse.getData().getPickupNotes() != null && orderDetailsResponse.getData().getPickupNotes().isEmpty()) {
                             orderDeliveryBinding.pickupInstruction.setVisibility(View.GONE);
                         } else {
                             orderDeliveryBinding.pickupInstruction.setVisibility(View.VISIBLE);
-                            orderDeliveryBinding.pickupInstructionText.setText(orderDetailsResponse.getData().getDeliverNotes());
+                            orderDeliveryBinding.pickupInstructionText.setText(orderDetailsResponse.getData().getPickupNotes());
                         }
-                        this.pickupPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getDelPn());
+                        this.pickupPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getPickupPn());
 
-                        //delivery address and details
-                        orderDeliveryBinding.customerName.setText(this.orderDetailsResponse.getData().getPickupAddId());
-//                        orderDeliveryBinding.customerheadName.setText(this.orderDetailsResponse.getData().getPickupAddId());
-                        orderDeliveryBinding.customerLandmark.setText(this.orderDetailsResponse.getData().getPickupLndmrk());
-                        orderDeliveryBinding.customerAddress.setText(pickupAddress);
-                        String userMobileNumber = String.valueOf(this.orderDetailsResponse.getData().getPickupPn());
-                        orderDeliveryBinding.userMobileNumber.setText("*******" + userMobileNumber.substring(userMobileNumber.length() - 3));
 
-                        if (orderDetailsResponse.getData().getPickupNotes() != null && orderDetailsResponse.getData().getPickupNotes().isEmpty()) {
-                            orderDeliveryBinding.deliveryInstruction.setVisibility(View.GONE);
-                        } else {
-                            orderDeliveryBinding.deliveryInstruction.setVisibility(View.VISIBLE);
-                            orderDeliveryBinding.deliveryInstructionText.setText(orderDetailsResponse.getData().getPickupNotes());
-                        }
-                        this.customerPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getPickupPn());
+                        //delivery address and details*********************************************
+
+                        orderDeliveryBinding.customerName.setText(this.orderDetailsResponse.getData().getReturnAccName());
+//                        orderDeliveryBinding.customerheadName.setText(this.orderDetailsResponse.getData().getReturnAddId());
+                        orderDeliveryBinding.customerLandmark.setText(this.orderDetailsResponse.getData().getReturnLandmark());
+                        orderDeliveryBinding.customerAddress.setText(returnAddress);
+                        String returnMobileNumber = String.valueOf(this.orderDetailsResponse.getData().getReturnPn());
+                        orderDeliveryBinding.userMobileNumber.setText("*******" + returnMobileNumber.substring(returnMobileNumber.length() - 3));
+                        orderDeliveryBinding.deliveryInstruction.setVisibility(View.GONE);
+                        this.customerPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getReturnPn());
+
 
                         // order not delivered address and details
-                        orderDeliveryBinding.orderNotDeliveredAddId.setText(this.orderDetailsResponse.getData().getDelAddId());
-//                        orderDeliveryBinding.orderNotDeliveredAddHeadId.setText(this.orderDetailsResponse.getData().getDelAddId());
-                        orderDeliveryBinding.orderNotDeliveryLandmark.setText(this.orderDetailsResponse.getData().getDeliverLandmark());
-                        orderDeliveryBinding.orderNotDeliveryAddress.setText(customerAddresss);
-                        String orderNotDeliveredPhoneNubmber = String.valueOf(this.orderDetailsResponse.getData().getDelPn());
+                        orderDeliveryBinding.orderNotDeliveredAddId.setText(this.orderDetailsResponse.getData().getReturnAccName());
+//                        orderDeliveryBinding.orderNotDeliveredAddHeadId.setText(this.orderDetailsResponse.getData().getReturnAddId());
+                        orderDeliveryBinding.orderNotDeliveryLandmark.setText(this.orderDetailsResponse.getData().getReturnLandmark());
+                        orderDeliveryBinding.orderNotDeliveryAddress.setText(returnAddress);
+                        String orderNotDeliveredPhoneNubmber = String.valueOf(this.orderDetailsResponse.getData().getReturnPn());
                         orderDeliveryBinding.pickupPhoneNumber.setText("*******" + orderNotDeliveredPhoneNubmber.substring(orderNotDeliveredPhoneNubmber.length() - 3));
 
-                        this.pickupPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getDelPn());
+                        this.pickupPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getReturnPn());
                     } else {
                         //pickup address and details
-                        orderDeliveryBinding.apolloPhamrmacyAddId.setText(this.orderDetailsResponse.getData().getPickupAddId());
+                        orderDeliveryBinding.apolloPhamrmacyAddId.setText(this.orderDetailsResponse.getData().getPickupAccName());
 //                        orderDeliveryBinding.apolloPhamrmacyAddHeadId.setText(this.orderDetailsResponse.getData().getPickupAddId());
                         orderDeliveryBinding.pharmacyLandmark.setText(this.orderDetailsResponse.getData().getPickupLndmrk());
                         orderDeliveryBinding.pharmacyAddress.setText(pickupAddress);
@@ -2055,7 +2079,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                         this.pickupPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getPickupPn());
 
                         //delivery address and details
-                        orderDeliveryBinding.customerName.setText(this.orderDetailsResponse.getData().getDelAddId());
+                        orderDeliveryBinding.customerName.setText(this.orderDetailsResponse.getData().getDelAccName());
 //                        orderDeliveryBinding.customerheadName.setText(this.orderDetailsResponse.getData().getDelAddId());
                         orderDeliveryBinding.customerLandmark.setText(this.orderDetailsResponse.getData().getDeliverLandmark());
                         orderDeliveryBinding.customerAddress.setText(customerAddresss);
@@ -2070,14 +2094,14 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                         this.customerPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getDelPn());
 
                         //order not delivery address and details
-                        orderDeliveryBinding.orderNotDeliveredAddId.setText(this.orderDetailsResponse.getData().getPickupAddId());
-//                        orderDeliveryBinding.orderNotDeliveredAddHeadId.setText(this.orderDetailsResponse.getData().getPickupAddId());
-                        orderDeliveryBinding.orderNotDeliveryLandmark.setText(this.orderDetailsResponse.getData().getPickupLndmrk());
-                        orderDeliveryBinding.orderNotDeliveryAddress.setText(pickupAddress);
-                        String orderNotDeliveredPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getPickupPn());
+                        orderDeliveryBinding.orderNotDeliveredAddId.setText(this.orderDetailsResponse.getData().getReturnAccName());
+//                        orderDeliveryBinding.orderNotDeliveredAddHeadId.setText(this.orderDetailsResponse.getData().getReturnAddId());
+                        orderDeliveryBinding.orderNotDeliveryLandmark.setText(this.orderDetailsResponse.getData().getReturnLandmark());
+                        orderDeliveryBinding.orderNotDeliveryAddress.setText(returnAddress);
+                        String orderNotDeliveredPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getReturnPn());
                         orderDeliveryBinding.orderNotDeliveredPhoneNumber.setText("*******" + orderNotDeliveredPhoneNumber.substring(orderNotDeliveredPhoneNumber.length() - 3));
 
-                        this.orderNotDeliveredPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getPickupPn());
+                        this.orderNotDeliveredPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getReturnPn());
                     }
                     orderDeliveryBinding.orderListLayout.removeAllViews();
                     if (orderDetailsResponse.getData().getItems() != null && orderDetailsResponse.getData().getItems().size() > 0) {
@@ -2142,24 +2166,17 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                 orderCurrentStatus = 2;
                 selectionTag = 1;
 
+                orderDeliveryBinding.apolloPhamrmacyAddHeadCompletedIcon.setVisibility(View.VISIBLE);
                 orderDeliveryBinding.orderStatusHeader.setText("Order Transit");
-
                 orderDeliveryBinding.pickupDetailsProcessingLine.setBackgroundColor(getResources().getColor(R.color.order_accepted_color));
                 orderDeliveryBinding.pickupDetailsInnerHead.setTextColor(getResources().getColor(R.color.order_status_processed_color));
+                orderDeliveryBinding.apolloPhamrmacyAddHeadId.setTextColor(getResources().getColor(R.color.order_status_processed_color));
+                orderDeliveryBinding.customerTxt.setBackground(getResources().getDrawable(R.drawable.delivery_item_bg));
+                orderDeliveryBinding.customerHeadTxt.setBackground(getResources().getDrawable(R.drawable.delivery_item_bg));
                 orderDeliveryBinding.pickupDetailsInnerHead.setText("Order Picked");
                 orderDeliveryBinding.apolloPhamrmacyAddHeadId.setText("Order Picked");
-
                 orderDeliveryBinding.apolloPhamrmacyAddHeadIdLayout.setBackground(getResources().getDrawable(R.drawable.status_completed_curves_bg));
                 orderDeliveryBinding.pickupDetailsInnerHeadIdLayout.setBackground(getResources().getDrawable(R.drawable.status_completed_curves_bg));
-                orderDeliveryBinding.deliverNameHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_processing_curves_bg));
-                orderDeliveryBinding.deliverNameInnerHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_processing_curves_bg));
-
-                orderDeliveryBinding.customerTxt.setBackground(getResources().getDrawable(R.drawable.delivery_item_bg));
-                orderDeliveryBinding.deliveryheadTxt.setBackground(getResources().getDrawable(R.drawable.order_active_circle_bg));
-                orderDeliveryBinding.deliveryheadTxt.setTextColor(getResources().getColor(R.color.colorBlack));
-                orderDeliveryBinding.deliveryTxt.setBackground(getResources().getDrawable(R.drawable.order_active_circle_bg));
-                orderDeliveryBinding.customerheadName.setTextColor(getResources().getColor(R.color.colorBlack));
-
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                 String orderDate = CommonUtils.getCurrentTimeDate();
                 Date orderDates = formatter.parse(orderDate);
@@ -2168,16 +2185,32 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                 pickupOtpVerificationChildLayoutEdge.setLayoutTransition(null);
                 pickupOtpVerificationChildLayout.setVisibility(View.GONE);
                 pickupOtpVerificationParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
-//                continueProcessLayout.setVisibility(View.VISIBLE);
+                // continueProcessLayout.setVisibility(View.VISIBLE);
                 onClickPicked();
-                onContinueDrivingClick();
 
-                //pickup header
-                orderDeliveryBinding.customerHeadTxt.setBackground(getResources().getDrawable(R.drawable.delivery_item_bg));
-                orderDeliveryBinding.apolloPhamrmacyAddHeadId.setTextColor(getResources().getColor(R.color.order_status_processed_color));
+
+                if (this.orderDetailsResponse.getData().getOrderState().getName().equals("RETURN")) {
+                    orderDeliveryBinding.orderNotDeliveredHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_processing_curves_bg));
+                    orderDeliveryBinding.orderNotDeliveredInnerHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_processing_curves_bg));
+                    orderDeliveryBinding.orderCancelHeadTxt.setTextColor(getResources().getColor(R.color.colorBlack));
+                    orderDeliveryBinding.orderCancelTxt.setTextColor(getResources().getColor(R.color.colorBlack));
+                    orderDeliveryBinding.orderCancelHeadTxt.setBackground(getResources().getDrawable(R.drawable.order_active_circle_bg));
+                    orderDeliveryBinding.orderCancelTxt.setBackground(getResources().getDrawable(R.drawable.order_active_circle_bg));
+                    orderDeliveryBinding.orderNotDeliveredAddInnerHeadId.setTextColor(getResources().getColor(R.color.colorBlack));
+                    orderDeliveryBinding.orderNotDeliveredAddHeadId.setTextColor(getResources().getColor(R.color.colorBlack));
+                } else {
+                    onContinueDrivingClick();
+                    orderDeliveryBinding.deliveryheadTxt.setTextColor(getResources().getColor(R.color.colorBlack));
+                    orderDeliveryBinding.customerheadName.setTextColor(getResources().getColor(R.color.colorBlack));
+                    orderDeliveryBinding.deliveryheadTxt.setBackground(getResources().getDrawable(R.drawable.order_active_circle_bg));
+                    orderDeliveryBinding.deliveryTxt.setBackground(getResources().getDrawable(R.drawable.order_active_circle_bg));
+                    orderDeliveryBinding.deliverNameHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_processing_curves_bg));
+                    orderDeliveryBinding.deliverNameInnerHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_processing_curves_bg));
+                }
+
+
 //                orderDeliveryBinding.apolloPhamrmacyAddHeadId.setText("Picked Up details verified");
 //                orderDeliveryBinding.apolloPhamrmacyAddHeadIdLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
-                orderDeliveryBinding.apolloPhamrmacyAddHeadCompletedIcon.setVisibility(View.VISIBLE);
                 ActivityUtils.hideDialog();
             } else if (status.equals("order_delivered")) {
                 ActivityUtils.hideDialog();
@@ -2299,8 +2332,6 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                 orderDeliveryBinding.orderCancelHeadTxt.setBackground(getResources().getDrawable(R.drawable.delivery_item_bg));
                 orderDeliveryBinding.orderCancelTxt.setBackground(getResources().getDrawable(R.drawable.delivery_item_bg));
                 orderDeliveryBinding.orderNotDeliveredProcessingLine.setBackgroundColor(getResources().getColor(R.color.order_accepted_color));
-
-
 
 
                 orderDeliveryBinding.cancelledOtpEditTextLayout.setVisibility(View.GONE);

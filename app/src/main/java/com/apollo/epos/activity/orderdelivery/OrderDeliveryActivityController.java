@@ -363,4 +363,34 @@ public class OrderDeliveryActivityController {
             mListener.onFialureMessage("Something went wrong.");
         }
     }
+    public void getOrderPaymentType() {
+        if (NetworkUtils.isNetworkConnected(context)) {
+            ActivityUtils.showDialog(context, "Please Wait");
+
+
+
+            ApiInterface apiInterface = ApiClient.getApiService();
+            Call<Object> call = apiInterface.ORDER_PAYMENT_UPDATE_API_CALL("Bearer " + new SessionManager(context).getLoginToken(), null);
+            call.enqueue(new Callback<Object>() {
+                @Override
+                public void onResponse(@NotNull Call<Object> call, @NotNull Response<Object> response) {
+                    if (response.body() != null) {
+                        ActivityUtils.hideDialog();
+                        mListener.onSuccessOrderPaymentUpdateApiCall();
+                    } else {
+                        ActivityUtils.hideDialog();
+                        mListener.onFailureOrderPaymentApiCall();
+                    }
+                }
+
+                @Override
+                public void onFailure(@NotNull Call<Object> call, @NotNull Throwable t) {
+                    ActivityUtils.hideDialog();
+                    mListener.onFialureMessage(t.getMessage());
+                }
+            });
+        } else {
+            mListener.onFialureMessage("Something went wrong.");
+        }
+    }
 }

@@ -60,8 +60,6 @@ public interface OrderDeliveryActivityCallback {
 
     void onClickProofofHandoverSkip();
 
-    void onClickReturnLabel();
-
     void onClickOrderNotDelivered();
 
     void onClickPickedLabel();
@@ -71,4 +69,6 @@ public interface OrderDeliveryActivityCallback {
     void onClickDeliveredLabel();
 
     void onClickDelivered();
+
+    void onClickReturnLabel();
 }

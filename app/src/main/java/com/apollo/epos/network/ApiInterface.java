@@ -20,11 +20,11 @@ import com.apollo.epos.fragment.dashboard.model.RiderActiveStatusRequest;
 import com.apollo.epos.fragment.dashboard.model.RiderActiveStatusResponse;
 import com.apollo.epos.fragment.dashboard.model.RiderLalangBatteryStatusResponse;
 import com.apollo.epos.fragment.dashboard.model.RiderLatlangBatteryStatusRequest;
-import com.apollo.epos.fragment.profile.model.ComplaintSaveUpdateRequest;
-import com.apollo.epos.fragment.profile.model.ComplaintSaveUpdateResponse;
 import com.apollo.epos.fragment.myorders.model.MyOrdersListRequest;
 import com.apollo.epos.fragment.myorders.model.MyOrdersListResponse;
 import com.apollo.epos.fragment.profile.model.ComplaintReasonsListResponse;
+import com.apollo.epos.fragment.profile.model.ComplaintSaveUpdateRequest;
+import com.apollo.epos.fragment.profile.model.ComplaintSaveUpdateResponse;
 import com.apollo.epos.model.GetRiderProfileResponse;
 
 import okhttp3.RequestBody;
@@ -32,7 +32,6 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
-import retrofit2.http.PUT;
 
 public interface ApiInterface {
     @POST("login")
@@ -82,4 +81,6 @@ public interface ApiInterface {
 
     @POST("api/orders/save-update/order-payment-update")
     Call<Object> ORDER_PAYMENT_UPDATE_API_CALL(@Header("authorization") String token, @Body OrderPaymentUpdateRequest orderPaymentUpdateRequest);
+
+
 }

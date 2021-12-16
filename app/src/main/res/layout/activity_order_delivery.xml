@@ -1999,6 +1999,19 @@
                                                         android:text="@string/label_handed_parcel_to"
                                                         android:textColor="@color/colorWhite"
                                                         android:textSize="@dimen/text_dimen_13" />
+
+                                                    <TextView
+                                                        android:id="@+id/handedover_parcelto_customer_name"
+                                                        android:layout_width="wrap_content"
+                                                        android:layout_height="wrap_content"
+                                                        android:layout_centerVertical="true"
+                                                        android:fontFamily="@font/roboto_bold"
+                                                        android:textColor="@color/colorWhite"
+                                                        android:layout_marginEnd="@dimen/twenty_five_dp"
+                                                        android:layout_alignParentRight="true"
+                                                        android:textSize="@dimen/text_dimen_13"
+                                                        android:visibility="gone" />
+
                                                 </RelativeLayout>
 
                                                 <LinearLayout
@@ -2775,7 +2788,7 @@
                                     android:fontFamily="@font/roboto_bold"
                                     android:paddingStart="@dimen/ten_dp"
                                     android:paddingEnd="@dimen/ten_dp"
-                                    android:text="Order return to store"
+                                    android:text="Return to store"
                                     android:textColor="@color/pharmacy_circle_color"
                                     android:textSize="@dimen/text_dimen_19" />
 
@@ -2859,7 +2872,7 @@
                                             android:fontFamily="@font/roboto_bold"
                                             android:paddingStart="@dimen/ten_dp"
                                             android:paddingEnd="@dimen/ten_dp"
-                                            android:text="Order return to store"
+                                            android:text="Return to store"
                                             android:textColor="@color/pharmacy_circle_color"
                                             android:textSize="@dimen/text_dimen_19" />
 
