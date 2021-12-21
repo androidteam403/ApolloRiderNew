@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 
 import com.apollo.epos.activity.neworder.model.OrderDetailsResponse;
 import com.apollo.epos.activity.orderdelivery.model.DeliveryFailreReasonsResponse;
+import com.apollo.epos.activity.orderdelivery.model.OrderPaymentSelectResponse;
 import com.apollo.epos.activity.orderdelivery.model.OrderStatusHitoryListResponse;
 
 public interface OrderDeliveryActivityCallback {
@@ -71,4 +72,10 @@ public interface OrderDeliveryActivityCallback {
     void onClickDelivered();
 
     void onClickReturnLabel();
+
+    void onClickReturntoStoreShowMap();
+
+    void onSuccessOrderPaymentTypeInCod(OrderPaymentSelectResponse orderPaymentSelectResponse);
+
+    void onFailureOrderPaymentTypeInCod(String message);
 }

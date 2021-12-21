@@ -11,6 +11,8 @@ import com.apollo.epos.activity.orderdelivery.model.DeliveryFailreReasonsRespons
 import com.apollo.epos.activity.orderdelivery.model.FileDataResponse;
 import com.apollo.epos.activity.orderdelivery.model.OrderHandoverSaveUpdateRequest;
 import com.apollo.epos.activity.orderdelivery.model.OrderHandoverSaveUpdateResponse;
+import com.apollo.epos.activity.orderdelivery.model.OrderPaymentSelectRequest;
+import com.apollo.epos.activity.orderdelivery.model.OrderPaymentSelectResponse;
 import com.apollo.epos.activity.orderdelivery.model.OrderPaymentUpdateRequest;
 import com.apollo.epos.activity.orderdelivery.model.OrderSaveUpdateStausRequest;
 import com.apollo.epos.activity.orderdelivery.model.OrderSaveUpdateStausResponse;
@@ -81,6 +83,9 @@ public interface ApiInterface {
 
     @POST("api/orders/save-update/order-payment-update")
     Call<Object> ORDER_PAYMENT_UPDATE_API_CALL(@Header("authorization") String token, @Body OrderPaymentUpdateRequest orderPaymentUpdateRequest);
+
+    @POST("api/orders/select/orders-payment-select")
+    Call<OrderPaymentSelectResponse> GET_ORDER_PAYMENT_TYPE_IN_COD(@Header("authorization") String token, @Body OrderPaymentSelectRequest orderPaymentSelectRequest);
 
 
 }
