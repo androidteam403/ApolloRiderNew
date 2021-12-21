@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.databinding.DataBindingUtil;
 
 import com.ahmadrosid.lib.drawroutemap.DirectionApiCallback;
 import com.ahmadrosid.lib.drawroutemap.DrawMarker;
@@ -32,6 +33,7 @@ import com.ahmadrosid.lib.drawroutemap.MapAnimator;
 import com.ahmadrosid.lib.drawroutemap.PiontsCallback;
 import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.R;
+import com.apollo.epos.databinding.ActivityTrackMapViewBinding;
 import com.apollo.epos.dialog.DialogManager;
 import com.apollo.epos.service.FloatingTouchService;
 import com.apollo.epos.utils.ActivityUtils;
@@ -103,7 +105,7 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_track_map_view);
+        ActivityTrackMapViewBinding trackMapViewBinding = DataBindingUtil.setContentView(this, R.layout.activity_track_map_view);
         ButterKnife.bind(this);
 
         if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
@@ -117,6 +119,14 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
             locType = Objects.requireNonNull(intent.getExtras()).getString("locType");
             latitude = intent.getExtras().getDouble("Lat");
             longitude = intent.getExtras().getDouble("Lon");
+            trackMapViewBinding.orderNumber.setText(intent.getStringExtra("order_number"));
+            if (locType.equals("Pharmacy")) {
+                trackMapViewBinding.followGoogleMap.setText("Start Pickup Journey");
+            } else if (locType.equals("Destination")) {
+                trackMapViewBinding.followGoogleMap.setText("Start Delivery Journey");
+            } else if (locType.equals("Store")) {
+                trackMapViewBinding.followGoogleMap.setText("Start Return Journey");
+            }
         }
 
 //show error dialog if GoolglePlayServices not available
@@ -212,8 +222,13 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
         destination = new LatLng(latitude, longitude);
 
         DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.location_current, "Current Location", 1, hashMap);
-        DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.location_pharmacy, "Destination Location", 0, hashMap);
-
+        if (locType.equals("Pharmacy")) {
+            DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.ic_pickup_location, "Destination Location", 0, hashMap);
+        } else if (locType.equals("Destination")) {
+            DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.ic_deliver_location, "Destination Location", 0, hashMap);
+        } else if (locType.equals("Store")) {
+            DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.ic_return_location, "Destination Location", 0, hashMap);
+        }
         if (!callOneTimeLocation) {
             DrawRouteMaps.getInstance(this, this, this, this).draw(origin, destination, mMap, 0);
 
@@ -226,10 +241,10 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
             int padding = (int) (width * 0.10); // offset from edges of the map 10% of screen
 
             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
-
-            mMap.moveCamera(cu);
-            mMap.animateCamera(cu);
-
+            if (mMap != null) {
+                mMap.moveCamera(cu);
+                mMap.animateCamera(cu);
+            }
             callOneTimeLocation = true;
         }
         ActivityUtils.hideDialog();
@@ -450,8 +465,8 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
                     try {
                         for (i = 0; i <= 100; i++) {
                             runOnUiThread(() -> {
-                                travelDistance.setText("Distance: " + finalRemoving + "KM");
-                                travelTime.setText("Time: " + Math.round(finalTime) + "Mins.");
+                                travelDistance.setText("Distance: " + finalRemoving + " KM");
+                                travelTime.setText("Expected Time: " + Math.round(finalTime) + " Mins.");
                             });
                             sleep(500);
                         }

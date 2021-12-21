@@ -76,7 +76,6 @@ import com.nabinbhandari.android.permissions.Permissions;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -995,7 +994,8 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putBoolean(KEY_REQUESTING_LOCATION_UPDATES, mRequestingLocationUpdates);
+        if (mRequestingLocationUpdates != null)
+            savedInstanceState.putBoolean(KEY_REQUESTING_LOCATION_UPDATES, mRequestingLocationUpdates);
         savedInstanceState.putParcelable(KEY_LOCATION, mCurrentLocation);
         savedInstanceState.putString(KEY_LAST_UPDATED_TIME_STRING, mLastUpdateTime);
     }
@@ -1018,7 +1018,7 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
     }
 
     public static void newOrderViewVisibility(boolean show) {
-        try{
+        try {
             if (show) {
                 newOrderLayoutView.setVisibility(View.VISIBLE);
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
@@ -1030,7 +1030,7 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
             } else {
                 newOrderLayoutView.setVisibility(View.GONE);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
     }
