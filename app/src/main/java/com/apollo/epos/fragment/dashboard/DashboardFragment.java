@@ -38,6 +38,7 @@ import com.apollo.epos.activity.NavigationActivity;
 import com.apollo.epos.activity.NewOrderActivity;
 import com.apollo.epos.base.BaseFragment;
 import com.apollo.epos.databinding.FragmentDashboardBinding;
+import com.apollo.epos.fragment.dashboard.model.RiderDashboardCountResponse;
 import com.apollo.epos.model.GetRiderProfileResponse;
 import com.apollo.epos.utils.ActivityUtils;
 import com.apollo.epos.utils.CommonUtils;
@@ -97,7 +98,6 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
     @BindView(R.id.barChart)
     protected BarChart mChart;
     protected RectF mOnValueSelectedRectF = new RectF();
-    private DashboardViewModel dashboardViewModel;
     private DashboardView dashboardView;
 
     @BindColor(R.color.dashboard_pending_text_color)
@@ -237,7 +237,7 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-
+        new DashboardFragmentController(getContext(), this).getRiderDashboardCountsApiCall();
         newOrderLayoutView = view.findViewById(R.id.new_order_layout);
         timeView = view.findViewById(R.id.time);
         if (getSessionManager().getNotificationStatus()) {
@@ -1015,6 +1015,18 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
     @Override
     public void onFialureMessage(String message) {
         Toast.makeText(mActivity, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSuccessGetRiderDashboardCountApiCall(RiderDashboardCountResponse riderDashboardCountResponse) {
+        if (riderDashboardCountResponse != null && riderDashboardCountResponse.getSuccess() && riderDashboardCountResponse.getData() != null && riderDashboardCountResponse.getData().getCount() != null) {
+            dashboardBinding.totalOrdersVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getTotalOrders()));
+            dashboardBinding.deliveredOrdersVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getDeliveredOrders()));
+            dashboardBinding.cancelledOrdersVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getCancelledOrders()));
+            dashboardBinding.codReceivedVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getCodReceived()));
+            dashboardBinding.codPendingVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getCodPending()));
+            dashboardBinding.travelledDistanceVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getDistanceTravelled()));
+        }
     }
 
     public static void newOrderViewVisibility(boolean show) {

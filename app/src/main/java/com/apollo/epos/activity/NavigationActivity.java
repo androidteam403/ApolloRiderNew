@@ -59,6 +59,7 @@ import com.apollo.epos.fragment.changepassword.ChangePasswordFragment;
 import com.apollo.epos.fragment.dashboard.DashboardFragment;
 import com.apollo.epos.fragment.help.HelpFragment;
 import com.apollo.epos.fragment.myorders.MyOrdersFragment;
+import com.apollo.epos.fragment.myorders.MyOrdersFragmentCallback;
 import com.apollo.epos.fragment.notifications.NotificationsFragment;
 import com.apollo.epos.fragment.profile.ProfileFragment;
 import com.apollo.epos.fragment.takeneworder.TakeNewOrderFragment;
@@ -73,7 +74,6 @@ import com.novoda.merlin.Merlin;
 import com.orhanobut.hawk.Hawk;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -93,6 +93,11 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     private LocationManager locationManager;
     private final static int GPS_REQUEST_CODE = 2;
     private boolean isLanchedByPushNotification;
+    private MyOrdersFragmentCallback myOrdersFragmentCallback;
+
+    public void setMyOrdersFragmentCallback(MyOrdersFragmentCallback myOrdersFragmentCallback) {
+        this.myOrdersFragmentCallback = myOrdersFragmentCallback;
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -272,7 +277,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 //        else if (mItem == R.id.nav_logout) {
 //            ActivityUtils.startActivity(this, LoginActivity.class, null);
 //            finishAffinity();
-//        }
+//        }get
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
@@ -347,7 +352,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 //        ((NavigationDrawerAdapter) ((HeaderViewListAdapter) mDrawerList.getAdapter()).getWrappedAdapter()).notifyDataSetChanged();
         adapter.notifyDataSetChanged();
         TextView appVersion = findViewById(R.id.app_version);
-        appVersion.setText("V "+BuildConfig.VERSION_NAME);
+        appVersion.setText("V " + BuildConfig.VERSION_NAME);
         TextView logoutText = findViewById(R.id.logout_btn);
         logoutText.setOnClickListener(v -> {
             mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -523,7 +528,8 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                 long orderDateMills = orderDates.getTime();
 
                 getInstance().getSessionManager().setNotificationArrivedTime(CommonUtils.getTimeFormatter(orderDateMills));
-            }catch (Exception e){
+
+            } catch (Exception e) {
 
             }
 
@@ -543,6 +549,11 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                 return true;
             case R.id.action_setting_icon:
                 selectItem(1);
+                if (getInstance().mCurrentFrag.equals("My Orders")) {
+                    if (myOrdersFragmentCallback != null) {
+                        myOrdersFragmentCallback.onClickNotificationIcon();
+                    }
+                }
                 return true;
             case R.id.action_cart_icon:
                 Intent i = new Intent(this, CartActivity.class);
@@ -667,4 +678,6 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     public void selectFragment(int pos) {
         selectItem(pos);
     }
+
+
 }

@@ -30,28 +30,21 @@ import com.apollo.epos.adapter.MyOrdersListAdapter;
 import com.apollo.epos.base.BaseFragment;
 import com.apollo.epos.databinding.FragmentMyOrdersBinding;
 import com.apollo.epos.fragment.myorders.model.MyOrdersListResponse;
-import com.apollo.epos.fragment.neworder.NewOrderFragment;
-import com.apollo.epos.model.MyOrdersItemModel;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItemSelectedListener, OnItemClickListener, MyOrdersFragmentCallback {
+public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItemSelectedListener, MyOrdersFragmentCallback {
     private Activity mActivity;
     private FragmentMyOrdersBinding myOrdersBinding;
     private MyOrdersListAdapter myOrdersListAdapter;
     @BindView(R.id.ordersRecyclerView)
     RecyclerView ordersRecyclerView;
-
-//    private ArrayList<MyOrdersItemModel> myOrdersList = new ArrayList<>();
-//    private ArrayList<MyOrdersItemModel> tempOrdersList = new ArrayList<>();
-
     private List<MyOrdersListResponse.Row> myOrdersList = new ArrayList<>();
     private List<MyOrdersListResponse.Row> tempOrdersList = new ArrayList<>();
 
@@ -87,6 +80,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        NavigationActivity.getInstance().setMyOrdersFragmentCallback(this);
         final Calendar c = Calendar.getInstance();
         if (mYear == 0 && mMonth == 0 && mDay == 0) {
             mYear = c.get(Calendar.YEAR);
@@ -219,10 +213,11 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
 
         myOrdersBinding.ordersRecyclerView.setOnTouchListener(new View.OnTouchListener() {
             View v;
+
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 this.v = v;
-                switch(event.getAction()) { // Check vertical and horizontal touches
+                switch (event.getAction()) { // Check vertical and horizontal touches
                     case MotionEvent.ACTION_DOWN: {
                         downX = event.getX();
                         downY = event.getY();
@@ -275,7 +270,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
                 return false;
             }
 
-            public void onLeftToRightSwipe(){
+            public void onLeftToRightSwipe() {
                 leftToRight();
             }
 
@@ -296,10 +291,11 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
 
         myOrdersBinding.noOrderFoundLayout.setOnTouchListener(new View.OnTouchListener() {
             View v;
+
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 this.v = v;
-                switch(event.getAction()) { // Check vertical and horizontal touches
+                switch (event.getAction()) { // Check vertical and horizontal touches
                     case MotionEvent.ACTION_DOWN: {
                         downX = event.getX();
                         downY = event.getY();
@@ -352,12 +348,12 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
                 return false;
             }
 
-            public void onLeftToRightSwipe(){
-               leftToRight();
+            public void onLeftToRightSwipe() {
+                leftToRight();
             }
 
             public void onRightToLeftSwipe() {
-               rightToLeft();
+                rightToLeft();
             }
 
             public void onTopToBottomSwipe() {
@@ -373,7 +369,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
 
     }
 
-    private void leftToRight(){
+    private void leftToRight() {
 //        Toast.makeText(getContext(),"left to right",
 //                Toast.LENGTH_SHORT).show();
 
@@ -460,7 +456,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
         }
     }
 
-    private void rightToLeft(){
+    private void rightToLeft() {
 //        Toast.makeText(getContext(),"right to left",
 //                Toast.LENGTH_SHORT).show();
 
@@ -585,16 +581,8 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
     }
 
     @Override
-    public void OnItemClick(MyOrdersItemModel model) {
-        if (model.getDeliveryStatus().equalsIgnoreCase("New Order")) {
-            ((NavigationActivity) Objects.requireNonNull(mActivity)).showFragment(new NewOrderFragment(), R.string.menu_take_order);
-            ((NavigationActivity) Objects.requireNonNull(mActivity)).updateSelection(-1);
-        }
-    }
-
-    @Override
     public void onFialureMessage(String message) {
-
+        Toast.makeText(mActivity, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -661,6 +649,11 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
     public void onStatusClick(MyOrdersListResponse.Row item) {
         startActivity(OrderDeliveryActivity.getStartIntent(getContext(), item.getOrderNumber()));
         getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+    }
+
+    @Override
+    public void onClickNotificationIcon() {
+        new MyOrdersFragmentController(getContext(), this).myOrdersListApiCall();
     }
 
     @Override
