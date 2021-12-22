@@ -5,12 +5,12 @@ import android.content.Context;
 import com.apollo.epos.db.SessionManager;
 import com.apollo.epos.fragment.dashboard.model.RiderActiveStatusRequest;
 import com.apollo.epos.fragment.dashboard.model.RiderActiveStatusResponse;
+import com.apollo.epos.fragment.dashboard.model.RiderDashboardCountResponse;
 import com.apollo.epos.model.GetRiderProfileResponse;
 import com.apollo.epos.network.ApiClient;
 import com.apollo.epos.network.ApiInterface;
 import com.apollo.epos.service.NetworkUtils;
 import com.apollo.epos.utils.ActivityUtils;
-import com.apollo.epos.utils.CommonUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -80,6 +80,36 @@ public class DashboardFragmentController {
                 public void onFailure(@NotNull Call<RiderActiveStatusResponse> call, @NotNull Throwable t) {
                     ActivityUtils.hideDialog();
                     System.out.println("RIDER ACTIVE STATUS ==============" + t.getMessage());
+                }
+            });
+        } else {
+            mListener.onFialureMessage("Something went wrong.");
+        }
+    }
+
+    public void getRiderDashboardCountsApiCall() {
+        if (NetworkUtils.isNetworkConnected(context)) {
+            ActivityUtils.showDialog(context, "Please wait.");
+            ApiInterface apiInterface = ApiClient.getApiService();
+
+            Call<RiderDashboardCountResponse> call = apiInterface.GET_RIDER_DASHBOARD_COUNTS_API_CALL("Bearer " + new SessionManager(context).getLoginToken(), "application/json");
+            call.enqueue(new Callback<RiderDashboardCountResponse>() {
+                @Override
+                public void onResponse(@NotNull Call<RiderDashboardCountResponse> call, @NotNull Response<RiderDashboardCountResponse> response) {
+                    ActivityUtils.hideDialog();
+                    if (response.body() != null && response.body().getSuccess()) {
+                        mListener.onSuccessGetRiderDashboardCountApiCall(response.body());
+                    }else{
+                        mListener.onFialureMessage("No Data Found");
+
+                    }
+                }
+
+                @Override
+                public void onFailure(@NotNull Call<RiderDashboardCountResponse> call, @NotNull Throwable t) {
+                    ActivityUtils.hideDialog();
+                    mListener.onFialureMessage("No Data Found");
+                    System.out.println("GET RIDER DASHBOARD COUNTS ==============" + t.getMessage());
                 }
             });
         } else {

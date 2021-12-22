@@ -38,6 +38,7 @@ import com.apollo.epos.activity.NavigationActivity;
 import com.apollo.epos.activity.NewOrderActivity;
 import com.apollo.epos.base.BaseFragment;
 import com.apollo.epos.databinding.FragmentDashboardBinding;
+import com.apollo.epos.fragment.dashboard.model.RiderDashboardCountResponse;
 import com.apollo.epos.model.GetRiderProfileResponse;
 import com.apollo.epos.utils.ActivityUtils;
 import com.apollo.epos.utils.CommonUtils;
@@ -76,7 +77,6 @@ import com.nabinbhandari.android.permissions.Permissions;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -98,7 +98,6 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
     @BindView(R.id.barChart)
     protected BarChart mChart;
     protected RectF mOnValueSelectedRectF = new RectF();
-    private DashboardViewModel dashboardViewModel;
     private DashboardView dashboardView;
 
     @BindColor(R.color.dashboard_pending_text_color)
@@ -238,7 +237,7 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-
+        new DashboardFragmentController(getContext(), this).getRiderDashboardCountsApiCall();
         newOrderLayoutView = view.findViewById(R.id.new_order_layout);
         timeView = view.findViewById(R.id.time);
         if (getSessionManager().getNotificationStatus()) {
@@ -995,7 +994,8 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putBoolean(KEY_REQUESTING_LOCATION_UPDATES, mRequestingLocationUpdates);
+        if (mRequestingLocationUpdates != null)
+            savedInstanceState.putBoolean(KEY_REQUESTING_LOCATION_UPDATES, mRequestingLocationUpdates);
         savedInstanceState.putParcelable(KEY_LOCATION, mCurrentLocation);
         savedInstanceState.putString(KEY_LAST_UPDATED_TIME_STRING, mLastUpdateTime);
     }
@@ -1017,8 +1017,20 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
         Toast.makeText(mActivity, message, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onSuccessGetRiderDashboardCountApiCall(RiderDashboardCountResponse riderDashboardCountResponse) {
+        if (riderDashboardCountResponse != null && riderDashboardCountResponse.getSuccess() && riderDashboardCountResponse.getData() != null && riderDashboardCountResponse.getData().getCount() != null) {
+            dashboardBinding.totalOrdersVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getTotalOrders()));
+            dashboardBinding.deliveredOrdersVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getDeliveredOrders()));
+            dashboardBinding.cancelledOrdersVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getCancelledOrders()));
+            dashboardBinding.codReceivedVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getCodReceived()));
+            dashboardBinding.codPendingVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getCodPending()));
+            dashboardBinding.travelledDistanceVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getDistanceTravelled()));
+        }
+    }
+
     public static void newOrderViewVisibility(boolean show) {
-        try{
+        try {
             if (show) {
                 newOrderLayoutView.setVisibility(View.VISIBLE);
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
@@ -1030,7 +1042,7 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
             } else {
                 newOrderLayoutView.setVisibility(View.GONE);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
     }

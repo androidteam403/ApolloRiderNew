@@ -28,7 +28,7 @@ import com.apollo.epos.activity.MapViewActivity;
 import com.apollo.epos.activity.NavigationActivity;
 import com.apollo.epos.activity.NewOrderActivity;
 import com.apollo.epos.activity.orderdelivery.OrderDeliveryActivity;
-import com.apollo.epos.activity.TrackMapActivity;
+import com.apollo.epos.activity.trackmap.TrackMapActivity;
 import com.orhanobut.hawk.Hawk;
 
 import static com.apollo.epos.utils.ActivityUtils.getScreenSize;

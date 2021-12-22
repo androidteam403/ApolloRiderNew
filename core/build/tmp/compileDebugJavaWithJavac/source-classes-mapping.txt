@@ -1,0 +1,105 @@
+com/novoda/merlin/Logger.java
+ com.novoda.merlin.Logger
+ com.novoda.merlin.Logger$LogHandle
+com/novoda/merlin/Connectable.java
+ com.novoda.merlin.Connectable
+com/novoda/merlin/DisconnectCallbackManager.java
+ com.novoda.merlin.DisconnectCallbackManager
+com/novoda/merlin/Registerable.java
+ com.novoda.merlin.Registerable
+com/novoda/merlin/PingTask.java
+ com.novoda.merlin.PingTask
+com/novoda/merlin/MerlinRequest.java
+ com.novoda.merlin.MerlinRequest
+com/novoda/merlin/RequestMaker.java
+ com.novoda.merlin.RequestMaker
+com/novoda/merlin/ConnectivityCallbacks.java
+ com.novoda.merlin.ConnectivityCallbacks
+com/novoda/merlin/Register.java
+ com.novoda.merlin.Register
+com/novoda/merlin/EndpointPinger.java
+ com.novoda.merlin.EndpointPinger
+ com.novoda.merlin.EndpointPinger$PingerCallback
+ com.novoda.merlin.EndpointPinger$ResponseCodeFetcher
+com/novoda/merlin/Endpoint.java
+ com.novoda.merlin.Endpoint
+com/novoda/merlin/BindableInterface.java
+ com.novoda.merlin.BindableInterface
+com/novoda/merlin/NetworkStatusRetriever.java
+ com.novoda.merlin.NetworkStatusRetriever
+com/novoda/merlin/ConnectivityChangesRegister.java
+ com.novoda.merlin.ConnectivityChangesRegister
+com/novoda/merlin/Ping.java
+ com.novoda.merlin.Ping
+com/novoda/merlin/ConnectivityReceiverConnectivityChangeNotifier.java
+ com.novoda.merlin.ConnectivityReceiverConnectivityChangeNotifier
+com/novoda/merlin/MerlinServiceDependencyMissingException.java
+ com.novoda.merlin.MerlinServiceDependencyMissingException
+com/novoda/merlin/BuildConfig.java
+ com.novoda.merlin.BuildConfig
+com/novoda/merlin/MerlinCallbackManager.java
+ com.novoda.merlin.MerlinCallbackManager
+com/novoda/merlin/AndroidVersion.java
+ com.novoda.merlin.AndroidVersion
+com/novoda/merlin/Disconnectable.java
+ com.novoda.merlin.Disconnectable
+com/novoda/merlin/ConnectivityReceiver.java
+ com.novoda.merlin.ConnectivityReceiver
+ com.novoda.merlin.ConnectivityReceiver$1
+ com.novoda.merlin.ConnectivityReceiver$2
+ com.novoda.merlin.ConnectivityReceiver$MerlinBinderRetriever
+ com.novoda.merlin.ConnectivityReceiver$MerlinsBeardCreator
+com/novoda/merlin/MerlinBuilder.java
+ com.novoda.merlin.MerlinBuilder
+com/novoda/merlin/MerlinMissingRegisterablesException.java
+ com.novoda.merlin.MerlinMissingRegisterablesException
+com/novoda/merlin/RequestException.java
+ com.novoda.merlin.RequestException
+com/novoda/merlin/NetworkStatus.java
+ com.novoda.merlin.NetworkStatus
+ com.novoda.merlin.NetworkStatus$State
+com/novoda/merlin/MerlinsBeardBuilder.java
+ com.novoda.merlin.MerlinsBeardBuilder
+com/novoda/merlin/Request.java
+ com.novoda.merlin.Request
+com/novoda/merlin/ConnectivityChangeEventCreator.java
+ com.novoda.merlin.ConnectivityChangeEventCreator
+com/novoda/merlin/Registrar.java
+ com.novoda.merlin.Registrar
+com/novoda/merlin/BindCallbackManager.java
+ com.novoda.merlin.BindCallbackManager
+com/novoda/merlin/MerlinService.java
+ com.novoda.merlin.MerlinService
+ com.novoda.merlin.MerlinService$ConnectivityChangesNotifier
+ com.novoda.merlin.MerlinService$LocalBinder
+com/novoda/merlin/ConnectCallbackManager.java
+ com.novoda.merlin.ConnectCallbackManager
+com/novoda/merlin/ResponseCodeValidator.java
+ com.novoda.merlin.ResponseCodeValidator
+ com.novoda.merlin.ResponseCodeValidator$CaptivePortalResponseCodeValidator
+com/novoda/merlin/MerlinBackwardsCompatibleLog.java
+ com.novoda.merlin.MerlinBackwardsCompatibleLog
+com/novoda/merlin/ConnectivityChangeEventExtractor.java
+ com.novoda.merlin.ConnectivityChangeEventExtractor
+com/novoda/merlin/MerlinsBeard.java
+ com.novoda.merlin.MerlinsBeard
+ com.novoda.merlin.MerlinsBeard$1
+ com.novoda.merlin.MerlinsBeard$Builder
+ com.novoda.merlin.MerlinsBeard$InternetAccessCallback
+com/novoda/merlin/ConnectivityChangeEvent.java
+ com.novoda.merlin.ConnectivityChangeEvent
+com/novoda/merlin/ConnectivityChangesForwarder.java
+ com.novoda.merlin.ConnectivityChangesForwarder
+ com.novoda.merlin.ConnectivityChangesForwarder$1
+com/novoda/merlin/HttpRequestMaker.java
+ com.novoda.merlin.HttpRequestMaker
+ com.novoda.merlin.HttpRequestMaker$MerlinHttpRequest
+com/novoda/merlin/MerlinServiceBinder.java
+ com.novoda.merlin.MerlinServiceBinder
+ com.novoda.merlin.MerlinServiceBinder$ListenerHolder
+ com.novoda.merlin.MerlinServiceBinder$MerlinServiceConnection
+com/novoda/merlin/PingTaskFactory.java
+ com.novoda.merlin.PingTaskFactory
+com/novoda/merlin/Merlin.java
+ com.novoda.merlin.Merlin
+ com.novoda.merlin.Merlin$Builder
