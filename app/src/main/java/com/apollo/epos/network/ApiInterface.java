@@ -37,6 +37,7 @@ import com.apollo.epos.model.GetRiderProfileResponse;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 
@@ -98,6 +99,6 @@ public interface ApiInterface {
     @POST("api/orders/save-update/ord-rdr-end-jrny-update")
     Call<OrderEndJourneyUpdateResponse> ORDER_END_JOURNEY_UPDATE_API_CALL(@Header("authorization") String token, @Body OrderEndJourneyUpdateRequest orderEndJourneyUpdateRequest);
 
-    @POST("api/user/select/rider-dashboard-counts")
-    Call<RiderDashboardCountResponse> GET_RIDER_DASHBOARD_COUNTS_API_CALL(@Header("authorization") String token, @Header("Content-Type") String contentType);
+    @GET("api/user/select/rider-dashboard-counts")
+    Call<RiderDashboardCountResponse> GET_RIDER_DASHBOARD_COUNTS_API_CALL(@Header("authorization") String token);
 }

@@ -92,7 +92,7 @@ public class DashboardFragmentController {
             ActivityUtils.showDialog(context, "Please wait.");
             ApiInterface apiInterface = ApiClient.getApiService();
 
-            Call<RiderDashboardCountResponse> call = apiInterface.GET_RIDER_DASHBOARD_COUNTS_API_CALL("Bearer " + new SessionManager(context).getLoginToken(), "application/json");
+            Call<RiderDashboardCountResponse> call = apiInterface.GET_RIDER_DASHBOARD_COUNTS_API_CALL("Bearer " + new SessionManager(context).getLoginToken());
             call.enqueue(new Callback<RiderDashboardCountResponse>() {
                 @Override
                 public void onResponse(@NotNull Call<RiderDashboardCountResponse> call, @NotNull Response<RiderDashboardCountResponse> response) {

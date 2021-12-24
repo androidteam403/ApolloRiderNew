@@ -6,6 +6,7 @@ import com.apollo.epos.activity.neworder.model.OrderDetailsResponse;
 import com.apollo.epos.activity.orderdelivery.model.DeliveryFailreReasonsResponse;
 import com.apollo.epos.activity.orderdelivery.model.OrderPaymentSelectResponse;
 import com.apollo.epos.activity.orderdelivery.model.OrderStatusHitoryListResponse;
+import com.apollo.epos.activity.trackmap.model.OrderEndJourneyUpdateResponse;
 
 public interface OrderDeliveryActivityCallback {
     // test
@@ -78,4 +79,6 @@ public interface OrderDeliveryActivityCallback {
     void onSuccessOrderPaymentTypeInCod(OrderPaymentSelectResponse orderPaymentSelectResponse);
 
     void onFailureOrderPaymentTypeInCod(String message);
+
+    void onSuccessOrderEndJourneyUpdateApiCall(OrderEndJourneyUpdateResponse orderEndJourneyUpdateResponse);
 }

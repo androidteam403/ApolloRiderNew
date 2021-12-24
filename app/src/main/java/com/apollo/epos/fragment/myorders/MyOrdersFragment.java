@@ -590,8 +590,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
         if (myOrdersListResponse != null) {
             if (myOrdersListResponse.getData() != null
                     && myOrdersListResponse.getData().getListData() != null
-                    && myOrdersListResponse.getData().getListData().getRows() != null
-                    && myOrdersListResponse.getData().getListData().getRows().size() > 0) {
+                    && myOrdersListResponse.getData().getListData().getRows() != null) {
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.GONE);
                 ordersRecyclerView.setVisibility(View.VISIBLE);
                 this.myOrdersList = myOrdersListResponse.getData().getListData().getRows();

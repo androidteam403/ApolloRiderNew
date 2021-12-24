@@ -229,11 +229,11 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
 
         DrawMarker.getInstance(this).draw(mMap, origin, R.drawable.location_current, "Current Location", 1, hashMap);
         if (locType.equals("Pharmacy")) {
-            DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.ic_pickup_location, "Destination Location", 0, hashMap);
+            DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.ic_pickup_location, "Pickup Location", 0, hashMap);
         } else if (locType.equals("Destination")) {
-            DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.ic_deliver_location, "Destination Location", 0, hashMap);
+            DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.ic_deliver_location, "Deliver Location", 0, hashMap);
         } else if (locType.equals("Store")) {
-            DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.ic_return_location, "Destination Location", 0, hashMap);
+            DrawMarker.getInstance(this).draw(mMap, destination, R.drawable.ic_return_location, "Return Location", 0, hashMap);
         }
         if (!callOneTimeLocation) {
             DrawRouteMaps.getInstance(this, this, this, this).draw(origin, destination, mMap, 0);
@@ -501,18 +501,26 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
 
         switch (locType) {
             case "Pharmacy":
-                new TrackMapActivityController(this, this).orderStartJourneyUpdateApiCall(orderUid, distanceInKm);
-                break;
-            case "Destination":
-                new TrackMapActivityController(this, this).orderEndJourneyUpdateApiCall(orderUid);
-                break;
-            case "Store":
+
                 String packageName = "com.google.android.apps.maps";
                 String query = "google.navigation:q=" + latitude + "," + longitude;
 
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(query));
                 intent.setPackage(packageName);
                 startActivity(intent);
+                break;
+            case "Destination":
+//                new TrackMapActivityController(this, this).orderEndJourneyUpdateApiCall(orderUid);
+                new TrackMapActivityController(this, this).orderStartJourneyUpdateApiCall(orderUid, distanceInKm);
+
+                break;
+            case "Store":
+                String packageName1 = "com.google.android.apps.maps";
+                String query1 = "google.navigation:q=" + latitude + "," + longitude;
+
+                Intent intent1 = new Intent(Intent.ACTION_VIEW, Uri.parse(query1));
+                intent1.setPackage(packageName1);
+                startActivity(intent1);
                 break;
             default:
         }

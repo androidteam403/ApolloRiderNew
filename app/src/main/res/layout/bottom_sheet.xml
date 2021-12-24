@@ -92,7 +92,7 @@
             android:layout_marginTop="@dimen/five_dp"
             android:background="@drawable/btn_send_ripple_effect"
             android:fontFamily="@font/roboto_bold"
-            android:text="@string/label_send"
+            android:text="@string/label_save"
             android:textColor="@color/colorWhite" />
     </LinearLayout>
 </layout>

@@ -72,6 +72,7 @@ public class RiderDashboardCountResponse {
     public void setZcServerHost(String zcServerHost) {
         this.zcServerHost = zcServerHost;
     }
+
     public class Count {
 
         @SerializedName("distance_travelled")
@@ -79,7 +80,7 @@ public class RiderDashboardCountResponse {
         private Object distanceTravelled;
         @SerializedName("cod_pending")
         @Expose
-        private Integer codPending;
+        private Double codPending;
         @SerializedName("cod_received")
         @Expose
         private Double codReceived;
@@ -101,11 +102,11 @@ public class RiderDashboardCountResponse {
             this.distanceTravelled = distanceTravelled;
         }
 
-        public Integer getCodPending() {
+        public Double getCodPending() {
             return codPending;
         }
 
-        public void setCodPending(Integer codPending) {
+        public void setCodPending(Double codPending) {
             this.codPending = codPending;
         }
 
@@ -142,6 +143,7 @@ public class RiderDashboardCountResponse {
         }
 
     }
+
     public class Data {
 
         @SerializedName("count")

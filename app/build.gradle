@@ -23,8 +23,8 @@ android {
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField("String", "BASE_URL", "\"https://apis.v35.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
-            buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
+            buildConfigField("String", "BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
+            buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
         }
         release {
             minifyEnabled false
@@ -125,18 +125,12 @@ dependencies {
 
     implementation 'com.nabinbhandari.android:permissions:3.8'
     implementation project(path: ':easywaylocation')
-//Firebase
-    implementation 'com.google.firebase:firebase-core:17.4.4'
-    implementation 'com.google.firebase:firebase-messaging:20.2.3'
-    // Recommended: Add the Firebase SDK for Google Analytics.
-    implementation 'com.google.firebase:firebase-analytics:17.4.4'
-    // Add the Firebase Crashlytics SDK.
-    implementation 'com.google.firebase:firebase-crashlytics:17.1.1'
+
     //firebase
-//    implementation 'com.google.firebase:firebase-core:20.0.0'
-//    implementation 'com.google.firebase:firebase-analytics:20.0.0'
-//    implementation 'com.google.firebase:firebase-messaging:23.0.0'
-//    implementation 'com.google.firebase:firebase-crashlytics:18.2.4'
+    implementation 'com.google.firebase:firebase-core:20.0.2'
+    implementation 'com.google.firebase:firebase-analytics:20.0.2'
+    implementation 'com.google.firebase:firebase-messaging:23.0.0'
+    implementation 'com.google.firebase:firebase-crashlytics:18.2.6'
 }
 
 /**

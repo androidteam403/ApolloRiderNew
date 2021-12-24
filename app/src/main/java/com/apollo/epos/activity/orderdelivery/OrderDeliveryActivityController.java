@@ -19,6 +19,8 @@ import com.apollo.epos.activity.orderdelivery.model.OrderSaveUpdateStausRequest;
 import com.apollo.epos.activity.orderdelivery.model.OrderSaveUpdateStausResponse;
 import com.apollo.epos.activity.orderdelivery.model.OrderStatusHistoryListRequest;
 import com.apollo.epos.activity.orderdelivery.model.OrderStatusHitoryListResponse;
+import com.apollo.epos.activity.trackmap.model.OrderEndJourneyUpdateRequest;
+import com.apollo.epos.activity.trackmap.model.OrderEndJourneyUpdateResponse;
 import com.apollo.epos.databinding.ActivityOrderDeliveryBinding;
 import com.apollo.epos.db.SessionManager;
 import com.apollo.epos.network.ApiClient;
@@ -399,4 +401,38 @@ public class OrderDeliveryActivityController {
             mListener.onFialureMessage("Something went wrong.");
         }
     }
+    public void orderEndJourneyUpdateApiCall(String uid) {
+        if (NetworkUtils.isNetworkConnected(context)) {
+//            ActivityUtils.showDialog(context, "Please wait.");
+
+            OrderEndJourneyUpdateRequest orderEndJourneyUpdateRequest = new OrderEndJourneyUpdateRequest();
+            orderEndJourneyUpdateRequest.setUid(uid);
+            OrderEndJourneyUpdateRequest.OrderRider orderRider = new OrderEndJourneyUpdateRequest.OrderRider();
+            orderRider.setEndTime(CommonUtils.getCurrentTimeDate());
+            orderEndJourneyUpdateRequest.setOrderRider(orderRider);
+
+            ApiInterface apiInterface = ApiClient.getApiService();
+            Call<OrderEndJourneyUpdateResponse> call = apiInterface.ORDER_END_JOURNEY_UPDATE_API_CALL("Bearer " + new SessionManager(context).getLoginToken(), orderEndJourneyUpdateRequest);
+            call.enqueue(new Callback<OrderEndJourneyUpdateResponse>() {
+                @Override
+                public void onResponse(@NotNull Call<OrderEndJourneyUpdateResponse> call, @NotNull Response<OrderEndJourneyUpdateResponse> response) {
+                    ActivityUtils.hideDialog();
+                    if (response.body() != null && response.body().getSuccess()) {
+                        mListener.onSuccessOrderEndJourneyUpdateApiCall(response.body());
+                    } else {
+                        mListener.onFialureMessage("No data saved.");
+                    }
+                }
+
+                @Override
+                public void onFailure(@NotNull Call<OrderEndJourneyUpdateResponse> call, @NotNull Throwable t) {
+                    ActivityUtils.hideDialog();
+                    mListener.onFialureMessage(t.getMessage());
+                }
+            });
+        } else {
+            mListener.onFialureMessage("Something went wrong.");
+        }
+    }
+
 }

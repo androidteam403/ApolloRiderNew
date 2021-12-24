@@ -5,7 +5,6 @@ import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -41,7 +40,7 @@ public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapte
     public class MyViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.order_id)
         TextView orderId;
-//        @BindView(R.id.order_amount)
+        //        @BindView(R.id.order_amount)
 //        TextView orderAmount;
 //        @BindView(R.id.order_payment_type)
 //        TextView orderPaymentType;
@@ -51,13 +50,13 @@ public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapte
         TextView customerName;
         @BindView(R.id.customer_address)
         TextView customerAddress;
-//        @BindView(R.id.order_status)
+        //        @BindView(R.id.order_status)
 //        TextView orderStatus;
 //        @BindView(R.id.order_date_text)
 //        TextView orderDateText;
         @BindView(R.id.order_date)
         TextView orderDate;
-//        @BindView(R.id.travelled_distance)
+        //        @BindView(R.id.travelled_distance)
 //        TextView travelledDistance;
 //        @BindView(R.id.status_type_icon)
 //        ImageView statusTypeIcon;
@@ -73,7 +72,7 @@ public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapte
         TextView newOrderCustomerName;
         @BindView(R.id.new_order_customer_address)
         TextView newOrderCustomerAddress;
-//        @BindView(R.id.divider_view_one)
+        //        @BindView(R.id.divider_view_one)
 //        View dividerViewOne;
 //        @BindView(R.id.divider_view_two)
 //        View dividerViewTwo;
@@ -81,7 +80,7 @@ public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapte
 //        View dividerViewThree;
         @BindView(R.id.divider_view_four)
         View dividerViewFour;
-//        @BindView(R.id.divider_view_five)
+        //        @BindView(R.id.divider_view_five)
 //        View dividerViewFive;
 //        @BindView(R.id.divider_view_six)
 //        View dividerViewSix;
@@ -93,6 +92,8 @@ public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapte
         TextView customerLandmark;
         @BindView(R.id.delivery_txt)
         TextView deliveryText;
+        @BindView(R.id.deliver_by)
+        TextView deliverBy;
 
         public MyViewHolder(View view) {
             super(view);
@@ -113,12 +114,24 @@ public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapte
         holder.orderId.setText("#" + item.getOrderNumber());
 //        holder.orderAmount.setText(String.valueOf(item.getCrateAmount()));
 //        holder.orderPaymentType.setText(item.getPaymentType().getName());
+        String orderDate = null;
         String pickupAddress = item.getDeliverApartment() + ", " + item.getDeliverStreetName() + ", " + item.getDeliverCity() + ", " + item.getDeliverState() + ", " + item.getDelPincode() + ", " + item.getDeliverCountry();
         String customerAddress = item.getPickupApt() + ", " + item.getPickupStreetName() + ", " + item.getPickupCity() + ", " + item.getPickupState() + ", " + item.getPickupPincode() + ", " + item.getPickupCountry();
         String returnAddress = item.getReturnApartment() + ", " + item.getReturnStreetName() + ", " + item.getReturnCity() + ", " + item.getReturnState() + ", " + item.getReturnPincode() + ", " + item.getReturnCountry();
 
 
         if (item.getOrderState().getName().equals("RETURN")) {
+            if (item.getOrderStatus().getUid().equals("order_assigned") || item.getOrderStatus().getUid().equals("order_transit")) {
+                holder.deliverBy.setText("Pickup by: ");
+                orderDate = item.getPickupEtWindo();
+            }else if (item.getOrderStatus().getUid().equals("order_delivered")){
+                holder.deliverBy.setText("Delivered at: ");
+                orderDate = item.getPickupEtWindo();
+            }else {
+                holder.deliverBy.setText("Pickup by: ");
+                orderDate = item.getPickupEtWindo();
+            }
+
             // Pickup Address
             holder.apolloPharmacyName.setText(item.getPickupAddId());
             holder.pharmacyAddress.setText(pickupAddress);
@@ -130,6 +143,17 @@ public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapte
             holder.customerAddress.setText(returnAddress);
             holder.customerLandmark.setText(item.getReturnLandmark());
         } else {
+             if (item.getOrderStatus().getUid().equals("order_assigned") || item.getOrderStatus().getUid().equals("order_transit")) {
+                 holder.deliverBy.setText("Deliver by: ");
+                 orderDate = item.getDelEtWindo();
+            }else if (item.getOrderStatus().getUid().equals("order_delivered")) {
+                 holder.deliverBy.setText("Delivered at: ");
+                 orderDate = item.getDelEtWindo();
+             }else{
+                 holder.deliverBy.setText("Deliver by: ");
+                 orderDate = item.getDelEtWindo();
+             }
+
             // Pickup Address
             holder.apolloPharmacyName.setText(item.getPickupAddId());
             holder.pharmacyAddress.setText(pickupAddress);
@@ -204,7 +228,7 @@ public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapte
             String currentDate = CommonUtils.getCurrentTimeDate();
             Date currentDates = formatter.parse(currentDate);
 
-            String orderDate = item.getDelEtWindo();
+
             Date orderDates = formatter.parse(orderDate);
             long orderDateMills = orderDates.getTime();
             holder.orderDate.setText(CommonUtils.getTimeFormatter(orderDateMills));

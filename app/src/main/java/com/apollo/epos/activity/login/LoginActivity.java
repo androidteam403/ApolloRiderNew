@@ -20,7 +20,6 @@ import com.apollo.epos.databinding.ActivityLoginBinding;
 import com.apollo.epos.dialog.ForgotPwdDialog;
 import com.apollo.epos.model.GetRiderProfileResponse;
 import com.apollo.epos.utils.ActivityUtils;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.novoda.merlin.Merlin;
 
@@ -47,24 +46,19 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
 
     @SuppressLint("ClickableViewAccessibility")
     private void setUp() {
-        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this, instanceIdResult -> {
-            String newToken = instanceIdResult.getToken();
-            this.firebaseToken = newToken;
-            Log.e("newToken", newToken);
-//            getActivity().getPreferences(Context.MODE_PRIVATE).edit().putString("fb", newToken).apply();
-        });//        FirebaseMessaging.getInstance().getToken().addOnSuccessListener(token -> {
-//            if (!TextUtils.isEmpty(token)) {
-//                this.firebaseToken = token;
-//                Log.d("Login Activity", "retrieve token successful : " + token);
-//            } else {
-//                Log.w("Login Activity", "token should not be null...");
-//            }
-//        }).addOnFailureListener(e -> {
-//            //handle e
-//        }).addOnCanceledListener(() -> {
-//            //handle cancel
-//        }).addOnCompleteListener(task -> Log.v("Login Activity", "This is the token : " + task.getResult()));
 
+        FirebaseMessaging.getInstance().getToken().addOnSuccessListener(token -> {
+            if (!TextUtils.isEmpty(token)) {
+                this.firebaseToken = token;
+                Log.d("newToken", "retrieve token successful : " + token);
+            } else {
+                Log.w("newToken", "token should not be null...");
+            }
+        }).addOnFailureListener(e -> {
+            //handle e
+        }).addOnCanceledListener(() -> {
+            //handle cancel
+        }).addOnCompleteListener(task -> Log.v("newToken", "This is the token : " + task.getResult()));
 
         loginBinding.loginParentLayout.setOnTouchListener((v, event) -> {
             hideKeyboard();

@@ -75,6 +75,7 @@ import com.nabinbhandari.android.permissions.PermissionHandler;
 import com.nabinbhandari.android.permissions.Permissions;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -208,7 +209,7 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
 
     private final int REQ_LOC_PERMISSION = 5002;
 
-    private static TextView timeView;
+    private static TextView timeView, youGotNewOrder;
 
 
     public static DashboardFragment newInstance() {
@@ -240,8 +241,12 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
         new DashboardFragmentController(getContext(), this).getRiderDashboardCountsApiCall();
         newOrderLayoutView = view.findViewById(R.id.new_order_layout);
         timeView = view.findViewById(R.id.time);
+        youGotNewOrder = view.findViewById(R.id.you_got_new_order);
+        if (CommonUtils.NOTIFICATIONS_COUNT == 0)
+            getSessionManager().setNotificationStatus(false);
         if (getSessionManager().getNotificationStatus()) {
             dashboardBinding.newOrderLayout.setVisibility(View.VISIBLE);
+            dashboardBinding.youGotNewOrder.setText(CommonUtils.NOTIFICATIONS_COUNT == 1 ? "You got 1 new order" : "You got " + CommonUtils.NOTIFICATIONS_COUNT + " new orders");
             dashboardBinding.time.setText(getSessionManager().getNotificationArrivedTime());
         } else {
             dashboardBinding.newOrderLayout.setVisibility(View.GONE);
@@ -509,9 +514,10 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
         mChart.setMarker(mv); // Set the marker to the chart
     }
 
-    private void setData(float monCan, float monDel, float tueCan, float tueDel, float wedCan,
-                         float wedDel, float thuCan, float thuDel,
-                         float friCan, float friDel, float satCan, float satDel, float sunCan, float sunDel) {
+    private void setData(float monCan, float monDel, float tueCan, float tueDel,
+                         float wedCan, float wedDel, float thuCan, float thuDel,
+                         float friCan, float friDel, float satCan, float satDel,
+                         float sunCan, float sunDel) {
         mChart.invalidate();
         ArrayList<BarEntry> yVals1 = new ArrayList<BarEntry>();
 //        yVals1.add(new BarEntry(0, (int) monVal));
@@ -1023,8 +1029,9 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
             dashboardBinding.totalOrdersVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getTotalOrders()));
             dashboardBinding.deliveredOrdersVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getDeliveredOrders()));
             dashboardBinding.cancelledOrdersVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getCancelledOrders()));
-            dashboardBinding.codReceivedVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getCodReceived()));
-            dashboardBinding.codPendingVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getCodPending()));
+            DecimalFormat decim = new DecimalFormat("#,###.##");
+            dashboardBinding.codReceivedVal.setText(getActivity().getResources().getString(R.string.label_rupee_symbol) + " " + decim.format(riderDashboardCountResponse.getData().getCount().getCodReceived()));
+            dashboardBinding.codPendingVal.setText(getActivity().getResources().getString(R.string.label_rupee_symbol) + " " + decim.format(riderDashboardCountResponse.getData().getCount().getCodPending()));
             dashboardBinding.travelledDistanceVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getDistanceTravelled()));
         }
     }
@@ -1037,8 +1044,8 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
                 String orderDate = CommonUtils.getCurrentTimeDate();
                 Date orderDates = formatter.parse(orderDate);
                 long orderDateMills = orderDates.getTime();
+                youGotNewOrder.setText(CommonUtils.NOTIFICATIONS_COUNT == 1 ? "You got 1 new order" : "You got " + CommonUtils.NOTIFICATIONS_COUNT + " new orders");
                 timeView.setText(CommonUtils.getTimeFormatter(orderDateMills));
-
             } else {
                 newOrderLayoutView.setVisibility(View.GONE);
             }
@@ -1050,6 +1057,6 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
     @Override
     public void onDestroy() {
         super.onDestroy();
-        getSessionManager().setNotificationStatus(false);
+//        getSessionManager().setNotificationStatus(false);
     }
 }

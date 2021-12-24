@@ -35,7 +35,6 @@ public class TrackMapActivityController {
             OrderStartJourneyUpdateRequest orderStartJourneyUpdateRequest = new OrderStartJourneyUpdateRequest();
             orderStartJourneyUpdateRequest.setUid(uid);
             OrderStartJourneyUpdateRequest.OrderRider orderRider = new OrderStartJourneyUpdateRequest.OrderRider();
-            orderRider.setUid("uid");
             orderRider.setActualDistance(distance);
             orderRider.setStartTime(CommonUtils.getCurrentTimeDate());
             orderStartJourneyUpdateRequest.setOrderRider(orderRider);
@@ -71,8 +70,6 @@ public class TrackMapActivityController {
             OrderEndJourneyUpdateRequest orderEndJourneyUpdateRequest = new OrderEndJourneyUpdateRequest();
             orderEndJourneyUpdateRequest.setUid(uid);
             OrderEndJourneyUpdateRequest.OrderRider orderRider = new OrderEndJourneyUpdateRequest.OrderRider();
-            orderRider.setUid("uid");
-            orderRider.setDistanceTravelled("");
             orderRider.setEndTime(CommonUtils.getCurrentTimeDate());
             orderEndJourneyUpdateRequest.setOrderRider(orderRider);
 
