@@ -57,10 +57,12 @@ import com.apollo.epos.activity.CancelOrderActivity;
 import com.apollo.epos.activity.CaptureSignatureActivity;
 import com.apollo.epos.activity.NavigationActivity;
 import com.apollo.epos.activity.ScannerActivity;
-import com.apollo.epos.activity.TrackMapActivity;
 import com.apollo.epos.activity.neworder.model.OrderDetailsResponse;
 import com.apollo.epos.activity.orderdelivery.model.DeliveryFailreReasonsResponse;
+import com.apollo.epos.activity.orderdelivery.model.OrderPaymentSelectResponse;
 import com.apollo.epos.activity.orderdelivery.model.OrderStatusHitoryListResponse;
+import com.apollo.epos.activity.trackmap.TrackMapActivity;
+import com.apollo.epos.activity.trackmap.model.OrderEndJourneyUpdateResponse;
 import com.apollo.epos.adapter.CustomReasonAdapter;
 import com.apollo.epos.databinding.ActivityOrderDeliveryBinding;
 import com.apollo.epos.databinding.BottomSheetBinding;
@@ -291,6 +293,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
     private final int REQ_LOC_PERMISSION = 5002;
     private boolean isPharmacyLoc = false;
     private boolean isDestinationLoc = false;
+    private boolean isStoreLoc = false;
     private OrderDetailsResponse orderDetailsResponse;
     private ActivityOrderDeliveryBinding orderDeliveryBinding;
     private String pickupPhoneNumber, orderNotDeliveredPhoneNumber;
@@ -298,7 +301,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
     private String branPickupVerificationCode;
     private String branReturnVerificatonCode;
     private String cusPickupVerificationCode;
-    private String cusReturnVerificationCode;
+    private String cusDeliveryVerificationCode;
     private String orderUid;
     private String orderNumber;
     private String customerNameTypeSinner;
@@ -306,7 +309,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
     private String paymentType;
 
     private static TextView notificationText;
-    private int orderCurrentStatus = 0;// order assigned =1, order in transit =2, order delivered =3
+    private int orderCurrentStatus = 0; // order assigned =1, order in transit =2, order delivered =3, order not delivered =4, order handover to pharmacy =5.
 
     public static Intent getStartIntent(Context context, OrderDetailsResponse orderDetailsResponse) {
         Intent intent = new Intent(context, OrderDeliveryActivity.class);
@@ -328,11 +331,10 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_order_delivery);
         orderDeliveryBinding = DataBindingUtil.setContentView(this, R.layout.activity_order_delivery);
         orderDeliveryBinding.setCallback(this);
         ButterKnife.bind(this);
-
+        orderDeliveryBinding.loadingWhiteScreen.setVisibility(View.VISIBLE);
         notificationText = (TextView) findViewById(R.id.notification_dot);
         isScreen = true;
         if (getSessionManager().getNotificationStatus()) {
@@ -354,7 +356,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                 String orderNumberId = bundle.getString("uid");
                 if (getIntent().getStringExtra("order_number") == null) {
                     isLaunchedByPushNotification = true;
-                    new OrderDeliveryActivityController(this, this).orderDetailsApiCall(getSessionManager().getLoginToken(), orderNumberId);
+                    new OrderDeliveryActivityController(this, this).orderDetailsApiCall(getSessionManager().getLoginToken(), orderNumberId, orderDeliveryBinding);
                 }
             } catch (Exception e) {
                 System.out.println("push notification new order activity::::::::::::::::::::::::::::" + e.getMessage());
@@ -365,7 +367,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
             if (getIntent().getStringExtra("order_number") != null) {
                 String orderNumberId = getIntent().getStringExtra("order_number");
                 if (orderNumberId != null && !orderNumberId.isEmpty()) {
-                    new OrderDeliveryActivityController(this, this).orderDetailsApiCall(getSessionManager().getLoginToken(), orderNumberId);
+                    new OrderDeliveryActivityController(this, this).orderDetailsApiCall(getSessionManager().getLoginToken(), orderNumberId, orderDeliveryBinding);
                 } else {
                     finish();
                     return;
@@ -558,10 +560,10 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
             orderDeliveryBinding.handoverParcelChildLayoutAnim.setLayoutTransition(null);
             orderDeliveryBinding.handedoverParceltoCustomerName.setVisibility(View.VISIBLE);
             if (this.customerNameTypeSinner.equals("Other"))
-                orderDeliveryBinding.handedoverParceltoCustomerName.setText("- " + orderDeliveryBinding.handoverUserName.getText().toString().trim());
+                orderDeliveryBinding.handedoverParceltoCustomerName.setText("( " + orderDeliveryBinding.handoverUserName.getText().toString().trim() + " )");
             else
-                orderDeliveryBinding.handedoverParceltoCustomerName.setText("- " + this.customerNameTypeSinner);
-
+                orderDeliveryBinding.handedoverParceltoCustomerName.setText("( " + this.customerNameTypeSinner + " )");
+            orderDeliveryBinding.handoverToParcel.setText("1. Handedover Parcel");
             handoverParcelChildLayout.setVisibility(View.GONE);
             handoverParcelParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
             handoverParcelImg.setImageDrawable(getDrawable(R.drawable.icon_status_completed));
@@ -628,7 +630,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
             if (orderStatusHitoryListResponse != null) {
                 boolean isTransitOrder = false;
                 for (OrderStatusHitoryListResponse.Row row : orderStatusHitoryListResponse.getData().getListData().getRows()) {
-                    if (row.getOrderStatus().getUid().equals("order_transit")) {
+                    if (row.getOrderStatus().getUid() != null && row.getOrderStatus().getUid().equals("order_transit")) {
                         isTransitOrder = true;
                         orderCurrentStatus = 2;
                         isOrderPicked = true;
@@ -661,6 +663,24 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 //                        orderDeliveryBinding.apolloPhamrmacyAddHeadIdLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
                         orderDeliveryBinding.apolloPhamrmacyAddHeadCompletedIcon.setVisibility(View.VISIBLE);
                         orderDeliveryBinding.deliveryheadTxt.setTextColor(getResources().getColor(R.color.colorBlack));
+
+                        if (!isOrderDelivered) {
+                            if (!expanded) {
+                                //return labels
+                                LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                                        LinearLayout.LayoutParams.WRAP_CONTENT
+                                );
+                                params2.setMargins(0, 20, 0, 0);
+                                orderDeliveryBinding.returnLabel.setLayoutParams(params2);
+                                LinearLayout.LayoutParams params3 = new LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                                        LinearLayout.LayoutParams.WRAP_CONTENT
+                                );
+                                params3.setMargins(0, 20, 0, 0);
+                                orderDeliveryBinding.orderNotDeliveredParentLayout.setLayoutParams(params3);
+                            }
+                        }
                         break;
                     }
 
@@ -669,9 +689,10 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                     orderDeliveryBinding.pickupOtpVerificationParentLayoutParent.setVisibility(View.GONE);
                 }
 
-                if (!this.orderDetailsResponse.getData().getOrderStatus().getUid().equals("order_not_delivered")) {
-                    continueProcessLayout.setVisibility(View.VISIBLE);
-                } else {
+                if (this.orderDetailsResponse.getData().getOrderStatus().getUid().equals("order_not_delivered")) {
+//                    continueProcessLayout.setVisibility(View.VISIBLE);
+                    orderDeliveryBinding.cancelledOtpVerificationParentLayoutParent.setVisibility(View.GONE);
+                    orderDeliveryBinding.handovertoPharmacy.setText("2. Handedover to pharmacy");
                     orderDeliveryBinding.orderCancelHeadTxt.setBackground(getResources().getDrawable(R.drawable.order_active_circle_bg));
                     orderDeliveryBinding.deliveryheadTxt.setBackground(getResources().getDrawable(R.drawable.order_disable_circle_bg));
                     orderDeliveryBinding.deliveryheadTxt.setTextColor(getResources().getColor(R.color.colorGrey));
@@ -682,8 +703,8 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                     orderDeliveryBinding.deliverNameInnerHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_disable_curves_bg));
                     orderDeliveryBinding.orderNotDeliveredHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_processing_curves_bg));
                     orderDeliveryBinding.orderNotDeliveredInnerHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_processing_curves_bg));
-                    orderCurrentStatus = 3;
-                    onClickDelivered();
+                    orderCurrentStatus = 4;
+//                    onClickDelivered();
                     orderDeliveryBinding.orderNotDeliveredParentLayout.setVisibility(View.VISIBLE);
 //                    orderDeliveryBinding.orderDeliveryProcessImg.setVisibility(View.VISIBLE);
                     if (!isTransitOrder) {
@@ -702,104 +723,172 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 
                 if (isOrderDelivered) {
                     selectionTag = 10;
+                    orderCurrentStatus = 3;
+                    orderDeliveryBinding.actionBarDeliverBy.setText("Delivered at: ");
+                    if (this.orderDetailsResponse.getData().getOrderState().getName().equals("RETURN")) {
+                        orderDeliveryBinding.deliveredLabel.setVisibility(View.GONE);
+                        orderDeliveryBinding.delivered.setVisibility(View.GONE);
+                        orderHandoverToPharmacy = 2;
+                        orderDeliveryBinding.cancelledReachedStoreLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
+                        orderDeliveryBinding.cancelledReachedStoreImg.setImageDrawable(getDrawable(R.drawable.icon_status_completed));
+                        orderDeliveryBinding.cancelledOtpVerificationImg.setImageDrawable(getDrawable(R.drawable.icon_status_completed));
+                        orderDeliveryBinding.cancelledVerifiedOtpText.setVisibility(View.VISIBLE);
+                        orderDeliveryBinding.cancelledOtpVerificationChildLayout.setVisibility(View.VISIBLE);
+                        orderDeliveryBinding.orderNotDeliveredParentLayout.setVisibility(View.VISIBLE);
+                        orderDeliveryBinding.orderStatusHeader.setText("Order Delivered");
+                        ActivityUtils.hideDialog();
+                        orderDeliveryBinding.orderNotDeliveredHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_completed_curves_bg));
+                        orderDeliveryBinding.orderNotDeliveredInnerHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_completed_curves_bg));
+
+                        orderDeliveryBinding.orderNotDeliveredHeadCompletedIcon.setVisibility(View.VISIBLE);
+                        orderDeliveryBinding.orderNotDeliveredAddHeadId.setText("Order Returned");
+                        orderDeliveryBinding.orderNotDeliveredAddInnerHeadId.setText("Order Returned");
+                        orderDeliveryBinding.orderNotDeliveredHeadCompletedIcon.setVisibility(View.VISIBLE);
+                        orderDeliveryBinding.orderNotDeliveredAddInnerHeadId.setTextColor(getResources().getColor(R.color.order_status_processed_color));
+                        orderDeliveryBinding.orderNotDeliveredAddHeadId.setTextColor(getResources().getColor(R.color.order_status_processed_color));
+                        orderDeliveryBinding.orderCancelHeadTxt.setBackground(getResources().getDrawable(R.drawable.delivery_item_bg));
+                        orderDeliveryBinding.orderCancelTxt.setBackground(getResources().getDrawable(R.drawable.delivery_item_bg));
+                        orderDeliveryBinding.orderNotDeliveredProcessingLine.setBackgroundColor(getResources().getColor(R.color.order_accepted_color));
 
 
-                    orderDeliveryBinding.apolloPhamrmacyAddHeadIdLayout.setBackground(getResources().getDrawable(R.drawable.status_completed_curves_bg));
-                    orderDeliveryBinding.pickupDetailsInnerHeadIdLayout.setBackground(getResources().getDrawable(R.drawable.status_completed_curves_bg));
-                    orderDeliveryBinding.deliverNameHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_completed_curves_bg));
-                    orderDeliveryBinding.deliverNameInnerHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_completed_curves_bg));
+                        orderDeliveryBinding.cancelledOtpEditTextLayout.setVisibility(View.GONE);
+                        orderDeliveryBinding.cancelledVerifyOtpBtn.setVisibility(View.GONE);
+                        orderDeliveryBinding.cancelledOtpEditTextLayout.setBackground(getResources().getDrawable(R.drawable.otp_bg));
+                        orderDeliveryBinding.cancelledVerifiedOtpText.setVisibility(View.VISIBLE);
+                        orderDeliveryBinding.cancelledOtpVerificationParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
 
-                    orderDeliveryBinding.deliveryheadTxt.setBackground(getResources().getDrawable(R.drawable.delivery_item_bg));
-                    orderDeliveryBinding.deliveryTxt.setBackground(getResources().getDrawable(R.drawable.delivery_item_bg));
-                    orderDeliveryBinding.deliverInnerHeader.setTextColor(getResources().getColor(R.color.order_status_processed_color));
-                    orderDeliveryBinding.deliverInnerHeader.setText("Order delivered");
-                    orderDeliveryBinding.deliveryItemsView.setBackgroundColor(getResources().getColor(R.color.order_accepted_color));
-                    //Continue process layout
-                    orderDeliveryBinding.continueProcessLayout.setVisibility(View.GONE);
+                        orderDeliveryBinding.cancelledVerifyOtpBtn.setBackground(getResources().getDrawable(R.drawable.continue_driving_btn_bg));
+                        cancelItemBtn.setVisibility(View.GONE);
+                        cancelOrderBtn.setVisibility(View.GONE);
+                        orderDeliveryBinding.cancelledOrderSuccessStatus.setText("Order Returned to store");
 
-                    //handover the parcel to
-                    orderDeliveryBinding.handoverParcelChildLayoutAnim.setLayoutTransition(null);
-                    handoverParcelChildLayout.setVisibility(View.GONE);
-                    handoverParcelParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
-                    handoverParcelImg.setImageDrawable(getDrawable(R.drawable.icon_status_completed));
-
-                    //continue driving
-                    userPhoneClick = true;
-                    userContactNumber.setImageDrawable(getResources().getDrawable(R.drawable.icon_phone_select));
-                    deliveryItemsView.setVisibility(View.VISIBLE);
-                    orderDeliveryProcessImg.setVisibility(View.GONE);
-                    userMobileNumberHeader.setVisibility(View.VISIBLE);
-                    userMobileNumber.setVisibility(View.VISIBLE);
-                    deliveryItemsListLayout.setVisibility(View.VISIBLE);
-
-                    //otp verified
-                    otpVerificationImg.setImageDrawable(getDrawable(R.drawable.icon_status_completed));
-                    otpEditTextLayout.setVisibility(View.GONE);
-                    verifyOtpBtn.setVisibility(View.GONE);
-                    otpEditTextLayout.setBackground(getResources().getDrawable(R.drawable.otp_bg));
-                    verifiedOtpText.setVisibility(View.VISIBLE);
-                    otpVerificationParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
-                    verifyOtpBtn.setBackground(getResources().getDrawable(R.drawable.continue_driving_btn_bg));
-                    cancelItemBtn.setVisibility(View.GONE);
-                    cancelOrderBtn.setVisibility(View.GONE);
-
-                    //proof of handover
-                    signaturePadImg.setImageDrawable(getDrawable(R.drawable.icon_status_completed));
-                    signaturePadChildLayout.setVisibility(View.VISIBLE);
-                    hintSignatureText.setVisibility(View.GONE);
-                    orderDeliveryBinding.touchHereForNewSign.setVisibility(View.GONE);
-                    signatureViewLayout.setVisibility(View.VISIBLE);
-                    Glide.with(this).load(this.orderDetailsResponse.getData().getOrderHandover().getSignature().get(0).getFullPath()).into(customerSignatureView);
-//                    customerSignatureView.setImageBitmap(bmp);
-                    signaturePadParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
-
-                    // collect payment
-                    otpEditTextLayout.setVisibility(View.GONE);
-                    verifyOtpBtn.setVisibility(View.GONE);
-                    otpEditTextLayout.setBackground(getResources().getDrawable(R.drawable.otp_bg));
-                    orderDeliveryBinding.collectPaymentRadio.setVisibility(View.GONE);
-                    orderDeliveryBinding.collectPaymentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
-                    orderDeliveryBinding.collectPaymentImg.setImageDrawable(getDrawable(R.drawable.icon_status_completed));
-                    verifiedOtpText.setVisibility(View.VISIBLE);
-                    otpVerificationParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
-                    orderDeliveredParentLayout.setBackground(getResources().getDrawable(R.drawable.order_delivered_layout_bg));
-                    for (OrderStatusHitoryListResponse.Row row : orderStatusHitoryListResponse.getData().getListData().getRows()) {
-                        if (row.getOrderStatus().getUid().equals("order_delivered")) {
-                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                            String orderDate = row.getCreatedTime();
-                            Date orderDates = formatter.parse(orderDate);
-                            long orderDateMills = orderDates.getTime();
-                            orderDeliveryBinding.orderCompletedSuccessfullyDateAndTime.setText(CommonUtils.getTimeFormatter(orderDateMills));
-
-                            //deliver header
-                            orderDeliveryBinding.customerheadName.setTextColor(getResources().getColor(R.color.order_status_processed_color));
-                            orderDeliveryBinding.customerheadName.setText("Order delivered");
-//                            orderDeliveryBinding.deliverNameHeadLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
-                            orderDeliveryBinding.deliverNameHeadCompletedIcon.setVisibility(View.VISIBLE);
-                            break;
+                        for (OrderStatusHitoryListResponse.Row row : orderStatusHitoryListResponse.getData().getListData().getRows()) {
+                            if (row.getOrderStatus().getUid().equals("order_delivered")) {
+                                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                                String orderDate = row.getCreatedTime();
+                                Date orderDates = formatter.parse(orderDate);
+                                long orderDateMills = orderDates.getTime();
+                                orderDeliveryBinding.cancelledOrderHandedoverToPharmacyTime.setText(CommonUtils.getTimeFormatter(orderDateMills));
+                                orderDeliveryBinding.deliveryonDatetime.setText(CommonUtils.getTimeFormatter(orderDateMills));
+                                break;
+                            }
                         }
-                    }
-                    orderCurrentStatus = 0;
-                    orderDeliveredChildOneLayout.setVisibility(View.GONE);
-                    orderDeliveredChildTwoLayout.setVisibility(View.VISIBLE);
 
-                    verifyOtpBtn.setBackground(getResources().getDrawable(R.drawable.continue_driving_btn_bg));
-                    cancelItemBtn.setVisibility(View.GONE);
-                    cancelOrderBtn.setVisibility(View.GONE);
 
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.MATCH_PARENT);
-                    int rightDp = (int) getResources().getDimension(R.dimen.five_dp);
-                    int bottomDp = (int) getResources().getDimension(R.dimen.twenty_five_dp);
-                    int marginEnd = (int) ActivityUtils.convertDpToPixel(rightDp, this);
-                    int marginBottom = (int) ActivityUtils.convertDpToPixel(bottomDp, this);
-                    params.setMargins(0, 0, marginEnd, marginBottom);
+                        orderDeliveryBinding.cancelledOrderHandoverParentLayout.setBackground(getResources().getDrawable(R.drawable.order_delivered_layout_bg));
+                        orderDeliveryBinding.cancelledOrderHandoverChildOneLayout.setVisibility(View.GONE);
+                        orderDeliveryBinding.cancelledOrderHandoverChildTwoLayout.setVisibility(View.VISIBLE);
+                    } else {
+                        if (this.paymentType.equals("COD"))
+                            new OrderDeliveryActivityController(this, this).getOrderPaymentTypeinCod(orderUid);
+                        orderDeliveryBinding.apolloPhamrmacyAddHeadIdLayout.setBackground(getResources().getDrawable(R.drawable.status_completed_curves_bg));
+                        orderDeliveryBinding.pickupDetailsInnerHeadIdLayout.setBackground(getResources().getDrawable(R.drawable.status_completed_curves_bg));
+                        orderDeliveryBinding.deliverNameHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_completed_curves_bg));
+                        orderDeliveryBinding.deliverNameInnerHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_completed_curves_bg));
+
+                        orderDeliveryBinding.deliveryheadTxt.setBackground(getResources().getDrawable(R.drawable.delivery_item_bg));
+                        orderDeliveryBinding.deliveryTxt.setBackground(getResources().getDrawable(R.drawable.delivery_item_bg));
+                        orderDeliveryBinding.deliverInnerHeader.setTextColor(getResources().getColor(R.color.order_status_processed_color));
+                        orderDeliveryBinding.deliverInnerHeader.setText("Order Delivered");
+                        orderDeliveryBinding.deliveryItemsView.setBackgroundColor(getResources().getColor(R.color.order_accepted_color));
+                        //Continue process layout
+                        orderDeliveryBinding.continueProcessLayout.setVisibility(View.GONE);
+
+                        //handover the parcel to
+                        orderDeliveryBinding.handoverParcelChildLayoutAnim.setLayoutTransition(null);
+                        handoverParcelChildLayout.setVisibility(View.GONE);
+                        handoverParcelParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
+                        handoverParcelImg.setImageDrawable(getDrawable(R.drawable.icon_status_completed));
+
+                        //continue driving
+                        userPhoneClick = true;
+                        userContactNumber.setImageDrawable(getResources().getDrawable(R.drawable.icon_phone_select));
+                        deliveryItemsView.setVisibility(View.VISIBLE);
+                        orderDeliveryProcessImg.setVisibility(View.GONE);
+                        userMobileNumberHeader.setVisibility(View.VISIBLE);
+                        userMobileNumber.setVisibility(View.VISIBLE);
+                        deliveryItemsListLayout.setVisibility(View.VISIBLE);
+
+                        //otp verified
+                        otpVerificationImg.setImageDrawable(getDrawable(R.drawable.icon_status_completed));
+                        otpEditTextLayout.setVisibility(View.GONE);
+                        verifyOtpBtn.setVisibility(View.GONE);
+                        otpEditTextLayout.setBackground(getResources().getDrawable(R.drawable.otp_bg));
+                        otpVerificationChildLayout.setVisibility(View.VISIBLE);
+                        verifiedOtpText.setVisibility(View.VISIBLE);
+                        otpVerificationParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
+                        verifyOtpBtn.setBackground(getResources().getDrawable(R.drawable.continue_driving_btn_bg));
+                        cancelItemBtn.setVisibility(View.GONE);
+                        cancelOrderBtn.setVisibility(View.GONE);
+
+                        //proof of handover
+                        signaturePadImg.setImageDrawable(getDrawable(R.drawable.icon_status_completed));
+                        signaturePadChildLayout.setVisibility(View.VISIBLE);
+                        hintSignatureText.setVisibility(View.GONE);
+                        orderDeliveryBinding.touchHereForNewSign.setVisibility(View.GONE);
+                        signatureViewLayout.setVisibility(View.VISIBLE);
+                        if (this.orderDetailsResponse.getData().getOrderHandover().getSignature().size() > 0) {
+                            Glide.with(this).load(this.orderDetailsResponse.getData().getOrderHandover().getSignature().get(0).getFullPath()).into(customerSignatureView);
+                            signaturePadParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
+                        } else {
+                            orderDeliveryBinding.proofofHandoverAnimLayout.setLayoutTransition(null);
+                            orderDeliveryBinding.proofOfHandover.setText("3. Proof of handover skipped");
+                            orderDeliveryBinding.proofofHandoverSkip.setVisibility(View.GONE);
+                            orderDeliveryBinding.signaturePadChildLayout.setVisibility(View.GONE);
+                            signaturePadParentLayout.setBackgroundColor(getResources().getColor(R.color.alert_header_bg));
+                        }
+                        //                    customerSignatureView.setImageBitmap(bmp);
+
+                        // collect payment
+                        otpEditTextLayout.setVisibility(View.GONE);
+                        verifyOtpBtn.setVisibility(View.GONE);
+                        otpEditTextLayout.setBackground(getResources().getDrawable(R.drawable.otp_bg));
+                        orderDeliveryBinding.collectPaymentRadio.setVisibility(View.GONE);
+                        orderDeliveryBinding.collectPaymentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
+                        orderDeliveryBinding.collectPaymentImg.setImageDrawable(getDrawable(R.drawable.icon_status_completed));
+                        verifiedOtpText.setVisibility(View.VISIBLE);
+                        orderDeliveryBinding.collectPaymentText.setText("4. Collected Payment");
+                        otpVerificationParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
+                        orderDeliveredParentLayout.setBackground(getResources().getDrawable(R.drawable.order_delivered_layout_bg));
+                        for (OrderStatusHitoryListResponse.Row row : orderStatusHitoryListResponse.getData().getListData().getRows()) {
+                            if (row.getOrderStatus().getUid().equals("order_delivered")) {
+                                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                                String orderDate = row.getCreatedTime();
+                                Date orderDates = formatter.parse(orderDate);
+                                long orderDateMills = orderDates.getTime();
+                                orderDeliveryBinding.orderCompletedSuccessfullyDateAndTime.setText(CommonUtils.getTimeFormatter(orderDateMills));
+                                orderDeliveryBinding.deliveryonDatetime.setText(CommonUtils.getTimeFormatter(orderDateMills));
+                                //deliver header
+                                orderDeliveryBinding.customerheadName.setTextColor(getResources().getColor(R.color.order_status_processed_color));
+                                orderDeliveryBinding.customerheadName.setText("Order Delivered");
+//                            orderDeliveryBinding.deliverNameHeadLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
+                                orderDeliveryBinding.deliverNameHeadCompletedIcon.setVisibility(View.VISIBLE);
+                                break;
+                            }
+                        }
+                        orderCurrentStatus = 0;
+                        orderDeliveredChildOneLayout.setVisibility(View.GONE);
+                        orderDeliveredChildTwoLayout.setVisibility(View.VISIBLE);
+
+                        verifyOtpBtn.setBackground(getResources().getDrawable(R.drawable.continue_driving_btn_bg));
+                        cancelItemBtn.setVisibility(View.GONE);
+                        cancelOrderBtn.setVisibility(View.GONE);
+
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.MATCH_PARENT);
+                        int rightDp = (int) getResources().getDimension(R.dimen.five_dp);
+                        int bottomDp = (int) getResources().getDimension(R.dimen.twenty_five_dp);
+                        int marginEnd = (int) ActivityUtils.convertDpToPixel(rightDp, this);
+                        int marginBottom = (int) ActivityUtils.convertDpToPixel(bottomDp, this);
+                        params.setMargins(0, 0, marginEnd, marginBottom);
 //                    deliveryItemsView.setLayoutParams(params);
+                    }
+
                 }
             }
 
         } catch (Exception e) {
-
+            System.out.println("onSuccessOrderStatusHistoryListApiCall=============================" + e.getMessage());
         }
     }
 
@@ -815,11 +904,42 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 
     @Override
     public void onClickNotificationIcon() {
-        notificationText.clearAnimation();
-        NavigationActivity.notificationDotVisibility(false);
-        DashboardFragment.newOrderViewVisibility(false);
-        getSessionManager().setNotificationStatus(false);
-        onBackPressed();
+        if (getSessionManager().getNotificationStatus()) {
+            if (isOrderDelivered) {
+                notificationText.clearAnimation();
+                NavigationActivity.notificationDotVisibility(false);
+                DashboardFragment.newOrderViewVisibility(false);
+//                getSessionManager().setNotificationStatus(false);
+
+                startActivity(NavigationActivity.getStartIntent(this));
+                overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+                finish();
+            } else {
+                Dialog alertDialog = new Dialog(this);
+                DialogAlertCustomBinding alertCustomBinding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.dialog_alert_custom, null, false);
+                alertDialog.setContentView(alertCustomBinding.getRoot());
+                alertCustomBinding.title.setText("Alert!");
+                alertCustomBinding.subtitle.setText("Are sure want to leave this page?");
+                alertCustomBinding.dialogButtonNO.setText("No");
+                alertCustomBinding.dialogButtonOK.setText("Yes");
+                alertCustomBinding.dialogButtonOK.setOnClickListener(v -> {
+                    notificationText.clearAnimation();
+                    NavigationActivity.notificationDotVisibility(false);
+                    DashboardFragment.newOrderViewVisibility(false);
+//                    getSessionManager().setNotificationStatus(false);
+
+                    startActivity(NavigationActivity.getStartIntent(this));
+                    overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+                    alertDialog.dismiss();
+                    finish();
+                });
+                alertCustomBinding.dialogButtonNO.setOnClickListener(v -> alertDialog.dismiss());
+                alertDialog.show();
+            }
+        }
+//        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+
+//        onBackPressed();
     }
 
     static Animation anim;
@@ -892,10 +1012,9 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
         }
     }
 
-
     @Override
     public void onClickOrderNotDelivered() {
-        if (orderCurrentStatus != 3) {
+        if (orderCurrentStatus != 2 && orderCurrentStatus != 4) {
             orderDeliveryBinding.returnLabel.setVisibility(View.VISIBLE);
             orderDeliveryBinding.orderNotDeliveredParentLayout.setVisibility(View.GONE);
         }
@@ -910,6 +1029,8 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
             orderDeliveryBinding.packedLabel.setVisibility(View.GONE);
             orderDeliveryBinding.packed.setVisibility(View.VISIBLE);
 
+
+            //deliver labels
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -923,6 +1044,21 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
             );
             params1.setMargins(0, 0, 0, 0);
             orderDeliveryBinding.delivered.setLayoutParams(params1);
+
+
+            //return labels
+            LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params2.setMargins(0, 0, 0, 0);
+            orderDeliveryBinding.returnLabel.setLayoutParams(params2);
+            LinearLayout.LayoutParams params3 = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params3.setMargins(0, 0, 0, 0);
+            orderDeliveryBinding.orderNotDeliveredParentLayout.setLayoutParams(params3);
         }
     }
 
@@ -934,6 +1070,8 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
             expanded = false;
             orderDeliveryBinding.packedLabel.setVisibility(View.VISIBLE);
             orderDeliveryBinding.packed.setVisibility(View.GONE);
+
+            //deliver labels
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -948,6 +1086,22 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                 params1.setMargins(0, 20, 0, 0);
                 orderDeliveryBinding.delivered.setLayoutParams(params1);
             }
+
+
+            //return labels
+            LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params2.setMargins(0, 20, 0, 0);
+            orderDeliveryBinding.returnLabel.setLayoutParams(params2);
+            LinearLayout.LayoutParams params3 = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params3.setMargins(0, 20, 0, 0);
+            orderDeliveryBinding.orderNotDeliveredParentLayout.setLayoutParams(params3);
+
         }
     }
 
@@ -966,13 +1120,13 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                 orderDeliveryBinding.delivered.setLayoutParams(params);
             }
 
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            );
-            params.setMargins(0, 0, 0, 0);
-            orderDeliveryBinding.returnLabel.setLayoutParams(params);
-
+//            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+//                    LinearLayout.LayoutParams.WRAP_CONTENT,
+//                    LinearLayout.LayoutParams.WRAP_CONTENT
+//            );
+//            params.setMargins(0, 0, 0, 0);
+//            orderDeliveryBinding.returnLabel.setLayoutParams(params);
+//
             LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -988,12 +1142,12 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
             orderDeliveryBinding.deliveredLabel.setVisibility(View.VISIBLE);
             orderDeliveryBinding.delivered.setVisibility(View.GONE);
 
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            );
-            params.setMargins(0, 20, 0, 0);
-            orderDeliveryBinding.returnLabel.setLayoutParams(params);
+//            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+//                    LinearLayout.LayoutParams.WRAP_CONTENT,
+//                    LinearLayout.LayoutParams.WRAP_CONTENT
+//            );
+//            params.setMargins(0, 20, 0, 0);
+//            orderDeliveryBinding.returnLabel.setLayoutParams(params);
 
             if (orderDeliveryBinding.orderDeliveredParentLayout.getVisibility() == View.VISIBLE) {
                 LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
@@ -1043,7 +1197,8 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
     @OnClick(R.id.verify_otp_btn)
     void onVerifyOtpBtnClick() {
         selectionTag = 4;
-        if (pinHiddenEditText.getText().toString().equalsIgnoreCase("0000") || pinHiddenEditText.getText().toString().equalsIgnoreCase(cusPickupVerificationCode)) {
+        if (pinHiddenEditText.getText().toString().equalsIgnoreCase("0000") || pinHiddenEditText.getText().toString().equalsIgnoreCase(cusDeliveryVerificationCode)) {
+            hideKeyboard();
             otpEditTextLayout.setVisibility(View.GONE);
             verifyOtpBtn.setVisibility(View.GONE);
             otpEditTextLayout.setBackground(getResources().getDrawable(R.drawable.otp_bg));
@@ -1118,19 +1273,14 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 
     @OnClick(R.id.cancel_order_btn)
     public void toggleBottomSheet() {
-
-        View dialogView = getLayoutInflater().inflate(R.layout.bottom_sheet, null);
         BottomSheetDialog dialog = new BottomSheetDialog(this);
         BottomSheetBinding bottomSheetBinding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.bottom_sheet, null, false);
         dialog.setContentView(bottomSheetBinding.getRoot());
         dialog.setCancelable(false);
         dialog.show();
 
-        TextView headerText = dialogView.findViewById(R.id.sheet_header);
-        headerText.setText(getResources().getString(R.string.label_order_cancel));
-        TextView cancelHeaderText = dialogView.findViewById(R.id.cancel_order_header);
-        cancelHeaderText.setText(getResources().getString(R.string.label_cancel_reason_header));
-        ImageView closeDialog = dialogView.findViewById(R.id.close_icon);
+        bottomSheetBinding.sheetHeader.setText(getResources().getString(R.string.label_order_cancel));
+        bottomSheetBinding.cancelOrderHeader.setText(getResources().getString(R.string.label_cancel_reason_subheader));
         bottomSheetBinding.closeIcon.setOnClickListener(v -> {
             dialog.dismiss();
         });
@@ -1768,15 +1918,46 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
     void onPharmaMapImgClick() {
         isPharmacyLoc = true;
         isDestinationLoc = false;
-        gotoTrackMapActivity("Pharmacy", 17.4410197, 78.3788463);
+        isStoreLoc = false;
+        gotoTrackMapActivity("Pharmacy", this.orderDetailsResponse.getData().getPickupLatitude(), this.orderDetailsResponse.getData().getPickupLongitude());
+//        gotoTrackMapActivity("Pharmacy", 17.4410197, 78.3788463);
     }
 
     @OnClick(R.id.map_view_layout)
     void onMapClick() {
         isPharmacyLoc = false;
         isDestinationLoc = true;
-        gotoTrackMapActivity("Destination", 17.4411128, 78.3827845);
+        isStoreLoc = false;
+        gotoTrackMapActivity("Destination", this.orderDetailsResponse.getData().getDeliverLatitude(), this.orderDetailsResponse.getData().getDeliverLongitude());
+//        gotoTrackMapActivity("Destination", 17.4411128, 78.3827845);
     }
+
+    @Override
+    public void onClickReturntoStoreShowMap() {
+        isPharmacyLoc = false;
+        isDestinationLoc = false;
+        isStoreLoc = true;
+        gotoTrackMapActivity("Store", this.orderDetailsResponse.getData().getPickupLatitude(), this.orderDetailsResponse.getData().getPickupLongitude());
+//        gotoTrackMapActivity("Store", 17.4411128, 78.3827845);
+    }
+
+    @Override
+    public void onSuccessOrderPaymentTypeInCod(OrderPaymentSelectResponse orderPaymentSelectResponse) {
+        orderDeliveryBinding.paymentTypeIncod.setText("( " + orderPaymentSelectResponse.getData().getOrderPayment().getType().getUid() + " )");
+        orderDeliveryBinding.paymentTypeIncod.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onFailureOrderPaymentTypeInCod(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSuccessOrderEndJourneyUpdateApiCall(OrderEndJourneyUpdateResponse orderEndJourneyUpdateResponse) {
+        isOrderDelivered = true;
+        System.out.println("onSuccessOrderEndJourneyUpdateApiCall:::::::::::::::::::::::::" + orderEndJourneyUpdateResponse.getMessage());
+    }
+
 
     private void gotoTrackMapActivity(String locType, double latitude, double longitude) {
         if (checkForLocPermission()) {
@@ -1785,6 +1966,8 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                 intent.putExtra("locType", locType);
                 intent.putExtra("Lat", latitude);
                 intent.putExtra("Lon", longitude);
+                intent.putExtra("order_number", orderNumber);
+                intent.putExtra("order_uid", this.orderDetailsResponse.getData().getUid());
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
             } else {
@@ -1870,9 +2053,11 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
                     if (isPharmacyLoc) {
-                        gotoTrackMapActivity("Pharmacy", 17.4410197, 78.3788463);
+                        gotoTrackMapActivity("Pharmacy", this.orderDetailsResponse.getData().getPickupLatitude(), this.orderDetailsResponse.getData().getPickupLongitude());
                     } else if (isDestinationLoc) {
-                        gotoTrackMapActivity("Destination", 17.4411128, 78.3827845);
+                        gotoTrackMapActivity("Destination", this.orderDetailsResponse.getData().getDeliverLatitude(), this.orderDetailsResponse.getData().getDeliverLongitude());
+                    } else if (isStoreLoc) {
+                        gotoTrackMapActivity("Store", this.orderDetailsResponse.getData().getPickupLatitude(), this.orderDetailsResponse.getData().getPickupLongitude());
                     }
                 } else {
                     // permission denied, boo! Disable the
@@ -1925,6 +2110,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
         onBackPressed();
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     public void onSuccessOrderDetailsApiCall(OrderDetailsResponse orderDetailsResponse) {
         try {
@@ -1934,10 +2120,10 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                     this.paymentType = this.orderDetailsResponse.getData().getPaymentType().getName();
                     if (!this.paymentType.equals("COD")) {
                         orderDeliveryBinding.collectPayment.setVisibility(View.GONE);
-                        orderDeliveryBinding.completedDeliveryText.setText("4. Completed delivery");
+                        orderDeliveryBinding.completedDeliveryText.setText("4. Complete delivery");
                     } else {
                         orderDeliveryBinding.collectPayment.setVisibility(View.VISIBLE);
-                        orderDeliveryBinding.completedDeliveryText.setText("5. Completed delivery");
+                        orderDeliveryBinding.completedDeliveryText.setText("5. Complete delivery");
                         orderDeliveryBinding.totalAmount.setText(getResources().getString(R.string.label_rupee_symbol) + " " + String.valueOf(this.orderDetailsResponse.getData().getPakgValue()));
                     }
                     if (this.orderDetailsResponse.getData().getCancelAllowed() != null && this.orderDetailsResponse.getData().getCancelAllowed().getName().equals("Yes")) {
@@ -1948,11 +2134,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                     this.orderUid = this.orderDetailsResponse.getData().getUid();
                     this.orderNumber = this.orderDetailsResponse.getData().getOrderNumber();
                     orderDeliveryBinding.orderStatusHeader.setText(this.orderDetailsResponse.getData().getOrderStatus().getName());
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                    String orderDate = orderDetailsResponse.getData().getDelEtWindo();
-                    Date orderDates = formatter.parse(orderDate);
-                    long orderDateMills = orderDates.getTime();
-                    orderDeliveryBinding.deliveryonDatetime.setText(CommonUtils.getTimeFormatter(orderDateMills));
+
                     orderDeliveryBinding.orderNumber.setText("#" + String.valueOf(this.orderDetailsResponse.getData().getOrderNumber()));
 //                    orderDeliveryBinding.crateAmount.setText(String.valueOf(this.orderDetailsResponse.getData().getCrateAmount()));
 //                    orderDeliveryBinding.paymentType.setText(this.orderDetailsResponse.getData().getPaymentType().getName());
@@ -1963,7 +2145,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                     this.branPickupVerificationCode = orderDetailsResponse.getData().getBranpickupVerCode();
                     this.branReturnVerificatonCode = orderDetailsResponse.getData().getBranreturnVerCode();
                     this.cusPickupVerificationCode = orderDetailsResponse.getData().getCusPickupVerCode();
-                    this.cusReturnVerificationCode = orderDetailsResponse.getData().getCusReturnVerCode();
+                    this.cusDeliveryVerificationCode = orderDetailsResponse.getData().getCusDeliveryVerCode();
 
                     if (this.orderDetailsResponse.getData().getOrderStatus().getUid().equals("order_assigned")) {
                         orderCurrentStatus = 1;
@@ -1997,17 +2179,37 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 
 
                     } else if (this.orderDetailsResponse.getData().getOrderStatus().getUid().equals("order_transit")) {
+                        orderDeliveryBinding.pharmacyMapViewImg.setVisibility(View.GONE);
+                        continueProcessLayout.setVisibility(View.GONE);
                         orderDeliveryBinding.apolloPhamrmacyAddHeadId.setTextColor(getResources().getColor(R.color.order_header_bg));
                         orderDeliveryBinding.apolloPhamrmacyAddHeadCompletedIcon.setVisibility(View.VISIBLE);
                         orderDeliveryBinding.customerHeadTxt.setTextColor(getResources().getColor(R.color.colorBlack));
                         orderDeliveryBinding.customerheadName.setTextColor(getResources().getColor(R.color.colorBlack));
                         orderCurrentStatus = 2;
-
-                        onClickDeliveredLabel();
-                        selectionTag = 1;
-                        onContinueDrivingClick();
-                        new OrderDeliveryActivityController(this, this).orderStatusHistoryListApiCall(this.orderDetailsResponse.getData().getUid());
+                        if (this.orderDetailsResponse.getData().getOrderState().getName().equals("RETURN")) {
+                            selectionTag = 10;
+                            orderDeliveryBinding.deliveredLabel.setVisibility(View.GONE);
+                            orderDeliveryBinding.orderNotDeliveredHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_processing_curves_bg));
+                            orderDeliveryBinding.orderNotDeliveredInnerHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_processing_curves_bg));
+                            orderDeliveryBinding.orderCancelHeadTxt.setTextColor(getResources().getColor(R.color.colorBlack));
+                            orderDeliveryBinding.orderCancelTxt.setTextColor(getResources().getColor(R.color.colorBlack));
+                            orderDeliveryBinding.orderCancelHeadTxt.setBackground(getResources().getDrawable(R.drawable.order_active_circle_bg));
+                            orderDeliveryBinding.orderCancelTxt.setBackground(getResources().getDrawable(R.drawable.order_active_circle_bg));
+                            orderDeliveryBinding.orderNotDeliveredAddInnerHeadId.setTextColor(getResources().getColor(R.color.pharmacy_circle_color));
+                            orderDeliveryBinding.orderNotDeliveredAddHeadId.setTextColor(getResources().getColor(R.color.pharmacy_circle_color));
+                            orderDeliveryBinding.returnLabel.setVisibility(View.GONE);
+                            orderDeliveryBinding.orderNotDeliveredParentLayout.setVisibility(View.VISIBLE);
+                            new OrderDeliveryActivityController(this, this).orderStatusHistoryListApiCall(this.orderDetailsResponse.getData().getUid());
+                        } else {
+                            onClickDeliveredLabel();
+                            selectionTag = 1;
+                            onContinueDrivingClick();
+                            new OrderDeliveryActivityController(this, this).orderStatusHistoryListApiCall(this.orderDetailsResponse.getData().getUid());
+                        }
                     } else if (this.orderDetailsResponse.getData().getOrderStatus().getUid().equals("order_delivered")) {
+                        orderDeliveryBinding.pharmacyMapViewImg.setVisibility(View.GONE);
+                        orderDeliveryBinding.mapViewLayout.setVisibility(View.GONE);
+                        orderDeliveryBinding.orderNotDeliveredMapViewImg.setVisibility(View.GONE);
                         onClickPickedLabel();
                         onClickDeliveredLabel();
                         selectionTag = 1;
@@ -2015,15 +2217,22 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                         isOrderDelivered = true;
                         new OrderDeliveryActivityController(this, this).orderStatusHistoryListApiCall(this.orderDetailsResponse.getData().getUid());
                     } else if (this.orderDetailsResponse.getData().getOrderStatus().getUid().equals("order_not_delivered")) {
-
+                        orderDeliveryBinding.pharmacyMapViewImg.setVisibility(View.GONE);
+                        selectionTag = 10;
                         orderDeliveryBinding.deliveredLabel.setVisibility(View.GONE);
-
-
                         new OrderDeliveryActivityController(this, this).orderStatusHistoryListApiCall(this.orderDetailsResponse.getData().getUid());
                         orderDeliveryBinding.cancelOrderBtn.setVisibility(View.GONE);
                         orderDeliveryBinding.orderDeliveryProcessImg.setVisibility(View.VISIBLE);
                     }
                     if (this.orderDetailsResponse.getData().getOrderState().getName().equals("RETURN")) {
+                        cancelOrderBtn.setVisibility(View.GONE);
+                        orderDeliveryBinding.actionBarDeliverBy.setText("Pickup by: ");
+                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                        String orderDate = orderDetailsResponse.getData().getPickupEtWindo();
+                        Date orderDates = formatter.parse(orderDate);
+                        long orderDateMills = orderDates.getTime();
+                        orderDeliveryBinding.deliveryonDatetime.setText(CommonUtils.getTimeFormatter(orderDateMills));
+
 
                         //pickup address and details*******************************************
                         orderDeliveryBinding.apolloPhamrmacyAddId.setText(this.orderDetailsResponse.getData().getPickupAccName());
@@ -2032,11 +2241,11 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                         orderDeliveryBinding.pharmacyAddress.setText(pickupAddress);
                         String pickupPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getPickupPn());
                         orderDeliveryBinding.pickupPhoneNumber.setText("*******" + pickupPhoneNumber.substring(pickupPhoneNumber.length() - 3));
-                        if (orderDetailsResponse.getData().getPickupNotes() != null && orderDetailsResponse.getData().getPickupNotes().isEmpty()) {
-                            orderDeliveryBinding.pickupInstruction.setVisibility(View.GONE);
-                        } else {
+                        if (orderDetailsResponse.getData().getPickupNotes() != null && !orderDetailsResponse.getData().getPickupNotes().isEmpty()) {
                             orderDeliveryBinding.pickupInstruction.setVisibility(View.VISIBLE);
                             orderDeliveryBinding.pickupInstructionText.setText(orderDetailsResponse.getData().getPickupNotes());
+                        } else {
+                            orderDeliveryBinding.pickupInstruction.setVisibility(View.GONE);
                         }
                         this.pickupPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getPickupPn());
 
@@ -2063,6 +2272,14 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 
                         this.pickupPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getReturnPn());
                     } else {
+                        orderDeliveryBinding.actionBarDeliverBy.setText("Deliver by: ");
+                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                        String orderDate = orderDetailsResponse.getData().getDelEtWindo();
+                        Date orderDates = formatter.parse(orderDate);
+                        long orderDateMills = orderDates.getTime();
+                        orderDeliveryBinding.deliveryonDatetime.setText(CommonUtils.getTimeFormatter(orderDateMills));
+
+
                         //pickup address and details
                         orderDeliveryBinding.apolloPhamrmacyAddId.setText(this.orderDetailsResponse.getData().getPickupAccName());
 //                        orderDeliveryBinding.apolloPhamrmacyAddHeadId.setText(this.orderDetailsResponse.getData().getPickupAddId());
@@ -2070,11 +2287,11 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                         orderDeliveryBinding.pharmacyAddress.setText(pickupAddress);
                         String pickupPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getPickupPn());
                         orderDeliveryBinding.pickupPhoneNumber.setText("*******" + pickupPhoneNumber.substring(pickupPhoneNumber.length() - 3));
-                        if (orderDetailsResponse.getData().getPickupNotes() != null && orderDetailsResponse.getData().getPickupNotes().isEmpty()) {
-                            orderDeliveryBinding.pickupInstruction.setVisibility(View.GONE);
-                        } else {
+                        if (orderDetailsResponse.getData().getPickupNotes() != null && !orderDetailsResponse.getData().getPickupNotes().isEmpty()) {
                             orderDeliveryBinding.pickupInstruction.setVisibility(View.VISIBLE);
                             orderDeliveryBinding.pickupInstructionText.setText(orderDetailsResponse.getData().getPickupNotes());
+                        } else {
+                            orderDeliveryBinding.pickupInstruction.setVisibility(View.GONE);
                         }
                         this.pickupPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getPickupPn());
 
@@ -2085,11 +2302,11 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                         orderDeliveryBinding.customerAddress.setText(customerAddresss);
                         String userMobileNumber = String.valueOf(this.orderDetailsResponse.getData().getDelPn());
                         orderDeliveryBinding.userMobileNumber.setText("*******" + userMobileNumber.substring(userMobileNumber.length() - 3));
-                        if (orderDetailsResponse.getData().getDeliverNotes() != null && orderDetailsResponse.getData().getDeliverNotes().isEmpty()) {
-                            orderDeliveryBinding.deliveryInstruction.setVisibility(View.GONE);
-                        } else {
+                        if (orderDetailsResponse.getData().getDeliverNotes() != null && !orderDetailsResponse.getData().getDeliverNotes().isEmpty()) {
                             orderDeliveryBinding.deliveryInstruction.setVisibility(View.VISIBLE);
                             orderDeliveryBinding.deliveryInstructionText.setText(orderDetailsResponse.getData().getPickupNotes());
+                        } else {
+                            orderDeliveryBinding.deliveryInstruction.setVisibility(View.GONE);
                         }
                         this.customerPhoneNumber = String.valueOf(this.orderDetailsResponse.getData().getDelPn());
 
@@ -2137,6 +2354,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
     @Override
     public void onClickPickupVerifyOtp() {
         if (pickupPinHiddenEditText.getText().toString().trim().equals("0000") || pickupPinHiddenEditText.getText().toString().trim().equals(branPickupVerificationCode)) {
+            hideKeyboard();
             ActivityUtils.showDialog(this, "Please wait.");
             new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("order_picked", orderUid, "", "");
         } else {
@@ -2162,6 +2380,9 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
             if (status.equals("order_picked")) {
                 new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("order_transit", orderUid, "", "");
             } else if (status.equals("order_transit")) {
+
+                orderDeliveryBinding.pharmacyMapViewImg.setVisibility(View.GONE);
+
                 isOrderPicked = true;
                 orderCurrentStatus = 2;
                 selectionTag = 1;
@@ -2196,8 +2417,10 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                     orderDeliveryBinding.orderCancelTxt.setTextColor(getResources().getColor(R.color.colorBlack));
                     orderDeliveryBinding.orderCancelHeadTxt.setBackground(getResources().getDrawable(R.drawable.order_active_circle_bg));
                     orderDeliveryBinding.orderCancelTxt.setBackground(getResources().getDrawable(R.drawable.order_active_circle_bg));
-                    orderDeliveryBinding.orderNotDeliveredAddInnerHeadId.setTextColor(getResources().getColor(R.color.colorBlack));
-                    orderDeliveryBinding.orderNotDeliveredAddHeadId.setTextColor(getResources().getColor(R.color.colorBlack));
+                    orderDeliveryBinding.orderNotDeliveredAddInnerHeadId.setTextColor(getResources().getColor(R.color.pharmacy_circle_color));
+                    orderDeliveryBinding.orderNotDeliveredAddHeadId.setTextColor(getResources().getColor(R.color.pharmacy_circle_color));
+                    orderDeliveryBinding.returnLabel.setVisibility(View.GONE);
+                    orderDeliveryBinding.orderNotDeliveredParentLayout.setVisibility(View.VISIBLE);
                 } else {
                     onContinueDrivingClick();
                     orderDeliveryBinding.deliveryheadTxt.setTextColor(getResources().getColor(R.color.colorBlack));
@@ -2207,65 +2430,116 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                     orderDeliveryBinding.deliverNameHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_processing_curves_bg));
                     orderDeliveryBinding.deliverNameInnerHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_processing_curves_bg));
                 }
-
-
-//                orderDeliveryBinding.apolloPhamrmacyAddHeadId.setText("Picked Up details verified");
-//                orderDeliveryBinding.apolloPhamrmacyAddHeadIdLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
                 ActivityUtils.hideDialog();
             } else if (status.equals("order_delivered")) {
-                ActivityUtils.hideDialog();
+//                ActivityUtils.hideDialog();
+                new OrderDeliveryActivityController(this, this).orderEndJourneyUpdateApiCall(orderUid);
+                orderCurrentStatus = 3;
+                orderDeliveryBinding.actionBarDeliverBy.setText("Delivered at: ");
+                orderDeliveryBinding.pharmacyMapViewImg.setVisibility(View.GONE);
+                orderDeliveryBinding.mapViewLayout.setVisibility(View.GONE);
+                orderDeliveryBinding.orderNotDeliveredMapViewImg.setVisibility(View.GONE);
 
-                orderDeliveryBinding.orderStatusHeader.setText("Order Delivered");
+                if (this.paymentType.equals("COD")) {
+                    orderDeliveryBinding.paymentTypeIncod.setVisibility(View.VISIBLE);
+                    if (orderDeliveryBinding.paymentCash.isChecked())
+                        orderDeliveryBinding.paymentTypeIncod.setText("( Cash )");
+                    else
+                        orderDeliveryBinding.paymentTypeIncod.setText("( Card )");
+                }
 
-                orderDeliveryBinding.deliveryheadTxt.setBackground(getResources().getDrawable(R.drawable.delivery_item_bg));
-                orderDeliveryBinding.deliveryTxt.setBackground(getResources().getDrawable(R.drawable.delivery_item_bg));
-                orderDeliveryBinding.deliveryheadTxt.setTextColor(getResources().getColor(R.color.colorBlack));
+                if (this.orderDetailsResponse.getData().getOrderState().getName().equals("RETURN")) {
+                    orderDeliveryBinding.orderStatusHeader.setText("Order Delivered");
+                    ActivityUtils.hideDialog();
+                    orderDeliveryBinding.orderNotDeliveredHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_completed_curves_bg));
+                    orderDeliveryBinding.orderNotDeliveredInnerHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_completed_curves_bg));
 
-                orderDeliveryBinding.deliveryItemsView.setBackgroundColor(getResources().getColor(R.color.order_accepted_color));
-                orderDeliveryBinding.deliverInnerHeader.setTextColor(getResources().getColor(R.color.order_status_processed_color));
-                orderDeliveryBinding.deliverInnerHeader.setText("Order Delivered");
 
-                orderDeliveryBinding.apolloPhamrmacyAddHeadIdLayout.setBackground(getResources().getDrawable(R.drawable.status_completed_curves_bg));
-                orderDeliveryBinding.pickupDetailsInnerHeadIdLayout.setBackground(getResources().getDrawable(R.drawable.status_completed_curves_bg));
-                orderDeliveryBinding.deliverNameHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_completed_curves_bg));
-                orderDeliveryBinding.deliverNameInnerHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_completed_curves_bg));
+                    orderDeliveryBinding.orderNotDeliveredHeadCompletedIcon.setVisibility(View.VISIBLE);
+                    orderDeliveryBinding.orderNotDeliveredAddHeadId.setText("Order Returned");
+                    orderDeliveryBinding.orderNotDeliveredAddInnerHeadId.setText("Order Returned");
+                    orderDeliveryBinding.orderNotDeliveredHeadCompletedIcon.setVisibility(View.VISIBLE);
+                    orderDeliveryBinding.orderNotDeliveredAddInnerHeadId.setTextColor(getResources().getColor(R.color.order_status_processed_color));
+                    orderDeliveryBinding.orderNotDeliveredAddHeadId.setTextColor(getResources().getColor(R.color.order_status_processed_color));
+                    orderDeliveryBinding.orderCancelHeadTxt.setBackground(getResources().getDrawable(R.drawable.delivery_item_bg));
+                    orderDeliveryBinding.orderCancelTxt.setBackground(getResources().getDrawable(R.drawable.delivery_item_bg));
+                    orderDeliveryBinding.orderNotDeliveredProcessingLine.setBackgroundColor(getResources().getColor(R.color.order_accepted_color));
 
-                otpEditTextLayout.setVisibility(View.GONE);
-                verifyOtpBtn.setVisibility(View.GONE);
-                otpEditTextLayout.setBackground(getResources().getDrawable(R.drawable.otp_bg));
-                orderDeliveryBinding.collectPaymentRadio.setVisibility(View.GONE);
-                orderDeliveryBinding.collectPaymentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
-                orderDeliveryBinding.collectPaymentImg.setImageDrawable(getDrawable(R.drawable.icon_status_completed));
-                verifiedOtpText.setVisibility(View.VISIBLE);
-                orderDeliveredParentLayout.setBackground(getResources().getDrawable(R.drawable.order_delivered_layout_bg));
 
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                String orderDate = CommonUtils.getCurrentTimeDate();
-                Date orderDates = formatter.parse(orderDate);
-                long orderDateMills = orderDates.getTime();
-                orderDeliveryBinding.orderCompletedSuccessfullyDateAndTime.setText(CommonUtils.getTimeFormatter(orderDateMills));
+                    orderDeliveryBinding.cancelledOtpEditTextLayout.setVisibility(View.GONE);
+                    orderDeliveryBinding.cancelledVerifyOtpBtn.setVisibility(View.GONE);
+                    orderDeliveryBinding.cancelledOtpEditTextLayout.setBackground(getResources().getDrawable(R.drawable.otp_bg));
+                    orderDeliveryBinding.cancelledVerifiedOtpText.setVisibility(View.VISIBLE);
+                    orderDeliveryBinding.cancelledOtpVerificationParentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
 
-                //deliver header
-                orderDeliveryBinding.customerheadName.setTextColor(getResources().getColor(R.color.order_status_processed_color));
-                orderDeliveryBinding.customerheadName.setText("Order Delivered");
+                    orderDeliveryBinding.cancelledVerifyOtpBtn.setBackground(getResources().getDrawable(R.drawable.continue_driving_btn_bg));
+                    cancelItemBtn.setVisibility(View.GONE);
+                    cancelOrderBtn.setVisibility(View.GONE);
+
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                    String orderDate = CommonUtils.getCurrentTimeDate();
+                    Date orderDates = formatter.parse(orderDate);
+                    long orderDateMills = orderDates.getTime();
+                    orderDeliveryBinding.cancelledOrderSuccessStatus.setText("Order Returned to store");
+                    orderDeliveryBinding.cancelledOrderHandedoverToPharmacyTime.setText(CommonUtils.getTimeFormatter(orderDateMills));
+                    orderDeliveryBinding.deliveryonDatetime.setText(CommonUtils.getTimeFormatter(orderDateMills));
+                    orderDeliveryBinding.cancelledOrderHandoverParentLayout.setBackground(getResources().getDrawable(R.drawable.order_delivered_layout_bg));
+                    orderDeliveryBinding.cancelledOrderHandoverChildOneLayout.setVisibility(View.GONE);
+                    orderDeliveryBinding.cancelledOrderHandoverChildTwoLayout.setVisibility(View.VISIBLE);
+                } else {
+                    orderDeliveryBinding.orderStatusHeader.setText("Order Delivered");
+
+                    orderDeliveryBinding.deliveryheadTxt.setBackground(getResources().getDrawable(R.drawable.delivery_item_bg));
+                    orderDeliveryBinding.deliveryTxt.setBackground(getResources().getDrawable(R.drawable.delivery_item_bg));
+                    orderDeliveryBinding.deliveryheadTxt.setTextColor(getResources().getColor(R.color.colorBlack));
+
+                    orderDeliveryBinding.deliveryItemsView.setBackgroundColor(getResources().getColor(R.color.order_accepted_color));
+                    orderDeliveryBinding.deliverInnerHeader.setTextColor(getResources().getColor(R.color.order_status_processed_color));
+                    orderDeliveryBinding.deliverInnerHeader.setText("Order Delivered");
+
+                    orderDeliveryBinding.apolloPhamrmacyAddHeadIdLayout.setBackground(getResources().getDrawable(R.drawable.status_completed_curves_bg));
+                    orderDeliveryBinding.pickupDetailsInnerHeadIdLayout.setBackground(getResources().getDrawable(R.drawable.status_completed_curves_bg));
+                    orderDeliveryBinding.deliverNameHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_completed_curves_bg));
+                    orderDeliveryBinding.deliverNameInnerHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_completed_curves_bg));
+
+                    otpEditTextLayout.setVisibility(View.GONE);
+                    verifyOtpBtn.setVisibility(View.GONE);
+                    otpEditTextLayout.setBackground(getResources().getDrawable(R.drawable.otp_bg));
+                    orderDeliveryBinding.collectPaymentRadio.setVisibility(View.GONE);
+                    orderDeliveryBinding.collectPaymentLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
+                    orderDeliveryBinding.collectPaymentImg.setImageDrawable(getDrawable(R.drawable.icon_status_completed));
+                    verifiedOtpText.setVisibility(View.VISIBLE);
+                    orderDeliveryBinding.collectPaymentText.setText("4. Collected Payment");
+                    orderDeliveredParentLayout.setBackground(getResources().getDrawable(R.drawable.order_delivered_layout_bg));
+
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                    String orderDate = CommonUtils.getCurrentTimeDate();
+                    Date orderDates = formatter.parse(orderDate);
+                    long orderDateMills = orderDates.getTime();
+                    orderDeliveryBinding.orderCompletedSuccessfullyDateAndTime.setText(CommonUtils.getTimeFormatter(orderDateMills));
+                    orderDeliveryBinding.deliveryonDatetime.setText(CommonUtils.getTimeFormatter(orderDateMills));
+
+                    //deliver header
+                    orderDeliveryBinding.customerheadName.setTextColor(getResources().getColor(R.color.order_status_processed_color));
+                    orderDeliveryBinding.customerheadName.setText("Order Delivered");
 //                orderDeliveryBinding.deliverNameHeadLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
-                orderDeliveryBinding.deliverNameHeadCompletedIcon.setVisibility(View.VISIBLE);
-                orderCurrentStatus = 0;
+                    orderDeliveryBinding.deliverNameHeadCompletedIcon.setVisibility(View.VISIBLE);
+                    orderCurrentStatus = 0;
 
-                orderDeliveredChildOneLayout.setVisibility(View.GONE);
-                orderDeliveredChildTwoLayout.setVisibility(View.VISIBLE);
+                    orderDeliveredChildOneLayout.setVisibility(View.GONE);
+                    orderDeliveredChildTwoLayout.setVisibility(View.VISIBLE);
 
-                verifyOtpBtn.setBackground(getResources().getDrawable(R.drawable.continue_driving_btn_bg));
-                cancelItemBtn.setVisibility(View.GONE);
-                cancelOrderBtn.setVisibility(View.GONE);
+                    verifyOtpBtn.setBackground(getResources().getDrawable(R.drawable.continue_driving_btn_bg));
+                    cancelItemBtn.setVisibility(View.GONE);
+                    cancelOrderBtn.setVisibility(View.GONE);
 
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT);
-                int rightDp = (int) getResources().getDimension(R.dimen.five_dp);
-                int bottomDp = (int) getResources().getDimension(R.dimen.twenty_five_dp);
-                int marginEnd = (int) ActivityUtils.convertDpToPixel(rightDp, this);
-                int marginBottom = (int) ActivityUtils.convertDpToPixel(bottomDp, this);
-                params.setMargins(0, 0, marginEnd, marginBottom);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.MATCH_PARENT);
+                    int rightDp = (int) getResources().getDimension(R.dimen.five_dp);
+                    int bottomDp = (int) getResources().getDimension(R.dimen.twenty_five_dp);
+                    int marginEnd = (int) ActivityUtils.convertDpToPixel(rightDp, this);
+                    int marginBottom = (int) ActivityUtils.convertDpToPixel(bottomDp, this);
+                    params.setMargins(0, 0, marginEnd, marginBottom);
 //                deliveryItemsView.setLayoutParams(params);
 
 //                new Handler().postDelayed(() -> {
@@ -2278,11 +2552,17 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 //                    finish();
 //                    overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
 //                }, 1000);
+                }
             } else if (status.equals("order_not_delivered")) {
-                ActivityUtils.hideDialog();
-                orderCurrentStatus = 3;
-                if (!isOrderPicked) {
 
+                orderDeliveryBinding.pharmacyMapViewImg.setVisibility(View.GONE);
+                ActivityUtils.hideDialog();
+                orderCurrentStatus = 4;
+                orderDeliveryBinding.deliveredLabel.setVisibility(View.GONE);
+                orderDeliveryBinding.delivered.setVisibility(View.GONE);
+                orderDeliveryBinding.cancelledOtpVerificationParentLayoutParent.setVisibility(View.GONE);
+                orderDeliveryBinding.handovertoPharmacy.setText("2. Handedover to pharmacy");
+                if (!isOrderPicked) {
                     orderDeliveryBinding.apolloPhamrmacyAddHeadIdLayout.setBackground(getResources().getDrawable(R.drawable.status_disable_curves_bg));
                     orderDeliveryBinding.pickupDetailsInnerHeadIdLayout.setBackground(getResources().getDrawable(R.drawable.status_disable_curves_bg));
                     orderDeliveryBinding.deliverNameHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_disable_curves_bg));
@@ -2299,10 +2579,8 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                 }
 
                 orderDeliveryBinding.orderStatusHeader.setText("Order Cancelled");
-
                 orderDeliveryBinding.orderNotDeliveredHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_disable_curves_bg));
                 orderDeliveryBinding.orderNotDeliveredInnerHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_disable_curves_bg));
-
                 orderDeliveryBinding.orderDeliveryProcessImg.setVisibility(View.VISIBLE);
                 orderDeliveryBinding.orderNotDeliveredParentLayout.setVisibility(View.VISIBLE);
                 cancelItemBtn.setVisibility(View.GONE);
@@ -2312,27 +2590,28 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                 orderDeliveryBinding.customerheadName.setTextColor(getResources().getColor(R.color.colorGrey));
                 orderDeliveryBinding.deliveryheadTxt.setTextColor(getResources().getColor(R.color.colorGrey));
                 orderDeliveryBinding.orderCancelTxt.setBackground(getResources().getDrawable(R.drawable.order_active_circle_bg));
-                onClickDelivered();
-//                finish();
-//                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+//                onClickDelivered();
             } else if (status.equals("order_handover_to_pharmacy")) {
+                isOrderDelivered = true;
+                orderDeliveryBinding.pharmacyMapViewImg.setVisibility(View.GONE);
+                orderDeliveryBinding.mapViewLayout.setVisibility(View.GONE);
+                orderDeliveryBinding.orderNotDeliveredMapViewImg.setVisibility(View.GONE);
+
+                orderCurrentStatus = 5;
+                orderDeliveryBinding.orderStatusHeader.setText("Order Handedover to Pharmacy");
                 ActivityUtils.hideDialog();
                 orderDeliveryBinding.orderNotDeliveredHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_completed_curves_bg));
                 orderDeliveryBinding.orderNotDeliveredInnerHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_completed_curves_bg));
 
-                orderDeliveryBinding.orderStatusHeader.setText("Order Handedover to Pharmacy");
-
+                orderDeliveryBinding.orderNotDeliveredHeadCompletedIcon.setVisibility(View.VISIBLE);
                 orderDeliveryBinding.orderNotDeliveredAddHeadId.setText("Handedover to store");
                 orderDeliveryBinding.orderNotDeliveredAddInnerHeadId.setText("Handedover to store");
-
                 orderDeliveryBinding.orderNotDeliveredHeadCompletedIcon.setVisibility(View.VISIBLE);
-
                 orderDeliveryBinding.orderNotDeliveredAddInnerHeadId.setTextColor(getResources().getColor(R.color.order_status_processed_color));
                 orderDeliveryBinding.orderNotDeliveredAddHeadId.setTextColor(getResources().getColor(R.color.order_status_processed_color));
                 orderDeliveryBinding.orderCancelHeadTxt.setBackground(getResources().getDrawable(R.drawable.delivery_item_bg));
                 orderDeliveryBinding.orderCancelTxt.setBackground(getResources().getDrawable(R.drawable.delivery_item_bg));
                 orderDeliveryBinding.orderNotDeliveredProcessingLine.setBackgroundColor(getResources().getColor(R.color.order_accepted_color));
-
 
                 orderDeliveryBinding.cancelledOtpEditTextLayout.setVisibility(View.GONE);
                 orderDeliveryBinding.cancelledVerifyOtpBtn.setVisibility(View.GONE);
@@ -2352,13 +2631,6 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                 orderDeliveryBinding.cancelledOrderHandoverParentLayout.setBackground(getResources().getDrawable(R.drawable.order_delivered_layout_bg));
                 orderDeliveryBinding.cancelledOrderHandoverChildOneLayout.setVisibility(View.GONE);
                 orderDeliveryBinding.cancelledOrderHandoverChildTwoLayout.setVisibility(View.VISIBLE);
-
-
-                //order not delivered header
-                orderDeliveryBinding.orderNotDeliveredAddHeadId.setTextColor(getResources().getColor(R.color.white));
-                orderDeliveryBinding.orderNotDeliveredAddHeadId.setText("Order handedover by " + CommonUtils.getTimeFormatter(orderDateMills));
-                orderDeliveryBinding.orderNotDeliveredHeadLayout.setBackgroundColor(getResources().getColor(R.color.order_status_processed_color));
-                orderDeliveryBinding.orderNotDeliveredHeadCompletedIcon.setVisibility(View.VISIBLE);
             }
         } catch (Exception e) {
 
@@ -2402,6 +2674,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
     // cancelled order return to store flow
     private int orderHandoverToPharmacy = 0;
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     public void onClickCancelledReachedtheStore() {
         if (orderHandoverToPharmacy == 0) {
@@ -2415,6 +2688,10 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                 orderDeliveryBinding.cancelledStoreReachedTime.setText(CommonUtils.getTimeFormatter(orderDateMills));
                 orderDeliveryBinding.cancelledStoreReachedTime.setVisibility(View.VISIBLE);
                 orderHandoverToPharmacy = 1;
+                if (orderCurrentStatus == 4) {
+                    ActivityUtils.showDialog(this, "Please Wait.");
+                    new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("order_handover_to_pharmacy", orderUid, "", "");
+                }
             } catch (Exception e) {
                 System.out.println("onClickCancelledReachedtheStore :::::::::::::::::::::::::::::::::::::" + e.getMessage());
             }
@@ -2435,8 +2712,9 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
     @Override
     public void onClickCancelledVerifyOtp() {
         if (orderDeliveryBinding.cancelledPinHiddenEdittext.getText().toString().equalsIgnoreCase("0000") || orderDeliveryBinding.cancelledPinHiddenEdittext.getText().toString().equalsIgnoreCase(branReturnVerificatonCode)) {
+            hideKeyboard();
             ActivityUtils.showDialog(this, "Please Wait.");
-            new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("order_handover_to_pharmacy", orderUid, "", "");
+            new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("order_delivered", orderUid, "", "");
         } else {
             orderDeliveryBinding.cancelledOtpEditTextLayout.setVisibility(View.VISIBLE);
             orderDeliveryBinding.cancelledVerifyOtpBtn.setVisibility(View.VISIBLE);
@@ -2462,12 +2740,11 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
         } else {
             super.onBackPressed();
         }
-
     }
 
     private void onBackPress() {
         if (isLaunchedByPushNotification) {
-            startActivity(new Intent(OrderDeliveryActivity.this, NavigationActivity.class).putExtra("isPushNotfication", true));
+            startActivity(NavigationActivity.getStartIntent(this));
             overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
             finish();
         } else {

@@ -3,7 +3,7 @@
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@color/colorWhite"
         android:orientation="vertical">
 
@@ -160,6 +160,7 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/you_got_new_order"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/roboto_regular"
@@ -194,6 +195,7 @@
                     android:layout_marginTop="@dimen/fifteen_dp"
                     android:layout_marginEnd="@dimen/ten_dp"
                     android:orientation="horizontal"
+                    android:visibility="gone"
                     android:weightSum="1">
 
                     <TextView
@@ -247,6 +249,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/two_hundred_dp"
                     android:layout_marginStart="@dimen/five_dp"
+                    android:visibility="gone"
                     android:layout_marginBottom="@dimen/ten_dp" />
 
                 <LinearLayout
@@ -291,7 +294,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/roboto_bold"
-                                android:text="150"
                                 android:textColor="@color/colorBlack"
                                 android:textSize="@dimen/text_dimen_20" />
                         </LinearLayout>
@@ -324,7 +326,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/roboto_bold"
-                                android:text="140"
                                 android:textColor="@color/colorBlack"
                                 android:textSize="@dimen/text_dimen_20" />
                         </LinearLayout>
@@ -357,7 +358,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/roboto_bold"
-                                android:text="10"
                                 android:textColor="@color/colorBlack"
                                 android:textSize="@dimen/text_dimen_20" />
                         </LinearLayout>
@@ -401,7 +401,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/roboto_bold"
-                                android:text="2,450"
                                 android:textColor="@color/colorBlack"
                                 android:textSize="@dimen/text_dimen_20" />
                         </LinearLayout>
@@ -440,7 +439,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/roboto_bold"
-                                android:text="1,050"
                                 android:textColor="@color/dashboard_pending_text_color"
                                 android:textSize="@dimen/text_dimen_20" />
                         </LinearLayout>
@@ -461,6 +459,7 @@
                             android:layout_weight="0.485"
                             android:background="@drawable/dashboard_item_bg"
                             android:gravity="center"
+                            android:visibility="gone"
                             android:orientation="vertical">
 
                             <ImageView
@@ -492,6 +491,7 @@
                         <View
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:visibility="gone"
                             android:layout_weight="0.03" />
 
                         <LinearLayout
@@ -523,7 +523,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/roboto_bold"
-                                android:text="1450.5 KM"
                                 android:textColor="@color/colorBlack"
                                 android:textSize="@dimen/text_dimen_20" />
                         </LinearLayout>

@@ -11,7 +11,7 @@
         <item>My Orders</item>
         <!--        <item>Notifications</item>-->
         <item>Profile</item>
-        <item>Change Password</item>
+<!--        <item>Change Password</item>-->
         <item>Help</item>
     </string-array>
 
@@ -127,6 +127,7 @@
     <string name="label_order_accepted">ACCEPTED</string>
     <string name="label_order_cancel">CANCEL ORDER</string>
     <string name="label_cancel_reason_header">Write reason below for cancel the order</string>
+    <string name="label_cancel_reason_subheader">Choose reason to cancel order</string>
     <string name="label_cancel_item">CANCEL ITEM</string>
     <string name="label_reached_the_store">1. Reached the Store</string>
     <string name="label_scan_the_barcode">2. Scan the Barcode</string>
@@ -216,5 +217,6 @@
     <string name="label_customer_name_">Customer Name</string>
     <string name="label_pickup_instructions">Pickup Instructions</string>
     <string name="label_delivery_instruction">Delivery Instructions</string>
+    <string name="label_phone_number_or_emp_id">Phone Number or Emp Id</string>
 
 </resources>

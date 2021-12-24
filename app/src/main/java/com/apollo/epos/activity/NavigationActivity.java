@@ -59,6 +59,7 @@ import com.apollo.epos.fragment.changepassword.ChangePasswordFragment;
 import com.apollo.epos.fragment.dashboard.DashboardFragment;
 import com.apollo.epos.fragment.help.HelpFragment;
 import com.apollo.epos.fragment.myorders.MyOrdersFragment;
+import com.apollo.epos.fragment.myorders.MyOrdersFragmentCallback;
 import com.apollo.epos.fragment.notifications.NotificationsFragment;
 import com.apollo.epos.fragment.profile.ProfileFragment;
 import com.apollo.epos.fragment.takeneworder.TakeNewOrderFragment;
@@ -73,7 +74,6 @@ import com.novoda.merlin.Merlin;
 import com.orhanobut.hawk.Hawk;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -93,6 +93,19 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     private LocationManager locationManager;
     private final static int GPS_REQUEST_CODE = 2;
     private boolean isLanchedByPushNotification;
+    private boolean isFromNotificaionIcon;
+    private MyOrdersFragmentCallback myOrdersFragmentCallback;
+
+    public static Intent getStartIntent(Context context) {
+        Intent intent = new Intent(context, NavigationActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        return intent;
+    }
+
+    public void setMyOrdersFragmentCallback(MyOrdersFragmentCallback myOrdersFragmentCallback) {
+        this.myOrdersFragmentCallback = myOrdersFragmentCallback;
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -101,6 +114,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         instance = this;
         if (getIntent() != null) {
             isLanchedByPushNotification = (Boolean) getIntent().getBooleanExtra("isPushNotfication", false);
+            isFromNotificaionIcon = (Boolean) getIntent().getBooleanExtra("is_from_notification", false);
         }
         LinearLayout locationDeniedLayout = (LinearLayout) findViewById(R.id.location_denied);
         locationDeniedLayout.setVisibility(View.GONE);
@@ -272,7 +286,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 //        else if (mItem == R.id.nav_logout) {
 //            ActivityUtils.startActivity(this, LoginActivity.class, null);
 //            finishAffinity();
-//        }
+//        }get
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
@@ -324,13 +338,13 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         header = (ViewGroup) inflater.inflate(R.layout.nav_header_main, mDrawerList, false);
         mDrawerList.addHeaderView(header);
 
-        NavDrawerModel[] drawerItem = new NavDrawerModel[5];
+        NavDrawerModel[] drawerItem = new NavDrawerModel[4];
         drawerItem[0] = new NavDrawerModel(mNavigationDrawerItemTitles[0], false, true);
         drawerItem[1] = new NavDrawerModel(mNavigationDrawerItemTitles[1], false, false);
 //        drawerItem[2] = new NavDrawerModel(mNavigationDrawerItemTitles[2], false, false);
         drawerItem[2] = new NavDrawerModel(mNavigationDrawerItemTitles[2], false, false);
         drawerItem[3] = new NavDrawerModel(mNavigationDrawerItemTitles[3], false, false);
-        drawerItem[4] = new NavDrawerModel(mNavigationDrawerItemTitles[4], false, false);
+//        drawerItem[4] = new NavDrawerModel(mNavigationDrawerItemTitles[4], false, false);
 //        drawerItem[6] = new NavDrawerModel(mNavigationDrawerItemTitles[6], false, false);
         adapter = new NavigationDrawerAdapter(this, R.layout.nav_item_row, drawerItem);
 
@@ -347,7 +361,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 //        ((NavigationDrawerAdapter) ((HeaderViewListAdapter) mDrawerList.getAdapter()).getWrappedAdapter()).notifyDataSetChanged();
         adapter.notifyDataSetChanged();
         TextView appVersion = findViewById(R.id.app_version);
-        appVersion.setText("V "+BuildConfig.VERSION_NAME);
+        appVersion.setText("V " + BuildConfig.VERSION_NAME);
         TextView logoutText = findViewById(R.id.logout_btn);
         logoutText.setOnClickListener(v -> {
             mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -419,11 +433,11 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                         mCurrentFrag = getString(R.string.menu_profile);
                         showFragment(ProfileFragment.newInstance(), R.string.menu_profile);
                         break;
+//                    case 3:
+//                        mCurrentFrag = getString(R.string.menu_change_password);
+//                        showFragment(ChangePasswordFragment.newInstance(), R.string.menu_change_password);
+//                        break;
                     case 3:
-                        mCurrentFrag = getString(R.string.menu_change_password);
-                        showFragment(ChangePasswordFragment.newInstance(), R.string.menu_change_password);
-                        break;
-                    case 4:
                         mCurrentFrag = getString(R.string.menu_help);
                         showFragment(HelpFragment.newInstance(), R.string.menu_help);
                         break;
@@ -477,8 +491,8 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                 onOptionsItemSelected(menuNotificationItem);
                 notificationText.setVisibility(View.GONE);
                 notificationText.clearAnimation();
-                DashboardFragment.newOrderViewVisibility(false);
-                getSessionManager().setNotificationStatus(false);
+//                DashboardFragment.newOrderViewVisibility(false);
+//                getSessionManager().setNotificationStatus(false);
             }
         });
 
@@ -523,7 +537,8 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                 long orderDateMills = orderDates.getTime();
 
                 getInstance().getSessionManager().setNotificationArrivedTime(CommonUtils.getTimeFormatter(orderDateMills));
-            }catch (Exception e){
+
+            } catch (Exception e) {
 
             }
 
@@ -542,7 +557,13 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                 overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
                 return true;
             case R.id.action_setting_icon:
-                selectItem(1);
+                if (getSessionManager().getNotificationStatus())
+                    selectItem(0);
+//                if (getInstance().mCurrentFrag.equals("My Orders")) {
+//                    if (myOrdersFragmentCallback != null) {
+//                        myOrdersFragmentCallback.onClickNotificationIcon();
+//                    }
+//                }
                 return true;
             case R.id.action_cart_icon:
                 Intent i = new Intent(this, CartActivity.class);
@@ -667,4 +688,6 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     public void selectFragment(int pos) {
         selectItem(pos);
     }
+
+
 }

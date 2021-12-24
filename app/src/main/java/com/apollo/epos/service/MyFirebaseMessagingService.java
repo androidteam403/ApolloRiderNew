@@ -7,12 +7,12 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.apollo.epos.activity.orderdelivery.OrderDeliveryActivity;
-import com.apollo.epos.utils.CommonUtils;
 import com.apollo.epos.R;
 import com.apollo.epos.activity.NavigationActivity;
+import com.apollo.epos.activity.orderdelivery.OrderDeliveryActivity;
 import com.apollo.epos.db.SessionManager;
 import com.apollo.epos.fragment.dashboard.DashboardFragment;
+import com.apollo.epos.utils.CommonUtils;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -35,7 +35,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getNotification() != null) {
             try {
                 if (remoteMessage.getData() != null && remoteMessage.getData().get("uid") != null) {
-
+                    if (!getSessionManager().getNotificationStatus())
+                        CommonUtils.NOTIFICATIONS_COUNT = 0;
+                    CommonUtils.NOTIFICATIONS_COUNT = CommonUtils.NOTIFICATIONS_COUNT + 1;
                     Handler handler = new Handler(Looper.getMainLooper());
 
                     handler.postDelayed(new Runnable() {

@@ -38,6 +38,7 @@ import com.apollo.epos.activity.NavigationActivity;
 import com.apollo.epos.activity.NewOrderActivity;
 import com.apollo.epos.base.BaseFragment;
 import com.apollo.epos.databinding.FragmentDashboardBinding;
+import com.apollo.epos.fragment.dashboard.model.RiderDashboardCountResponse;
 import com.apollo.epos.model.GetRiderProfileResponse;
 import com.apollo.epos.utils.ActivityUtils;
 import com.apollo.epos.utils.CommonUtils;
@@ -74,9 +75,9 @@ import com.nabinbhandari.android.permissions.PermissionHandler;
 import com.nabinbhandari.android.permissions.Permissions;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -98,7 +99,6 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
     @BindView(R.id.barChart)
     protected BarChart mChart;
     protected RectF mOnValueSelectedRectF = new RectF();
-    private DashboardViewModel dashboardViewModel;
     private DashboardView dashboardView;
 
     @BindColor(R.color.dashboard_pending_text_color)
@@ -209,7 +209,7 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
 
     private final int REQ_LOC_PERMISSION = 5002;
 
-    private static TextView timeView;
+    private static TextView timeView, youGotNewOrder;
 
 
     public static DashboardFragment newInstance() {
@@ -238,11 +238,15 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-
+        new DashboardFragmentController(getContext(), this).getRiderDashboardCountsApiCall();
         newOrderLayoutView = view.findViewById(R.id.new_order_layout);
         timeView = view.findViewById(R.id.time);
+        youGotNewOrder = view.findViewById(R.id.you_got_new_order);
+        if (CommonUtils.NOTIFICATIONS_COUNT == 0)
+            getSessionManager().setNotificationStatus(false);
         if (getSessionManager().getNotificationStatus()) {
             dashboardBinding.newOrderLayout.setVisibility(View.VISIBLE);
+            dashboardBinding.youGotNewOrder.setText(CommonUtils.NOTIFICATIONS_COUNT == 1 ? "You got 1 new order" : "You got " + CommonUtils.NOTIFICATIONS_COUNT + " new orders");
             dashboardBinding.time.setText(getSessionManager().getNotificationArrivedTime());
         } else {
             dashboardBinding.newOrderLayout.setVisibility(View.GONE);
@@ -510,9 +514,10 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
         mChart.setMarker(mv); // Set the marker to the chart
     }
 
-    private void setData(float monCan, float monDel, float tueCan, float tueDel, float wedCan,
-                         float wedDel, float thuCan, float thuDel,
-                         float friCan, float friDel, float satCan, float satDel, float sunCan, float sunDel) {
+    private void setData(float monCan, float monDel, float tueCan, float tueDel,
+                         float wedCan, float wedDel, float thuCan, float thuDel,
+                         float friCan, float friDel, float satCan, float satDel,
+                         float sunCan, float sunDel) {
         mChart.invalidate();
         ArrayList<BarEntry> yVals1 = new ArrayList<BarEntry>();
 //        yVals1.add(new BarEntry(0, (int) monVal));
@@ -995,7 +1000,8 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putBoolean(KEY_REQUESTING_LOCATION_UPDATES, mRequestingLocationUpdates);
+        if (mRequestingLocationUpdates != null)
+            savedInstanceState.putBoolean(KEY_REQUESTING_LOCATION_UPDATES, mRequestingLocationUpdates);
         savedInstanceState.putParcelable(KEY_LOCATION, mCurrentLocation);
         savedInstanceState.putString(KEY_LAST_UPDATED_TIME_STRING, mLastUpdateTime);
     }
@@ -1017,20 +1023,33 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
         Toast.makeText(mActivity, message, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onSuccessGetRiderDashboardCountApiCall(RiderDashboardCountResponse riderDashboardCountResponse) {
+        if (riderDashboardCountResponse != null && riderDashboardCountResponse.getSuccess() && riderDashboardCountResponse.getData() != null && riderDashboardCountResponse.getData().getCount() != null) {
+            dashboardBinding.totalOrdersVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getTotalOrders()));
+            dashboardBinding.deliveredOrdersVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getDeliveredOrders()));
+            dashboardBinding.cancelledOrdersVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getCancelledOrders()));
+            DecimalFormat decim = new DecimalFormat("#,###.##");
+            dashboardBinding.codReceivedVal.setText(getActivity().getResources().getString(R.string.label_rupee_symbol) + " " + decim.format(riderDashboardCountResponse.getData().getCount().getCodReceived()));
+            dashboardBinding.codPendingVal.setText(getActivity().getResources().getString(R.string.label_rupee_symbol) + " " + decim.format(riderDashboardCountResponse.getData().getCount().getCodPending()));
+            dashboardBinding.travelledDistanceVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getDistanceTravelled()));
+        }
+    }
+
     public static void newOrderViewVisibility(boolean show) {
-        try{
+        try {
             if (show) {
                 newOrderLayoutView.setVisibility(View.VISIBLE);
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                 String orderDate = CommonUtils.getCurrentTimeDate();
                 Date orderDates = formatter.parse(orderDate);
                 long orderDateMills = orderDates.getTime();
+                youGotNewOrder.setText(CommonUtils.NOTIFICATIONS_COUNT == 1 ? "You got 1 new order" : "You got " + CommonUtils.NOTIFICATIONS_COUNT + " new orders");
                 timeView.setText(CommonUtils.getTimeFormatter(orderDateMills));
-
             } else {
                 newOrderLayoutView.setVisibility(View.GONE);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
     }
@@ -1038,6 +1057,6 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
     @Override
     public void onDestroy() {
         super.onDestroy();
-        getSessionManager().setNotificationStatus(false);
+//        getSessionManager().setNotificationStatus(false);
     }
 }
