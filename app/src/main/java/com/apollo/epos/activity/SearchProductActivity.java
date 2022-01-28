@@ -28,7 +28,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.apollo.epos.R;
 import com.apollo.epos.adapter.SearchedItemAdapter;
-import com.apollo.epos.fragment.profile.ProfileViewModel;
 import com.apollo.epos.fragment.takeneworder.OnItemClickListener;
 import com.apollo.epos.model.OrderItemModel;
 import com.novoda.merlin.Merlin;
@@ -68,7 +67,6 @@ public class SearchProductActivity extends BaseActivity implements OnItemClickLi
     private File file;
     private boolean imageStatus = false;
     private Bitmap bp;
-    private ProfileViewModel takeNewOrderViewModel;
     private boolean isTextInput = false;
 
     @Override

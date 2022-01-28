@@ -317,9 +317,9 @@ public class OrderDetailsResponse implements Serializable {
         @SerializedName("cus_pickup_ver_code")
         @Expose
         private String cusPickupVerCode;
-        @SerializedName("cus_return_ver_code")
+        @SerializedName("cus_delivery_ver_code")
         @Expose
-        private String cusReturnVerCode;
+        private String cusDeliveryVerCode;
         @SerializedName("del_acc_code")
         @Expose
         private String delAccCode;
@@ -655,12 +655,12 @@ public class OrderDetailsResponse implements Serializable {
             this.cusPickupVerCode = cusPickupVerCode;
         }
 
-        public String getCusReturnVerCode() {
-            return cusReturnVerCode;
+        public String getCusDeliveryVerCode() {
+            return cusDeliveryVerCode;
         }
 
-        public void setCusReturnVerCode(String cusReturnVerCode) {
-            this.cusReturnVerCode = cusReturnVerCode;
+        public void setCusDeliveryVerCode(String cusReturnVerCode) {
+            this.cusDeliveryVerCode = cusReturnVerCode;
         }
 
         public String getDelAccCode() {

@@ -6,26 +6,19 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apollo.epos.R;
-import com.apollo.epos.activity.NavigationActivity;
 import com.apollo.epos.adapter.NotificationsListAdapter;
 import com.apollo.epos.base.BaseFragment;
-import com.apollo.epos.fragment.neworder.NewOrderFragment;
 import com.apollo.epos.model.NotificationItemModel;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

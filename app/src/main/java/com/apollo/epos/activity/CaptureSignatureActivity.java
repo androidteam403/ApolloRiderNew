@@ -12,7 +12,10 @@ import androidx.appcompat.app.ActionBar;
 import androidx.databinding.DataBindingUtil;
 
 import com.apollo.epos.R;
+import com.apollo.epos.activity.navigation.NavigationActivity;
 import com.apollo.epos.databinding.ActivityCaptureSignatureBinding;
+import com.apollo.epos.service.FloatingTouchService;
+import com.apollo.epos.utils.CommonUtils;
 import com.kyanogen.signatureview.SignatureView;
 import com.novoda.merlin.Merlin;
 
@@ -101,5 +104,12 @@ public class CaptureSignatureActivity extends BaseActivity {
         setResult(2, intent);
         finish();
         overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CommonUtils.CURRENT_SCREEN = getClass().getSimpleName();
+        startService(new Intent(CaptureSignatureActivity.this, FloatingTouchService.class));
     }
 }

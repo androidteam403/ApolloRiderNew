@@ -75,4 +75,6 @@
     <color name="delivery_user">#00a550</color>
     <color name="application_bg">#1f373a</color>
     <color name="edit_text_textcolor">#b5c3c2</color>
+    <color name="order_status_pending_green_color">#6B8E23</color>
+    <color name="orange_color">#f77901</color>
 </resources>

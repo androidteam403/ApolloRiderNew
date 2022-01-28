@@ -11,15 +11,26 @@ import com.apollo.epos.activity.orderdelivery.model.DeliveryFailreReasonsRespons
 import com.apollo.epos.activity.orderdelivery.model.FileDataResponse;
 import com.apollo.epos.activity.orderdelivery.model.OrderHandoverSaveUpdateRequest;
 import com.apollo.epos.activity.orderdelivery.model.OrderHandoverSaveUpdateResponse;
+import com.apollo.epos.activity.orderdelivery.model.OrderPaymentSelectRequest;
+import com.apollo.epos.activity.orderdelivery.model.OrderPaymentSelectResponse;
 import com.apollo.epos.activity.orderdelivery.model.OrderPaymentUpdateRequest;
 import com.apollo.epos.activity.orderdelivery.model.OrderSaveUpdateStausRequest;
 import com.apollo.epos.activity.orderdelivery.model.OrderSaveUpdateStausResponse;
 import com.apollo.epos.activity.orderdelivery.model.OrderStatusHistoryListRequest;
 import com.apollo.epos.activity.orderdelivery.model.OrderStatusHitoryListResponse;
+import com.apollo.epos.activity.reports.model.OrdersCodStatusResponse;
+import com.apollo.epos.activity.trackmap.model.OrderEndJourneyUpdateRequest;
+import com.apollo.epos.activity.trackmap.model.OrderEndJourneyUpdateResponse;
+import com.apollo.epos.activity.trackmap.model.OrderStartJourneyUpdateRequest;
+import com.apollo.epos.activity.trackmap.model.OrderStartJourneyUpdateResponse;
+import com.apollo.epos.fragment.changepassword.model.ChangePasswordRequest;
+import com.apollo.epos.fragment.changepassword.model.ChangePasswordResponse;
 import com.apollo.epos.fragment.dashboard.model.RiderActiveStatusRequest;
 import com.apollo.epos.fragment.dashboard.model.RiderActiveStatusResponse;
+import com.apollo.epos.fragment.dashboard.model.RiderDashboardCountResponse;
 import com.apollo.epos.fragment.dashboard.model.RiderLalangBatteryStatusResponse;
 import com.apollo.epos.fragment.dashboard.model.RiderLatlangBatteryStatusRequest;
+import com.apollo.epos.fragment.help.model.RiderBasicDetailsforHelpResponse;
 import com.apollo.epos.fragment.myorders.model.MyOrdersListRequest;
 import com.apollo.epos.fragment.myorders.model.MyOrdersListResponse;
 import com.apollo.epos.fragment.profile.model.ComplaintReasonsListResponse;
@@ -30,6 +41,7 @@ import com.apollo.epos.model.GetRiderProfileResponse;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 
@@ -41,7 +53,7 @@ public interface ApiInterface {
     Call<SaveUserDeviceInfoResponse> SAVE_USER_DEVICE_INFO_API_CALL(@Header("authorization") String token, @Body SaveUserDeviceInfoRequest saveUserDeviceInfoRequest);
 
     @POST("updateFirebaseToken")
-    Call<Object> UPDATE_FIREBASE_TOKEN_API_CALL(@Header("authorization") String token, @Body FirebaseTokenRequest o);
+    Call<Object> UPDATE_FIREBASE_TOKEN_API_CALL(@Header("authorization") String token, @Body FirebaseTokenRequest firebaseTokenRequest);
 
     @POST("api/user/select/rider-profile-select")
     Call<GetRiderProfileResponse> GET_RIDER_PROFILE_API_CALL(@Header("authorization") String token);
@@ -70,7 +82,7 @@ public interface ApiInterface {
     @POST("api/order_status_his/list/order-status-history-list")
     Call<OrderStatusHitoryListResponse> ORDER_STATUS_HISTORY_LIST_API_CALL(@Header("authorization") String token, @Body OrderStatusHistoryListRequest orderStatusHistoryListRequest);
 
-    @POST("api/orders/save-update/order-status-update")//api/orders/save-update
+    @POST("api/orders/save-update/order-status-update")
     Call<OrderSaveUpdateStausResponse> ORDER_SAVE_UPDATE_STATUS_API_CALL(@Header("authorization") String token, @Body OrderSaveUpdateStausRequest orderSaveUpdateStausRequest);
 
     @POST("upload")
@@ -82,5 +94,24 @@ public interface ApiInterface {
     @POST("api/orders/save-update/order-payment-update")
     Call<Object> ORDER_PAYMENT_UPDATE_API_CALL(@Header("authorization") String token, @Body OrderPaymentUpdateRequest orderPaymentUpdateRequest);
 
+    @POST("api/orders/select/orders-payment-select")
+    Call<OrderPaymentSelectResponse> GET_ORDER_PAYMENT_TYPE_IN_COD(@Header("authorization") String token, @Body OrderPaymentSelectRequest orderPaymentSelectRequest);
 
+    @POST("api/orders/save-update/ord-rdr-strt-jrny-update")
+    Call<OrderStartJourneyUpdateResponse> ORDER_START_JOURNEY_UPDATE_API_CALL(@Header("authorization") String token, @Body OrderStartJourneyUpdateRequest orderStartJourneyUpdateRequest);
+
+    @POST("api/orders/save-update/ord-rdr-end-jrny-update")
+    Call<OrderEndJourneyUpdateResponse> ORDER_END_JOURNEY_UPDATE_API_CALL(@Header("authorization") String token, @Body OrderEndJourneyUpdateRequest orderEndJourneyUpdateRequest);
+
+    @GET("api/user/select/rider-dashboard-counts")
+    Call<RiderDashboardCountResponse> GET_RIDER_DASHBOARD_COUNTS_API_CALL(@Header("authorization") String token);
+
+    @POST("api/user/save-update/change-password")
+    Call<ChangePasswordResponse> CHANGE_PASSWORD_API_CALL(@Header("authorization") String token, @Body ChangePasswordRequest changePasswordRequest);
+
+    @GET("api/orders/list/rider-orders-cod-status")
+    Call<OrdersCodStatusResponse> GET_ORDERS_COD_STATUS_API_CALL(@Header("authorization") String token);
+
+    @POST("api/user/select/rider-basic-details-for-help")
+    Call<RiderBasicDetailsforHelpResponse> RIDER_BASIC_DETAILS_FOR_HELP_API_CALL(@Header("authorization") String token, @Body Object riderBasicDetailsforHelpRequest);
 }
