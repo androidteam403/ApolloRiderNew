@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android.support.design="http://schemas.android.com/apk/res-auto">
+    xmlns:android.support.design="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <RelativeLayout
         android:id="@+id/login_parent_layout"
@@ -85,10 +85,11 @@
                 android:layout_gravity="end"
                 android:layout_marginTop="@dimen/five_dp"
                 android:fontFamily="@font/roboto_regular"
+                android:onClick="@{()-> callback.onClickForgotPasswordText()}"
                 android:padding="@dimen/five_dp"
-                android:visibility="gone"
                 android:text="@string/label_forgot_password"
-                android:textColor="@color/colorWhite" />
+                android:textColor="@color/colorWhite"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/btn_signin"
@@ -97,7 +98,15 @@
                 android:layout_marginTop="@dimen/forty_dp"
                 android:background="@drawable/btn_signin_ripple_effect"
                 android:fontFamily="@font/roboto_bold"
+                android:onClick="@{()-> callback.onClickSignin()}"
                 android:text="@string/label_signin" />
         </LinearLayout>
     </RelativeLayout>
+
+    <data>
+
+        <variable
+            name="callback"
+            type="com.apollo.epos.activity.login.LoginActivityCallback" />
+    </data>
 </layout>

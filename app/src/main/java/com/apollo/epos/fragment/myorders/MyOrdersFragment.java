@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apollo.epos.R;
-import com.apollo.epos.activity.NavigationActivity;
+import com.apollo.epos.activity.navigation.NavigationActivity;
 import com.apollo.epos.activity.orderdelivery.OrderDeliveryActivity;
 import com.apollo.epos.adapter.CustomReasonAdapter;
 import com.apollo.epos.adapter.MyOrdersListAdapter;
@@ -114,7 +114,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
 
             List<MyOrdersListResponse.Row> myNewOrdersList = new ArrayList<>();
             for (MyOrdersListResponse.Row newOrder : myOrdersList)
-                if (newOrder.getOrderStatus().getUid().equals("order_assigned"))
+                if (newOrder.getOrderStatus().getUid().equals("ORDERUPDATE") || newOrder.getOrderStatus().getUid().equals("ORDERACCEPTED"))
                     myNewOrdersList.add(newOrder);
             if (myNewOrdersList.size() > 0) {
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.GONE);
@@ -125,6 +125,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
                 ordersRecyclerView.setItemAnimator(new DefaultItemAnimator());
                 ordersRecyclerView.setAdapter(myOrdersListAdapter);
             } else {
+                myOrdersBinding.noOrdersInstatusText.setText(R.string.label_no_orders_assigned);
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.VISIBLE);
                 ordersRecyclerView.setVisibility(View.GONE);
             }
@@ -141,7 +142,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
             myOrdersBinding.select.animate().x(size).setDuration(100);
             List<MyOrdersListResponse.Row> myInTransitOrdersList = new ArrayList<>();
             for (MyOrdersListResponse.Row inTransitOrder : myOrdersList)
-                if (inTransitOrder.getOrderStatus().getUid().equals("order_picked") || inTransitOrder.getOrderStatus().getUid().equals("order_transit"))
+                if (inTransitOrder.getOrderStatus().getUid().equals("PICKUP") || inTransitOrder.getOrderStatus().getUid().equals("OUTFORDELIVERY") || inTransitOrder.getOrderStatus().getUid().equals("RETURNPICKED"))
                     myInTransitOrdersList.add(inTransitOrder);
             if (myInTransitOrdersList.size() > 0) {
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.GONE);
@@ -152,6 +153,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
                 ordersRecyclerView.setItemAnimator(new DefaultItemAnimator());
                 ordersRecyclerView.setAdapter(myOrdersListAdapter);
             } else {
+                myOrdersBinding.noOrdersInstatusText.setText(R.string.label_no_orders_intransit);
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.VISIBLE);
                 ordersRecyclerView.setVisibility(View.GONE);
             }
@@ -168,7 +170,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
             myOrdersBinding.select.animate().x(size).setDuration(100);
             List<MyOrdersListResponse.Row> deliveredOrdersList = new ArrayList<>();
             for (MyOrdersListResponse.Row deliveredOrder : myOrdersList)
-                if (deliveredOrder.getOrderStatus().getUid().equals("order_delivered"))
+                if (deliveredOrder.getOrderStatus().getUid().equals("DELIVERED") || deliveredOrder.getOrderStatus().getUid().equals("RETURNORDERRTO"))
                     deliveredOrdersList.add(deliveredOrder);
             if (deliveredOrdersList.size() > 0) {
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.GONE);
@@ -179,6 +181,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
                 ordersRecyclerView.setItemAnimator(new DefaultItemAnimator());
                 ordersRecyclerView.setAdapter(myOrdersListAdapter);
             } else {
+                myOrdersBinding.noOrdersInstatusText.setText(R.string.label_no_orders_delivered);
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.VISIBLE);
                 ordersRecyclerView.setVisibility(View.GONE);
             }
@@ -195,7 +198,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
             myOrdersBinding.select.animate().x(size).setDuration(100);
             List<MyOrdersListResponse.Row> orderNotDeliveredList = new ArrayList<>();
             for (MyOrdersListResponse.Row deliveredOrder : myOrdersList)
-                if (deliveredOrder.getOrderStatus().getUid().equals("order_not_delivered"))
+                if (deliveredOrder.getOrderStatus().getUid().equals("DELIVERYATTEMPTED") || deliveredOrder.getOrderStatus().getUid().equals("DELIVERYFAILED") || deliveredOrder.getOrderStatus().getUid().equals("CANCELRETURNINITIATED") || deliveredOrder.getOrderStatus().getUid().equals("CANCELLED"))
                     orderNotDeliveredList.add(deliveredOrder);
             if (orderNotDeliveredList.size() > 0) {
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.GONE);
@@ -206,6 +209,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
                 ordersRecyclerView.setItemAnimator(new DefaultItemAnimator());
                 ordersRecyclerView.setAdapter(myOrdersListAdapter);
             } else {
+                myOrdersBinding.noOrdersInstatusText.setText(R.string.label_no_orders_cancelled);
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.VISIBLE);
                 ordersRecyclerView.setVisibility(View.GONE);
             }
@@ -388,7 +392,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
             myOrdersBinding.select.animate().x(size).setDuration(100);
             List<MyOrdersListResponse.Row> deliveredOrdersList = new ArrayList<>();
             for (MyOrdersListResponse.Row deliveredOrder : myOrdersList)
-                if (deliveredOrder.getOrderStatus().getUid().equals("order_delivered"))
+                if (deliveredOrder.getOrderStatus().getUid().equals("DELIVERED") || deliveredOrder.getOrderStatus().getUid().equals("RETURNORDERRTO"))
                     deliveredOrdersList.add(deliveredOrder);
             if (deliveredOrdersList.size() > 0) {
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.GONE);
@@ -399,6 +403,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
                 ordersRecyclerView.setItemAnimator(new DefaultItemAnimator());
                 ordersRecyclerView.setAdapter(myOrdersListAdapter);
             } else {
+                myOrdersBinding.noOrdersInstatusText.setText(R.string.label_no_orders_delivered);
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.VISIBLE);
                 ordersRecyclerView.setVisibility(View.GONE);
             }
@@ -414,7 +419,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
             myOrdersBinding.select.animate().x(size).setDuration(100);
             List<MyOrdersListResponse.Row> myInTransitOrdersList = new ArrayList<>();
             for (MyOrdersListResponse.Row inTransitOrder : myOrdersList)
-                if (inTransitOrder.getOrderStatus().getUid().equals("order_picked") || inTransitOrder.getOrderStatus().getUid().equals("order_transit"))
+                if (inTransitOrder.getOrderStatus().getUid().equals("PICKUP") || inTransitOrder.getOrderStatus().getUid().equals("OUTFORDELIVERY") || inTransitOrder.getOrderStatus().getUid().equals("RETURNPICKED"))
                     myInTransitOrdersList.add(inTransitOrder);
             if (myInTransitOrdersList.size() > 0) {
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.GONE);
@@ -425,6 +430,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
                 ordersRecyclerView.setItemAnimator(new DefaultItemAnimator());
                 ordersRecyclerView.setAdapter(myOrdersListAdapter);
             } else {
+                myOrdersBinding.noOrdersInstatusText.setText(R.string.label_no_orders_intransit);
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.VISIBLE);
                 ordersRecyclerView.setVisibility(View.GONE);
             }
@@ -439,7 +445,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
 
             List<MyOrdersListResponse.Row> myNewOrdersList = new ArrayList<>();
             for (MyOrdersListResponse.Row newOrder : myOrdersList)
-                if (newOrder.getOrderStatus().getUid().equals("order_assigned"))
+                if (newOrder.getOrderStatus().getUid().equals("ORDERUPDATE") || newOrder.getOrderStatus().getUid().equals("ORDERACCEPTED"))
                     myNewOrdersList.add(newOrder);
             if (myNewOrdersList.size() > 0) {
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.GONE);
@@ -450,6 +456,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
                 ordersRecyclerView.setItemAnimator(new DefaultItemAnimator());
                 ordersRecyclerView.setAdapter(myOrdersListAdapter);
             } else {
+                myOrdersBinding.noOrdersInstatusText.setText(R.string.label_no_orders_assigned);
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.VISIBLE);
                 ordersRecyclerView.setVisibility(View.GONE);
             }
@@ -475,7 +482,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
             myOrdersBinding.select.animate().x(size).setDuration(100);
             List<MyOrdersListResponse.Row> myInTransitOrdersList = new ArrayList<>();
             for (MyOrdersListResponse.Row inTransitOrder : myOrdersList)
-                if (inTransitOrder.getOrderStatus().getUid().equals("order_picked") || inTransitOrder.getOrderStatus().getUid().equals("order_transit"))
+                if (inTransitOrder.getOrderStatus().getUid().equals("PICKUP") || inTransitOrder.getOrderStatus().getUid().equals("OUTFORDELIVERY") || inTransitOrder.getOrderStatus().getUid().equals("RETURNPICKED"))
                     myInTransitOrdersList.add(inTransitOrder);
             if (myInTransitOrdersList.size() > 0) {
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.GONE);
@@ -486,6 +493,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
                 ordersRecyclerView.setItemAnimator(new DefaultItemAnimator());
                 ordersRecyclerView.setAdapter(myOrdersListAdapter);
             } else {
+                myOrdersBinding.noOrdersInstatusText.setText(R.string.label_no_orders_intransit);
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.VISIBLE);
                 ordersRecyclerView.setVisibility(View.GONE);
             }
@@ -501,7 +509,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
             myOrdersBinding.select.animate().x(size).setDuration(100);
             List<MyOrdersListResponse.Row> deliveredOrdersList = new ArrayList<>();
             for (MyOrdersListResponse.Row deliveredOrder : myOrdersList)
-                if (deliveredOrder.getOrderStatus().getUid().equals("order_delivered"))
+                if (deliveredOrder.getOrderStatus().getUid().equals("DELIVERED") || deliveredOrder.getOrderStatus().getUid().equals("RETURNORDERRTO"))
                     deliveredOrdersList.add(deliveredOrder);
             if (deliveredOrdersList.size() > 0) {
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.GONE);
@@ -512,6 +520,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
                 ordersRecyclerView.setItemAnimator(new DefaultItemAnimator());
                 ordersRecyclerView.setAdapter(myOrdersListAdapter);
             } else {
+                myOrdersBinding.noOrdersInstatusText.setText(R.string.label_no_orders_delivered);
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.VISIBLE);
                 ordersRecyclerView.setVisibility(View.GONE);
             }
@@ -527,7 +536,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
             myOrdersBinding.select.animate().x(size).setDuration(100);
             List<MyOrdersListResponse.Row> orderNotDeliveredList = new ArrayList<>();
             for (MyOrdersListResponse.Row deliveredOrder : myOrdersList)
-                if (deliveredOrder.getOrderStatus().getUid().equals("order_not_delivered"))
+                if (deliveredOrder.getOrderStatus().getUid().equals("DELIVERYATTEMPTED") || deliveredOrder.getOrderStatus().getUid().equals("DELIVERYFAILED") || deliveredOrder.getOrderStatus().getUid().equals("CANCELRETURNINITIATED") || deliveredOrder.getOrderStatus().getUid().equals("CANCELLED"))
                     orderNotDeliveredList.add(deliveredOrder);
             if (orderNotDeliveredList.size() > 0) {
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.GONE);
@@ -538,6 +547,7 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
                 ordersRecyclerView.setItemAnimator(new DefaultItemAnimator());
                 ordersRecyclerView.setAdapter(myOrdersListAdapter);
             } else {
+                myOrdersBinding.noOrdersInstatusText.setText(R.string.label_no_orders_cancelled);
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.VISIBLE);
                 ordersRecyclerView.setVisibility(View.GONE);
             }
@@ -602,22 +612,29 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
 
                 List<MyOrdersListResponse.Row> myOrdersLists = new ArrayList<>();
                 for (MyOrdersListResponse.Row order : myOrdersList)
-                    if (order.getOrderStatus().getUid().equals("order_assigned"))
+                    if (order.getOrderStatus().getUid() == null)
+                        System.out.println("naveen");
+                    else if (order.getOrderStatus().getUid().equals("ORDERUPDATE") || order.getOrderStatus().getUid().equals("ORDERACCEPTED"))
                         myNewOrdersList.add(order);
-                    else if (order.getOrderStatus().getUid().equals("order_picked") || order.getOrderStatus().getUid().equals("order_transit"))
+                    else if (order.getOrderStatus().getUid().equals("PICKUP") || order.getOrderStatus().getUid().equals("OUTFORDELIVERY") || order.getOrderStatus().getUid().equals("RETURNPICKED"))
                         myInTransitOrdersList.add(order);
-                    else if (order.getOrderStatus().getUid().equals("order_delivered"))
+                    else if (order.getOrderStatus().getUid().equals("DELIVERED") || order.getOrderStatus().getUid().equals("RETURNORDERRTO"))
                         deliveredOrdersList.add(order);
-                    else if (order.getOrderStatus().getUid().equals("order_not_delivered"))
+                    else if (order.getOrderStatus().getUid().equals("DELIVERYATTEMPTED") || order.getOrderStatus().getUid().equals("DELIVERYFAILED") || order.getOrderStatus().getUid().equals("CANCELRETURNINITIATED") || order.getOrderStatus().getUid().equals("CANCELLED"))
                         orderNotDeliveredList.add(order);
-                if (selectedStatus == 1)
+                if (selectedStatus == 1) {
+                    myOrdersBinding.noOrdersInstatusText.setText(R.string.label_no_orders_assigned);
                     myOrdersLists = myNewOrdersList;
-                else if (selectedStatus == 2)
+                } else if (selectedStatus == 2) {
+                    myOrdersBinding.noOrdersInstatusText.setText(R.string.label_no_orders_intransit);
                     myOrdersLists = myInTransitOrdersList;
-                else if (selectedStatus == 3)
+                } else if (selectedStatus == 3) {
+                    myOrdersBinding.noOrdersInstatusText.setText(R.string.label_no_orders_delivered);
                     myOrdersLists = deliveredOrdersList;
-                else if (selectedStatus == 4)
+                } else if (selectedStatus == 4) {
+                    myOrdersBinding.noOrdersInstatusText.setText(R.string.label_no_orders_cancelled);
                     myOrdersLists = orderNotDeliveredList;
+                }
                 myOrdersBinding.newOrder.setText("New (" + myNewOrdersList.size() + ")");
                 myOrdersBinding.intTransit.setText("In Transit (" + myInTransitOrdersList.size() + ")");
                 myOrdersBinding.orderDelivered.setText("Delivered (" + deliveredOrdersList.size() + ")");
@@ -646,19 +663,33 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
 
     @Override
     public void onStatusClick(MyOrdersListResponse.Row item) {
+        if (getSessionManager().getAsignedOrderUid() != null && getSessionManager().getAsignedOrderUid().size() > 0) {
+            for (String orderUid : getSessionManager().getAsignedOrderUid()) {
+                if (orderUid.equals(item.getUid())) {
+                    NavigationActivity.notificationDotVisibility(false);
+                    getSessionManager().setNotificationStatus(false);
+                    getSessionManager().setAsignedOrderUid(null);
+                    break;
+                }
+            }
+        }
         startActivity(OrderDeliveryActivity.getStartIntent(getContext(), item.getOrderNumber()));
         getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
     }
 
     @Override
     public void onClickNotificationIcon() {
-        new MyOrdersFragmentController(getContext(), this).myOrdersListApiCall();
+        getController().myOrdersListApiCall();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         orderStatusTabviews();
-        new MyOrdersFragmentController(getContext(), this).myOrdersListApiCall();
+        getController().myOrdersListApiCall();
+    }
+
+    private MyOrdersFragmentController getController() {
+        return new MyOrdersFragmentController(getContext(), this);
     }
 }

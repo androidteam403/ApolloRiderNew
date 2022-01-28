@@ -18,15 +18,19 @@ import com.apollo.epos.activity.orderdelivery.model.OrderSaveUpdateStausRequest;
 import com.apollo.epos.activity.orderdelivery.model.OrderSaveUpdateStausResponse;
 import com.apollo.epos.activity.orderdelivery.model.OrderStatusHistoryListRequest;
 import com.apollo.epos.activity.orderdelivery.model.OrderStatusHitoryListResponse;
+import com.apollo.epos.activity.reports.model.OrdersCodStatusResponse;
 import com.apollo.epos.activity.trackmap.model.OrderEndJourneyUpdateRequest;
 import com.apollo.epos.activity.trackmap.model.OrderEndJourneyUpdateResponse;
 import com.apollo.epos.activity.trackmap.model.OrderStartJourneyUpdateRequest;
 import com.apollo.epos.activity.trackmap.model.OrderStartJourneyUpdateResponse;
+import com.apollo.epos.fragment.changepassword.model.ChangePasswordRequest;
+import com.apollo.epos.fragment.changepassword.model.ChangePasswordResponse;
 import com.apollo.epos.fragment.dashboard.model.RiderActiveStatusRequest;
 import com.apollo.epos.fragment.dashboard.model.RiderActiveStatusResponse;
 import com.apollo.epos.fragment.dashboard.model.RiderDashboardCountResponse;
 import com.apollo.epos.fragment.dashboard.model.RiderLalangBatteryStatusResponse;
 import com.apollo.epos.fragment.dashboard.model.RiderLatlangBatteryStatusRequest;
+import com.apollo.epos.fragment.help.model.RiderBasicDetailsforHelpResponse;
 import com.apollo.epos.fragment.myorders.model.MyOrdersListRequest;
 import com.apollo.epos.fragment.myorders.model.MyOrdersListResponse;
 import com.apollo.epos.fragment.profile.model.ComplaintReasonsListResponse;
@@ -101,4 +105,13 @@ public interface ApiInterface {
 
     @GET("api/user/select/rider-dashboard-counts")
     Call<RiderDashboardCountResponse> GET_RIDER_DASHBOARD_COUNTS_API_CALL(@Header("authorization") String token);
+
+    @POST("api/user/save-update/change-password")
+    Call<ChangePasswordResponse> CHANGE_PASSWORD_API_CALL(@Header("authorization") String token, @Body ChangePasswordRequest changePasswordRequest);
+
+    @GET("api/orders/list/rider-orders-cod-status")
+    Call<OrdersCodStatusResponse> GET_ORDERS_COD_STATUS_API_CALL(@Header("authorization") String token);
+
+    @POST("api/user/select/rider-basic-details-for-help")
+    Call<RiderBasicDetailsforHelpResponse> RIDER_BASIC_DETAILS_FOR_HELP_API_CALL(@Header("authorization") String token, @Body Object riderBasicDetailsforHelpRequest);
 }

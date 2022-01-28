@@ -15,6 +15,7 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/app_logo" />
+
         <activity
             android:name=".activity.SplashScreen"
             android:label="@string/app_name"
@@ -30,7 +31,7 @@
             android:name=".activity.login.LoginActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.NavigationActivity"
+            android:name=".activity.navigation.NavigationActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan" />
@@ -41,7 +42,18 @@
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.NavigationActivity" />
+                android:value=".activity.navigation.NavigationActivity" />
+        </activity>
+        <activity
+            android:name=".activity.reports.ReportsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+
         </activity>
         <activity
             android:name=".activity.orderdelivery.OrderDeliveryActivity"
@@ -52,11 +64,6 @@
                 <action android:name="apollo:orders:create-orders-form" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-            <!--            <intent-filter>-->
-            <!--                <action android:name="android.intent.action.MAIN" />-->
-
-            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-            <!--            </intent-filter>-->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.NewOrderActivity" />
@@ -75,7 +82,7 @@
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.NavigationActivity" />
+                android:value=".activity.navigation.NavigationActivity" />
         </activity>
         <activity
             android:name=".activity.CaptureSignatureActivity"
@@ -87,7 +94,7 @@
             android:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.NavigationActivity" />
+                android:value=".activity.navigation.NavigationActivity" />
         </activity>
         <activity
             android:name=".activity.CartActivity"
@@ -96,7 +103,7 @@
             android:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.NavigationActivity" />
+                android:value=".activity.navigation.NavigationActivity" />
         </activity>
 
         <activity
@@ -105,21 +112,24 @@
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.NavigationActivity" />
+                android:value=".activity.navigation.NavigationActivity" />
         </activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCIfiXJzjIsYegXANaoSXbifkoK-ROb0oM" />
-        <!--        AIzaSyBY57sFc1I5c5YMmQ7AhrazAhHZ6L8ccn8-->
-        <!--        <service android:name=".service.FloatingTouchService" />-->
-<!--        AIzaSyDlqvq37mmAUE1TPHzvToOdPfQaq2W7GJk-->
+
+        <service android:name=".service.FloatingTouchService" />
+
         <service android:name=".service.MyFirebaseMessagingService">
 
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+        <!--        <meta-data-->
+        <!--            android:name="com.google.firebase.messaging.default_notification_icon"-->
+        <!--            android:resource="@drawable/ic_float" />-->
         <service
             android:name=".service.BatteryLevelLocationService"
             android:enabled="true" />

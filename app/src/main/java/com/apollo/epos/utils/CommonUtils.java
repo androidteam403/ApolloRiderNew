@@ -15,8 +15,10 @@ import java.util.Locale;
  */
 public class CommonUtils {
     public static String ORDER_DETAILS_RESPONSE = "ORDER_DETAILS_RESPONSE";
-    public static String CURRENT_SCREEN = null;
+    public static String CURRENT_SCREEN = "";
     public static int NOTIFICATIONS_COUNT = 0;
+    public static boolean is_order_delivery_screen = false;
+    public static boolean isIs_order_delivery_or_track_map_screen = false;
 
     public static String getCurrentTimeDate() {
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());

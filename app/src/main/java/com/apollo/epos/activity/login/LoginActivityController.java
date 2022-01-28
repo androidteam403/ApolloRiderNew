@@ -2,6 +2,7 @@ package com.apollo.epos.activity.login;
 
 import android.content.Context;
 import android.os.Build;
+import android.view.View;
 
 import com.apollo.epos.BuildConfig;
 import com.apollo.epos.activity.login.model.FirebaseTokenRequest;
@@ -9,6 +10,8 @@ import com.apollo.epos.activity.login.model.LoginRequest;
 import com.apollo.epos.activity.login.model.LoginResponse;
 import com.apollo.epos.activity.login.model.SaveUserDeviceInfoRequest;
 import com.apollo.epos.activity.login.model.SaveUserDeviceInfoResponse;
+import com.apollo.epos.activity.orderdelivery.model.DeliveryFailreReasonsResponse;
+import com.apollo.epos.databinding.ActivityOrderDeliveryBinding;
 import com.apollo.epos.db.SessionManager;
 import com.apollo.epos.model.GetRiderProfileResponse;
 import com.apollo.epos.network.ApiClient;
@@ -147,6 +150,31 @@ public class LoginActivityController {
 
                 @Override
                 public void onFailure(@NotNull Call<Object> call, @NotNull Throwable t) {
+                    ActivityUtils.hideDialog();
+                    mListener.onFialureMessage(t.getMessage());
+                }
+            });
+        } else {
+            mListener.onFialureMessage("Something went wrong.");
+        }
+    }
+    public void deliveryFailureReasonApiCall() {
+        if (NetworkUtils.isNetworkConnected(context)) {
+            ApiInterface apiInterface = ApiClient.getApiService();
+            Call<DeliveryFailreReasonsResponse> call = apiInterface.DELIVERY_FAILURE_REASONS_API_CALL("Bearer " + new SessionManager(context).getLoginToken(), "application/json");
+            call.enqueue(new Callback<DeliveryFailreReasonsResponse>() {
+                @Override
+                public void onResponse(@NotNull Call<DeliveryFailreReasonsResponse> call, @NotNull Response<DeliveryFailreReasonsResponse> response) {
+                    ActivityUtils.hideDialog();
+                    if (response.body() != null && response.body().isSuccess()) {
+                        mListener.onSuccessDeliveryReasonApiCall(response.body());
+                    } else {
+                        mListener.onFialureMessage("No data found.");
+                    }
+                }
+
+                @Override
+                public void onFailure(@NotNull Call<DeliveryFailreReasonsResponse> call, @NotNull Throwable t) {
                     ActivityUtils.hideDialog();
                     mListener.onFialureMessage(t.getMessage());
                 }

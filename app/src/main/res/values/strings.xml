@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Apollo Rider </string>
+    <string name="app_name">Vivekagam </string>
     <string name="nav_header_title">Muddaraboina Naveen</string>
     <string name="nav_header_subtitle">+91 9177551736</string>
     <string name="nav_header_desc">Navigation header</string>
@@ -11,7 +11,7 @@
         <item>My Orders</item>
         <!--        <item>Notifications</item>-->
         <item>Profile</item>
-<!--        <item>Change Password</item>-->
+        <item>Change Password</item>
         <item>Help</item>
     </string-array>
 
@@ -218,5 +218,31 @@
     <string name="label_pickup_instructions">Pickup Instructions</string>
     <string name="label_delivery_instruction">Delivery Instructions</string>
     <string name="label_phone_number_or_emp_id">Phone Number or Emp Id</string>
+    <string name="label_welcome_rider">Welcome Rider</string>
+    <string name="label_current_address">Current Address</string>
+    <string name="label_permanent_address">Permanent Address</string>
+    <string name="label_vivekagam_logistics_system">Vivekagam Logistics System</string>
+    <string name="label_gps_enable_to_access_application">GPS enable to access application</string>
+    <string name="gps_enable">GPS permission</string>
+    <string name="label_are_you_sure_want_to_logout">Are sure want to logout?</string>
+    <string name="label_alert">Alert!</string>
+    <string name="label_no">No</string>
+    <string name="label_yes">Yes</string>
+    <string name="label_location_permission_must_be_required_to_access_application">Location permission must be required to access application</string>
+    <string name="label_location_permission">Location permission</string>
+    <string name="label_vehicle_type">Vehicle Type</string>
+    <string name="label_vehicle_number">Vehicle Number</string>
+    <string name="label_model1">Model</string>
+    <string name="label_capacity">Capacity</string>
+    <string name="label_manufacturer">Manufacturer</string>
+    <string name="label_current_order_has_been_cancelled">Current order has been cancelled</string>
+    <string name="label_no_orders_yet">No Orders Yet</string>
+    <string name="label_no_orders_assigned">No orders assigned</string>
+    <string name="label_no_orders_intransit">No orders in Transit</string>
+    <string name="label_no_orders_delivered">No orders delivered</string>
+    <string name="label_no_orders_cancelled">No orders cancelled</string>
+    <string name="label_this_order_is_cancelled">This Order is Cancelled</string>
+    <string name="label_reports">Reports</string>
+    <string name="label_no_reports_yet">No Reports Yet</string>
 
 </resources>

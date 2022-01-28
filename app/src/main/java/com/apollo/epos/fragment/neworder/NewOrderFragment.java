@@ -28,7 +28,6 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import androidx.transition.Slide;
 import androidx.transition.Transition;
 import androidx.transition.TransitionManager;
@@ -39,7 +38,7 @@ import com.ahmadrosid.lib.drawroutemap.PiontsCallback;
 import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.R;
 import com.apollo.epos.activity.MapViewActivity;
-import com.apollo.epos.activity.NavigationActivity;
+import com.apollo.epos.activity.navigation.NavigationActivity;
 import com.apollo.epos.adapter.CustomReasonAdapter;
 import com.apollo.epos.base.BaseFragment;
 import com.apollo.epos.dialog.DialogManager;
@@ -52,8 +51,6 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;

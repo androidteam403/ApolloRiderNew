@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.apollo.epos.BuildConfig;
+import com.apollo.epos.activity.login.model.LoginResponse;
 import com.apollo.epos.activity.neworder.model.OrderDetailsRequest;
 import com.apollo.epos.activity.neworder.model.OrderDetailsResponse;
 import com.apollo.epos.activity.orderdelivery.model.DeliveryFailreReasonsResponse;
@@ -75,7 +76,7 @@ public class OrderDeliveryActivityController {
                 public void onResponse(@NotNull Call<OrderDetailsResponse> call, @NotNull Response<OrderDetailsResponse> response) {
                     if (response.body() != null && response.body().getSuccess()) {
                         mListener.onSuccessOrderDetailsApiCall(response.body());
-                        deliveryFailureReasonApiCall(orderDeliveryBinding);
+//                        deliveryFailureReasonApiCall(orderDeliveryBinding);
                     } else {
                         ActivityUtils.hideDialog();
                         mListener.onFialureMessage("No data found.");
@@ -292,7 +293,8 @@ public class OrderDeliveryActivityController {
         if (NetworkUtils.isNetworkConnected(context)) {
             OrderHandoverSaveUpdateRequest orderHandoverSaveUpdateRequest = new OrderHandoverSaveUpdateRequest();
             orderHandoverSaveUpdateRequest.setHandoverTo(customerName);
-            orderHandoverSaveUpdateRequest.setSignature(imageFullPath.getData());
+            if (imageFullPath != null)
+                orderHandoverSaveUpdateRequest.setSignature(imageFullPath.getData());
             OrderHandoverSaveUpdateRequest.Order order = new OrderHandoverSaveUpdateRequest.Order();
             order.setUid(orderUid);
             order.setOrderNumber(orderNumber);
@@ -305,7 +307,8 @@ public class OrderDeliveryActivityController {
                 public void onResponse(@NotNull Call<OrderHandoverSaveUpdateResponse> call, @NotNull Response<OrderHandoverSaveUpdateResponse> response) {
                     if (response.body() != null && response.body().getSuccess()) {
                         ActivityUtils.hideDialog();
-                        mListener.onSuccessOrderHandoverSaveUpdateApi(bitmap);
+                        if (bitmap != null)
+                            mListener.onSuccessOrderHandoverSaveUpdateApi(bitmap);
                     } else {
                         ActivityUtils.hideDialog();
                         if (response.body() != null && response.body().getMessage() != null)
@@ -332,7 +335,7 @@ public class OrderDeliveryActivityController {
             orderPaymentUpdateRequest.setUid(orderDetailsResponse.getData().getUid());
 
             OrderPaymentUpdateRequest.OrderPayment orderPayment = new OrderPaymentUpdateRequest.OrderPayment();
-            orderPayment.setAmount(String.valueOf(orderDetailsResponse.getData().getCrateAmount()));
+            orderPayment.setAmount(orderDetailsResponse.getData().getPakgValue());
             orderPayment.setTxnDate(CommonUtils.getCurrentTimeDate());
 
             OrderPaymentUpdateRequest.Type type = new OrderPaymentUpdateRequest.Type();
@@ -401,6 +404,7 @@ public class OrderDeliveryActivityController {
             mListener.onFialureMessage("Something went wrong.");
         }
     }
+
     public void orderEndJourneyUpdateApiCall(String uid) {
         if (NetworkUtils.isNetworkConnected(context)) {
 //            ActivityUtils.showDialog(context, "Please wait.");

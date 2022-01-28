@@ -41,10 +41,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apollo.epos.R;
-import com.apollo.epos.activity.NavigationActivity;
+import com.apollo.epos.activity.navigation.NavigationActivity;
 import com.apollo.epos.activity.ScannerActivity;
 import com.apollo.epos.adapter.SearchedItemAdapter;
-import com.apollo.epos.fragment.profile.ProfileViewModel;
 import com.apollo.epos.model.OrderItemModel;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -129,7 +128,6 @@ public class TakeNewOrderFragment extends Fragment implements OnItemClickListene
     private File file;
     private boolean imageStatus = false;
     private Bitmap bp;
-    private ProfileViewModel takeNewOrderViewModel;
     private String searchedProductName = "";
     private boolean isTextInput = false;
 

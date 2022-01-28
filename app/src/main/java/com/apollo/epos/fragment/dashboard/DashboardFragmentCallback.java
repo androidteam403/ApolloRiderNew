@@ -9,4 +9,6 @@ public interface DashboardFragmentCallback {
     void onFialureMessage(String message);
 
     void onSuccessGetRiderDashboardCountApiCall(RiderDashboardCountResponse riderDashboardCountResponse);
+
+    void onClickCodReciebedorPendingDeposits();
 }

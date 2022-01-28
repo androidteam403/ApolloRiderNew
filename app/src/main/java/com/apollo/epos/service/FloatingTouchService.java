@@ -24,17 +24,16 @@ import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 
 import com.apollo.epos.R;
-import com.apollo.epos.activity.MapViewActivity;
-import com.apollo.epos.activity.NavigationActivity;
-import com.apollo.epos.activity.NewOrderActivity;
+import com.apollo.epos.activity.CaptureSignatureActivity;
+import com.apollo.epos.activity.navigation.NavigationActivity;
 import com.apollo.epos.activity.orderdelivery.OrderDeliveryActivity;
+import com.apollo.epos.activity.reports.ReportsActivity;
 import com.apollo.epos.activity.trackmap.TrackMapActivity;
-import com.orhanobut.hawk.Hawk;
+import com.apollo.epos.utils.CommonUtils;
 
 import static com.apollo.epos.utils.ActivityUtils.getScreenSize;
 import static com.apollo.epos.utils.ActivityUtils.getStatusBarHeight;
 import static com.apollo.epos.utils.ActivityUtils.isAppOnForeground;
-import static com.apollo.epos.utils.AppConstants.LAST_ACTIVITY;
 
 public class FloatingTouchService extends Service {
     private boolean isMoving;
@@ -93,10 +92,10 @@ public class FloatingTouchService extends Service {
             public void run() {
                 if (isAppOnForeground(FloatingTouchService.this, getApplicationContext().getPackageName())) {
                     updateAssistiveInvisible();
-//                    mAssistiveTouchView.setVisibility(View.GONE);
+                    mAssistiveTouchView.setVisibility(View.GONE);
                     Log.e("AssistiveTouch", "Activity On Foreground = : = : = : = : ");
                 } else {
-//                    mAssistiveTouchView.setVisibility(View.VISIBLE);
+                    mAssistiveTouchView.setVisibility(View.VISIBLE);
                     if (!isAssitiveClicked) {
                         Log.e("AssistiveTouch", "Activity On Background, Visible = : = : = : = : ");
                         updateAssistiveVisible();
@@ -175,39 +174,42 @@ public class FloatingTouchService extends Service {
                 lastAssistiveTouchViewX = mParams.x;
                 lastAssistiveTouchViewY = mParams.y;
 
-                String resumeActivity = Hawk.get(LAST_ACTIVITY, "");
-                Log.e("AssistiveTouch", "Activity fetched from shared pref : == : == : == : == :");
-                if (resumeActivity.equalsIgnoreCase(NavigationActivity.class.getSimpleName())) {
-                    try {
+                try {
+                    if (CommonUtils.CURRENT_SCREEN.equals(NavigationActivity.class.getSimpleName())) {
                         Intent intent = new Intent(getApplicationContext(), NavigationActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                                | Intent.FLAG_ACTIVITY_NEW_TASK
+                                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(intent);
-//                    startActivity(new Intent(getApplicationContext(), NavigationActivity.class));
-                    } catch (Exception e) {
-                        System.out.println("Floating touch service:::::::::::::::::::::::::::::::" + e.getMessage());
+                    } else if (CommonUtils.CURRENT_SCREEN.equals(ReportsActivity.class.getSimpleName())) {
+                        Intent intent = new Intent(getApplicationContext(), ReportsActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                                | Intent.FLAG_ACTIVITY_NEW_TASK
+                                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(intent);
+                    } else if (CommonUtils.CURRENT_SCREEN.equals(OrderDeliveryActivity.class.getSimpleName())) {
+                        Intent intent = new Intent(getApplicationContext(), OrderDeliveryActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                                | Intent.FLAG_ACTIVITY_NEW_TASK
+                                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(intent);
+                    } else if (CommonUtils.CURRENT_SCREEN.equals(TrackMapActivity.class.getSimpleName())) {
+                        Intent intent = new Intent(getApplicationContext(), TrackMapActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                                | Intent.FLAG_ACTIVITY_NEW_TASK
+                                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(intent);
+                    } else if (CommonUtils.CURRENT_SCREEN.equals(CaptureSignatureActivity.class.getSimpleName())) {
+                        Intent intent = new Intent(getApplicationContext(), CaptureSignatureActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                                | Intent.FLAG_ACTIVITY_NEW_TASK
+                                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(intent);
                     }
-                } else if (resumeActivity.equalsIgnoreCase(NewOrderActivity.class.getSimpleName())) {
-                    Intent intent = new Intent(getApplicationContext(), NewOrderActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                    startActivity(intent);
-                } else if (resumeActivity.equalsIgnoreCase(MapViewActivity.class.getSimpleName())) {
-                    Intent intent = new Intent(getApplicationContext(), MapViewActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                    startActivity(intent);
-                } else if (resumeActivity.equalsIgnoreCase(OrderDeliveryActivity.class.getSimpleName())) {
-                    Intent intent = new Intent(getApplicationContext(), OrderDeliveryActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                    startActivity(intent);
-                } else if (resumeActivity.equalsIgnoreCase(TrackMapActivity.class.getSimpleName())) {
-                    Intent intent = new Intent(getApplicationContext(), TrackMapActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                    startActivity(intent);
-                } else {
-                    Intent intent = new Intent(getApplicationContext(), NavigationActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                    startActivity(intent);
+                    stopSelf();
+                } catch (Exception e) {
+                    System.out.println("Floating touch service:::::::::::::::::::::::::::::::" + e.getMessage());
                 }
-                stopSelf();
             }
         });
     }

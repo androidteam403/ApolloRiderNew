@@ -7,24 +7,21 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
 
 import androidx.databinding.DataBindingUtil;
 
 import com.apollo.epos.R;
 import com.apollo.epos.activity.login.LoginActivity;
+import com.apollo.epos.activity.navigation.NavigationActivity;
 import com.apollo.epos.databinding.ActivitySplashBinding;
 import com.apollo.epos.db.SessionManager;
 import com.novoda.merlin.Merlin;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class SplashScreen extends BaseActivity {
+
     private static final long SPLASH_DISPLAY_LENGTH = 2500;
-    @BindView(R.id.image_app_logo)
-    ImageView iv_splash;
-    private ActivitySplashBinding splashBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +29,7 @@ public class SplashScreen extends BaseActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
-        splashBinding = DataBindingUtil.setContentView(this, R.layout.activity_splash);
+        ActivitySplashBinding splashBinding = DataBindingUtil.setContentView(this, R.layout.activity_splash);
         ButterKnife.bind(this);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -43,10 +40,10 @@ public class SplashScreen extends BaseActivity {
         splashBinding.riderIcon.startAnimation(slideLefttoRight);
 
         Animation animZoomOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
-        iv_splash.startAnimation(animZoomOut);
+        splashBinding.imageAppLogo.startAnimation(animZoomOut);
 
         new Handler().postDelayed(() -> {
-            if (new SessionManager(this).getLoginToken() != null && !new SessionManager(this).getLoginToken().isEmpty()) {
+            if (getSessionManager().getLoginToken() != null && !getSessionManager().getLoginToken().isEmpty()) {
                 Intent mainIntent = new Intent(SplashScreen.this, NavigationActivity.class);
                 startActivity(mainIntent);
                 finish();

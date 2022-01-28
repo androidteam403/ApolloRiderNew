@@ -7,6 +7,8 @@ public interface TrackMapActivityCallback {
 
     void onFialureMessage(String message);
 
+    void onSuccessOrderSaveUpdateStatusApi(String status);
+
     void onSuccessOrderStartJourneyUpdateApiCall(OrderStartJourneyUpdateResponse orderStartJourneyUpdateResponse);
 
     void onFailureOrderStartJourneyUpdateApiCall(String message);

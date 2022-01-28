@@ -70,7 +70,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/two_dp"
                             android:fontFamily="@font/roboto_regular"
-                            android:text="@string/label_welcome"
+                            android:text="@string/label_welcome_rider"
                             android:textColor="@color/profile_header_color"
                             android:textSize="@dimen/text_dimen_14" />
 
@@ -169,6 +169,7 @@
                                 android:textSize="@dimen/text_dimen_11" />
 
                             <TextView
+                                android:id="@+id/new_order"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/roboto_bold"
@@ -249,8 +250,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/two_hundred_dp"
                     android:layout_marginStart="@dimen/five_dp"
-                    android:visibility="gone"
-                    android:layout_marginBottom="@dimen/ten_dp" />
+                    android:layout_marginBottom="@dimen/ten_dp"
+                    android:visibility="gone" />
 
                 <LinearLayout
                     android:id="@+id/orders_information_layout"
@@ -260,7 +261,7 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/one_hundred_twenty_five_dp"
+                        android:layout_height="135dp"
                         android:layout_margin="@dimen/ten_dp"
                         android:background="@drawable/dashboard_item_bg"
                         android:orientation="horizontal"
@@ -268,7 +269,7 @@
 
                         <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
                             android:orientation="vertical">
@@ -300,7 +301,7 @@
 
                         <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
                             android:orientation="vertical">
@@ -332,7 +333,7 @@
 
                         <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
                             android:orientation="vertical">
@@ -378,6 +379,7 @@
                             android:layout_weight="0.485"
                             android:background="@drawable/dashboard_item_bg"
                             android:gravity="center"
+                            android:onClick="@{()-> callback.onClickCodReciebedorPendingDeposits()}"
                             android:orientation="vertical">
 
                             <ImageView
@@ -416,6 +418,7 @@
                             android:layout_weight="0.485"
                             android:background="@drawable/dashboard_item_bg"
                             android:gravity="center"
+                            android:onClick="@{()-> callback.onClickCodReciebedorPendingDeposits()}"
                             android:orientation="vertical">
 
                             <ImageView
@@ -459,8 +462,8 @@
                             android:layout_weight="0.485"
                             android:background="@drawable/dashboard_item_bg"
                             android:gravity="center"
-                            android:visibility="gone"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:visibility="gone">
 
                             <ImageView
                                 android:layout_width="@dimen/fifty_dp"
@@ -488,11 +491,45 @@
                                 android:textSize="@dimen/text_dimen_20" />
                         </LinearLayout>
 
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.485"
+                            android:background="@drawable/dashboard_item_bg"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:visibility="gone">
+
+                            <ImageView
+                                android:layout_width="@dimen/fifty_dp"
+                                android:layout_height="@dimen/forty_dp"
+                                android:contentDescription="@string/app_name"
+                                android:src="@drawable/db_distance_travelled" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/eight_dp"
+                                android:fontFamily="@font/roboto_bold"
+                                android:gravity="center"
+                                android:text="Today Travelled"
+                                android:textColor="@color/dashboard_text_color"
+                                android:textSize="@dimen/text_dimen_12" />
+
+                            <TextView
+                                android:id="@+id/rider_travelled_distance_inaday"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto_bold"
+                                android:textColor="@color/colorBlack"
+                                android:textSize="@dimen/text_dimen_20" />
+                        </LinearLayout>
+
                         <View
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:visibility="gone"
-                            android:layout_weight="0.03" />
+                            android:layout_weight="0.03"
+                            android:visibility="gone" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -531,4 +568,11 @@
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
+
+    <data>
+
+        <variable
+            name="callback"
+            type="com.apollo.epos.fragment.dashboard.DashboardFragmentCallback" />
+    </data>
 </layout>

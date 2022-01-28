@@ -2,6 +2,8 @@ package com.apollo.epos.activity.trackmap;
 
 import android.content.Context;
 
+import com.apollo.epos.activity.orderdelivery.model.OrderSaveUpdateStausRequest;
+import com.apollo.epos.activity.orderdelivery.model.OrderSaveUpdateStausResponse;
 import com.apollo.epos.activity.trackmap.model.OrderEndJourneyUpdateRequest;
 import com.apollo.epos.activity.trackmap.model.OrderEndJourneyUpdateResponse;
 import com.apollo.epos.activity.trackmap.model.OrderStartJourneyUpdateRequest;
@@ -26,6 +28,43 @@ public class TrackMapActivityController {
     public TrackMapActivityController(Context context, TrackMapActivityCallback mListener) {
         this.context = context;
         this.mListener = mListener;
+    }
+    public void ordersSaveUpdateStatusApiCall(String orderStatus, String orderUid, String orderCancelReason, String comment) {
+        if (NetworkUtils.isNetworkConnected(context)) {
+            OrderSaveUpdateStausRequest orderSaveUpdateStausRequest = new OrderSaveUpdateStausRequest();
+            orderSaveUpdateStausRequest.setUid(orderUid);
+            OrderSaveUpdateStausRequest.OrderStatus orderStatus1 = new OrderSaveUpdateStausRequest.OrderStatus();
+            orderStatus1.setUid(orderStatus);
+            orderSaveUpdateStausRequest.setOrderStatus(orderStatus1);
+            OrderSaveUpdateStausRequest.DeliveryFailureReason deliveryFailureReason = new OrderSaveUpdateStausRequest.DeliveryFailureReason();
+            deliveryFailureReason.setUid(orderCancelReason);
+            orderSaveUpdateStausRequest.setDeliveryFailureReason(deliveryFailureReason);
+            orderSaveUpdateStausRequest.setComment(comment);
+            ApiInterface apiInterface = ApiClient.getApiService();
+
+            Call<OrderSaveUpdateStausResponse> call = apiInterface.ORDER_SAVE_UPDATE_STATUS_API_CALL("Bearer " + new SessionManager(context).getLoginToken(), orderSaveUpdateStausRequest);
+            call.enqueue(new Callback<OrderSaveUpdateStausResponse>() {
+                @Override
+                public void onResponse(@NotNull Call<OrderSaveUpdateStausResponse> call, @NotNull Response<OrderSaveUpdateStausResponse> response) {
+
+                    if (response.body() != null && response.body().getSuccess()) {
+                        mListener.onSuccessOrderSaveUpdateStatusApi(orderStatus);
+
+                    } else {
+                        ActivityUtils.hideDialog();
+//                        mListener.onFialureOrderSaveUpdateStatusApi(response.errorBody().toString());
+                    }
+                }
+
+                @Override
+                public void onFailure(@NotNull Call<OrderSaveUpdateStausResponse> call, @NotNull Throwable t) {
+                    ActivityUtils.hideDialog();
+                    mListener.onFialureMessage(t.getMessage());
+                }
+            });
+        } else {
+            mListener.onFialureMessage("Something went wrong.");
+        }
     }
 
     public void orderStartJourneyUpdateApiCall(String uid, String distance) {

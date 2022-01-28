@@ -1,8 +1,10 @@
 package com.apollo.epos.activity.trackmap;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,6 +16,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
@@ -29,17 +32,19 @@ import androidx.databinding.DataBindingUtil;
 import com.ahmadrosid.lib.drawroutemap.DirectionApiCallback;
 import com.ahmadrosid.lib.drawroutemap.DrawMarker;
 import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
-import com.ahmadrosid.lib.drawroutemap.MapAnimator;
 import com.ahmadrosid.lib.drawroutemap.PiontsCallback;
 import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.R;
 import com.apollo.epos.activity.BaseActivity;
+import com.apollo.epos.activity.navigation.NavigationActivity;
 import com.apollo.epos.activity.trackmap.model.OrderEndJourneyUpdateResponse;
 import com.apollo.epos.activity.trackmap.model.OrderStartJourneyUpdateResponse;
 import com.apollo.epos.databinding.ActivityTrackMapViewBinding;
+import com.apollo.epos.databinding.DialogAlertMessageBinding;
 import com.apollo.epos.dialog.DialogManager;
 import com.apollo.epos.service.FloatingTouchService;
 import com.apollo.epos.utils.ActivityUtils;
+import com.apollo.epos.utils.CommonUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
@@ -105,6 +110,27 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
     private PolylineOptions lineOptions = null;
     private String distanceInKm;
     private String orderUid;
+    private String orderState;
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent != null)
+            if (intent.getBooleanExtra("order_cancelled", false) && intent.getStringExtra("order_uid").equals(orderUid)) {
+                Dialog alertDialog = new Dialog(this);
+                DialogAlertMessageBinding alertMessageBinding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.dialog_alert_message, null, false);
+                alertDialog.setContentView(alertMessageBinding.getRoot());
+                alertDialog.setCancelable(false);
+                alertMessageBinding.dialogButtonOk.setOnClickListener(v -> {
+                    alertDialog.dismiss();
+                    Intent intent1 = new Intent();
+                    intent1.putExtra("is_order_cancelled", true);
+                    setResult(Activity.RESULT_OK, intent1);
+                    finish();
+                });
+                alertDialog.show();
+            }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,6 +152,7 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
             longitude = intent.getExtras().getDouble("Lon");
             trackMapViewBinding.orderNumber.setText(intent.getStringExtra("order_number"));
             this.orderUid = (String) intent.getExtras().getString("order_uid");
+            this.orderState = (String) intent.getExtras().getString("order_state");
             if (locType.equals("Pharmacy")) {
                 trackMapViewBinding.followGoogleMap.setText("Start Pickup Journey");
             } else if (locType.equals("Destination")) {
@@ -199,8 +226,9 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
                     mMap.animateCamera(cu);
 
 
-                    if (piontsList != null && piontsList.size() > 0) {
-                        MapAnimator.getInstance().animateRoute(mMap, piontsList, this, true);
+                    if (piontsList != null && piontsList.size() > 0 && lineOptions != null) {
+//                        mMap.addPolyline(lineOptions.addAll(piontsList));
+//                        MapAnimator.getInstance().animateRoute(mMap, piontsList, this, true);
                     }
                 }
             }
@@ -501,23 +529,23 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
 
         switch (locType) {
             case "Pharmacy":
-
-                String packageName = "com.google.android.apps.maps";
-                String query = "google.navigation:q=" + latitude + "," + longitude;
-
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(query));
-                intent.setPackage(packageName);
-                startActivity(intent);
+                if (this.orderState.equals("RETURN")) {
+                    new TrackMapActivityController(this, this).orderStartJourneyUpdateApiCall(orderUid, distanceInKm);
+                } else {
+                    String packageName = "com.google.android.apps.maps";
+                    String query = "google.navigation:q=" + latitude + "," + longitude;
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(query));
+                    intent.setPackage(packageName);
+                    startActivity(intent);
+                }
                 break;
             case "Destination":
-//                new TrackMapActivityController(this, this).orderEndJourneyUpdateApiCall(orderUid);
+                new TrackMapActivityController(this, this).ordersSaveUpdateStatusApiCall("OUTFORDELIVERY", orderUid, "", "");
                 new TrackMapActivityController(this, this).orderStartJourneyUpdateApiCall(orderUid, distanceInKm);
-
                 break;
             case "Store":
                 String packageName1 = "com.google.android.apps.maps";
                 String query1 = "google.navigation:q=" + latitude + "," + longitude;
-
                 Intent intent1 = new Intent(Intent.ACTION_VIEW, Uri.parse(query1));
                 intent1.setPackage(packageName1);
                 startActivity(intent1);
@@ -583,7 +611,9 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
     @Override
     protected void onResume() {
         Hawk.put(LAST_ACTIVITY, getClass().getSimpleName());
+        CommonUtils.CURRENT_SCREEN = getClass().getSimpleName();
         super.onResume();
+        startService(new Intent(TrackMapActivity.this, FloatingTouchService.class));
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
         }
@@ -592,15 +622,6 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
         registerBindable(this);
         callOneTimeLocation = false;
         hashMap.clear();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Intent intent = new Intent(TrackMapActivity.this, FloatingTouchService.class);
-        if (isMyServiceRunning(FloatingTouchService.class)) {
-            stopService(intent);
-        }
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
@@ -624,6 +645,8 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
         if (pionts != null && pionts.size() > 0) {
             piontsList = new ArrayList<>();
             piontsList.addAll(pionts);
+            lineOptions = new PolylineOptions();
+            lineOptions.color(ContextCompat.getColor(DrawRouteMaps.getContext(), com.ahmadrosid.lib.drawroutemap.R.color.delivery_pharmacy));
         }
     }
 
@@ -637,10 +660,14 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     @Override
+    public void onSuccessOrderSaveUpdateStatusApi(String status) {
+
+    }
+
+    @Override
     public void onSuccessOrderStartJourneyUpdateApiCall(OrderStartJourneyUpdateResponse orderStartJourneyUpdateResponse) {
         String packageName = "com.google.android.apps.maps";
         String query = "google.navigation:q=" + latitude + "," + longitude;
-
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(query));
         intent.setPackage(packageName);
         startActivity(intent);
@@ -666,4 +693,5 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
     public void onFailureOrderEndJourneyUpdateApiCall(String message) {
 
     }
+
 }

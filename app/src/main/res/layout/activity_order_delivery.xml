@@ -730,25 +730,42 @@
                             android:onClick="@{()->callback.onClickPickedLabel()}"
                             android:orientation="horizontal">
 
-                            <TextView
-                                android:id="@+id/customer_head_txt"
-                                android:layout_width="@dimen/twenty_five_dp"
-                                android:layout_height="@dimen/twenty_five_dp"
-                                android:layout_marginStart="13dp"
-                                android:background="@drawable/pharmacy_item_bg"
-                                android:fontFamily="@font/roboto_bold"
-                                android:gravity="center"
-                                android:text="@string/label_type_pharmacy"
-                                android:textColor="@color/colorBlack"
-                                android:textSize="@dimen/text_dimen_14" />
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/customer_head_txt"
+                                    android:layout_width="@dimen/twenty_five_dp"
+                                    android:layout_height="@dimen/twenty_five_dp"
+                                    android:layout_marginStart="13dp"
+                                    android:background="@drawable/pharmacy_item_bg"
+                                    android:fontFamily="@font/roboto_bold"
+                                    android:gravity="center"
+                                    android:text="@string/label_type_pharmacy"
+                                    android:textColor="@color/colorBlack"
+                                    android:textSize="@dimen/text_dimen_14" />
+
+                                <View
+                                    android:id="@+id/pickup_details_processing_line_head"
+                                    android:layout_width="1dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_marginStart="25dp"
+                                    android:background="@color/colorGrey"
+                                    android:contentDescription="@string/app_name"
+                                    android:hardwareAccelerated="false"
+                                    android:layerType="software" />
+
+                            </LinearLayout>
 
                             <RelativeLayout
                                 android:id="@+id/apollo_phamrmacy_add_head_id_layout"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
                                 android:layout_marginStart="@dimen/five_dp"
                                 android:layout_marginEnd="@dimen/thirty_dp"
+                                android:layout_marginBottom="@dimen/ten_dp"
                                 android:background="@drawable/status_processing_curves_bg"
                                 android:gravity="center_vertical"
                                 android:paddingTop="@dimen/five_dp"
@@ -783,14 +800,13 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/ten_dp"
-                            android:layout_marginEnd="@dimen/fifteen_dp"
                             android:orientation="horizontal"
                             android:visibility="gone">
 
                             <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:layout_marginEnd="@dimen/fifteen_dp"
+                                android:layout_marginEnd="@dimen/thirty_dp"
                                 android:orientation="horizontal">
 
                                 <LinearLayout
@@ -809,13 +825,13 @@
                                         android:onClick="@{()->callback.onClickPicked()}"
                                         android:text="@string/label_type_pharmacy"
                                         android:textColor="@color/colorBlack"
-                                        android:textSize="@dimen/text_dimen_12" />
+                                        android:textSize="@dimen/text_dimen_14" />
 
                                     <View
                                         android:id="@+id/pickup_details_processing_line"
                                         android:layout_width="1dp"
                                         android:layout_height="match_parent"
-                                        android:layout_marginStart="24dp"
+                                        android:layout_marginStart="25dp"
                                         android:background="@color/colorBlack"
                                         android:contentDescription="@string/app_name"
                                         android:hardwareAccelerated="false"
@@ -823,7 +839,7 @@
                                 </LinearLayout>
 
                                 <LinearLayout
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="28dp"
                                     android:layout_marginBottom="@dimen/fifteen_dp"
@@ -1453,29 +1469,45 @@
                             android:id="@+id/delivered_label"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/ten_dp"
                             android:onClick="@{()->callback.onClickDeliveredLabel()}"
                             android:orientation="horizontal">
 
-                            <TextView
-                                android:id="@+id/deliveryhead_txt"
-                                android:layout_width="@dimen/twenty_five_dp"
-                                android:layout_height="@dimen/twenty_five_dp"
-                                android:layout_marginStart="13dp"
-                                android:background="@drawable/delivery_item_bg"
-                                android:fontFamily="@font/roboto_bold"
-                                android:gravity="center"
-                                android:text="@string/label_type_delivery"
-                                android:textColor="@color/colorBlack"
-                                android:textSize="@dimen/text_dimen_14" />
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/deliveryhead_txt"
+                                    android:layout_width="@dimen/twenty_five_dp"
+                                    android:layout_height="@dimen/twenty_five_dp"
+                                    android:layout_marginStart="13dp"
+                                    android:background="@drawable/delivery_item_bg"
+                                    android:fontFamily="@font/roboto_bold"
+                                    android:gravity="center"
+                                    android:text="@string/label_type_delivery"
+                                    android:textColor="@color/colorBlack"
+                                    android:textSize="@dimen/text_dimen_14" />
+
+                                <View
+                                    android:id="@+id/delivered_label_processing_line_head"
+                                    android:layout_width="1dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_marginStart="25dp"
+                                    android:background="@color/colorGrey"
+                                    android:contentDescription="@string/app_name"
+                                    android:hardwareAccelerated="false"
+                                    android:visibility="gone"
+                                    android:layerType="software" />
+                            </LinearLayout>
 
                             <RelativeLayout
                                 android:id="@+id/deliver_name_head_layout"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
                                 android:layout_marginStart="@dimen/five_dp"
                                 android:layout_marginEnd="@dimen/thirty_dp"
+                                android:layout_marginBottom="@dimen/ten_dp"
                                 android:background="@drawable/status_completed_curves_bg"
                                 android:paddingTop="@dimen/five_dp"
                                 android:paddingBottom="@dimen/five_dp">
@@ -1540,13 +1572,13 @@
                                         android:onClick="@{()->callback.onClickDelivered()}"
                                         android:text="@string/label_type_delivery"
                                         android:textColor="@color/colorBlack"
-                                        android:textSize="@dimen/text_dimen_12" />
+                                        android:textSize="@dimen/text_dimen_14" />
 
                                     <View
                                         android:id="@+id/order_delivery_process_img"
                                         android:layout_width="1dp"
                                         android:layout_height="match_parent"
-                                        android:layout_marginStart="24dp"
+                                        android:layout_marginStart="25dp"
                                         android:layout_marginBottom="@dimen/fifteen_dp"
                                         android:background="@color/colorBlack"
                                         android:backgroundTint="@color/order_accepted_color"
@@ -1669,7 +1701,7 @@
                                                     android:contentDescription="@string/app_name"
                                                     android:fontFamily="@font/roboto_medium"
                                                     android:padding="@dimen/three_dp"
-                                                    android:text="Show deliver Route"
+                                                    android:text="Show Delivery Route"
                                                     android:textColor="@color/new_order_header_view_bg"
                                                     android:textSize="@dimen/text_dimen_10" />
 
@@ -1751,6 +1783,7 @@
                                                 android:layout_width="match_parent"
                                                 android:layout_height="wrap_content"
                                                 android:layout_marginStart="@dimen/fifteen_dp"
+                                                android:layout_marginTop="@dimen/ten_dp"
                                                 android:background="@drawable/instruction_bg"
                                                 android:gravity="center_vertical"
                                                 android:orientation="horizontal"
@@ -1797,7 +1830,7 @@
                                         android:id="@+id/delivery_items_list_layout"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:layout_marginTop="@dimen/fifteen_dp"
+                                        android:layout_marginTop="@dimen/five_dp"
                                         android:animateLayoutChanges="true"
                                         android:orientation="vertical"
                                         android:paddingEnd="@dimen/ten_dp"
@@ -2137,6 +2170,7 @@
                                                         android:src="@drawable/icon_status_pending" />
 
                                                     <TextView
+                                                        android:id="@+id/delivery_otp_verification_text"
                                                         android:layout_width="wrap_content"
                                                         android:layout_height="wrap_content"
                                                         android:layout_centerVertical="true"
@@ -2778,7 +2812,6 @@
                             android:id="@+id/return_label"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/ten_dp"
                             android:onClick="@{()->callback.onClickReturnLabel()}"
                             android:orientation="horizontal"
                             android:visibility="gone">
@@ -2865,13 +2898,13 @@
                                         android:onClick="@{()->callback.onClickOrderNotDelivered()}"
                                         android:text="@string/label_type_return"
                                         android:textColor="@color/colorBlack"
-                                        android:textSize="@dimen/text_dimen_12" />
+                                        android:textSize="@dimen/text_dimen_14" />
 
                                     <View
                                         android:id="@+id/order_not_delivered_processing_line"
                                         android:layout_width="1dp"
                                         android:layout_height="match_parent"
-                                        android:layout_marginStart="24dp"
+                                        android:layout_marginStart="25dp"
                                         android:background="@color/colorBlack"
                                         android:contentDescription="@string/app_name"
                                         android:hardwareAccelerated="false"

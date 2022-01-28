@@ -10,15 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,17 +23,11 @@ import androidx.transition.Transition;
 import androidx.transition.TransitionManager;
 
 import com.apollo.epos.R;
-import com.apollo.epos.activity.NavigationActivity;
 import com.apollo.epos.adapter.CancelOrderItemsAdapter;
-import com.apollo.epos.adapter.CustomReasonAdapter;
-import com.apollo.epos.adapter.MyOrdersListAdapter;
 import com.apollo.epos.base.BaseFragment;
-import com.apollo.epos.fragment.deliveryorder.DeliveryOrderFragment;
 import com.apollo.epos.model.OrderItemModel;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

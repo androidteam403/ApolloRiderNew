@@ -109,10 +109,7 @@ public class RouteDrawerTask extends AsyncTask<String, Integer, List<List<HashMa
             if (lineOptions != null && mMap != null && colorFlag == 0) {
                 piontsCallback.pointsFirst(points);
                 mMap.addPolyline(lineOptions.addAll(points));
-
-
 //                MapAnimator.getInstance().animateRoute(mMap, points, taskLoadedCallback, false);
-                String test = "test";
 //                taskLoadedCallback.onTaskDone(lineOptions);
 
             } else if (lineOptions != null && mMap != null && colorFlag == 1) {
