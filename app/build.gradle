@@ -26,7 +26,6 @@ android {
             buildConfigField("String", "BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
             buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
             buildConfigField("String", "HELP_BASE_URL", "\"https://apollo_rider.v35.dev.zeroco.de/apollo/rider/rider-help/\"")
-
         }
         release {
             minifyEnabled false
@@ -34,7 +33,6 @@ android {
             buildConfigField("String", "BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
             buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
             buildConfigField("String", "HELP_BASE_URL", "\"https://apollo_rider.v35.dev.zeroco.de/apollo/rider/rider-help/\"")
-
         }
     }
     compileOptions {
@@ -139,8 +137,9 @@ dependencies {
 /**
  * prod base url          :::   https://apis.v35.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/
  * prod upload base url   :::   https://apis.v35.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/
+ * prod help base url     :::   https://apollo_rider.v35.zeroco.de/apollo/rider/rider-help/
  *
  * dev base url           :::   https://apis.v35.dev.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/
  * dev upload base url    :::   https://apis.v35.dev.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/
- *
+ * dev help base url      :::   https://apollo_rider.v35.dev.zeroco.de/apollo/rider/rider-help/
  */

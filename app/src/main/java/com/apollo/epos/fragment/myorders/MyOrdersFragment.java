@@ -7,9 +7,10 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -118,12 +119,18 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
                     myNewOrdersList.add(newOrder);
             if (myNewOrdersList.size() > 0) {
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.GONE);
-                ordersRecyclerView.setVisibility(View.VISIBLE);
+
                 myOrdersListAdapter = new MyOrdersListAdapter(mActivity, myNewOrdersList, this);
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mActivity);
                 ordersRecyclerView.setLayoutManager(mLayoutManager);
                 ordersRecyclerView.setItemAnimator(new DefaultItemAnimator());
                 ordersRecyclerView.setAdapter(myOrdersListAdapter);
+
+                Animation fadeInAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.anim_frag_fade_in);
+                ordersRecyclerView.setVisibility(View.VISIBLE);
+                ordersRecyclerView.startAnimation(fadeInAnimation);
+
+
             } else {
                 myOrdersBinding.noOrdersInstatusText.setText(R.string.label_no_orders_assigned);
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.VISIBLE);
@@ -146,12 +153,17 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
                     myInTransitOrdersList.add(inTransitOrder);
             if (myInTransitOrdersList.size() > 0) {
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.GONE);
-                ordersRecyclerView.setVisibility(View.VISIBLE);
+
                 myOrdersListAdapter = new MyOrdersListAdapter(mActivity, myInTransitOrdersList, this);
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mActivity);
                 ordersRecyclerView.setLayoutManager(mLayoutManager);
                 ordersRecyclerView.setItemAnimator(new DefaultItemAnimator());
                 ordersRecyclerView.setAdapter(myOrdersListAdapter);
+
+                Animation fadeInAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.anim_frag_fade_in);
+                ordersRecyclerView.setVisibility(View.VISIBLE);
+                ordersRecyclerView.startAnimation(fadeInAnimation);
+
             } else {
                 myOrdersBinding.noOrdersInstatusText.setText(R.string.label_no_orders_intransit);
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.VISIBLE);
@@ -174,12 +186,18 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
                     deliveredOrdersList.add(deliveredOrder);
             if (deliveredOrdersList.size() > 0) {
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.GONE);
-                ordersRecyclerView.setVisibility(View.VISIBLE);
+
                 myOrdersListAdapter = new MyOrdersListAdapter(mActivity, deliveredOrdersList, this);
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mActivity);
                 ordersRecyclerView.setLayoutManager(mLayoutManager);
                 ordersRecyclerView.setItemAnimator(new DefaultItemAnimator());
                 ordersRecyclerView.setAdapter(myOrdersListAdapter);
+
+
+                Animation fadeInAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.anim_frag_fade_in);
+                ordersRecyclerView.setVisibility(View.VISIBLE);
+                ordersRecyclerView.startAnimation(fadeInAnimation);
+
             } else {
                 myOrdersBinding.noOrdersInstatusText.setText(R.string.label_no_orders_delivered);
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.VISIBLE);
@@ -202,12 +220,17 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
                     orderNotDeliveredList.add(deliveredOrder);
             if (orderNotDeliveredList.size() > 0) {
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.GONE);
-                ordersRecyclerView.setVisibility(View.VISIBLE);
                 myOrdersListAdapter = new MyOrdersListAdapter(mActivity, orderNotDeliveredList, this);
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mActivity);
                 ordersRecyclerView.setLayoutManager(mLayoutManager);
                 ordersRecyclerView.setItemAnimator(new DefaultItemAnimator());
                 ordersRecyclerView.setAdapter(myOrdersListAdapter);
+
+                Animation fadeInAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.anim_frag_fade_in);
+                ordersRecyclerView.setVisibility(View.VISIBLE);
+                ordersRecyclerView.startAnimation(fadeInAnimation);
+
+
             } else {
                 myOrdersBinding.noOrdersInstatusText.setText(R.string.label_no_orders_cancelled);
                 myOrdersBinding.noOrderFoundLayout.setVisibility(View.VISIBLE);
@@ -215,161 +238,161 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
             }
         });
 
-        myOrdersBinding.ordersRecyclerView.setOnTouchListener(new View.OnTouchListener() {
-            View v;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                this.v = v;
-                switch (event.getAction()) { // Check vertical and horizontal touches
-                    case MotionEvent.ACTION_DOWN: {
-                        downX = event.getX();
-                        downY = event.getY();
-                        return true;
-                    }
-                    case MotionEvent.ACTION_UP: {
-                        upX = event.getX();
-                        upY = event.getY();
-
-                        float deltaX = downX - upX;
-                        float deltaY = downY - upY;
-
-                        //HORIZONTAL SCROLL
-                        if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                            if (Math.abs(deltaX) > min_distance) {
-                                // left or right
-                                if (deltaX < 0) {
-                                    this.onLeftToRightSwipe();
-                                    return true;
-                                }
-                                if (deltaX > 0) {
-                                    this.onRightToLeftSwipe();
-                                    return true;
-                                }
-                            } else {
-                                //not long enough swipe...
-                                return false;
-                            }
-                        }
-                        //VERTICAL SCROLL
-                        else {
-                            if (Math.abs(deltaY) > min_distance) {
-                                // top or down
-                                if (deltaY < 0) {
-                                    this.onTopToBottomSwipe();
-                                    return true;
-                                }
-                                if (deltaY > 0) {
-                                    this.onBottomToTopSwipe();
-                                    return true;
-                                }
-                            } else {
-                                //not long enough swipe...
-                                return false;
-                            }
-                        }
-                        return false;
-                    }
-                }
-                return false;
-            }
-
-            public void onLeftToRightSwipe() {
-                leftToRight();
-            }
-
-            public void onRightToLeftSwipe() {
-                rightToLeft();
-            }
-
-            public void onTopToBottomSwipe() {
-//                Toast.makeText(v.getContext(),"top to bottom",
-//                        Toast.LENGTH_SHORT).show();
-            }
-
-            public void onBottomToTopSwipe() {
-//                Toast.makeText(v.getContext(),"bottom to top",
-//                        Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        myOrdersBinding.noOrderFoundLayout.setOnTouchListener(new View.OnTouchListener() {
-            View v;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                this.v = v;
-                switch (event.getAction()) { // Check vertical and horizontal touches
-                    case MotionEvent.ACTION_DOWN: {
-                        downX = event.getX();
-                        downY = event.getY();
-                        return true;
-                    }
-                    case MotionEvent.ACTION_UP: {
-                        upX = event.getX();
-                        upY = event.getY();
-
-                        float deltaX = downX - upX;
-                        float deltaY = downY - upY;
-
-                        //HORIZONTAL SCROLL
-                        if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                            if (Math.abs(deltaX) > min_distance) {
-                                // left or right
-                                if (deltaX < 0) {
-                                    this.onLeftToRightSwipe();
-                                    return true;
-                                }
-                                if (deltaX > 0) {
-                                    this.onRightToLeftSwipe();
-                                    return true;
-                                }
-                            } else {
-                                //not long enough swipe...
-                                return false;
-                            }
-                        }
-                        //VERTICAL SCROLL
-                        else {
-                            if (Math.abs(deltaY) > min_distance) {
-                                // top or down
-                                if (deltaY < 0) {
-                                    this.onTopToBottomSwipe();
-                                    return true;
-                                }
-                                if (deltaY > 0) {
-                                    this.onBottomToTopSwipe();
-                                    return true;
-                                }
-                            } else {
-                                //not long enough swipe...
-                                return false;
-                            }
-                        }
-                        return false;
-                    }
-                }
-                return false;
-            }
-
-            public void onLeftToRightSwipe() {
-                leftToRight();
-            }
-
-            public void onRightToLeftSwipe() {
-                rightToLeft();
-            }
-
-            public void onTopToBottomSwipe() {
-//                Toast.makeText(v.getContext(),"top to bottom",
-//                        Toast.LENGTH_SHORT).show();
-            }
-
-            public void onBottomToTopSwipe() {
-//                Toast.makeText(v.getContext(),"bottom to top",
-//                        Toast.LENGTH_SHORT).show();
-            }
-        });
+//        myOrdersBinding.ordersRecyclerView.setOnTouchListener(new View.OnTouchListener() {
+//            View v;
+//
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                this.v = v;
+//                switch (event.getAction()) { // Check vertical and horizontal touches
+//                    case MotionEvent.ACTION_DOWN: {
+//                        downX = event.getX();
+//                        downY = event.getY();
+//                        return true;
+//                    }
+//                    case MotionEvent.ACTION_UP: {
+//                        upX = event.getX();
+//                        upY = event.getY();
+//
+//                        float deltaX = downX - upX;
+//                        float deltaY = downY - upY;
+//
+//                        //HORIZONTAL SCROLL
+//                        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+//                            if (Math.abs(deltaX) > min_distance) {
+//                                // left or right
+//                                if (deltaX < 0) {
+//                                    this.onLeftToRightSwipe();
+//                                    return true;
+//                                }
+//                                if (deltaX > 0) {
+//                                    this.onRightToLeftSwipe();
+//                                    return true;
+//                                }
+//                            } else {
+//                                //not long enough swipe...
+//                                return false;
+//                            }
+//                        }
+//                        //VERTICAL SCROLL
+//                        else {
+//                            if (Math.abs(deltaY) > min_distance) {
+//                                // top or down
+//                                if (deltaY < 0) {
+//                                    this.onTopToBottomSwipe();
+//                                    return true;
+//                                }
+//                                if (deltaY > 0) {
+//                                    this.onBottomToTopSwipe();
+//                                    return true;
+//                                }
+//                            } else {
+//                                //not long enough swipe...
+//                                return false;
+//                            }
+//                        }
+//                        return false;
+//                    }
+//                }
+//                return false;
+//            }
+//
+//            public void onLeftToRightSwipe() {
+//                leftToRight();
+//            }
+//
+//            public void onRightToLeftSwipe() {
+//                rightToLeft();
+//            }
+//
+//            public void onTopToBottomSwipe() {
+////                Toast.makeText(v.getContext(),"top to bottom",
+////                        Toast.LENGTH_SHORT).show();
+//            }
+//
+//            public void onBottomToTopSwipe() {
+////                Toast.makeText(v.getContext(),"bottom to top",
+////                        Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//
+//        myOrdersBinding.noOrderFoundLayout.setOnTouchListener(new View.OnTouchListener() {
+//            View v;
+//
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                this.v = v;
+//                switch (event.getAction()) { // Check vertical and horizontal touches
+//                    case MotionEvent.ACTION_DOWN: {
+//                        downX = event.getX();
+//                        downY = event.getY();
+//                        return true;
+//                    }
+//                    case MotionEvent.ACTION_UP: {
+//                        upX = event.getX();
+//                        upY = event.getY();
+//
+//                        float deltaX = downX - upX;
+//                        float deltaY = downY - upY;
+//
+//                        //HORIZONTAL SCROLL
+//                        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+//                            if (Math.abs(deltaX) > min_distance) {
+//                                // left or right
+//                                if (deltaX < 0) {
+//                                    this.onLeftToRightSwipe();
+//                                    return true;
+//                                }
+//                                if (deltaX > 0) {
+//                                    this.onRightToLeftSwipe();
+//                                    return true;
+//                                }
+//                            } else {
+//                                //not long enough swipe...
+//                                return false;
+//                            }
+//                        }
+//                        //VERTICAL SCROLL
+//                        else {
+//                            if (Math.abs(deltaY) > min_distance) {
+//                                // top or down
+//                                if (deltaY < 0) {
+//                                    this.onTopToBottomSwipe();
+//                                    return true;
+//                                }
+//                                if (deltaY > 0) {
+//                                    this.onBottomToTopSwipe();
+//                                    return true;
+//                                }
+//                            } else {
+//                                //not long enough swipe...
+//                                return false;
+//                            }
+//                        }
+//                        return false;
+//                    }
+//                }
+//                return false;
+//            }
+//
+//            public void onLeftToRightSwipe() {
+//                leftToRight();
+//            }
+//
+//            public void onRightToLeftSwipe() {
+//                rightToLeft();
+//            }
+//
+//            public void onTopToBottomSwipe() {
+////                Toast.makeText(v.getContext(),"top to bottom",
+////                        Toast.LENGTH_SHORT).show();
+//            }
+//
+//            public void onBottomToTopSwipe() {
+////                Toast.makeText(v.getContext(),"bottom to top",
+////                        Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
     }
 

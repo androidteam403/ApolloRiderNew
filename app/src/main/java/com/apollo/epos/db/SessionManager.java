@@ -29,6 +29,8 @@ public class SessionManager {
     private static final String PREF_KEY_DELIVERY_FAILURE_REASONS = "PREF_KEY_DELIVERY_FAILURE_REASONS";
     private static final String PREF_KEY_RIDER_TRAVELLED_DISTANCE_IN_DAY = "PREF_KEY_RIDER_TRAVELLED_DISTANCE_IN_DAY";
     private static final String PREF_KEY_ASIGNED_ORDER_UID = "PREF_KEY_ASIGNED_ORDER_UID";
+    private static final String PREF_KEY_COD_RECEIVED = "PREF_KEY_COD_RECEIVED";
+    private static final String PREF_KEY_COD_PENDING_DEPOSITED = "PREF_KEY_COD_PENDING_DEPOSITED";
 
     public SessionManager(Context context) {
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -114,7 +116,24 @@ public class SessionManager {
 
     public List<String> getAsignedOrderUid() {
         String orderUidList = preferences.getString(PREF_KEY_ASIGNED_ORDER_UID, null);
-        Type type = new TypeToken<List<String>>() {}.getType();
+        Type type = new TypeToken<List<String>>() {
+        }.getType();
         return new Gson().fromJson(orderUidList, type);
+    }
+
+    public void setCodReceived(String codReceived) {
+        preferences.edit().putString(PREF_KEY_COD_RECEIVED, codReceived).apply();
+    }
+
+    public String getCodReceived() {
+        return preferences.getString(PREF_KEY_COD_RECEIVED, "0.0");
+    }
+
+    public void setCodPendingDeposited(String codPendingDeposited) {
+        preferences.edit().putString(PREF_KEY_COD_PENDING_DEPOSITED, codPendingDeposited).apply();
+    }
+
+    public String getCodPendingDeposited() {
+        return preferences.getString(PREF_KEY_COD_PENDING_DEPOSITED, "0.0");
     }
 }

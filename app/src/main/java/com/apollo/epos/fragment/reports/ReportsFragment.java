@@ -1,88 +1,68 @@
-package com.apollo.epos.activity.reports;
+package com.apollo.epos.fragment.reports;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apollo.epos.R;
-import com.apollo.epos.activity.BaseActivity;
 import com.apollo.epos.activity.reports.adapter.OrdersCodStatusAdapter;
 import com.apollo.epos.activity.reports.model.OrdersCodStatusResponse;
-import com.apollo.epos.databinding.ActivityReportsBinding;
+import com.apollo.epos.base.BaseFragment;
+import com.apollo.epos.databinding.FragmentReportsBinding;
+import com.apollo.epos.db.SessionManager;
 import com.apollo.epos.utils.ActivityUtils;
-import com.apollo.epos.utils.CommonUtils;
-import com.novoda.merlin.Merlin;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReportsActivity extends BaseActivity implements ReportsActivityCallback {
-
-    private ActivityReportsBinding reportsBinding;
-    private static TextView notificationText;
+public class ReportsFragment extends BaseFragment implements ReportsFragmentCallback {
+    private Activity mActivity;
+    private FragmentReportsBinding reportsBinding;
     private OrdersCodStatusAdapter ordersCodStatusAdapter;
     private boolean isLoading = false;
     private List<OrdersCodStatusResponse.Row> ordersCodStatusList;
     private List<OrdersCodStatusResponse.Row> ordersCodStatusListLoad;
 
-    @Override
-    protected Merlin createMerlin() {
-        return new Merlin.Builder()
-                .withConnectableCallbacks()
-                .withDisconnectableCallbacks()
-                .withBindableCallbacks()
-                .build(this);
-    }
-
-    public static Intent getStartIntent(Context context) {
-        Intent intent = new Intent(context, ReportsActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        return intent;
+    public static ReportsFragment newInstance() {
+        return new ReportsFragment();
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        reportsBinding = DataBindingUtil.setContentView(this, R.layout.activity_reports);
-        reportsBinding.setCallback(this);
-        notificationText = (TextView) findViewById(R.id.notification_dot);
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity) {
+            mActivity = (Activity) context;
+        }
+    }
+
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        reportsBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_reports, container, false);
+        return reportsBinding.getRoot();
+    }
+
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         getController().getOrdersCodStatusApiCall();
         Double codReceived = Double.parseDouble(getSessionManager().getCodReceived());
         Double codPendingDeposited = Double.parseDouble(getSessionManager().getCodPendingDeposited());
         DecimalFormat decim = new DecimalFormat("#,###.##");
-        reportsBinding.codReceivedVal.setText(getResources().getString(R.string.label_rupee_symbol) + " " + decim.format(codReceived));
-        reportsBinding.codPendingVal.setText(getResources().getString(R.string.label_rupee_symbol) + " " + decim.format(codPendingDeposited));
-
-    }
-
-    @Override
-    public void onClickNotificationIcon() {
-        if (getSessionManager().getNotificationStatus()) {
-            notificationText.clearAnimation();
-            overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
-            finish();
-        } else {
-            Toast.makeText(this, "No Notification.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        CommonUtils.CURRENT_SCREEN = getClass().getSimpleName();
+        reportsBinding.codReceivedVal.setText(getActivity().getResources().getString(R.string.label_rupee_symbol) + " " + decim.format(codReceived));
+        reportsBinding.codPendingVal.setText(getActivity().getResources().getString(R.string.label_rupee_symbol) + " " + decim.format(codPendingDeposited));
     }
 
     @Override
@@ -105,7 +85,7 @@ public class ReportsActivity extends BaseActivity implements ReportsActivityCall
                     this.ordersCodStatusList = ordersCodStatusListLoad;
                 }
             }
-            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
             reportsBinding.reportsRecycler.setLayoutManager(mLayoutManager);
             reportsBinding.reportsRecycler.setItemAnimator(new DefaultItemAnimator());
             reportsBinding.reportsRecycler.setVisibility(View.VISIBLE);
@@ -123,7 +103,7 @@ public class ReportsActivity extends BaseActivity implements ReportsActivityCall
     }
 
     private void initAdapter() {
-        ordersCodStatusAdapter = new OrdersCodStatusAdapter(this, ordersCodStatusList, this);
+        ordersCodStatusAdapter = new OrdersCodStatusAdapter(getContext(), ordersCodStatusList, this);
         reportsBinding.reportsRecycler.setAdapter(ordersCodStatusAdapter);
     }
 
@@ -175,32 +155,11 @@ public class ReportsActivity extends BaseActivity implements ReportsActivityCall
 
     }
 
-    @Override
-    public void onClickBack() {
-        finish();
-        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+    public SessionManager getSessionManager() {
+        return new SessionManager(getContext());
     }
 
-    private ReportsActivityController getController() {
-        return new ReportsActivityController(this, this);
-    }
-
-    static Animation anim;
-
-    public static void notificationDotVisibility(boolean show) {
-        if (show) {
-            if (notificationText != null) {
-                notificationText.setVisibility(View.VISIBLE);
-                anim = new AlphaAnimation(0.0f, 1.0f);
-                anim.setDuration(350); //You can manage the blinking time with this parameter
-                anim.setStartOffset(20);
-                anim.setRepeatMode(Animation.REVERSE);
-                anim.setRepeatCount(Animation.INFINITE);
-                notificationText.startAnimation(anim);
-            }
-        } else {
-            if (notificationText != null)
-                notificationText.setVisibility(View.GONE);
-        }
+    private ReportsFragmentController getController() {
+        return new ReportsFragmentController(getContext(), this);
     }
 }

@@ -65,6 +65,7 @@ import com.apollo.epos.fragment.myorders.MyOrdersFragment;
 import com.apollo.epos.fragment.myorders.MyOrdersFragmentCallback;
 import com.apollo.epos.fragment.notifications.NotificationsFragment;
 import com.apollo.epos.fragment.profile.ProfileFragment;
+import com.apollo.epos.fragment.reports.ReportsFragment;
 import com.apollo.epos.fragment.takeneworder.TakeNewOrderFragment;
 import com.apollo.epos.model.NavDrawerModel;
 import com.apollo.epos.service.BatteryLevelLocationService;
@@ -287,6 +288,8 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
             showFragment(new MyOrdersFragment(), R.string.menu_my_orders);
         } else if (mItem == R.id.nav_faqs) {
             showFragment(new HelpFragment(), R.string.menu_help);
+        } else if (mItem == R.id.nav_reports) {
+            showFragment(new ReportsFragment(), R.string.menu_reports);
         }
 //        else if (mItem == R.id.nav_logout) {
 //            ActivityUtils.startActivity(this, LoginActivity.class, null);
@@ -344,13 +347,14 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         header = (ViewGroup) inflater.inflate(R.layout.nav_header_main, mDrawerList, false);
         mDrawerList.addHeaderView(header);
 
-        NavDrawerModel[] drawerItem = new NavDrawerModel[5];
+        NavDrawerModel[] drawerItem = new NavDrawerModel[6];
         drawerItem[0] = new NavDrawerModel(mNavigationDrawerItemTitles[0], false, true);
         drawerItem[1] = new NavDrawerModel(mNavigationDrawerItemTitles[1], false, false);
 //        drawerItem[2] = new NavDrawerModel(mNavigationDrawerItemTitles[2], false, false);
         drawerItem[2] = new NavDrawerModel(mNavigationDrawerItemTitles[2], false, false);
         drawerItem[3] = new NavDrawerModel(mNavigationDrawerItemTitles[3], false, false);
         drawerItem[4] = new NavDrawerModel(mNavigationDrawerItemTitles[4], false, false);
+        drawerItem[5] = new NavDrawerModel(mNavigationDrawerItemTitles[5], false, false);
 //        drawerItem[6] = new NavDrawerModel(mNavigationDrawerItemTitles[6], false, false);
         adapter = new NavigationDrawerAdapter(this, R.layout.nav_item_row, drawerItem);
 
@@ -460,19 +464,23 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                         mCurrentFrag = getString(R.string.menu_my_orders);
                         showFragment(MyOrdersFragment.newInstance(), R.string.menu_my_orders);
                         break;
+                    case 2:
+                        mCurrentFrag = getString(R.string.menu_reports);
+                        showFragment(ReportsFragment.newInstance(), R.string.menu_reports);
+                        break;
 //                    case 2:
 //                        mCurrentFrag = getString(R.string.menu_notifications);
 //                        showFragment(NotificationsFragment.newInstance(), R.string.menu_notifications);
 //                        break;
-                    case 2:
+                    case 3:
                         mCurrentFrag = getString(R.string.menu_profile);
                         showFragment(ProfileFragment.newInstance(), R.string.menu_profile);
                         break;
-                    case 3:
+                    case 4:
                         mCurrentFrag = getString(R.string.menu_change_password);
                         showFragment(ChangePasswordFragment.newInstance(), R.string.menu_change_password);
                         break;
-                    case 4:
+                    case 5:
                         mCurrentFrag = getString(R.string.menu_help);
                         showFragment(HelpFragment.newInstance(), R.string.menu_help);
                         break;

@@ -22,6 +22,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.Toast;
 
 import com.apollo.epos.R;
 import com.apollo.epos.activity.CaptureSignatureActivity;
@@ -120,98 +121,104 @@ public class FloatingTouchService extends Service {
     }
 
     public void createAssistiveTouchView() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            mParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
-        } else {
-            mParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
-        }
-        mParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        mParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        mParams.x = mScreenWidth;
-        mParams.y = mScreenHeight;
-        mParams.gravity = Gravity.TOP | Gravity.END;
-        mParams.format = PixelFormat.RGBA_8888;
-        mParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        mWindowManager.addView(mAssistiveTouchView, mParams);
+        try{
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                mParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+            } else {
+                Toast.makeText(this, "Build.VERSION.SDK_INT"+Build.VERSION.SDK_INT, Toast.LENGTH_SHORT).show();
+                mParams.type = WindowManager.LayoutParams.TYPE_PHONE;
+            }
+            mParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
+            mParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            mParams.x = mScreenWidth;
+            mParams.y = mScreenHeight;
+            mParams.gravity = Gravity.TOP | Gravity.END;
+            mParams.format = PixelFormat.RGBA_8888;
+            mParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+            mWindowManager.addView(mAssistiveTouchView, mParams);
 
-        mAssistiveTouchView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                isLogClick = true;
-                return false;
-            }
-        });
-        mAssistiveTouchView.setOnTouchListener(new View.OnTouchListener() {
-            @SuppressLint("ClickableViewAccessibility")
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                rawX = event.getRawX();
-                rawY = event.getRawY();
-                if (isLogClick) {
-                    switch (event.getAction()) {
-                        case MotionEvent.ACTION_DOWN:
-                            isMoving = false;
-                            isLogClick = false;
-                            break;
-                        case MotionEvent.ACTION_UP:
-                            setAssitiveTouchViewAlign();
-                            break;
-                        case MotionEvent.ACTION_MOVE:
-                            isMoving = true;
-                            mParams.x = (int) (mScreenWidth - rawX);
-                            mParams.y = (int) (rawY - mAssistiveTouchView.getMeasuredHeight() / 2 - mStatusBarHeight);
-                            mWindowManager.updateViewLayout(mAssistiveTouchView, mParams);
-                    }
+            mAssistiveTouchView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    isLogClick = true;
+                    return false;
                 }
-                return isMoving;
-            }
-        });
-        mAssistiveTouchView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isAssitiveClicked = true;
+            });
+            mAssistiveTouchView.setOnTouchListener(new View.OnTouchListener() {
+                @SuppressLint("ClickableViewAccessibility")
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    rawX = event.getRawX();
+                    rawY = event.getRawY();
+                    if (isLogClick) {
+                        switch (event.getAction()) {
+                            case MotionEvent.ACTION_DOWN:
+                                isMoving = false;
+                                isLogClick = false;
+                                break;
+                            case MotionEvent.ACTION_UP:
+                                setAssitiveTouchViewAlign();
+                                break;
+                            case MotionEvent.ACTION_MOVE:
+                                isMoving = true;
+                                mParams.x = (int) (mScreenWidth - rawX);
+                                mParams.y = (int) (rawY - mAssistiveTouchView.getMeasuredHeight() / 2 - mStatusBarHeight);
+                                mWindowManager.updateViewLayout(mAssistiveTouchView, mParams);
+                        }
+                    }
+                    return isMoving;
+                }
+            });
+            mAssistiveTouchView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    isAssitiveClicked = true;
 //                updateAssistiveInvisible();
-                lastAssistiveTouchViewX = mParams.x;
-                lastAssistiveTouchViewY = mParams.y;
+                    lastAssistiveTouchViewX = mParams.x;
+                    lastAssistiveTouchViewY = mParams.y;
 
-                try {
-                    if (CommonUtils.CURRENT_SCREEN.equals(NavigationActivity.class.getSimpleName())) {
-                        Intent intent = new Intent(getApplicationContext(), NavigationActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-                                | Intent.FLAG_ACTIVITY_NEW_TASK
-                                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        startActivity(intent);
-                    } else if (CommonUtils.CURRENT_SCREEN.equals(ReportsActivity.class.getSimpleName())) {
-                        Intent intent = new Intent(getApplicationContext(), ReportsActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-                                | Intent.FLAG_ACTIVITY_NEW_TASK
-                                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        startActivity(intent);
-                    } else if (CommonUtils.CURRENT_SCREEN.equals(OrderDeliveryActivity.class.getSimpleName())) {
-                        Intent intent = new Intent(getApplicationContext(), OrderDeliveryActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-                                | Intent.FLAG_ACTIVITY_NEW_TASK
-                                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        startActivity(intent);
-                    } else if (CommonUtils.CURRENT_SCREEN.equals(TrackMapActivity.class.getSimpleName())) {
-                        Intent intent = new Intent(getApplicationContext(), TrackMapActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-                                | Intent.FLAG_ACTIVITY_NEW_TASK
-                                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        startActivity(intent);
-                    } else if (CommonUtils.CURRENT_SCREEN.equals(CaptureSignatureActivity.class.getSimpleName())) {
-                        Intent intent = new Intent(getApplicationContext(), CaptureSignatureActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-                                | Intent.FLAG_ACTIVITY_NEW_TASK
-                                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        startActivity(intent);
+                    try {
+                        if (CommonUtils.CURRENT_SCREEN.equals(NavigationActivity.class.getSimpleName())) {
+                            Intent intent = new Intent(getApplicationContext(), NavigationActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                                    | Intent.FLAG_ACTIVITY_NEW_TASK
+                                    | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            startActivity(intent);
+                        } else if (CommonUtils.CURRENT_SCREEN.equals(ReportsActivity.class.getSimpleName())) {
+                            Intent intent = new Intent(getApplicationContext(), ReportsActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                                    | Intent.FLAG_ACTIVITY_NEW_TASK
+                                    | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            startActivity(intent);
+                        } else if (CommonUtils.CURRENT_SCREEN.equals(OrderDeliveryActivity.class.getSimpleName())) {
+                            Intent intent = new Intent(getApplicationContext(), OrderDeliveryActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                                    | Intent.FLAG_ACTIVITY_NEW_TASK
+                                    | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            startActivity(intent);
+                        } else if (CommonUtils.CURRENT_SCREEN.equals(TrackMapActivity.class.getSimpleName())) {
+                            Intent intent = new Intent(getApplicationContext(), TrackMapActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                                    | Intent.FLAG_ACTIVITY_NEW_TASK
+                                    | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            startActivity(intent);
+                        } else if (CommonUtils.CURRENT_SCREEN.equals(CaptureSignatureActivity.class.getSimpleName())) {
+                            Intent intent = new Intent(getApplicationContext(), CaptureSignatureActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                                    | Intent.FLAG_ACTIVITY_NEW_TASK
+                                    | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            startActivity(intent);
+                        }
+                        stopSelf();
+                    } catch (Exception e) {
+                        System.out.println("Floating touch service:::::::::::::::::::::::::::::::" + e.getMessage());
                     }
-                    stopSelf();
-                } catch (Exception e) {
-                    System.out.println("Floating touch service:::::::::::::::::::::::::::::::" + e.getMessage());
                 }
-            }
-        });
+            });
+        }catch (Exception e){
+            System.out.println("Floating touch service:::::::::::::::::::::::::::::::" + e.getMessage());
+        }
+
     }
 
     private ValueAnimator myAssitiveTouchAnimator(final int fromx, final int tox, int fromy, final int toy) {

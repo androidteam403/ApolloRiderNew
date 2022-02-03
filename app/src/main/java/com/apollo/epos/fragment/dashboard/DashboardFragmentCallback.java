@@ -11,4 +11,6 @@ public interface DashboardFragmentCallback {
     void onSuccessGetRiderDashboardCountApiCall(RiderDashboardCountResponse riderDashboardCountResponse);
 
     void onClickCodReciebedorPendingDeposits();
+
+    void onClickTotalDeliveredCancelledOrders();
 }

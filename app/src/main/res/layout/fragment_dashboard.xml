@@ -263,6 +263,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="135dp"
                         android:layout_margin="@dimen/ten_dp"
+                        android:onClick="@{()-> callback.onClickTotalDeliveredCancelledOrders()}"
                         android:background="@drawable/dashboard_item_bg"
                         android:orientation="horizontal"
                         android:weightSum="3">

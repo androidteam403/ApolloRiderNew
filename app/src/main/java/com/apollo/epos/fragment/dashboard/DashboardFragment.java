@@ -1048,6 +1048,18 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
         getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
     }
 
+    @Override
+    public void onClickTotalDeliveredCancelledOrders() {
+        if (getSessionManager().getAsignedOrderUid() != null && getSessionManager().getAsignedOrderUid().size() > 0)
+            getSessionManager().setAsignedOrderUid(null);
+        dashboardBinding.newOrderLayout.setVisibility(View.GONE);
+        NavigationActivity.notificationDotVisibility(false);
+        getSessionManager().setNotificationStatus(false);
+
+        NavigationActivity.getInstance().selectItem(1);
+//            startUpdatesButtonHandler(newOrderLayout);
+    }
+
     private void todayRiderTravelledDistanceText() {
         try {
             dashboardBinding.riderTravelledDistanceInaday.setText(getSessionManager().getRiderTravelledDistanceinDay() + " M");

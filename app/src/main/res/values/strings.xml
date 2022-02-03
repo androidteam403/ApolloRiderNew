@@ -10,6 +10,7 @@
         <item>Dashboard</item>
         <item>My Orders</item>
         <!--        <item>Notifications</item>-->
+        <item>Cash Deposits</item>
         <item>Profile</item>
         <item>Change Password</item>
         <item>Help</item>
@@ -25,6 +26,7 @@
     <string name="menu_take_order">New Order</string>
     <string name="menu_dashboard">Dashboard</string>
     <string name="menu_my_orders">My Orders</string>
+    <string name="menu_reports">Cash Deposits</string>
     <string name="menu_notifications">Notifications</string>
     <string name="menu_profile">Profile</string>
     <string name="menu_change_password">Change Password</string>
@@ -242,7 +244,7 @@
     <string name="label_no_orders_delivered">No orders delivered</string>
     <string name="label_no_orders_cancelled">No orders cancelled</string>
     <string name="label_this_order_is_cancelled">This Order is Cancelled</string>
-    <string name="label_reports">Reports</string>
+    <string name="label_reports">Cash Deposits</string>
     <string name="label_no_reports_yet">No Reports Yet</string>
 
 </resources>

@@ -27,6 +27,10 @@ public class DashboardFragmentController {
         this.mListener = mListener;
     }
 
+    public SessionManager getSessionManager() {
+        return new SessionManager(context);
+    }
+
     public void getRiderProfileDetailsApi(String token) {
         if (NetworkUtils.isNetworkConnected(context)) {
             ActivityUtils.showDialog(context, "Please wait.");
@@ -99,7 +103,9 @@ public class DashboardFragmentController {
                     ActivityUtils.hideDialog();
                     if (response.body() != null && response.body().getSuccess()) {
                         mListener.onSuccessGetRiderDashboardCountApiCall(response.body());
-                    }else{
+                        getSessionManager().setCodReceived(String.valueOf(response.body().getData().getCount().getCodReceived()));
+                        getSessionManager().setCodPendingDeposited(String.valueOf(response.body().getData().getCount().getCodPending()));
+                    } else {
                         mListener.onFialureMessage("No Data Found");
 
                     }

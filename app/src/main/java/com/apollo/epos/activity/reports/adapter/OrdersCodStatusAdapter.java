@@ -1,6 +1,7 @@
 package com.apollo.epos.activity.reports.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -13,6 +14,7 @@ import com.apollo.epos.activity.reports.ReportsActivityCallback;
 import com.apollo.epos.activity.reports.model.OrdersCodStatusResponse;
 import com.apollo.epos.databinding.AdapterOrdersCodStatusBinding;
 import com.apollo.epos.databinding.LoadingProgressbarBinding;
+import com.apollo.epos.fragment.reports.ReportsFragmentCallback;
 import com.apollo.epos.utils.CommonUtils;
 
 import java.text.SimpleDateFormat;
@@ -24,6 +26,7 @@ public class OrdersCodStatusAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private Context context;
     private List<OrdersCodStatusResponse.Row> ordersCodStatusList;
     private ReportsActivityCallback mListener;
+    private ReportsFragmentCallback mReportsFragmentListener;
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
 
@@ -31,6 +34,12 @@ public class OrdersCodStatusAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.context = context;
         this.ordersCodStatusList = ordersCodStatusList;
         this.mListener = mListener;
+    }
+
+    public OrdersCodStatusAdapter(Context context, List<OrdersCodStatusResponse.Row> ordersCodStatusList,  ReportsFragmentCallback mReportsFragmentListener) {
+        this.context = context;
+        this.ordersCodStatusList = ordersCodStatusList;
+        this.mReportsFragmentListener = mReportsFragmentListener;
     }
 
     @NonNull
@@ -49,7 +58,7 @@ public class OrdersCodStatusAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof ItemViewHolder) {
             itemOnBindViewHolder((ItemViewHolder) holder, position);
-        }else if (holder instanceof LoadingViewHolder){
+        } else if (holder instanceof LoadingViewHolder) {
 
         }
     }
@@ -58,20 +67,22 @@ public class OrdersCodStatusAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         try {
             OrdersCodStatusResponse.Row orderCodStatus = ordersCodStatusList.get(position);
             holder.ordersCodStatusBinding.orderNumber.setText(orderCodStatus.getOrderNumber());
-            holder.ordersCodStatusBinding.awbNumber.setText(orderCodStatus.getAwbNumber());
-            holder.ordersCodStatusBinding.collectedAmount.setText(String.valueOf(orderCodStatus.getOrderPayment().getAmount()));
-            if (orderCodStatus.getOrderPayment().getSettled().getName().equals("No"))
-                holder.ordersCodStatusBinding.depositedAmount.setText("0");
-            else
-                holder.ordersCodStatusBinding.depositedAmount.setText(String.valueOf(orderCodStatus.getOrderPayment().getAmount()));
+
+            holder.ordersCodStatusBinding.collectedAmount.setText(context.getResources().getString(R.string.label_rupee_symbol)+" "+String.valueOf(orderCodStatus.getOrderPayment().getAmount()));
+            if (orderCodStatus.getOrderPayment().getSettled().getName().equals("No")) {
+                holder.ordersCodStatusBinding.depositedAmount.setTextColor(Color.RED);
+                holder.ordersCodStatusBinding.depositedAmount.setText(context.getResources().getString(R.string.label_rupee_symbol)+" "+"0.0");
+            } else {
+                holder.ordersCodStatusBinding.depositedAmount.setText(context.getResources().getString(R.string.label_rupee_symbol)+" "+String.valueOf(orderCodStatus.getOrderPayment().getAmount()));
+            }
             if (orderCodStatus.getOrderRider().getDeliveredOn() != null && !orderCodStatus.getOrderRider().getDeliveredOn().isEmpty()) {
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                 String orderDate = orderCodStatus.getOrderRider().getDeliveredOn();
                 Date orderDates = formatter.parse(orderDate);
                 long orderDateMills = orderDates.getTime();
-                holder.ordersCodStatusBinding.orderdDate.setText(CommonUtils.getTimeFormatter(orderDateMills));
+                holder.ordersCodStatusBinding.deliveredDate.setText(CommonUtils.getTimeFormatter(orderDateMills));
             } else {
-                holder.ordersCodStatusBinding.orderdDate.setText("---");
+                holder.ordersCodStatusBinding.deliveredDate.setText("---");
             }
         } catch (Exception e) {
             System.out.println("OrdersCodStatusAdapter::::::::::::::::::::::::::::::::::::::::" + e.getMessage());

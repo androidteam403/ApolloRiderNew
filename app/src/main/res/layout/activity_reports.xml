@@ -19,8 +19,8 @@
 
             <ImageView
                 android:id="@+id/icon_back"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/forty_dp"
+                android:layout_height="@dimen/forty_dp"
                 android:layout_centerVertical="true"
                 android:contentDescription="@string/app_name"
                 android:onClick="@{()-> callback.onClickBack()}"
@@ -30,7 +30,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/ten_dp"
                 android:layout_toEndOf="@id/icon_back"
                 android:fontFamily="@font/roboto_bold"
                 android:text="@string/label_reports"
@@ -67,7 +66,93 @@
                     android:visibility="gone" />
             </RelativeLayout>
         </RelativeLayout>
+        <LinearLayout
+            android:id="@+id/codreceived_codpending"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/one_hundred_twenty_five_dp"
+            android:layout_marginStart="@dimen/ten_dp"
+            android:layout_marginEnd="@dimen/ten_dp"
+            android:layout_marginBottom="@dimen/ten_dp"
+            android:layout_marginTop="@dimen/five_dp"
+            android:orientation="horizontal"
+            android:weightSum="1">
 
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.485"
+                android:background="@drawable/dashboard_item_bg"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/fifty_dp"
+                    android:layout_height="@dimen/forty_dp"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/db_cod_received" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/three_dp"
+                    android:fontFamily="@font/roboto_bold"
+                    android:gravity="center"
+                    android:text="@string/label_cod_received"
+                    android:textColor="@color/dashboard_text_color"
+                    android:textSize="@dimen/text_dimen_12" />
+
+                <TextView
+                    android:id="@+id/cod_received_val"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_bold"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/text_dimen_20" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.03" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.485"
+                android:background="@drawable/dashboard_item_bg"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/fifty_dp"
+                    android:layout_height="@dimen/forty_dp"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/db_cod_penging" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/three_dp"
+                    android:fontFamily="@font/roboto_bold"
+                    android:gravity="center"
+                    android:text="@string/label_cod_pending"
+                    android:textColor="@color/dashboard_text_color"
+                    android:textSize="@dimen/text_dimen_12" />
+
+                <TextView
+                    android:id="@+id/cod_pending_val"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_bold"
+                    android:textColor="@color/dashboard_pending_text_color"
+                    android:textSize="@dimen/text_dimen_20" />
+            </LinearLayout>
+        </LinearLayout>
+        <View
+            android:id="@+id/devider"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/five_dp"
+            android:background="@color/colorGrey" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/reports_recycler"

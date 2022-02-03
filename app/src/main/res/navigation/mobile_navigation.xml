@@ -16,6 +16,11 @@
         android:name="com.apollo.epos.fragment.profile.ProfileFragment"
         android:label="@string/menu_profile"
         tools:layout="@layout/fragment_new_order" />
+    <fragment
+        android:id="@+id/nav_reports"
+        android:name="com.apollo.epos.fragment.reports.ReportsFragment"
+        android:label="@string/menu_reports"
+        tools:layout="@layout/fragment_reports" />
 
     <fragment
         android:id="@+id/nav_change_password"

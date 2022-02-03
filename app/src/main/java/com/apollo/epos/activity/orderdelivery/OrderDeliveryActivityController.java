@@ -70,7 +70,7 @@ public class OrderDeliveryActivityController {
             orderDetailsRequest.setOrderNumber(orderNumber);
 
             ApiInterface apiInterface = ApiClient.getApiService();
-            Call<OrderDetailsResponse> call = apiInterface.ORDER_DETAILS_API_CALL("Bearer " + token, orderDetailsRequest);
+            Call<OrderDetailsResponse> call = apiInterface.ORDER_DETAILS_API_CALL("Bearer " + token, orderNumber);
             call.enqueue(new Callback<OrderDetailsResponse>() {
                 @Override
                 public void onResponse(@NotNull Call<OrderDetailsResponse> call, @NotNull Response<OrderDetailsResponse> response) {
@@ -125,11 +125,11 @@ public class OrderDeliveryActivityController {
     public void orderStatusHistoryListApiCall(String uid) {
         if (NetworkUtils.isNetworkConnected(context)) {
             ActivityUtils.showDialog(context, "Please wait.");
-            OrderStatusHistoryListRequest orderStatusHistoryListRequest = new OrderStatusHistoryListRequest();
-            orderStatusHistoryListRequest.setUid(uid);
+//            OrderStatusHistoryListRequest orderStatusHistoryListRequest = new OrderStatusHistoryListRequest();
+//            orderStatusHistoryListRequest.setUid(uid);
 
             ApiInterface apiInterface = ApiClient.getApiService();
-            Call<OrderStatusHitoryListResponse> call = apiInterface.ORDER_STATUS_HISTORY_LIST_API_CALL("Bearer " + new SessionManager(context).getLoginToken(), orderStatusHistoryListRequest);
+            Call<OrderStatusHitoryListResponse> call = apiInterface.ORDER_STATUS_HISTORY_LIST_API_CALL("Bearer " + new SessionManager(context).getLoginToken(), uid);
             call.enqueue(new Callback<OrderStatusHitoryListResponse>() {
                 @Override
                 public void onResponse(@NotNull Call<OrderStatusHitoryListResponse> call, @NotNull Response<OrderStatusHitoryListResponse> response) {
@@ -377,11 +377,11 @@ public class OrderDeliveryActivityController {
     public void getOrderPaymentTypeinCod(String orderUid) {
         if (NetworkUtils.isNetworkConnected(context)) {
 //            ActivityUtils.showDialog(context, "Please Wait");
-            OrderPaymentSelectRequest orderPaymentSelectRequest = new OrderPaymentSelectRequest();
-            orderPaymentSelectRequest.setUid(orderUid);
+//            OrderPaymentSelectRequest orderPaymentSelectRequest = new OrderPaymentSelectRequest();
+//            orderPaymentSelectRequest.setUid(orderUid);
 
             ApiInterface apiInterface = ApiClient.getApiService();
-            Call<OrderPaymentSelectResponse> call = apiInterface.GET_ORDER_PAYMENT_TYPE_IN_COD("Bearer " + new SessionManager(context).getLoginToken(), orderPaymentSelectRequest);
+            Call<OrderPaymentSelectResponse> call = apiInterface.GET_ORDER_PAYMENT_TYPE_IN_COD("Bearer " + new SessionManager(context).getLoginToken(), orderUid);
             call.enqueue(new Callback<OrderPaymentSelectResponse>() {
                 @Override
                 public void onResponse(@NotNull Call<OrderPaymentSelectResponse> call, @NotNull Response<OrderPaymentSelectResponse> response) {
