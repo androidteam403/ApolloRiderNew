@@ -3,4 +3,5 @@
     <dimen name="custom_profile_image">30dp</dimen>
     <dimen name="custom_profile_padding">1dp</dimen>
     <dimen name="text_dimen_19">19sp</dimen>
+    <dimen name="text_dimen_25">25sp</dimen>
 </resources>

@@ -19,8 +19,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ProfileFragmentController {
-    private Context context;
-    private ProfileFragmentCallback mListener;
+    private final Context context;
+    private final ProfileFragmentCallback mListener;
 
     public ProfileFragmentController(Context context, ProfileFragmentCallback mListener) {
         this.context = context;

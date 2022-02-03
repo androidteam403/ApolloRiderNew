@@ -49,7 +49,7 @@ public class OrderPaymentUpdateRequest {
 
         @SerializedName("amount")
         @Expose
-        private String amount;
+        private Double amount;
         @SerializedName("device_type")
         @Expose
         private DeviceType deviceType;
@@ -66,11 +66,11 @@ public class OrderPaymentUpdateRequest {
         @Expose
         private Type type;
 
-        public String getAmount() {
+        public Double getAmount() {
             return amount;
         }
 
-        public void setAmount(String amount) {
+        public void setAmount(Double amount) {
             this.amount = amount;
         }
 

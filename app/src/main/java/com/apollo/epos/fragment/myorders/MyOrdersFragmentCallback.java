@@ -12,5 +12,7 @@ public interface MyOrdersFragmentCallback {
 
     void onStatusClick(MyOrdersListResponse.Row item);
 
+    void onClickNotificationIcon();
+
 
 }

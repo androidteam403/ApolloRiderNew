@@ -40,7 +40,8 @@ public class IdentityProofsAdapter extends RecyclerView.Adapter<IdentityProofsAd
         holder.identityProofsBinding.proofName.setText(identificationProof.getDocType().getName());
         Glide.with(context)
                 .load(identificationProof.getDoc().get(0).getDimenesions().get300300FullPath())
-                .error(R.drawable.drivinglicense)
+                .error(R.drawable.placeholder_image)
+                .placeholder(R.drawable.placeholder_image)
                 .into(holder.identityProofsBinding.proofIcon);
         holder.itemView.setOnClickListener(v -> {
             if (mListener != null) {
