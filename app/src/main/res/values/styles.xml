@@ -165,4 +165,9 @@
             <enum name="NEVER" value="3" />
         </attr>
     </declare-styleable>
+
+    <style name="CustomAppTheme" parent="Theme.AppCompat">
+        <item name="android:textColorPrimaryDisableOnly">#00838f</item>
+        <item name="colorAccent">#5ec639</item>
+    </style>
 </resources>

@@ -16,6 +16,15 @@ public class MyOrdersListResponse {
     @SerializedName("data")
     @Expose
     private Data data;
+    @SerializedName("zcServerDateTime")
+    @Expose
+    private String zcServerDateTime;
+    @SerializedName("zcServerIp")
+    @Expose
+    private String zcServerIp;
+    @SerializedName("zcServerHost")
+    @Expose
+    private String zcServerHost;
 
     public Object getMessage() {
         return message;
@@ -39,6 +48,30 @@ public class MyOrdersListResponse {
 
     public void setData(Data data) {
         this.data = data;
+    }
+
+    public String getZcServerDateTime() {
+        return zcServerDateTime;
+    }
+
+    public void setZcServerDateTime(String zcServerDateTime) {
+        this.zcServerDateTime = zcServerDateTime;
+    }
+
+    public String getZcServerIp() {
+        return zcServerIp;
+    }
+
+    public void setZcServerIp(String zcServerIp) {
+        this.zcServerIp = zcServerIp;
+    }
+
+    public String getZcServerHost() {
+        return zcServerHost;
+    }
+
+    public void setZcServerHost(String zcServerHost) {
+        this.zcServerHost = zcServerHost;
     }
 
     public class Data {
@@ -123,6 +156,18 @@ public class MyOrdersListResponse {
         @SerializedName("rows")
         @Expose
         private List<Row> rows = null;
+        @SerializedName("zc_extra")
+        @Expose
+        private Object zcExtra;
+        @SerializedName("pivotData")
+        @Expose
+        private Object pivotData;
+        @SerializedName("aggregation")
+        @Expose
+        private Object aggregation;
+        @SerializedName("size")
+        @Expose
+        private Integer size;
 
         public String getRecords() {
             return records;
@@ -162,6 +207,38 @@ public class MyOrdersListResponse {
 
         public void setRows(List<Row> rows) {
             this.rows = rows;
+        }
+
+        public Object getZcExtra() {
+            return zcExtra;
+        }
+
+        public void setZcExtra(Object zcExtra) {
+            this.zcExtra = zcExtra;
+        }
+
+        public Object getPivotData() {
+            return pivotData;
+        }
+
+        public void setPivotData(Object pivotData) {
+            this.pivotData = pivotData;
+        }
+
+        public Object getAggregation() {
+            return aggregation;
+        }
+
+        public void setAggregation(Object aggregation) {
+            this.aggregation = aggregation;
+        }
+
+        public Integer getSize() {
+            return size;
+        }
+
+        public void setSize(Integer size) {
+            this.size = size;
         }
 
     }
@@ -211,6 +288,44 @@ public class MyOrdersListResponse {
 
         public void setDeliveredOn(Object deliveredOn) {
             this.deliveredOn = deliveredOn;
+        }
+
+    }
+
+    public class OrderSh {
+
+        @SerializedName("uid")
+        @Expose
+        private String uid;
+        @SerializedName("order_status")
+        @Expose
+        private OrderStatus__1 orderStatus;
+        @SerializedName("created_time")
+        @Expose
+        private String createdTime;
+
+        public String getUid() {
+            return uid;
+        }
+
+        public void setUid(String uid) {
+            this.uid = uid;
+        }
+
+        public OrderStatus__1 getOrderStatus() {
+            return orderStatus;
+        }
+
+        public void setOrderStatus(OrderStatus__1 orderStatus) {
+            this.orderStatus = orderStatus;
+        }
+
+        public String getCreatedTime() {
+            return createdTime;
+        }
+
+        public void setCreatedTime(String createdTime) {
+            this.createdTime = createdTime;
         }
 
     }
@@ -313,6 +428,55 @@ public class MyOrdersListResponse {
 
     }
 
+    public class OrderStatus__1 {
+
+        @SerializedName("uid")
+        @Expose
+        private String uid;
+        @SerializedName("name")
+        @Expose
+        private String name;
+        @SerializedName("other")
+        @Expose
+        private Other__4 other;
+        @SerializedName("icon")
+        @Expose
+        private Object icon;
+
+        public String getUid() {
+            return uid;
+        }
+
+        public void setUid(String uid) {
+            this.uid = uid;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Other__4 getOther() {
+            return other;
+        }
+
+        public void setOther(Other__4 other) {
+            this.other = other;
+        }
+
+        public Object getIcon() {
+            return icon;
+        }
+
+        public void setIcon(Object icon) {
+            this.icon = icon;
+        }
+
+    }
+
     public class Other {
 
         @SerializedName("color")
@@ -349,13 +513,13 @@ public class MyOrdersListResponse {
 
         @SerializedName("color")
         @Expose
-        private Object color;
+        private String color;
 
-        public Object getColor() {
+        public String getColor() {
             return color;
         }
 
-        public void setColor(Object color) {
+        public void setColor(String color) {
             this.color = color;
         }
 
@@ -372,6 +536,22 @@ public class MyOrdersListResponse {
         }
 
         public void setColor(Object color) {
+            this.color = color;
+        }
+
+    }
+
+    public class Other__4 {
+
+        @SerializedName("color")
+        @Expose
+        private String color;
+
+        public String getColor() {
+            return color;
+        }
+
+        public void setColor(String color) {
             this.color = color;
         }
 
@@ -461,6 +641,10 @@ public class MyOrdersListResponse {
         @SerializedName("crate_amount")
         @Expose
         private Double crateAmount;
+
+        @SerializedName("del_acc_name")
+        @Expose
+        private String delAccName;
         @SerializedName("del_add_id")
         @Expose
         private String delAddId;
@@ -478,7 +662,7 @@ public class MyOrdersListResponse {
         private String deliverLandmark;
         @SerializedName("deliver_latitude")
         @Expose
-        private Object deliverLatitude;
+        private Double deliverLatitude;
         @SerializedName("deliver_locality")
         @Expose
         private String deliverLocality;
@@ -487,7 +671,10 @@ public class MyOrdersListResponse {
         private DelLocType delLocType;
         @SerializedName("deliver_longitude")
         @Expose
-        private Object deliverLongitude;
+        private Double deliverLongitude;
+        @SerializedName("del_pincode")
+        @Expose
+        private Integer delPincode;
         @SerializedName("deliver_state")
         @Expose
         private String deliverState;
@@ -509,6 +696,9 @@ public class MyOrdersListResponse {
         @SerializedName("payment_type")
         @Expose
         private PaymentType paymentType;
+        @SerializedName("pickup_acc_name")
+        @Expose
+        private String pickupAccName;
         @SerializedName("pickup_add_id")
         @Expose
         private String pickupAddId;
@@ -526,19 +716,25 @@ public class MyOrdersListResponse {
         private String pickupLndmrk;
         @SerializedName("pickup_latitude")
         @Expose
-        private Object pickupLatitude;
+        private Double pickupLatitude;
         @SerializedName("pickup_locality")
         @Expose
         private String pickupLocality;
         @SerializedName("pickup_longitude")
         @Expose
-        private Object pickupLongitude;
+        private Double pickupLongitude;
+        @SerializedName("pickup_pincode")
+        @Expose
+        private Integer pickupPincode;
         @SerializedName("pickup_state")
         @Expose
         private String pickupState;
         @SerializedName("pickup_street_name")
         @Expose
         private String pickupStreetName;
+        @SerializedName("return_acc_name")
+        @Expose
+        private String returnAccName;
         @SerializedName("return_add_id")
         @Expose
         private String returnAddId;
@@ -557,6 +753,9 @@ public class MyOrdersListResponse {
         @SerializedName("return_locality")
         @Expose
         private String returnLocality;
+        @SerializedName("return_pincode")
+        @Expose
+        private Integer returnPincode;
         @SerializedName("return_state")
         @Expose
         private String returnState;
@@ -566,21 +765,15 @@ public class MyOrdersListResponse {
         @SerializedName("order_rider")
         @Expose
         private OrderRider orderRider;
-        @SerializedName("del_pincode")
+        @SerializedName("failure_attempts")
         @Expose
-        private Integer delPincode;
-        @SerializedName("return_pincode")
-        @Expose
-        private Integer returnPincode;
-        @SerializedName("pickup_pincode")
-        @Expose
-        private Integer pickupPincode;
-        @SerializedName("created_time")
-        @Expose
-        private String createdTime;
+        private int failureAttempts;
         @SerializedName("pickup_st_windo")
         @Expose
         private String pickupStWindo;
+        @SerializedName("created_time")
+        @Expose
+        private String createdTime;
         @SerializedName("del_st_windo")
         @Expose
         private String delStWindo;
@@ -590,10 +783,41 @@ public class MyOrdersListResponse {
         @SerializedName("pickup_et_windo")
         @Expose
         private String pickupEtWindo;
+        @SerializedName("order_sh")
+        @Expose
+        private List<OrderSh> orderSh = null;
 
+        public int getFailureAttempts() {
+            return failureAttempts;
+        }
 
+        public void setFailureAttempts(int failureAttempts) {
+            this.failureAttempts = failureAttempts;
+        }
 
+        public String getDelAccName() {
+            return delAccName;
+        }
 
+        public void setDelAccName(String delAccName) {
+            this.delAccName = delAccName;
+        }
+
+        public String getPickupAccName() {
+            return pickupAccName;
+        }
+
+        public void setPickupAccName(String pickupAccName) {
+            this.pickupAccName = pickupAccName;
+        }
+
+        public String getReturnAccName() {
+            return returnAccName;
+        }
+
+        public void setReturnAccName(String returnAccName) {
+            this.returnAccName = returnAccName;
+        }
 
         public String getUid() {
             return uid;
@@ -651,11 +875,11 @@ public class MyOrdersListResponse {
             this.deliverLandmark = deliverLandmark;
         }
 
-        public Object getDeliverLatitude() {
+        public Double getDeliverLatitude() {
             return deliverLatitude;
         }
 
-        public void setDeliverLatitude(Object deliverLatitude) {
+        public void setDeliverLatitude(Double deliverLatitude) {
             this.deliverLatitude = deliverLatitude;
         }
 
@@ -675,12 +899,20 @@ public class MyOrdersListResponse {
             this.delLocType = delLocType;
         }
 
-        public Object getDeliverLongitude() {
+        public Double getDeliverLongitude() {
             return deliverLongitude;
         }
 
-        public void setDeliverLongitude(Object deliverLongitude) {
+        public void setDeliverLongitude(Double deliverLongitude) {
             this.deliverLongitude = deliverLongitude;
+        }
+
+        public Integer getDelPincode() {
+            return delPincode;
+        }
+
+        public void setDelPincode(Integer delPincode) {
+            this.delPincode = delPincode;
         }
 
         public String getDeliverState() {
@@ -779,11 +1011,11 @@ public class MyOrdersListResponse {
             this.pickupLndmrk = pickupLndmrk;
         }
 
-        public Object getPickupLatitude() {
+        public Double getPickupLatitude() {
             return pickupLatitude;
         }
 
-        public void setPickupLatitude(Object pickupLatitude) {
+        public void setPickupLatitude(Double pickupLatitude) {
             this.pickupLatitude = pickupLatitude;
         }
 
@@ -795,12 +1027,20 @@ public class MyOrdersListResponse {
             this.pickupLocality = pickupLocality;
         }
 
-        public Object getPickupLongitude() {
+        public Double getPickupLongitude() {
             return pickupLongitude;
         }
 
-        public void setPickupLongitude(Object pickupLongitude) {
+        public void setPickupLongitude(Double pickupLongitude) {
             this.pickupLongitude = pickupLongitude;
+        }
+
+        public Integer getPickupPincode() {
+            return pickupPincode;
+        }
+
+        public void setPickupPincode(Integer pickupPincode) {
+            this.pickupPincode = pickupPincode;
         }
 
         public String getPickupState() {
@@ -867,6 +1107,14 @@ public class MyOrdersListResponse {
             this.returnLocality = returnLocality;
         }
 
+        public Integer getReturnPincode() {
+            return returnPincode;
+        }
+
+        public void setReturnPincode(Integer returnPincode) {
+            this.returnPincode = returnPincode;
+        }
+
         public String getReturnState() {
             return returnState;
         }
@@ -891,28 +1139,12 @@ public class MyOrdersListResponse {
             this.orderRider = orderRider;
         }
 
-        public Integer getDelPincode() {
-            return delPincode;
+        public String getPickupStWindo() {
+            return pickupStWindo;
         }
 
-        public void setDelPincode(Integer delPincode) {
-            this.delPincode = delPincode;
-        }
-
-        public Integer getReturnPincode() {
-            return returnPincode;
-        }
-
-        public void setReturnPincode(Integer returnPincode) {
-            this.returnPincode = returnPincode;
-        }
-
-        public Integer getPickupPincode() {
-            return pickupPincode;
-        }
-
-        public void setPickupPincode(Integer pickupPincode) {
-            this.pickupPincode = pickupPincode;
+        public void setPickupStWindo(String pickupStWindo) {
+            this.pickupStWindo = pickupStWindo;
         }
 
         public String getCreatedTime() {
@@ -921,14 +1153,6 @@ public class MyOrdersListResponse {
 
         public void setCreatedTime(String createdTime) {
             this.createdTime = createdTime;
-        }
-
-        public String getPickupStWindo() {
-            return pickupStWindo;
-        }
-
-        public void setPickupStWindo(String pickupStWindo) {
-            this.pickupStWindo = pickupStWindo;
         }
 
         public String getDelStWindo() {
@@ -954,5 +1178,14 @@ public class MyOrdersListResponse {
         public void setPickupEtWindo(String pickupEtWindo) {
             this.pickupEtWindo = pickupEtWindo;
         }
+
+        public List<OrderSh> getOrderSh() {
+            return orderSh;
+        }
+
+        public void setOrderSh(List<OrderSh> orderSh) {
+            this.orderSh = orderSh;
+        }
+
     }
 }

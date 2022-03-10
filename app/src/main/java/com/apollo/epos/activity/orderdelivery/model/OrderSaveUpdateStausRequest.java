@@ -20,6 +20,10 @@ public class OrderSaveUpdateStausRequest {
     @Expose
     private DeliveryFailureReason deliveryFailureReason;
 
+    @SerializedName("paymentSubType")
+    @Expose
+    private String paymentSubType;
+
     public String getUid() {
         return uid;
     }
@@ -50,6 +54,14 @@ public class OrderSaveUpdateStausRequest {
 
     public void setDeliveryFailureReason(DeliveryFailureReason deliveryFailureReason) {
         this.deliveryFailureReason = deliveryFailureReason;
+    }
+
+    public String getPaymentSubType() {
+        return paymentSubType;
+    }
+
+    public void setPaymentSubType(String paymentSubType) {
+        this.paymentSubType = paymentSubType;
     }
 
     public static class OrderStatus {

@@ -317,9 +317,9 @@ public class OrderDetailsResponse implements Serializable {
         @SerializedName("cus_pickup_ver_code")
         @Expose
         private String cusPickupVerCode;
-        @SerializedName("cus_return_ver_code")
+        @SerializedName("cus_delivery_ver_code")
         @Expose
-        private String cusReturnVerCode;
+        private String cusDeliveryVerCode;
         @SerializedName("del_acc_code")
         @Expose
         private String delAccCode;
@@ -536,6 +536,9 @@ public class OrderDetailsResponse implements Serializable {
         @SerializedName("order_handover")
         @Expose
         private OrderHandover orderHandover;
+        @SerializedName("failure_attempts")
+        @Expose
+        private int failureAttempts;
         @SerializedName("pickup_st_windo")
         @Expose
         private String pickupStWindo;
@@ -566,6 +569,14 @@ public class OrderDetailsResponse implements Serializable {
         @SerializedName("order_sh")
         @Expose
         private List<OrderSh> orderSh = null;
+
+        public int getFailureAttempts() {
+            return failureAttempts;
+        }
+
+        public void setFailureAttempts(int failureAttempts) {
+            this.failureAttempts = failureAttempts;
+        }
 
         public String getUid() {
             return uid;
@@ -655,12 +666,12 @@ public class OrderDetailsResponse implements Serializable {
             this.cusPickupVerCode = cusPickupVerCode;
         }
 
-        public String getCusReturnVerCode() {
-            return cusReturnVerCode;
+        public String getCusDeliveryVerCode() {
+            return cusDeliveryVerCode;
         }
 
-        public void setCusReturnVerCode(String cusReturnVerCode) {
-            this.cusReturnVerCode = cusReturnVerCode;
+        public void setCusDeliveryVerCode(String cusReturnVerCode) {
+            this.cusDeliveryVerCode = cusReturnVerCode;
         }
 
         public String getDelAccCode() {

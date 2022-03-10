@@ -38,12 +38,11 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 
 import com.apollo.epos.R;
 import com.apollo.epos.activity.CancelOrderActivity;
 import com.apollo.epos.activity.CaptureSignatureActivity;
-import com.apollo.epos.activity.NavigationActivity;
+import com.apollo.epos.activity.navigation.NavigationActivity;
 import com.apollo.epos.activity.ScannerActivity;
 import com.apollo.epos.adapter.CustomReasonAdapter;
 import com.apollo.epos.base.BaseFragment;
@@ -233,6 +232,7 @@ public class DeliveryOrderFragment extends BaseFragment implements AdapterView.O
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        NavigationActivity.getInstance().setTitle(R.string.menu_delivery_order);
         mActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         CustomReasonAdapter customUserListAdapter = new CustomReasonAdapter(mActivity, customerTypesList, null);
