@@ -10,6 +10,9 @@ import com.apollo.epos.activity.trackmap.model.OrderEndJourneyUpdateResponse;
 
 public interface OrderDeliveryActivityCallback {
     // test
+
+    void onFailureMessage(String message);
+
     void onClickBackIcon();
 
     void onSuccessOrderDetailsApiCall(OrderDetailsResponse orderDetailsResponse);
@@ -35,6 +38,8 @@ public interface OrderDeliveryActivityCallback {
     void onClickCollectPayment();
 
     void onClickCollectPaymentSave();
+
+    String getCodCardCash();
 
     void onSuccessOrderPaymentUpdateApiCall();
 
@@ -81,4 +86,14 @@ public interface OrderDeliveryActivityCallback {
     void onFailureOrderPaymentTypeInCod(String message);
 
     void onSuccessOrderEndJourneyUpdateApiCall(OrderEndJourneyUpdateResponse orderEndJourneyUpdateResponse);
+
+    void onLogout();
+
+    boolean isOrderCancelled();
+
+    void orderCancelled();
+
+    boolean isStatusCancelled();
+
+    void statusCanelled();
 }

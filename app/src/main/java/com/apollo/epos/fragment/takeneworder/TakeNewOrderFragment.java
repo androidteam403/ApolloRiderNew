@@ -176,6 +176,7 @@ public class TakeNewOrderFragment extends Fragment implements OnItemClickListene
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        NavigationActivity.getInstance().setTitle(R.string.menu_take_order);
         setHasOptionsMenu(true);
 
         final SpeechRecognizer mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(mActivity);

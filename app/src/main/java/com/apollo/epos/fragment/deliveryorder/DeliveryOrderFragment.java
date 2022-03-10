@@ -232,6 +232,7 @@ public class DeliveryOrderFragment extends BaseFragment implements AdapterView.O
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        NavigationActivity.getInstance().setTitle(R.string.menu_delivery_order);
         mActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         CustomReasonAdapter customUserListAdapter = new CustomReasonAdapter(mActivity, customerTypesList, null);

@@ -1,6 +1,7 @@
 package com.apollo.epos.adapter;
 
-import android.app.Activity;
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +13,6 @@ import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apollo.epos.R;
-import com.apollo.epos.fragment.myorders.MyOrdersFragmentCallback;
 import com.apollo.epos.fragment.myorders.model.MyOrdersListResponse;
 import com.apollo.epos.utils.CommonUtils;
 
@@ -26,12 +26,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapter.MyViewHolder> {
-    private Activity activity;
+    private Context activity;
     private List<MyOrdersListResponse.Row> myOrdersList;
 
-    private MyOrdersFragmentCallback listener;
+    private MyOrdersListAdapterCallback listener;
 
-    public MyOrdersListAdapter(Activity activity, List<MyOrdersListResponse.Row> myOrdersList, MyOrdersFragmentCallback listener) {
+    public MyOrdersListAdapter(Context activity, List<MyOrdersListResponse.Row> myOrdersList, MyOrdersListAdapterCallback listener) {
         this.activity = activity;
         this.myOrdersList = myOrdersList;
         this.listener = listener;
@@ -71,6 +71,11 @@ public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapte
         TextView deliveryText;
         @BindView(R.id.deliver_by)
         TextView deliverBy;
+        @BindView(R.id.order_status_layout)
+        LinearLayout orderStatusLayout;
+        @BindView(R.id.order_status)
+        TextView orderStatus;
+
 
         public MyViewHolder(View view) {
             super(view);
@@ -88,11 +93,80 @@ public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapte
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         MyOrdersListResponse.Row item = myOrdersList.get(position);
+        if (listener == null) {
+            holder.orderStatusLayout.setVisibility(View.VISIBLE);
+            holder.orderStatus.setText(item.getOrderStatus().getName());
+            holder.orderStatus.setTextColor(Color.parseColor(item.getOrderStatus().getOther().getColor()));
+        } else {
+            holder.orderStatusLayout.setVisibility(View.GONE);
+        }
+
         holder.orderId.setText("#" + item.getOrderNumber());
         String orderDate = null;
-        String customerAddress = item.getDeliverApartment() + ", " + item.getDeliverStreetName() + ", " + item.getDeliverCity() + ", " + item.getDeliverState() + ", " + item.getDelPincode() + ", " + item.getDeliverCountry();
-        String pickupAddress = item.getPickupApt() + ", " + item.getPickupStreetName() + ", " + item.getPickupCity() + ", " + item.getPickupState() + ", " + item.getPickupPincode() + ", " + item.getPickupCountry();
-        String returnAddress = item.getReturnApartment() + ", " + item.getReturnStreetName() + ", " + item.getReturnCity() + ", " + item.getReturnState() + ", " + item.getReturnPincode() + ", " + item.getReturnCountry();
+
+        String customerAddress = "";
+        if (item.getDeliverApartment() != null) {
+            customerAddress = item.getDeliverApartment() + ", ";
+        }
+        if (item.getDeliverStreetName() != null) {
+            customerAddress = customerAddress + item.getDeliverStreetName() + ", ";
+        }
+        if (item.getDeliverCity() != null) {
+            customerAddress = customerAddress + item.getDeliverCity() + ", ";
+        }
+        if (item.getDeliverState() != null) {
+            customerAddress = customerAddress + item.getDeliverState() + ", ";
+        }
+        if (item.getDelPincode() != null) {
+            customerAddress = customerAddress + item.getDelPincode() + ", ";
+        }
+        if (item.getDeliverCountry() != null) {
+            customerAddress = customerAddress + item.getDeliverCountry();
+        }
+//        item.getDeliverApartment() + ", " + item.getDeliverStreetName() + ", " + item.getDeliverCity() + ", " + item.getDeliverState() + ", " + item.getDelPincode() + ", " + item.getDeliverCountry();
+
+        String pickupAddress = "";
+        if (item.getPickupApt() != null) {
+            pickupAddress = item.getPickupApt() + ", ";
+        }
+        if (item.getPickupStreetName() != null) {
+            pickupAddress = pickupAddress + item.getPickupStreetName() + ", ";
+        }
+        if (item.getPickupCity() != null) {
+            pickupAddress = pickupAddress + item.getPickupCity() + ", ";
+        }
+        if (item.getPickupState() != null) {
+            pickupAddress = pickupAddress + item.getPickupState() + ", ";
+        }
+        if (item.getPickupPincode() != null) {
+            pickupAddress = pickupAddress + item.getPickupPincode() + ", ";
+        }
+        if (item.getPickupCountry() != null) {
+            pickupAddress = pickupAddress + item.getPickupCountry();
+        }
+//        = item.getPickupApt() + ", " + item.getPickupStreetName() + ", " + item.getPickupCity() + ", " + item.getPickupState() + ", " + item.getPickupPincode() + ", " + item.getPickupCountry();
+
+        String returnAddress = "";
+        if (item.getReturnApartment() != null) {
+            returnAddress = item.getReturnApartment() + ", ";
+        }
+        if (item.getReturnStreetName() != null) {
+            returnAddress = returnAddress + item.getReturnStreetName() + ", ";
+        }
+        if (item.getReturnCity() != null) {
+            returnAddress = returnAddress + item.getReturnCity() + ", ";
+        }
+        if (item.getReturnState() != null) {
+            returnAddress = returnAddress + item.getReturnState() + ", ";
+        }
+        if (item.getReturnPincode() != null) {
+            returnAddress = returnAddress + item.getReturnPincode() + ", ";
+        }
+        if (item.getReturnCountry() != null) {
+            returnAddress = returnAddress + item.getReturnCountry();
+        }
+//                item.getReturnApartment() + ", " + item.getReturnStreetName() + ", " + item.getReturnCity() + ", " + item.getReturnState() + ", " + item.getReturnPincode() + ", " + item.getReturnCountry();
+
         if (item.getOrderState().getName().equals("RETURN")) {
             if (item.getOrderStatus().getUid().equals("ORDERACCEPTED") || item.getOrderStatus().getUid().equals("ORDERUPDATE")) {
                 holder.deliverBy.setText("Pickup by: ");
@@ -105,12 +179,12 @@ public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapte
                 orderDate = item.getPickupEtWindo();
             }
             // Pickup Address
-            holder.apolloPharmacyName.setText(item.getPickupAddId());
+            holder.apolloPharmacyName.setText(item.getPickupAccName());
             holder.pharmacyAddress.setText(pickupAddress);
             holder.pickupLandmark.setText(item.getPickupLndmrk());
             // Delivery Address
             holder.deliveryText.setText("R");
-            holder.customerName.setText(item.getReturnAddId());
+            holder.customerName.setText(item.getReturnAccName());
             holder.customerAddress.setText(returnAddress);
             holder.customerLandmark.setText(item.getReturnLandmark());
         } else {
@@ -125,11 +199,11 @@ public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapte
                 orderDate = item.getDelEtWindo();
             }
             // Pickup Address
-            holder.apolloPharmacyName.setText(item.getPickupAddId());
+            holder.apolloPharmacyName.setText(item.getPickupAccName());
             holder.pharmacyAddress.setText(pickupAddress);
             holder.pickupLandmark.setText(item.getPickupLndmrk());
             // Delivery Address
-            holder.customerName.setText(item.getDelAddId());
+            holder.customerName.setText(item.getDelAccName());
             holder.customerAddress.setText(customerAddress);
             holder.customerLandmark.setText(item.getDeliverLandmark());
         }
@@ -152,7 +226,7 @@ public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapte
         }
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
-                listener.onStatusClick(item);
+                listener.onClickOrder(item);
             }
         });
     }
@@ -160,5 +234,10 @@ public class MyOrdersListAdapter extends RecyclerView.Adapter<MyOrdersListAdapte
     @Override
     public int getItemCount() {
         return myOrdersList.size();
+    }
+
+
+    public interface MyOrdersListAdapterCallback {
+        void onClickOrder(MyOrdersListResponse.Row order);
     }
 }

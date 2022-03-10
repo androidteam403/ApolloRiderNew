@@ -9,6 +9,9 @@ public class RiderActiveStatusRequest {
     @SerializedName("user_add_info")
     @Expose
     private UserAddInfo userAddInfo;
+    @SerializedName("uid")
+    @Expose
+    private String uid;
 
     public UserAddInfo getUserAddInfo() {
         return userAddInfo;
@@ -16,6 +19,14 @@ public class RiderActiveStatusRequest {
 
     public void setUserAddInfo(UserAddInfo userAddInfo) {
         this.userAddInfo = userAddInfo;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public static class AvailableStatus {

@@ -73,7 +73,6 @@ public class GetRiderProfileResponse {
     public void setZcServerHost(String zcServerHost) {
         this.zcServerHost = zcServerHost;
     }
-
     public class CaCountry {
 
         @SerializedName("uid")
@@ -100,7 +99,58 @@ public class GetRiderProfileResponse {
         }
 
     }
+    public class CaDistrict {
 
+        @SerializedName("uid")
+        @Expose
+        private String uid;
+        @SerializedName("name")
+        @Expose
+        private String name;
+
+        public String getUid() {
+            return uid;
+        }
+
+        public void setUid(String uid) {
+            this.uid = uid;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+    }
+    public class CaPinCode {
+
+        @SerializedName("uid")
+        @Expose
+        private String uid;
+        @SerializedName("name")
+        @Expose
+        private String name;
+
+        public String getUid() {
+            return uid;
+        }
+
+        public void setUid(String uid) {
+            this.uid = uid;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+    }
     public class CaState {
 
         @SerializedName("uid")
@@ -127,7 +177,32 @@ public class GetRiderProfileResponse {
         }
 
     }
+    public class CadCity {
 
+        @SerializedName("uid")
+        @Expose
+        private String uid;
+        @SerializedName("name")
+        @Expose
+        private String name;
+
+        public String getUid() {
+            return uid;
+        }
+
+        public void setUid(String uid) {
+            this.uid = uid;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+    }
     public class Cluster {
 
         @SerializedName("uid")
@@ -154,7 +229,6 @@ public class GetRiderProfileResponse {
         }
 
     }
-
     public class CreatedInfo {
 
         @SerializedName("created_on")
@@ -269,7 +343,6 @@ public class GetRiderProfileResponse {
         }
 
     }
-
     public class CreatedInfo__1 {
 
         @SerializedName("created_on")
@@ -384,7 +457,32 @@ public class GetRiderProfileResponse {
         }
 
     }
+    public class CuaRegion {
 
+        @SerializedName("uid")
+        @Expose
+        private String uid;
+        @SerializedName("name")
+        @Expose
+        private String name;
+
+        public String getUid() {
+            return uid;
+        }
+
+        public void setUid(String uid) {
+            this.uid = uid;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+    }
     public class Data {
 
         @SerializedName("uid")
@@ -486,8 +584,8 @@ public class GetRiderProfileResponse {
         public void setPic(List<Pic> pic) {
             this.pic = pic;
         }
-    }
 
+    }
     public class Dimenesions {
 
         @SerializedName("300_300")
@@ -514,7 +612,6 @@ public class GetRiderProfileResponse {
         }
 
     }
-
     public class Dimenesions__1 {
 
         @SerializedName("200_200")
@@ -541,7 +638,6 @@ public class GetRiderProfileResponse {
         }
 
     }
-
     public class Doc {
 
         @SerializedName("size")
@@ -562,12 +658,12 @@ public class GetRiderProfileResponse {
         @SerializedName("path")
         @Expose
         private String path;
-        @SerializedName("created_info")
-        @Expose
-        private CreatedInfo createdInfo;
         @SerializedName("fullPath")
         @Expose
         private String fullPath;
+        @SerializedName("created_info")
+        @Expose
+        private CreatedInfo createdInfo;
 
         public Integer getSize() {
             return size;
@@ -617,14 +713,6 @@ public class GetRiderProfileResponse {
             this.path = path;
         }
 
-        public CreatedInfo getCreatedInfo() {
-            return createdInfo;
-        }
-
-        public void setCreatedInfo(CreatedInfo createdInfo) {
-            this.createdInfo = createdInfo;
-        }
-
         public String getFullPath() {
             return fullPath;
         }
@@ -633,8 +721,15 @@ public class GetRiderProfileResponse {
             this.fullPath = fullPath;
         }
 
-    }
+        public CreatedInfo getCreatedInfo() {
+            return createdInfo;
+        }
 
+        public void setCreatedInfo(CreatedInfo createdInfo) {
+            this.createdInfo = createdInfo;
+        }
+
+    }
     public class DocType {
 
         @SerializedName("uid")
@@ -683,7 +778,6 @@ public class GetRiderProfileResponse {
         }
 
     }
-
     public class IdentificationProof {
 
         @SerializedName("uid")
@@ -732,7 +826,6 @@ public class GetRiderProfileResponse {
         }
 
     }
-
     public class Language {
 
         @SerializedName("uid")
@@ -781,7 +874,6 @@ public class GetRiderProfileResponse {
         }
 
     }
-
     public class Other {
 
         @SerializedName("color")
@@ -797,7 +889,6 @@ public class GetRiderProfileResponse {
         }
 
     }
-
     public class Other__1 {
 
         @SerializedName("color")
@@ -813,7 +904,6 @@ public class GetRiderProfileResponse {
         }
 
     }
-
     public class Other__2 {
 
         @SerializedName("color")
@@ -829,7 +919,6 @@ public class GetRiderProfileResponse {
         }
 
     }
-
     public class PaCountry {
 
         @SerializedName("uid")
@@ -856,7 +945,58 @@ public class GetRiderProfileResponse {
         }
 
     }
+    public class PaDistrict {
 
+        @SerializedName("uid")
+        @Expose
+        private String uid;
+        @SerializedName("name")
+        @Expose
+        private String name;
+
+        public String getUid() {
+            return uid;
+        }
+
+        public void setUid(String uid) {
+            this.uid = uid;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+    }
+    public class PaPinCode {
+
+        @SerializedName("uid")
+        @Expose
+        private String uid;
+        @SerializedName("name")
+        @Expose
+        private String name;
+
+        public String getUid() {
+            return uid;
+        }
+
+        public void setUid(String uid) {
+            this.uid = uid;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+    }
     public class PaState {
 
         @SerializedName("uid")
@@ -883,7 +1023,58 @@ public class GetRiderProfileResponse {
         }
 
     }
+    public class PadCity {
 
+        @SerializedName("uid")
+        @Expose
+        private String uid;
+        @SerializedName("name")
+        @Expose
+        private String name;
+
+        public String getUid() {
+            return uid;
+        }
+
+        public void setUid(String uid) {
+            this.uid = uid;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+    }
+    public class PeaRegion {
+
+        @SerializedName("uid")
+        @Expose
+        private String uid;
+        @SerializedName("name")
+        @Expose
+        private String name;
+
+        public String getUid() {
+            return uid;
+        }
+
+        public void setUid(String uid) {
+            this.uid = uid;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+    }
     public class Pic {
 
         @SerializedName("size")
@@ -904,12 +1095,12 @@ public class GetRiderProfileResponse {
         @SerializedName("path")
         @Expose
         private String path;
-        @SerializedName("created_info")
-        @Expose
-        private CreatedInfo__1 createdInfo;
         @SerializedName("fullPath")
         @Expose
         private String fullPath;
+        @SerializedName("created_info")
+        @Expose
+        private CreatedInfo__1 createdInfo;
 
         public Integer getSize() {
             return size;
@@ -959,14 +1150,6 @@ public class GetRiderProfileResponse {
             this.path = path;
         }
 
-        public CreatedInfo__1 getCreatedInfo() {
-            return createdInfo;
-        }
-
-        public void setCreatedInfo(CreatedInfo__1 createdInfo) {
-            this.createdInfo = createdInfo;
-        }
-
         public String getFullPath() {
             return fullPath;
         }
@@ -975,8 +1158,15 @@ public class GetRiderProfileResponse {
             this.fullPath = fullPath;
         }
 
-    }
+        public CreatedInfo__1 getCreatedInfo() {
+            return createdInfo;
+        }
 
+        public void setCreatedInfo(CreatedInfo__1 createdInfo) {
+            this.createdInfo = createdInfo;
+        }
+
+    }
     public class RiderPostalCode {
 
         @SerializedName("uid")
@@ -1003,7 +1193,6 @@ public class GetRiderProfileResponse {
         }
 
     }
-
     public class SkillSet {
 
         @SerializedName("uid")
@@ -1030,7 +1219,6 @@ public class GetRiderProfileResponse {
         }
 
     }
-
     public class Store {
 
         @SerializedName("uid")
@@ -1057,7 +1245,6 @@ public class GetRiderProfileResponse {
         }
 
     }
-
     public class UserAddInfo {
 
         @SerializedName("uid")
@@ -1114,12 +1301,12 @@ public class GetRiderProfileResponse {
         @SerializedName("language")
         @Expose
         private List<Language> language = null;
-        @SerializedName("identification_proofs")
-        @Expose
-        private List<IdentificationProof> identificationProofs = null;
         @SerializedName("rider_postal_code")
         @Expose
         private List<RiderPostalCode> riderPostalCode = null;
+        @SerializedName("identification_proofs")
+        @Expose
+        private List<IdentificationProof> identificationProofs = null;
 
         public String getUid() {
             return uid;
@@ -1265,14 +1452,6 @@ public class GetRiderProfileResponse {
             this.language = language;
         }
 
-        public List<IdentificationProof> getIdentificationProofs() {
-            return identificationProofs;
-        }
-
-        public void setIdentificationProofs(List<IdentificationProof> identificationProofs) {
-            this.identificationProofs = identificationProofs;
-        }
-
         public List<RiderPostalCode> getRiderPostalCode() {
             return riderPostalCode;
         }
@@ -1281,8 +1460,15 @@ public class GetRiderProfileResponse {
             this.riderPostalCode = riderPostalCode;
         }
 
-    }
+        public List<IdentificationProof> getIdentificationProofs() {
+            return identificationProofs;
+        }
 
+        public void setIdentificationProofs(List<IdentificationProof> identificationProofs) {
+            this.identificationProofs = identificationProofs;
+        }
+
+    }
     public class UserAddress {
 
         @SerializedName("uid")
@@ -1291,36 +1477,48 @@ public class GetRiderProfileResponse {
         @SerializedName("current_address")
         @Expose
         private String currentAddress;
-        @SerializedName("ca_city")
-        @Expose
-        private String caCity;
-        @SerializedName("ca_pincode")
-        @Expose
-        private String caPincode;
         @SerializedName("is_ca_is_same_as_pa")
         @Expose
         private Boolean isCaIsSameAsPa;
         @SerializedName("permanent_address")
         @Expose
         private String permanentAddress;
-        @SerializedName("pa_city")
-        @Expose
-        private String paCity;
-        @SerializedName("pa_pincode")
-        @Expose
-        private String paPincode;
         @SerializedName("ca_country")
         @Expose
         private CaCountry caCountry;
+        @SerializedName("cua_region")
+        @Expose
+        private CuaRegion cuaRegion;
         @SerializedName("ca_state")
         @Expose
         private CaState caState;
+        @SerializedName("pa_pin_code")
+        @Expose
+        private PaPinCode paPinCode;
+        @SerializedName("pad_city")
+        @Expose
+        private PadCity padCity;
+        @SerializedName("cad_city")
+        @Expose
+        private CadCity cadCity;
+        @SerializedName("pea_region")
+        @Expose
+        private PeaRegion peaRegion;
         @SerializedName("pa_country")
         @Expose
         private PaCountry paCountry;
         @SerializedName("pa_state")
         @Expose
         private PaState paState;
+        @SerializedName("ca_pin_code")
+        @Expose
+        private CaPinCode caPinCode;
+        @SerializedName("ca_district")
+        @Expose
+        private CaDistrict caDistrict;
+        @SerializedName("pa_district")
+        @Expose
+        private PaDistrict paDistrict;
 
         public String getUid() {
             return uid;
@@ -1336,22 +1534,6 @@ public class GetRiderProfileResponse {
 
         public void setCurrentAddress(String currentAddress) {
             this.currentAddress = currentAddress;
-        }
-
-        public String getCaCity() {
-            return caCity;
-        }
-
-        public void setCaCity(String caCity) {
-            this.caCity = caCity;
-        }
-
-        public String getCaPincode() {
-            return caPincode;
-        }
-
-        public void setCaPincode(String caPincode) {
-            this.caPincode = caPincode;
         }
 
         public Boolean getIsCaIsSameAsPa() {
@@ -1370,22 +1552,6 @@ public class GetRiderProfileResponse {
             this.permanentAddress = permanentAddress;
         }
 
-        public String getPaCity() {
-            return paCity;
-        }
-
-        public void setPaCity(String paCity) {
-            this.paCity = paCity;
-        }
-
-        public String getPaPincode() {
-            return paPincode;
-        }
-
-        public void setPaPincode(String paPincode) {
-            this.paPincode = paPincode;
-        }
-
         public CaCountry getCaCountry() {
             return caCountry;
         }
@@ -1394,12 +1560,52 @@ public class GetRiderProfileResponse {
             this.caCountry = caCountry;
         }
 
+        public CuaRegion getCuaRegion() {
+            return cuaRegion;
+        }
+
+        public void setCuaRegion(CuaRegion cuaRegion) {
+            this.cuaRegion = cuaRegion;
+        }
+
         public CaState getCaState() {
             return caState;
         }
 
         public void setCaState(CaState caState) {
             this.caState = caState;
+        }
+
+        public PaPinCode getPaPinCode() {
+            return paPinCode;
+        }
+
+        public void setPaPinCode(PaPinCode paPinCode) {
+            this.paPinCode = paPinCode;
+        }
+
+        public PadCity getPadCity() {
+            return padCity;
+        }
+
+        public void setPadCity(PadCity padCity) {
+            this.padCity = padCity;
+        }
+
+        public CadCity getCadCity() {
+            return cadCity;
+        }
+
+        public void setCadCity(CadCity cadCity) {
+            this.cadCity = cadCity;
+        }
+
+        public PeaRegion getPeaRegion() {
+            return peaRegion;
+        }
+
+        public void setPeaRegion(PeaRegion peaRegion) {
+            this.peaRegion = peaRegion;
         }
 
         public PaCountry getPaCountry() {
@@ -1418,8 +1624,31 @@ public class GetRiderProfileResponse {
             this.paState = paState;
         }
 
-    }
+        public CaPinCode getCaPinCode() {
+            return caPinCode;
+        }
 
+        public void setCaPinCode(CaPinCode caPinCode) {
+            this.caPinCode = caPinCode;
+        }
+
+        public CaDistrict getCaDistrict() {
+            return caDistrict;
+        }
+
+        public void setCaDistrict(CaDistrict caDistrict) {
+            this.caDistrict = caDistrict;
+        }
+
+        public PaDistrict getPaDistrict() {
+            return paDistrict;
+        }
+
+        public void setPaDistrict(PaDistrict paDistrict) {
+            this.paDistrict = paDistrict;
+        }
+
+    }
     public class VehicleType {
 
         @SerializedName("uid")
@@ -1469,5 +1698,8 @@ public class GetRiderProfileResponse {
 
     }
 }
+
+
+
 
 

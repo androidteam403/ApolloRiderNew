@@ -14,5 +14,5 @@ public interface MyOrdersFragmentCallback {
 
     void onClickNotificationIcon();
 
-
+    void onLogout();
 }

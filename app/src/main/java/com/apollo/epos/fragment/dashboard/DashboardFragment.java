@@ -4,6 +4,7 @@ import android.Manifest;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -36,8 +37,8 @@ import androidx.databinding.DataBindingUtil;
 
 import com.apollo.epos.R;
 import com.apollo.epos.activity.NewOrderActivity;
+import com.apollo.epos.activity.login.LoginActivity;
 import com.apollo.epos.activity.navigation.NavigationActivity;
-import com.apollo.epos.activity.reports.ReportsActivity;
 import com.apollo.epos.base.BaseFragment;
 import com.apollo.epos.databinding.FragmentDashboardBinding;
 import com.apollo.epos.fragment.dashboard.model.RiderDashboardCountResponse;
@@ -232,10 +233,13 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
 
     final AnimationDrawable drawable = new AnimationDrawable();
     final Handler handler = new Handler();
+    private boolean isActiveSwith = false;
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        NavigationActivity.getInstance().setTitle(R.string.menu_dashboard);
         ButterKnife.bind(this, view);
         dashboardBinding.setCallback(this);
         new DashboardFragmentController(getContext(), this).getRiderDashboardCountsApiCall();
@@ -273,8 +277,10 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
                 userStatus.setText("Online");
                 getController().riderUpdateStauts(getSessionManager().getLoginToken(), "Online");
             } else {
-                userStatus.setText("Offline");
-                getController().riderUpdateStauts(getSessionManager().getLoginToken(), "Offline");
+                isActiveSwith = true;
+                getController().getRiderDashboardCountsApiCall();
+//                userStatus.setText("Offline");
+//                getController().riderUpdateStauts(getSessionManager().getLoginToken(), "Offline");
             }
         });
 
@@ -1028,24 +1034,51 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
         return new DashboardFragmentController(getContext(), this);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onSuccessGetRiderDashboardCountApiCall(RiderDashboardCountResponse riderDashboardCountResponse) {
         if (riderDashboardCountResponse != null && riderDashboardCountResponse.getSuccess() && riderDashboardCountResponse.getData() != null && riderDashboardCountResponse.getData().getCount() != null) {
-            dashboardBinding.totalOrdersVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getTotalOrders()));
-            dashboardBinding.deliveredOrdersVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getDeliveredOrders()));
-            dashboardBinding.cancelledOrdersVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getCancelledOrders()));
+//            dashboardBinding.totalOrdersVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getTotalOrders()));
+//            dashboardBinding.newOrders.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getNewOrders()));
+//            dashboardBinding.inTransit.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getIntransitOrders()));
+//            dashboardBinding.deliveredOrdersVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getDeliveredOrders()));
+//            dashboardBinding.cancelledOrdersVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getCancelledOrders()));
+
+            dashboardBinding.total.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getTotalOrders()));
+            dashboardBinding.newOrdr.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getNewOrders()));
+            dashboardBinding.intransit.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getIntransitOrders()));
+            dashboardBinding.delivered.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getDeliveredOrders()));
+            dashboardBinding.cancelled.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getCancelledOrders()));
+
             DecimalFormat decim = new DecimalFormat("#,###.##");
             dashboardBinding.codReceivedVal.setText(getActivity().getResources().getString(R.string.label_rupee_symbol) + " " + decim.format(riderDashboardCountResponse.getData().getCount().getCodReceived()));
             dashboardBinding.codPendingVal.setText(getActivity().getResources().getString(R.string.label_rupee_symbol) + " " + decim.format(riderDashboardCountResponse.getData().getCount().getCodPending()));
             dashboardBinding.travelledDistanceVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getDistanceTravelled()) + " KM");
             todayRiderTravelledDistanceText();
+
+            if (isActiveSwith) {
+                isActiveSwith = false;
+                if (riderDashboardCountResponse.getData().getCount().getNewOrders() > 0
+                        || riderDashboardCountResponse.getData().getCount().getIntransitOrders() > 0) {
+                    Toast.makeText(mActivity, "Please Complete Pending Orders.", Toast.LENGTH_SHORT).show();
+                    sw.setChecked(true);
+                } else {
+                    userStatus.setText("Offline");
+                    getController().riderUpdateStauts(getSessionManager().getLoginToken(), "Offline");
+                }
+            } else {
+                ActivityUtils.hideDialog();
+            }
         }
     }
 
     @Override
     public void onClickCodReciebedorPendingDeposits() {
-        startActivity(ReportsActivity.getStartIntent(getContext()));
-        getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+        NavigationActivity.getInstance().selectItem(2);
+
+
+//        startActivity(ReportsActivity.getStartIntent(getContext()));
+//        getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
     }
 
     @Override
@@ -1060,13 +1093,53 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
 //            startUpdatesButtonHandler(newOrderLayout);
     }
 
+    @Override
+    public void onLogout() {
+        getSessionManager().clearAllSharedPreferences();
+        NavigationActivity.getInstance().stopBatteryLevelLocationService();
+        Intent intent = new Intent(getContext(), LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        getActivity().finish();
+        getActivity().overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+    }
+
+    @Override
+    public void onClickNewOrders() {
+        CommonUtils.selectedTab = "NEW";
+        NavigationActivity.getInstance().selectItem(1);
+    }
+
+    @Override
+    public void onClickIntransitOrders() {
+        CommonUtils.selectedTab = "INTRANSIT";
+        NavigationActivity.getInstance().selectItem(1);
+    }
+
+    @Override
+    public void onClickDeliveredOrders() {
+        CommonUtils.selectedTab = "DELIVERED";
+        NavigationActivity.getInstance().selectItem(1);
+    }
+
+    @Override
+    public void onClickCancelledOrders() {
+        CommonUtils.selectedTab = "CANCELLED";
+        NavigationActivity.getInstance().selectItem(1);
+    }
+
+    @Override
+    public boolean isActiveStausSw() {
+        return isActiveSwith;
+    }
+
     private void todayRiderTravelledDistanceText() {
         try {
             dashboardBinding.riderTravelledDistanceInaday.setText(getSessionManager().getRiderTravelledDistanceinDay() + " M");
             Handler todayRiderTravelledDistance = new Handler();
             todayRiderTravelledDistance.postDelayed(() -> todayRiderTravelledDistanceText(), 1000);
         } catch (Exception e) {
-
+            System.out.println("todayRiderTravelledDistanceText::::::::::::::::::::::::::::::" + e.getMessage());
         }
     }
 

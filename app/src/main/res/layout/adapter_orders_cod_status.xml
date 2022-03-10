@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
-
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/five_dp"
+        android:layout_marginStart="@dimen/five_dp"
+        android:layout_marginEnd="@dimen/five_dp"
+        android:background="@drawable/bg_summary_adapter"
         android:orientation="vertical">
 
         <LinearLayout
@@ -29,7 +35,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/roboto_regular"
                         android:text="Order Number: "
-                        android:textColor="@color/colorBlack"
+                        android:textColor="@color/label_color"
                         android:textSize="@dimen/text_dimen_10" />
 
                     <TextView
@@ -53,7 +59,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/roboto_regular"
                         android:text="Delivered Date: "
-                        android:textColor="@color/colorBlack"
+                        android:textColor="@color/label_color"
                         android:textSize="@dimen/text_dimen_10" />
 
                     <TextView
@@ -85,7 +91,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/roboto_regular"
                         android:text="Amount Collected: "
-                        android:textColor="@color/colorBlack"
+                        android:textColor="@color/label_color"
                         android:textSize="@dimen/text_dimen_10" />
 
                     <TextView
@@ -109,7 +115,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/roboto_regular"
                         android:text="Amount Deposited: "
-                        android:textColor="@color/colorBlack"
+                        android:textColor="@color/label_color"
                         android:textSize="@dimen/text_dimen_10" />
 
                     <TextView
@@ -117,7 +123,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/roboto_medium"
-                        android:textColor="@color/colorBlack"
+                        android:textColor="@color/colorGrey"
                         android:textSize="@dimen/twelve_dp" />
                 </LinearLayout>
 
@@ -127,6 +133,8 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/five_dp"
-            android:background="@color/colorGrey" />
+            android:background="@color/colorGrey"
+            android:visibility="gone" />
     </LinearLayout>
+</RelativeLayout>
 </layout>

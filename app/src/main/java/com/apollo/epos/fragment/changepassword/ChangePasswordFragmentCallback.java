@@ -14,4 +14,6 @@ public interface ChangePasswordFragmentCallback {
     void onSuccessRiderUpdateStatusApiCall();
 
     void onFailureRiderUpdateStatusApiCall(String message);
+
+    void onLogout();
 }

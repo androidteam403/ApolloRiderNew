@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorWhite"
@@ -16,120 +17,125 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <LinearLayout
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/one_hundred_dp"
-                    android:layout_marginTop="@dimen/five_dp"
-                    android:layout_marginBottom="@dimen/five_dp"
-                    android:orientation="horizontal"
-                    android:weightSum="1">
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.03" />
+                    android:layout_height="wrap_content"
+                    android:outlineAmbientShadowColor="@color/colorGrey"
+                    app:cardElevation="@dimen/ten_dp">
 
                     <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_weight="0.2"
-                        android:orientation="vertical">
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
 
-                        <RelativeLayout
-                            android:layout_width="@dimen/seventy_dp"
-                            android:layout_height="@dimen/seventy_dp"
-                            android:layout_gravity="center_horizontal"
-                            android:paddingTop="@dimen/eight_dp"
-                            android:paddingBottom="@dimen/eight_dp">
-
-                            <ImageView
-                                android:id="@+id/user_image"
-                                android:layout_width="60dp"
-                                android:layout_height="60dp"
-                                android:contentDescription="@string/nav_header_desc" />
-                        </RelativeLayout>
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.02" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginTop="@dimen/five_dp"
-                        android:layout_marginBottom="@dimen/five_dp"
-                        android:layout_weight="0.55"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
+                        <View
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/two_dp"
-                            android:fontFamily="@font/roboto_regular"
-                            android:text="@string/label_welcome_rider"
-                            android:textColor="@color/profile_header_color"
-                            android:textSize="@dimen/text_dimen_14" />
+                            android:layout_weight="0.03" />
 
-                        <TextView
-                            android:id="@+id/rider_name"
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/two_dp"
-                            android:fontFamily="@font/roboto_bold"
-                            android:textColor="@color/colorBlack"
-                            android:textSize="@dimen/text_dimen_15" />
+                            android:layout_gravity="center"
+                            android:layout_weight="0.2"
+                            android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/rider_phone_number"
-                            android:layout_width="wrap_content"
+                            <RelativeLayout
+                                android:layout_width="@dimen/seventy_dp"
+                                android:layout_height="@dimen/seventy_dp"
+                                android:layout_gravity="center_horizontal"
+                                android:paddingTop="@dimen/eight_dp"
+                                android:paddingBottom="@dimen/eight_dp">
+
+                                <ImageView
+                                    android:id="@+id/user_image"
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    android:contentDescription="@string/nav_header_desc" />
+                            </RelativeLayout>
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/two_dp"
-                            android:fontFamily="@font/roboto_regular"
-                            android:textColor="@color/colorBlack"
-                            android:textSize="@dimen/text_dimen_14" />
-                    </LinearLayout>
+                            android:layout_weight="0.02" />
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_weight="0.15"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/user_status"
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="end"
-                            android:layout_marginTop="@dimen/ten_dp"
-                            android:layout_marginEnd="@dimen/two_dp"
-                            android:fontFamily="@font/roboto_regular"
-                            android:text="Offline" />
-
-
-                        <Switch
-                            android:id="@+id/switch1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="end"
+                            android:layout_gravity="center_vertical"
                             android:layout_marginTop="@dimen/five_dp"
-                            android:checked="false"
-                            android:fontFamily="@font/roboto_regular"
-                            android:switchMinWidth="@dimen/fifty_five_dp" />
+                            android:layout_marginBottom="@dimen/five_dp"
+                            android:layout_weight="0.55"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/two_dp"
+                                android:fontFamily="@font/roboto_regular"
+                                android:text="@string/label_welcome_rider"
+                                android:textColor="@color/label_color"
+                                android:textSize="@dimen/text_dimen_14" />
+
+                            <TextView
+                                android:id="@+id/rider_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/two_dp"
+                                android:fontFamily="@font/roboto_bold"
+                                android:textColor="@color/colorBlack"
+                                android:textSize="@dimen/text_dimen_15" />
+
+                            <TextView
+                                android:id="@+id/rider_phone_number"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/two_dp"
+                                android:fontFamily="@font/roboto_regular"
+                                android:textColor="@color/colorBlack"
+                                android:textSize="@dimen/text_dimen_14" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:layout_weight="0.15"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/user_status"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/ten_dp"
+                                android:layout_marginEnd="@dimen/two_dp"
+                                android:fontFamily="@font/roboto_regular"
+                                android:text="Offline" />
+
+
+                            <Switch
+                                android:id="@+id/switch1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/five_dp"
+                                android:checked="false"
+                                android:fontFamily="@font/roboto_regular"
+                                android:switchMinWidth="@dimen/fifty_five_dp"
+                                android:theme="@style/CustomAppTheme" />
+                        </LinearLayout>
                     </LinearLayout>
-                </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
                 <LinearLayout
                     android:id="@+id/new_order_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/ten_dp"
+                    android:layout_marginTop="@dimen/ten_dp"
                     android:layout_marginEnd="@dimen/ten_dp"
-                    android:layout_marginBottom="@dimen/ten_dp"
                     android:background="@color/dashboard_pending_text_color"
                     android:orientation="horizontal"
                     android:visibility="gone">
@@ -253,19 +259,358 @@
                     android:layout_marginBottom="@dimen/ten_dp"
                     android:visibility="gone" />
 
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ten_dp"
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/seventy_dp"
+                        android:layout_margin="@dimen/ten_dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/dashboard_box_bg"
+                        app:cardElevation="@dimen/ten_dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto_regular"
+                                android:text="Total"
+                                android:textColor="#3f9bb3" />
+
+                            <TextView
+                                android:id="@+id/total"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/five_dp"
+                                android:fontFamily="@font/roboto_bold"
+                                android:textColor="@color/colorBlack"
+                                android:textSize="@dimen/text_dimen_24" />
+
+
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/seventy_dp"
+                        android:layout_margin="@dimen/ten_dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/dashboard_box_bg"
+                        android:onClick="@{()-> callback.onClickNewOrders()}"
+                        app:cardElevation="@dimen/ten_dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto_regular"
+                                android:text="New"
+                                android:textColor="@color/label_color" />
+
+                            <TextView
+                                android:id="@+id/new_ordr"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/five_dp"
+                                android:fontFamily="@font/roboto_bold"
+                                android:textColor="@color/colorBlack"
+                                android:textSize="@dimen/text_dimen_24" />
+
+
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/seventy_dp"
+                        android:layout_margin="@dimen/ten_dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/dashboard_box_bg"
+                        android:onClick="@{()-> callback.onClickIntransitOrders()}"
+                        app:cardElevation="@dimen/ten_dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto_regular"
+                                android:text="In Transit"
+                                android:textColor="@color/label_color" />
+
+                            <TextView
+                                android:id="@+id/intransit"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/five_dp"
+                                android:fontFamily="@font/roboto_bold"
+                                android:textColor="@color/colorBlack"
+                                android:textSize="@dimen/text_dimen_24" />
+
+
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/seventy_dp"
+                        android:layout_margin="@dimen/ten_dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/dashboard_box_bg"
+                        android:onClick="@{()-> callback.onClickDeliveredOrders()}"
+                        app:cardElevation="@dimen/ten_dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto_regular"
+                                android:text="Delivered"
+                                android:textColor="@color/label_color" />
+
+                            <TextView
+                                android:id="@+id/delivered"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/five_dp"
+                                android:fontFamily="@font/roboto_bold"
+                                android:textColor="@color/colorBlack"
+                                android:textSize="@dimen/text_dimen_24" />
+
+
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/seventy_dp"
+                        android:layout_margin="@dimen/ten_dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/dashboard_box_bg"
+                        android:onClick="@{()-> callback.onClickCancelledOrders()}"
+                        app:cardElevation="@dimen/ten_dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto_regular"
+                                android:text="Cancelled"
+                                android:textColor="@color/label_color" />
+
+                            <TextView
+                                android:id="@+id/cancelled"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/five_dp"
+                                android:fontFamily="@font/roboto_bold"
+                                android:textColor="@color/colorBlack"
+                                android:textSize="@dimen/text_dimen_24" />
+
+
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/seventy_dp"
+                        android:layout_margin="@dimen/ten_dp"
+                        android:layout_weight="1">
+
+                    </View>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/fifteen_dp"
+                    android:layout_marginTop="@dimen/fifteen_dp"
+                    android:layout_marginEnd="@dimen/fifteen_dp"
+                    android:onClick="@{()-> callback.onClickCodReciebedorPendingDeposits()}"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight=".5"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/thirty_five_dp"
+                            android:layout_height="@dimen/thirty_five_dp"
+                            android:contentDescription="@string/app_name"
+                            android:src="@drawable/ic_cod_received" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/ten_dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto_regular"
+                                android:text="COD Received"
+                                android:textColor="@color/label_color"
+                                android:textSize="@dimen/text_dimen_12" />
+
+                            <TextView
+                                android:id="@+id/cod_received_val"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto_bold"
+                                android:textColor="@color/colorBlack"
+                                android:textSize="@dimen/text_dimen_24" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight=".5"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/thirty_five_dp"
+                            android:layout_height="@dimen/thirty_five_dp"
+                            android:contentDescription="@string/app_name"
+                            android:src="@drawable/ic_cod_deposit_red" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/ten_dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto_regular"
+                                android:text="COD Pending"
+                                android:textColor="@color/label_color"
+                                android:textSize="@dimen/text_dimen_12" />
+
+                            <TextView
+                                android:id="@+id/cod_pending_val"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto_bold"
+                                android:textColor="#e21d27"
+                                android:textSize="@dimen/text_dimen_24" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/one_dp"
+                    android:layout_marginTop="@dimen/five_dp"
+                    android:background="@color/colorGrey" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/ten_dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="@dimen/thirty_five_dp"
+                        android:layout_height="@dimen/thirty_five_dp"
+                        android:contentDescription="@string/app_name"
+                        android:src="@drawable/ic_distance_travelled" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ten_dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_regular"
+                            android:text="Distance Travelled"
+                            android:textColor="@color/label_color"
+                            android:textSize="@dimen/text_dimen_12" />
+
+                        <TextView
+                            android:id="@+id/travelled_distance_val"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_bold"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/text_dimen_24" />
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/one_dp"
+                    android:background="@color/colorGrey" />
+
                 <LinearLayout
                     android:id="@+id/orders_information_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="135dp"
                         android:layout_margin="@dimen/ten_dp"
-                        android:onClick="@{()-> callback.onClickTotalDeliveredCancelledOrders()}"
                         android:background="@drawable/dashboard_item_bg"
                         android:orientation="horizontal"
+                        android:visibility="gone"
                         android:weightSum="3">
 
                         <LinearLayout
@@ -305,6 +650,75 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
+                            android:onClick="@{()-> callback.onClickNewOrders()}"
+                            android:orientation="vertical"
+                            android:visibility="gone">
+
+                            <ImageView
+                                android:layout_width="@dimen/fifty_dp"
+                                android:layout_height="@dimen/forty_dp"
+                                android:contentDescription="@string/app_name"
+                                android:src="@drawable/db_total_orders" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/three_dp"
+                                android:fontFamily="@font/roboto_bold"
+                                android:gravity="center"
+                                android:text="New\nOrders"
+                                android:textColor="@color/dashboard_text_color"
+                                android:textSize="@dimen/text_dimen_12" />
+
+                            <TextView
+                                android:id="@+id/new_orders"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto_bold"
+                                android:textColor="@color/colorBlack"
+                                android:textSize="@dimen/text_dimen_20" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:onClick="@{()-> callback.onClickIntransitOrders()}"
+                            android:orientation="vertical"
+                            android:visibility="gone">
+
+                            <ImageView
+                                android:layout_width="@dimen/fifty_dp"
+                                android:layout_height="@dimen/forty_dp"
+                                android:contentDescription="@string/app_name"
+                                android:src="@drawable/db_total_orders" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/three_dp"
+                                android:fontFamily="@font/roboto_bold"
+                                android:gravity="center"
+                                android:text="In Transit\nOrders"
+                                android:textColor="@color/dashboard_text_color"
+                                android:textSize="@dimen/text_dimen_12" />
+
+                            <TextView
+                                android:id="@+id/in_transit"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto_bold"
+                                android:textColor="@color/colorBlack"
+                                android:textSize="@dimen/text_dimen_20" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:onClick="@{()-> callback.onClickDeliveredOrders()}"
                             android:orientation="vertical">
 
                             <ImageView
@@ -337,6 +751,7 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
+                            android:onClick="@{()-> callback.onClickCancelledOrders()}"
                             android:orientation="vertical">
 
                             <ImageView
@@ -364,6 +779,152 @@
                                 android:textSize="@dimen/text_dimen_20" />
                         </LinearLayout>
                     </LinearLayout>
+
+
+                    <!--                    <LinearLayout-->
+                    <!--                        android:layout_width="match_parent"-->
+                    <!--                        android:layout_height="wrap_content"-->
+                    <!--                        android:layout_margin="@dimen/ten_dp"-->
+                    <!--                        android:background="@drawable/dashboard_item_bg"-->
+                    <!--                        android:orientation="horizontal"-->
+                    <!--                        android:weightSum="5">-->
+
+                    <!--                        <LinearLayout-->
+                    <!--                            android:layout_width="0dp"-->
+                    <!--                            android:layout_height="wrap_content"-->
+                    <!--                            android:layout_weight="1"-->
+                    <!--                            android:gravity="center"-->
+                    <!--                            android:orientation="vertical">-->
+
+                    <!--                            <TextView-->
+                    <!--                                android:layout_width="wrap_content"-->
+                    <!--                                android:layout_height="wrap_content"-->
+                    <!--                                android:fontFamily="@font/roboto_regular"-->
+                    <!--                                android:text="Total"-->
+                    <!--                                android:textColor="@color/dashboard_text_color"-->
+                    <!--                                android:textSize="@dimen/text_dimen_10" />-->
+
+                    <!--                            <TextView-->
+                    <!--                                android:id="@+id/total"-->
+                    <!--                                android:layout_width="wrap_content"-->
+                    <!--                                android:layout_height="wrap_content"-->
+                    <!--                                android:layout_marginTop="@dimen/five_dp"-->
+                    <!--                                android:fontFamily="@font/roboto_bold"-->
+                    <!--                                android:textColor="@color/colorBlack"-->
+                    <!--                                android:textSize="@dimen/text_dimen_15" />-->
+
+                    <!--                        </LinearLayout>-->
+
+                    <!--                        <LinearLayout-->
+                    <!--                            android:layout_width="0dp"-->
+                    <!--                            android:layout_height="wrap_content"-->
+                    <!--                            android:layout_weight="1"-->
+                    <!--                            android:gravity="center"-->
+                    <!--                            android:onClick="@{()-> callback.onClickNewOrders()}"-->
+                    <!--                            android:orientation="vertical">-->
+
+                    <!--                            <TextView-->
+                    <!--                                android:layout_width="wrap_content"-->
+                    <!--                                android:layout_height="wrap_content"-->
+                    <!--                                android:fontFamily="@font/roboto_regular"-->
+                    <!--                                android:text="New"-->
+                    <!--                                android:textColor="@color/dashboard_text_color"-->
+                    <!--                                android:textSize="@dimen/text_dimen_10" />-->
+
+                    <!--                            <TextView-->
+                    <!--                                android:id="@+id/new_ordr"-->
+                    <!--                                android:layout_width="wrap_content"-->
+                    <!--                                android:layout_height="wrap_content"-->
+                    <!--                                android:layout_marginTop="@dimen/five_dp"-->
+                    <!--                                android:fontFamily="@font/roboto_bold"-->
+                    <!--                                android:textColor="@color/colorBlack"-->
+                    <!--                                android:textSize="@dimen/text_dimen_15" />-->
+
+                    <!--                        </LinearLayout>-->
+
+                    <!--                        <LinearLayout-->
+                    <!--                            android:layout_width="0dp"-->
+                    <!--                            android:layout_height="wrap_content"-->
+                    <!--                            android:layout_weight="1"-->
+                    <!--                            android:gravity="center"-->
+                    <!--                            android:orientation="vertical">-->
+
+                    <!--                            <TextView-->
+                    <!--                                android:layout_width="wrap_content"-->
+                    <!--                                android:layout_height="wrap_content"-->
+                    <!--                                android:fontFamily="@font/roboto_regular"-->
+                    <!--                                android:onClick="@{()-> callback.onClickIntransitOrders()}"-->
+                    <!--                                android:text="In Transit"-->
+                    <!--                                android:textColor="@color/dashboard_text_color"-->
+                    <!--                                android:textSize="@dimen/text_dimen_10" />-->
+
+                    <!--                            <TextView-->
+                    <!--                                android:id="@+id/intransit"-->
+                    <!--                                android:layout_width="wrap_content"-->
+                    <!--                                android:layout_height="wrap_content"-->
+                    <!--                                android:layout_marginTop="@dimen/five_dp"-->
+                    <!--                                android:fontFamily="@font/roboto_bold"-->
+                    <!--                                android:textColor="@color/colorBlack"-->
+                    <!--                                android:textSize="@dimen/text_dimen_15" />-->
+
+                    <!--                        </LinearLayout>-->
+
+                    <!--                        <LinearLayout-->
+                    <!--                            android:layout_width="0dp"-->
+                    <!--                            android:layout_height="wrap_content"-->
+                    <!--                            android:layout_weight="1"-->
+                    <!--                            android:gravity="center"-->
+                    <!--                            android:orientation="vertical">-->
+
+                    <!--                            <TextView-->
+                    <!--                                android:layout_width="wrap_content"-->
+                    <!--                                android:layout_height="wrap_content"-->
+                    <!--                                android:fontFamily="@font/roboto_regular"-->
+                    <!--                                android:onClick="@{()-> callback.onClickDeliveredOrders()}"-->
+                    <!--                                android:text="Delivered"-->
+                    <!--                                android:textColor="@color/dashboard_text_color"-->
+                    <!--                                android:textSize="@dimen/text_dimen_10" />-->
+
+                    <!--                            <TextView-->
+                    <!--                                android:id="@+id/delivered"-->
+                    <!--                                android:layout_width="wrap_content"-->
+                    <!--                                android:layout_height="wrap_content"-->
+                    <!--                                android:layout_marginTop="@dimen/five_dp"-->
+                    <!--                                android:fontFamily="@font/roboto_bold"-->
+                    <!--                                android:textColor="@color/colorBlack"-->
+                    <!--                                android:textSize="@dimen/text_dimen_15" />-->
+
+                    <!--                        </LinearLayout>-->
+
+                    <!--                        <LinearLayout-->
+                    <!--                            android:layout_width="0dp"-->
+                    <!--                            android:layout_height="wrap_content"-->
+                    <!--                            android:layout_weight="1"-->
+                    <!--                            android:gravity="center"-->
+                    <!--                            android:orientation="vertical">-->
+
+                    <!--                            <TextView-->
+                    <!--                                android:layout_width="wrap_content"-->
+                    <!--                                android:layout_height="wrap_content"-->
+                    <!--                                android:fontFamily="@font/roboto_regular"-->
+                    <!--                                android:onClick="@{()-> callback.onClickCancelledOrders()}"-->
+                    <!--                                android:text="Cancelled"-->
+                    <!--                                android:textColor="@color/dashboard_text_color"-->
+                    <!--                                android:textSize="@dimen/text_dimen_10" />-->
+
+                    <!--                            <TextView-->
+                    <!--                                android:id="@+id/cancelled"-->
+                    <!--                                android:layout_width="wrap_content"-->
+                    <!--                                android:layout_height="wrap_content"-->
+                    <!--                                android:layout_marginTop="@dimen/five_dp"-->
+                    <!--                                android:fontFamily="@font/roboto_bold"-->
+                    <!--                                android:textColor="@color/colorBlack"-->
+                    <!--                                android:textSize="@dimen/text_dimen_15" />-->
+
+                    <!--                        </LinearLayout>-->
+
+                    <!--                    </LinearLayout>-->
+
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -400,7 +961,6 @@
                                 android:textSize="@dimen/text_dimen_12" />
 
                             <TextView
-                                android:id="@+id/cod_received_val"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/roboto_bold"
@@ -439,7 +999,6 @@
                                 android:textSize="@dimen/text_dimen_12" />
 
                             <TextView
-                                android:id="@+id/cod_pending_val"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/roboto_bold"
@@ -557,7 +1116,6 @@
                                 android:textSize="@dimen/text_dimen_12" />
 
                             <TextView
-                                android:id="@+id/travelled_distance_val"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/roboto_bold"

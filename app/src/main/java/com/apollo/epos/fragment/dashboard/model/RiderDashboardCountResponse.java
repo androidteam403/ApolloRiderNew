@@ -84,6 +84,13 @@ public class RiderDashboardCountResponse {
         @SerializedName("cod_received")
         @Expose
         private Double codReceived;
+
+        @SerializedName("new_orders")
+        @Expose
+        private Integer newOrders;
+        @SerializedName("intransit_orders")
+        @Expose
+        private Integer intransitOrders;
         @SerializedName("cancelled_orders")
         @Expose
         private Integer cancelledOrders;
@@ -116,6 +123,22 @@ public class RiderDashboardCountResponse {
 
         public void setCodReceived(Double codReceived) {
             this.codReceived = codReceived;
+        }
+
+        public Integer getNewOrders() {
+            return newOrders;
+        }
+
+        public void setNewOrders(Integer newOrders) {
+            this.newOrders = newOrders;
+        }
+
+        public Integer getIntransitOrders() {
+            return intransitOrders;
+        }
+
+        public void setIntransitOrders(Integer intransitOrders) {
+            this.intransitOrders = intransitOrders;
         }
 
         public Integer getCancelledOrders() {

@@ -19,6 +19,7 @@ import com.apollo.epos.activity.orderdelivery.model.DeliveryFailreReasonsRespons
 import com.apollo.epos.databinding.ActivityLoginBinding;
 import com.apollo.epos.dialog.ForgotPwdDialog;
 import com.apollo.epos.model.GetRiderProfileResponse;
+import com.apollo.epos.utils.ActivityUtils;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.novoda.merlin.Merlin;
 
@@ -94,9 +95,15 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
     @Override
     public void onSuccessLoginApi(LoginResponse loginResponse) {
         if (loginResponse != null && loginResponse.getData() != null && loginResponse.getSuccess() && loginResponse.getData().getToken() != null) {
-            getSessionManager().setLoginToken(loginResponse.getData().getToken());
-            getSessionManager().setRiderIconUrl(loginResponse.getData().getAddInfo().getPic().get(0).getDimenesions().get200200FullPath());
-            new LoginActivityController(this, this).getRiderProfileDetailsApi(getSessionManager().getLoginToken());
+            try {
+                getSessionManager().setLoginToken(loginResponse.getData().getToken());
+                getSessionManager().setRiderIconUrl(loginResponse.getData().getPic().get(0).getDimenesions().get200200FullPath());
+                new LoginActivityController(this, this).getRiderProfileDetailsApi(getSessionManager().getLoginToken());
+            } catch (Exception e) {
+                System.out.println("onSuccessLoginApi ::::::::::::::::::::::::" + e.getMessage());
+                ActivityUtils.hideDialog();
+                Toast.makeText(this, "Please try again later", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -110,6 +117,7 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
         if (getRiderProfileResponse != null) {
             getSessionManager().setRiderProfileDetails(getRiderProfileResponse);
             new LoginActivityController(this, this).deliveryFailureReasonApiCall();
+            new LoginActivityController(this, this).getComplaintReasonsListApiCall();
         }
     }
 

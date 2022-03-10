@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dialog_phonepe_link_dialog_bg"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="@dimen/five_dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/five_dp"
+            android:background="@color/thick_blue"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/ten_dp"
+            android:paddingTop="@dimen/five_dp"
+            android:paddingEnd="@dimen/ten_dp"
+            android:paddingBottom="@dimen/five_dp">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="3dp"
+                android:background="@color/white"
+                android:contentDescription="@string/app_name"
+                android:padding="@dimen/two_dp"
+                android:src="@drawable/phone_pay_logo" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="5dp"
+                android:fontFamily="@font/roboto_bold"
+                android:text="PhonePay"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_dimen_18" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ten_dp"
+            android:fontFamily="@font/roboto_bold"
+            android:gravity="center"
+            android:text="PhonePe payment Link will send to your mobile..."
+            android:textColor="@color/colorBlack" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ten_dp"
+            android:layout_marginTop="@dimen/twenty_dp"
+            android:layout_marginEnd="@dimen/ten_dp"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <TextView
+                android:id="@+id/phonepe_link_payment_check_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/five_dp"
+                android:layout_marginEnd="@dimen/five_dp"
+                android:layout_marginBottom="@dimen/five_dp"
+                android:layout_weight="0.5"
+                android:background="@drawable/bg_check_status_btn"
+                android:fontFamily="@font/roboto_bold"
+                android:gravity="center"
+                android:paddingTop="@dimen/ten_dp"
+                android:paddingBottom="@dimen/ten_dp"
+                android:text="@string/label_check_status"
+                android:textColor="@color/colorWhite" />
+
+            <TextView
+                android:id="@+id/phonepe_link_payment_cancelled_request"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/five_dp"
+                android:layout_marginTop="@dimen/five_dp"
+                android:layout_marginBottom="@dimen/five_dp"
+                android:layout_weight="0.5"
+                android:background="@drawable/bg_cancel_btn"
+                android:fontFamily="@font/roboto_bold"
+                android:gravity="center"
+                android:paddingTop="@dimen/ten_dp"
+                android:paddingBottom="@dimen/ten_dp"
+                android:text="@string/label_cancel"
+                android:textColor="@color/colorWhite" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

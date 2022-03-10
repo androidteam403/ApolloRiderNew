@@ -15,6 +15,7 @@ import androidx.databinding.DataBindingUtil;
 
 import com.apollo.epos.BuildConfig;
 import com.apollo.epos.R;
+import com.apollo.epos.activity.navigation.NavigationActivity;
 import com.apollo.epos.base.BaseFragment;
 import com.apollo.epos.databinding.FragmentHelpBinding;
 import com.apollo.epos.db.SessionManager;
@@ -36,6 +37,7 @@ public class HelpFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        NavigationActivity.getInstance().setTitle(R.string.menu_help);
         ActivityUtils.showDialog(getActivity(), "Please Wait");
         helpBinding.webView.getSettings().setJavaScriptEnabled(true);
         helpBinding.webView.getSettings().setDomStorageEnabled(true);

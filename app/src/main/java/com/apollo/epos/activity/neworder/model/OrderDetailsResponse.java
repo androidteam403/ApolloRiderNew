@@ -536,6 +536,9 @@ public class OrderDetailsResponse implements Serializable {
         @SerializedName("order_handover")
         @Expose
         private OrderHandover orderHandover;
+        @SerializedName("failure_attempts")
+        @Expose
+        private int failureAttempts;
         @SerializedName("pickup_st_windo")
         @Expose
         private String pickupStWindo;
@@ -566,6 +569,14 @@ public class OrderDetailsResponse implements Serializable {
         @SerializedName("order_sh")
         @Expose
         private List<OrderSh> orderSh = null;
+
+        public int getFailureAttempts() {
+            return failureAttempts;
+        }
+
+        public void setFailureAttempts(int failureAttempts) {
+            this.failureAttempts = failureAttempts;
+        }
 
         public String getUid() {
             return uid;

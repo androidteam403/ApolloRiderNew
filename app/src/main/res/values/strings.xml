@@ -11,6 +11,7 @@
         <item>My Orders</item>
         <!--        <item>Notifications</item>-->
         <item>Cash Deposits</item>
+        <item>Summary</item>
         <item>Profile</item>
         <item>Change Password</item>
         <item>Help</item>
@@ -27,6 +28,7 @@
     <string name="menu_dashboard">Dashboard</string>
     <string name="menu_my_orders">My Orders</string>
     <string name="menu_reports">Cash Deposits</string>
+    <string name="menu_summary">Summary</string>
     <string name="menu_notifications">Notifications</string>
     <string name="menu_profile">Profile</string>
     <string name="menu_change_password">Change Password</string>
@@ -246,5 +248,26 @@
     <string name="label_this_order_is_cancelled">This Order is Cancelled</string>
     <string name="label_reports">Cash Deposits</string>
     <string name="label_no_reports_yet">No Reports Yet</string>
+    <string name="label_online_payment">Online Payment</string>
+    <string name="label_phonepe_qr_code">PhonePe QR Code</string>
+    <string name="label_check_status">Check Status</string>
+    <string name="label_cancel">Cancel</string>
+    <string name="label_phonepe_link">PhonePe Link</string>
+    <string name="label_hdfc_link">HDFC Link</string>
+    <string name="label_9177551647">9177551647</string>
+    <string name="label_continue">Continue</string>
+    <string name="label_change_order_status">Change Order Status</string>
+    <string name="label_choose_appropriate_reasons">Choose Appropriate Reason</string>
+    <string name="label_from_date">From Date</string>
+    <string name="label_go">GO</string>
+    <string name="label_order_number">Order Number</string>
+    <string name="label_sdelivered_on">Delivered On</string>
+    <string name="label_p">P</string>
+    <string name="label_d">D</string>
+    <string name="label_to_date">To Date</string>
+    <string name="label_apply">Apply</string>
+    <string name="label_from">From</string>
+    <string name="label_to">To</string>
+    <string name="label_order_date">Order Date</string>
 
 </resources>

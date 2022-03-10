@@ -8,7 +8,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.apollo.epos.activity.login.model.OrderPaymentTypeResponse;
 import com.apollo.epos.activity.orderdelivery.model.DeliveryFailreReasonsResponse;
+import com.apollo.epos.fragment.myorders.model.GlobalSettingSelectResponse;
+import com.apollo.epos.fragment.profile.model.ComplaintReasonsListResponse;
 import com.apollo.epos.model.GetRiderProfileResponse;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -31,6 +34,9 @@ public class SessionManager {
     private static final String PREF_KEY_ASIGNED_ORDER_UID = "PREF_KEY_ASIGNED_ORDER_UID";
     private static final String PREF_KEY_COD_RECEIVED = "PREF_KEY_COD_RECEIVED";
     private static final String PREF_KEY_COD_PENDING_DEPOSITED = "PREF_KEY_COD_PENDING_DEPOSITED";
+    private static final String PREF_KEY_ORDER_PAYMENT_TYPE_LIST = "PREF_KEY_ORDER_PAYMENT_TYPE_LIST";
+    private static final String PREF_KEY_GLOBAL_SETTING_SELECT = "PREF_KEY_GLOBAL_SETTING_SELECT";
+    private static final String PREF_KEY_COMPLAINT_REASONS = "PREF_KEY_COMPLAINT_REASONS";
 
     public SessionManager(Context context) {
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -135,5 +141,35 @@ public class SessionManager {
 
     public String getCodPendingDeposited() {
         return preferences.getString(PREF_KEY_COD_PENDING_DEPOSITED, "0.0");
+    }
+
+    public void setOrderPaymentTypeList(OrderPaymentTypeResponse orderPaymentTypeResponse) {
+        String orderPaymentTypeResponseList = new Gson().toJson(orderPaymentTypeResponse);
+        preferences.edit().putString(PREF_KEY_ORDER_PAYMENT_TYPE_LIST, orderPaymentTypeResponseList).apply();
+    }
+
+    public OrderPaymentTypeResponse getOrderPaymentTypeList() {
+        String orderPaymentTypeResponseList = preferences.getString(PREF_KEY_ORDER_PAYMENT_TYPE_LIST, null);
+        return new Gson().fromJson(orderPaymentTypeResponseList, OrderPaymentTypeResponse.class);
+    }
+
+    public void setGlobalSettingSelectResponse(GlobalSettingSelectResponse globalSettingSelectResponse) {
+        String globalSettingSelectResponseString = new Gson().toJson(globalSettingSelectResponse);
+        preferences.edit().putString(PREF_KEY_GLOBAL_SETTING_SELECT, globalSettingSelectResponseString).apply();
+    }
+
+    public GlobalSettingSelectResponse getGlobalSettingSelectResponse() {
+        String globalSettingSelectResponseString = preferences.getString(PREF_KEY_GLOBAL_SETTING_SELECT, null);
+        return new Gson().fromJson(globalSettingSelectResponseString, GlobalSettingSelectResponse.class);
+    }
+
+    public void setComplaintReasonsListResponse(ComplaintReasonsListResponse complaintReasonsListResponse) {
+        String complaintReasonsListResponseString = new Gson().toJson(complaintReasonsListResponse);
+        preferences.edit().putString(PREF_KEY_COMPLAINT_REASONS, complaintReasonsListResponseString).apply();
+    }
+
+    public ComplaintReasonsListResponse getComplaintReasonsListResponse() {
+        String complaintReasonsListResponseString = preferences.getString(PREF_KEY_COMPLAINT_REASONS, null);
+        return new Gson().fromJson(complaintReasonsListResponseString, ComplaintReasonsListResponse.class);
     }
 }

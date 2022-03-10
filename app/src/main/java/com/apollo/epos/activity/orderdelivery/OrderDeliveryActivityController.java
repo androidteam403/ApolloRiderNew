@@ -13,17 +13,17 @@ import com.apollo.epos.activity.orderdelivery.model.DeliveryFailreReasonsRespons
 import com.apollo.epos.activity.orderdelivery.model.FileDataResponse;
 import com.apollo.epos.activity.orderdelivery.model.OrderHandoverSaveUpdateRequest;
 import com.apollo.epos.activity.orderdelivery.model.OrderHandoverSaveUpdateResponse;
-import com.apollo.epos.activity.orderdelivery.model.OrderPaymentSelectRequest;
 import com.apollo.epos.activity.orderdelivery.model.OrderPaymentSelectResponse;
 import com.apollo.epos.activity.orderdelivery.model.OrderPaymentUpdateRequest;
 import com.apollo.epos.activity.orderdelivery.model.OrderSaveUpdateStausRequest;
 import com.apollo.epos.activity.orderdelivery.model.OrderSaveUpdateStausResponse;
-import com.apollo.epos.activity.orderdelivery.model.OrderStatusHistoryListRequest;
 import com.apollo.epos.activity.orderdelivery.model.OrderStatusHitoryListResponse;
 import com.apollo.epos.activity.trackmap.model.OrderEndJourneyUpdateRequest;
 import com.apollo.epos.activity.trackmap.model.OrderEndJourneyUpdateResponse;
 import com.apollo.epos.databinding.ActivityOrderDeliveryBinding;
 import com.apollo.epos.db.SessionManager;
+import com.apollo.epos.fragment.dashboard.model.RiderActiveStatusRequest;
+import com.apollo.epos.fragment.dashboard.model.RiderActiveStatusResponse;
 import com.apollo.epos.network.ApiClient;
 import com.apollo.epos.network.ApiInterface;
 import com.apollo.epos.service.NetworkUtils;
@@ -39,6 +39,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -74,9 +75,33 @@ public class OrderDeliveryActivityController {
             call.enqueue(new Callback<OrderDetailsResponse>() {
                 @Override
                 public void onResponse(@NotNull Call<OrderDetailsResponse> call, @NotNull Response<OrderDetailsResponse> response) {
-                    if (response.body() != null && response.body().getSuccess()) {
+                    if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
                         mListener.onSuccessOrderDetailsApiCall(response.body());
 //                        deliveryFailureReasonApiCall(orderDeliveryBinding);
+                    } else if (response.code() == 401) {
+                        HashMap<String, Object> refreshTokenRequest = new HashMap<>();
+                        refreshTokenRequest.put("token", new SessionManager(context).getLoginToken());
+                        Call<LoginResponse> call1 = apiInterface.REFRESH_TOKEN(refreshTokenRequest);
+                        call1.enqueue(new Callback<LoginResponse>() {
+                            @Override
+                            public void onResponse(@NotNull Call<LoginResponse> call1, @NotNull Response<LoginResponse> response) {
+                                if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
+                                    new SessionManager(context).setLoginToken(response.body().getData().getToken());
+                                    orderDetailsApiCall(token, orderNumber, orderDeliveryBinding);
+                                } else if (response.code() == 401) {
+                                    logout();
+                                } else {
+                                    mListener.onFailureMessage("Please try again");
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(@NotNull Call<LoginResponse> call1, @NotNull Throwable t) {
+                                ActivityUtils.hideDialog();
+                                mListener.onFailureMessage("Please try again");
+                                System.out.println("REFRESH_TOKEN_DASHBOARD ==============" + t.getMessage());
+                            }
+                        });
                     } else {
                         ActivityUtils.hideDialog();
                         mListener.onFialureMessage("No data found.");
@@ -104,8 +129,32 @@ public class OrderDeliveryActivityController {
                 public void onResponse(@NotNull Call<DeliveryFailreReasonsResponse> call, @NotNull Response<DeliveryFailreReasonsResponse> response) {
                     orderDeliveryBinding.loadingWhiteScreen.setVisibility(View.GONE);
                     ActivityUtils.hideDialog();
-                    if (response.body() != null && response.body().isSuccess()) {
+                    if (response.code() == 200 && response.body() != null && response.body().isSuccess()) {
                         mListener.onSuccessDeliveryReasonApiCall(response.body());
+                    } else if (response.code() == 401) {
+                        HashMap<String, Object> refreshTokenRequest = new HashMap<>();
+                        refreshTokenRequest.put("token", new SessionManager(context).getLoginToken());
+                        Call<LoginResponse> call1 = apiInterface.REFRESH_TOKEN(refreshTokenRequest);
+                        call1.enqueue(new Callback<LoginResponse>() {
+                            @Override
+                            public void onResponse(@NotNull Call<LoginResponse> call1, @NotNull Response<LoginResponse> response) {
+                                if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
+                                    new SessionManager(context).setLoginToken(response.body().getData().getToken());
+                                    deliveryFailureReasonApiCall(orderDeliveryBinding);
+                                } else if (response.code() == 401) {
+                                    logout();
+                                } else {
+                                    mListener.onFailureMessage("Please try again");
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(@NotNull Call<LoginResponse> call1, @NotNull Throwable t) {
+                                ActivityUtils.hideDialog();
+                                mListener.onFailureMessage("Please try again");
+                                System.out.println("REFRESH_TOKEN_DASHBOARD ==============" + t.getMessage());
+                            }
+                        });
                     } else {
                         mListener.onFialureMessage("No data found.");
                     }
@@ -134,8 +183,33 @@ public class OrderDeliveryActivityController {
                 @Override
                 public void onResponse(@NotNull Call<OrderStatusHitoryListResponse> call, @NotNull Response<OrderStatusHitoryListResponse> response) {
                     ActivityUtils.hideDialog();
-                    if (response.body() != null) {
+                    if (response.code() == 200 && response.body() != null) {
                         mListener.onSuccessOrderStatusHistoryListApiCall(response.body());
+                    } else if (response.code() == 401) {
+                        ActivityUtils.showDialog(context, "Please wait.");
+                        HashMap<String, Object> refreshTokenRequest = new HashMap<>();
+                        refreshTokenRequest.put("token", new SessionManager(context).getLoginToken());
+                        Call<LoginResponse> call1 = apiInterface.REFRESH_TOKEN(refreshTokenRequest);
+                        call1.enqueue(new Callback<LoginResponse>() {
+                            @Override
+                            public void onResponse(@NotNull Call<LoginResponse> call1, @NotNull Response<LoginResponse> response) {
+                                if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
+                                    new SessionManager(context).setLoginToken(response.body().getData().getToken());
+                                    orderStatusHistoryListApiCall(uid);
+                                } else if (response.code() == 401) {
+                                    logout();
+                                } else {
+                                    mListener.onFailureMessage("Please try again");
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(@NotNull Call<LoginResponse> call1, @NotNull Throwable t) {
+                                ActivityUtils.hideDialog();
+                                mListener.onFailureMessage("Please try again");
+                                System.out.println("REFRESH_TOKEN_DASHBOARD ==============" + t.getMessage());
+                            }
+                        });
                     } else {
                         mListener.onFialureMessage("No data found.");
                     }
@@ -163,16 +237,49 @@ public class OrderDeliveryActivityController {
             deliveryFailureReason.setUid(orderCancelReason);
             orderSaveUpdateStausRequest.setDeliveryFailureReason(deliveryFailureReason);
             orderSaveUpdateStausRequest.setComment(comment);
-            ApiInterface apiInterface = ApiClient.getApiService();
+            orderSaveUpdateStausRequest.setPaymentSubType(mListener.getCodCardCash());
 
+            ApiInterface apiInterface = ApiClient.getApiService();
             Call<OrderSaveUpdateStausResponse> call = apiInterface.ORDER_SAVE_UPDATE_STATUS_API_CALL("Bearer " + new SessionManager(context).getLoginToken(), orderSaveUpdateStausRequest);
             call.enqueue(new Callback<OrderSaveUpdateStausResponse>() {
                 @Override
                 public void onResponse(@NotNull Call<OrderSaveUpdateStausResponse> call, @NotNull Response<OrderSaveUpdateStausResponse> response) {
 
-                    if (response.body() != null && response.body().getSuccess()) {
-                        mListener.onSuccessOrderSaveUpdateStatusApi(orderStatus);
+                    if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
+                        CommonUtils.isMyOrdersListApiCall = true;
+                        if (mListener != null) {
+                            if (mListener.isOrderCancelled())
+                                mListener.orderCancelled();
+                            else if (mListener.isStatusCancelled())
+                                mListener.statusCanelled();
+                            else
+                                mListener.onSuccessOrderSaveUpdateStatusApi(orderStatus);
+                        }
+                    } else if (response.code() == 401) {
+                        ActivityUtils.showDialog(context, "Please wait.");
+                        HashMap<String, Object> refreshTokenRequest = new HashMap<>();
+                        refreshTokenRequest.put("token", new SessionManager(context).getLoginToken());
+                        Call<LoginResponse> call1 = apiInterface.REFRESH_TOKEN(refreshTokenRequest);
+                        call1.enqueue(new Callback<LoginResponse>() {
+                            @Override
+                            public void onResponse(@NotNull Call<LoginResponse> call1, @NotNull Response<LoginResponse> response) {
+                                if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
+                                    new SessionManager(context).setLoginToken(response.body().getData().getToken());
+                                    ordersSaveUpdateStatusApiCall(orderStatus, orderUid, orderCancelReason, comment);
+                                } else if (response.code() == 401) {
+                                    logout();
+                                } else {
+                                    mListener.onFailureMessage("Please try again");
+                                }
+                            }
 
+                            @Override
+                            public void onFailure(@NotNull Call<LoginResponse> call1, @NotNull Throwable t) {
+                                ActivityUtils.hideDialog();
+                                mListener.onFailureMessage("Please try again");
+                                System.out.println("REFRESH_TOKEN_DASHBOARD ==============" + t.getMessage());
+                            }
+                        });
                     } else {
                         ActivityUtils.hideDialog();
 //                        mListener.onFialureOrderSaveUpdateStatusApi(response.errorBody().toString());
@@ -305,10 +412,35 @@ public class OrderDeliveryActivityController {
             call.enqueue(new Callback<OrderHandoverSaveUpdateResponse>() {
                 @Override
                 public void onResponse(@NotNull Call<OrderHandoverSaveUpdateResponse> call, @NotNull Response<OrderHandoverSaveUpdateResponse> response) {
-                    if (response.body() != null && response.body().getSuccess()) {
+                    if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
                         ActivityUtils.hideDialog();
                         if (bitmap != null)
                             mListener.onSuccessOrderHandoverSaveUpdateApi(bitmap);
+                    } else if (response.code() == 401) {
+                        ActivityUtils.showDialog(context, "Please wait.");
+                        HashMap<String, Object> refreshTokenRequest = new HashMap<>();
+                        refreshTokenRequest.put("token", new SessionManager(context).getLoginToken());
+                        Call<LoginResponse> call1 = apiInterface.REFRESH_TOKEN(refreshTokenRequest);
+                        call1.enqueue(new Callback<LoginResponse>() {
+                            @Override
+                            public void onResponse(@NotNull Call<LoginResponse> call1, @NotNull Response<LoginResponse> response) {
+                                if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
+                                    new SessionManager(context).setLoginToken(response.body().getData().getToken());
+                                    orderHandoverSaveUpdate(imageFullPath, bitmap, orderUid, orderNumber, customerName);
+                                } else if (response.code() == 401) {
+                                    logout();
+                                } else {
+                                    mListener.onFailureMessage("Please try again");
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(@NotNull Call<LoginResponse> call1, @NotNull Throwable t) {
+                                ActivityUtils.hideDialog();
+                                mListener.onFailureMessage("Please try again");
+                                System.out.println("REFRESH_TOKEN_DASHBOARD ==============" + t.getMessage());
+                            }
+                        });
                     } else {
                         ActivityUtils.hideDialog();
                         if (response.body() != null && response.body().getMessage() != null)
@@ -327,7 +459,7 @@ public class OrderDeliveryActivityController {
         }
     }
 
-    public void orderPaymentUpdateApiCall(OrderDetailsResponse orderDetailsResponse, String paymentType, String deviceType1) {
+    public void orderPaymentUpdateApiCall(OrderDetailsResponse orderDetailsResponse, String paymentType, String deviceType1, String transactionId) {
         if (NetworkUtils.isNetworkConnected(context)) {
             ActivityUtils.showDialog(context, "Please Wait");
 
@@ -337,7 +469,7 @@ public class OrderDeliveryActivityController {
             OrderPaymentUpdateRequest.OrderPayment orderPayment = new OrderPaymentUpdateRequest.OrderPayment();
             orderPayment.setAmount(orderDetailsResponse.getData().getPakgValue());
             orderPayment.setTxnDate(CommonUtils.getCurrentTimeDate());
-
+            orderPayment.setTxnId(transactionId);
             OrderPaymentUpdateRequest.Type type = new OrderPaymentUpdateRequest.Type();
             type.setUid(paymentType);
             orderPayment.setType(type);
@@ -354,9 +486,33 @@ public class OrderDeliveryActivityController {
             call.enqueue(new Callback<Object>() {
                 @Override
                 public void onResponse(@NotNull Call<Object> call, @NotNull Response<Object> response) {
-                    if (response.body() != null) {
+                    if (response.code() == 200 && response.body() != null) {
                         ActivityUtils.hideDialog();
                         mListener.onSuccessOrderPaymentUpdateApiCall();
+                    } else if (response.code() == 401) {
+                        HashMap<String, Object> refreshTokenRequest = new HashMap<>();
+                        refreshTokenRequest.put("token", new SessionManager(context).getLoginToken());
+                        Call<LoginResponse> call1 = apiInterface.REFRESH_TOKEN(refreshTokenRequest);
+                        call1.enqueue(new Callback<LoginResponse>() {
+                            @Override
+                            public void onResponse(@NotNull Call<LoginResponse> call1, @NotNull Response<LoginResponse> response) {
+                                if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
+                                    new SessionManager(context).setLoginToken(response.body().getData().getToken());
+                                    orderPaymentUpdateApiCall(orderDetailsResponse, paymentType, deviceType1, transactionId);
+                                } else if (response.code() == 401) {
+                                    logout();
+                                } else {
+                                    mListener.onFailureMessage("Please try again");
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(@NotNull Call<LoginResponse> call1, @NotNull Throwable t) {
+                                ActivityUtils.hideDialog();
+                                mListener.onFailureMessage("Please try again");
+                                System.out.println("REFRESH_TOKEN_DASHBOARD ==============" + t.getMessage());
+                            }
+                        });
                     } else {
                         ActivityUtils.hideDialog();
                         mListener.onFailureOrderPaymentApiCall();
@@ -385,9 +541,33 @@ public class OrderDeliveryActivityController {
             call.enqueue(new Callback<OrderPaymentSelectResponse>() {
                 @Override
                 public void onResponse(@NotNull Call<OrderPaymentSelectResponse> call, @NotNull Response<OrderPaymentSelectResponse> response) {
-                    if (response.body() != null) {
+                    if (response.code() == 200 && response.body() != null) {
                         ActivityUtils.hideDialog();
                         mListener.onSuccessOrderPaymentTypeInCod(response.body());
+                    } else if (response.code() == 401) {
+                        HashMap<String, Object> refreshTokenRequest = new HashMap<>();
+                        refreshTokenRequest.put("token", new SessionManager(context).getLoginToken());
+                        Call<LoginResponse> call1 = apiInterface.REFRESH_TOKEN(refreshTokenRequest);
+                        call1.enqueue(new Callback<LoginResponse>() {
+                            @Override
+                            public void onResponse(@NotNull Call<LoginResponse> call1, @NotNull Response<LoginResponse> response) {
+                                if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
+                                    new SessionManager(context).setLoginToken(response.body().getData().getToken());
+                                    getOrderPaymentTypeinCod(orderUid);
+                                } else if (response.code() == 401) {
+                                    logout();
+                                } else {
+                                    mListener.onFailureMessage("Please try again");
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(@NotNull Call<LoginResponse> call1, @NotNull Throwable t) {
+                                ActivityUtils.hideDialog();
+                                mListener.onFailureMessage("Please try again");
+                                System.out.println("REFRESH_TOKEN_DASHBOARD ==============" + t.getMessage());
+                            }
+                        });
                     } else {
                         ActivityUtils.hideDialog();
                         mListener.onFailureOrderPaymentTypeInCod("No Data Found");
@@ -421,8 +601,33 @@ public class OrderDeliveryActivityController {
                 @Override
                 public void onResponse(@NotNull Call<OrderEndJourneyUpdateResponse> call, @NotNull Response<OrderEndJourneyUpdateResponse> response) {
                     ActivityUtils.hideDialog();
-                    if (response.body() != null && response.body().getSuccess()) {
+                    if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
                         mListener.onSuccessOrderEndJourneyUpdateApiCall(response.body());
+                    } else if (response.code() == 401) {
+                        ActivityUtils.showDialog(context, "Please wait.");
+                        HashMap<String, Object> refreshTokenRequest = new HashMap<>();
+                        refreshTokenRequest.put("token", new SessionManager(context).getLoginToken());
+                        Call<LoginResponse> call1 = apiInterface.REFRESH_TOKEN(refreshTokenRequest);
+                        call1.enqueue(new Callback<LoginResponse>() {
+                            @Override
+                            public void onResponse(@NotNull Call<LoginResponse> call1, @NotNull Response<LoginResponse> response) {
+                                if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
+                                    new SessionManager(context).setLoginToken(response.body().getData().getToken());
+                                    orderEndJourneyUpdateApiCall(uid);
+                                } else if (response.code() == 401) {
+                                    logout();
+                                } else {
+                                    mListener.onFailureMessage("Please try again");
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(@NotNull Call<LoginResponse> call1, @NotNull Throwable t) {
+                                ActivityUtils.hideDialog();
+                                mListener.onFailureMessage("Please try again");
+                                System.out.println("REFRESH_TOKEN_DASHBOARD ==============" + t.getMessage());
+                            }
+                        });
                     } else {
                         mListener.onFialureMessage("No data saved.");
                     }
@@ -439,4 +644,38 @@ public class OrderDeliveryActivityController {
         }
     }
 
+    public void logout() {
+        if (NetworkUtils.isNetworkConnected(context)) {
+            ApiInterface apiInterface = ApiClient.getApiService();
+            RiderActiveStatusRequest riderActiveStatusRequest = new RiderActiveStatusRequest();
+            riderActiveStatusRequest.setUid(new SessionManager(context).getRiderProfileResponse().getData().getUid());
+            RiderActiveStatusRequest.UserAddInfo userAddInfo = new RiderActiveStatusRequest.UserAddInfo();
+            RiderActiveStatusRequest.AvailableStatus availableStatus = new RiderActiveStatusRequest.AvailableStatus();
+            availableStatus.setUid("Offline");
+            userAddInfo.setAvailableStatus(availableStatus);
+            riderActiveStatusRequest.setUserAddInfo(userAddInfo);
+
+            Call<RiderActiveStatusResponse> call = apiInterface.RIDER_ACTIVE_STATUS_API_CALL("Bearer " + new SessionManager(context).getLoginToken(), riderActiveStatusRequest);
+            call.enqueue(new Callback<RiderActiveStatusResponse>() {
+                @Override
+                public void onResponse(@NotNull Call<RiderActiveStatusResponse> call, @NotNull Response<RiderActiveStatusResponse> response) {
+                    ActivityUtils.hideDialog();
+                    if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
+                        new SessionManager(context).setRiderActiveStatus("Offline");
+                        mListener.onLogout();
+                    } else if (response.code() == 401) {
+                        mListener.onLogout();
+                    }
+                }
+
+                @Override
+                public void onFailure(@NotNull Call<RiderActiveStatusResponse> call, @NotNull Throwable t) {
+                    ActivityUtils.hideDialog();
+                    System.out.println("RIDER ACTIVE STATUS ==============" + t.getMessage());
+                }
+            });
+        } else {
+            mListener.onFailureMessage("Something went wrong.");
+        }
+    }
 }

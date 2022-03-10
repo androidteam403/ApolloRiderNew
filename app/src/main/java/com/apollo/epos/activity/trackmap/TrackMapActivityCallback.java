@@ -5,7 +5,7 @@ import com.apollo.epos.activity.trackmap.model.OrderStartJourneyUpdateResponse;
 
 public interface TrackMapActivityCallback {
 
-    void onFialureMessage(String message);
+    void onFailureMessage(String message);
 
     void onSuccessOrderSaveUpdateStatusApi(String status);
 
@@ -16,4 +16,6 @@ public interface TrackMapActivityCallback {
     void onSuccessOrderEndJourneyUpdateApiCall(OrderEndJourneyUpdateResponse orderEndJourneyUpdateResponse);
 
     void onFailureOrderEndJourneyUpdateApiCall(String message);
+
+    void onLogout();
 }

@@ -641,6 +641,10 @@ public class MyOrdersListResponse {
         @SerializedName("crate_amount")
         @Expose
         private Double crateAmount;
+
+        @SerializedName("del_acc_name")
+        @Expose
+        private String delAccName;
         @SerializedName("del_add_id")
         @Expose
         private String delAddId;
@@ -692,6 +696,9 @@ public class MyOrdersListResponse {
         @SerializedName("payment_type")
         @Expose
         private PaymentType paymentType;
+        @SerializedName("pickup_acc_name")
+        @Expose
+        private String pickupAccName;
         @SerializedName("pickup_add_id")
         @Expose
         private String pickupAddId;
@@ -725,6 +732,9 @@ public class MyOrdersListResponse {
         @SerializedName("pickup_street_name")
         @Expose
         private String pickupStreetName;
+        @SerializedName("return_acc_name")
+        @Expose
+        private String returnAccName;
         @SerializedName("return_add_id")
         @Expose
         private String returnAddId;
@@ -755,6 +765,9 @@ public class MyOrdersListResponse {
         @SerializedName("order_rider")
         @Expose
         private OrderRider orderRider;
+        @SerializedName("failure_attempts")
+        @Expose
+        private int failureAttempts;
         @SerializedName("pickup_st_windo")
         @Expose
         private String pickupStWindo;
@@ -773,6 +786,38 @@ public class MyOrdersListResponse {
         @SerializedName("order_sh")
         @Expose
         private List<OrderSh> orderSh = null;
+
+        public int getFailureAttempts() {
+            return failureAttempts;
+        }
+
+        public void setFailureAttempts(int failureAttempts) {
+            this.failureAttempts = failureAttempts;
+        }
+
+        public String getDelAccName() {
+            return delAccName;
+        }
+
+        public void setDelAccName(String delAccName) {
+            this.delAccName = delAccName;
+        }
+
+        public String getPickupAccName() {
+            return pickupAccName;
+        }
+
+        public void setPickupAccName(String pickupAccName) {
+            this.pickupAccName = pickupAccName;
+        }
+
+        public String getReturnAccName() {
+            return returnAccName;
+        }
+
+        public void setReturnAccName(String returnAccName) {
+            this.returnAccName = returnAccName;
+        }
 
         public String getUid() {
             return uid;

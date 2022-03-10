@@ -36,7 +36,7 @@ public class OrdersCodStatusAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.mListener = mListener;
     }
 
-    public OrdersCodStatusAdapter(Context context, List<OrdersCodStatusResponse.Row> ordersCodStatusList,  ReportsFragmentCallback mReportsFragmentListener) {
+    public OrdersCodStatusAdapter(Context context, List<OrdersCodStatusResponse.Row> ordersCodStatusList, ReportsFragmentCallback mReportsFragmentListener) {
         this.context = context;
         this.ordersCodStatusList = ordersCodStatusList;
         this.mReportsFragmentListener = mReportsFragmentListener;
@@ -56,6 +56,8 @@ public class OrdersCodStatusAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+
+
         if (holder instanceof ItemViewHolder) {
             itemOnBindViewHolder((ItemViewHolder) holder, position);
         } else if (holder instanceof LoadingViewHolder) {
@@ -68,12 +70,14 @@ public class OrdersCodStatusAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             OrdersCodStatusResponse.Row orderCodStatus = ordersCodStatusList.get(position);
             holder.ordersCodStatusBinding.orderNumber.setText(orderCodStatus.getOrderNumber());
 
-            holder.ordersCodStatusBinding.collectedAmount.setText(context.getResources().getString(R.string.label_rupee_symbol)+" "+String.valueOf(orderCodStatus.getOrderPayment().getAmount()));
-            if (orderCodStatus.getOrderPayment().getSettled().getName().equals("No")) {
+            holder.ordersCodStatusBinding.collectedAmount.setText(context.getResources().getString(R.string.label_rupee_symbol) + " " + String.valueOf(orderCodStatus.getOrderPayment().getAmount()));
+
+            if (orderCodStatus.getOrderPayment().getSettled().getName() == null || orderCodStatus.getOrderPayment().getSettled().getName().equals("No")) {
                 holder.ordersCodStatusBinding.depositedAmount.setTextColor(Color.RED);
-                holder.ordersCodStatusBinding.depositedAmount.setText(context.getResources().getString(R.string.label_rupee_symbol)+" "+"0.0");
+                holder.ordersCodStatusBinding.depositedAmount.setText("Pending");//context.getResources().getString(R.string.label_rupee_symbol) + " " + "0.0"
             } else {
-                holder.ordersCodStatusBinding.depositedAmount.setText(context.getResources().getString(R.string.label_rupee_symbol)+" "+String.valueOf(orderCodStatus.getOrderPayment().getAmount()));
+                holder.ordersCodStatusBinding.depositedAmount.setTextColor(Color.parseColor("#228B22"));
+                holder.ordersCodStatusBinding.depositedAmount.setText(context.getResources().getString(R.string.label_rupee_symbol) + " " + String.valueOf(orderCodStatus.getOrderPayment().getAmount()));
             }
             if (orderCodStatus.getOrderRider().getDeliveredOn() != null && !orderCodStatus.getOrderRider().getDeliveredOn().isEmpty()) {
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());

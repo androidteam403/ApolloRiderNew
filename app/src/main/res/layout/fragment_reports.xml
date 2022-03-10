@@ -1,107 +1,245 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#e8e7e7"
         android:orientation="vertical">
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:descendantFocusability="blocksDescendants"
             android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingTop="@dimen/five_dp"
+                android:paddingEnd="@dimen/ten_dp"
+                android:paddingBottom="@dimen/five_dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/ten_dp"
+                        android:layout_weight=".42"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_regular"
+                            android:text="From"
+                            android:textColor="@color/label_color" />
+
+                        <EditText
+                            android:id="@+id/from_date"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/thirty_dp"
+                            android:layout_marginStart="@dimen/five_dp"
+                            android:background="@drawable/date_edit_bg"
+                            android:focusable="false"
+                            android:fontFamily="@font/roboto_regular"
+                            android:gravity="center"
+                            android:importantForAutofill="no"
+                            android:inputType="date"
+                            android:onClick="@{()-> callback.onClickFromDate()}"
+                            android:padding="@dimen/five_dp"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/text_dimen_12"
+                            tools:ignore="LabelFor" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/ten_dp"
+                        android:layout_weight=".42"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_regular"
+                            android:text="To"
+                            android:textColor="@color/label_color" />
+
+                        <EditText
+                            android:id="@+id/to_date"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/thirty_dp"
+                            android:layout_marginStart="@dimen/five_dp"
+                            android:background="@drawable/date_edit_bg"
+                            android:focusable="false"
+                            android:fontFamily="@font/roboto_regular"
+                            android:gravity="center"
+                            android:importantForAutofill="no"
+                            android:inputType="date"
+                            android:onClick="@{()-> callback.onClickToDate()}"
+                            android:padding="@dimen/five_dp"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/text_dimen_12"
+                            tools:ignore="LabelFor" />
+                    </LinearLayout>
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.16"
+                        android:gravity="bottom">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/thirty_dp"
+                            android:background="#4b9e2e"
+                            android:fontFamily="@font/roboto_bold"
+                            android:gravity="center"
+                            android:onClick="@{()-> callback.onClickOk()}"
+                            android:text="Apply"
+                            android:textColor="@color/colorWhite" />
+
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/date_comparison_error_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/five_dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="Invalid Date Range."
+                    android:textColor="#e21d27"
+                    android:textSize="@dimen/text_dimen_10"
+                    android:visibility="gone" />
+            </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/codreceived_codpending"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/one_hundred_twenty_five_dp"
-                android:layout_marginStart="@dimen/ten_dp"
-                android:layout_marginEnd="@dimen/ten_dp"
-                android:layout_marginBottom="@dimen/ten_dp"
-                android:layout_marginTop="@dimen/five_dp"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
                 android:orientation="horizontal"
+                android:paddingStart="@dimen/fifteen_dp"
+                android:paddingEnd="@dimen/fifteen_dp"
+                android:paddingBottom="@dimen/five_dp"
+                android:visibility="gone"
                 android:weightSum="1">
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.485"
-                    android:background="@drawable/dashboard_item_bg"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                    android:layout_weight=".5"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
                     <ImageView
-                        android:layout_width="@dimen/fifty_dp"
-                        android:layout_height="@dimen/forty_dp"
+                        android:layout_width="@dimen/thirty_five_dp"
+                        android:layout_height="@dimen/thirty_five_dp"
                         android:contentDescription="@string/app_name"
-                        android:src="@drawable/db_cod_received" />
+                        android:src="@drawable/ic_cod_received" />
 
-                    <TextView
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/three_dp"
-                        android:fontFamily="@font/roboto_bold"
-                        android:gravity="center"
-                        android:text="@string/label_cod_received"
-                        android:textColor="@color/dashboard_text_color"
-                        android:textSize="@dimen/text_dimen_12" />
+                        android:layout_marginStart="@dimen/ten_dp"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/cod_received_val"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/roboto_bold"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/text_dimen_20" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_regular"
+                            android:text="COD Received"
+                            android:textColor="@color/label_color"
+                            android:textSize="@dimen/text_dimen_11" />
+
+                        <TextView
+                            android:id="@+id/cod_received_val"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_bold"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/text_dimen_18" />
+
+                    </LinearLayout>
                 </LinearLayout>
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.03" />
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.485"
-                    android:background="@drawable/dashboard_item_bg"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                    android:layout_weight=".5"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
                     <ImageView
-                        android:layout_width="@dimen/fifty_dp"
-                        android:layout_height="@dimen/forty_dp"
+                        android:layout_width="@dimen/thirty_five_dp"
+                        android:layout_height="@dimen/thirty_five_dp"
                         android:contentDescription="@string/app_name"
-                        android:src="@drawable/db_cod_penging" />
+                        android:src="@drawable/ic_cod_deposit_red" />
 
-                    <TextView
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/three_dp"
-                        android:fontFamily="@font/roboto_bold"
-                        android:gravity="center"
-                        android:text="@string/label_cod_pending"
-                        android:textColor="@color/dashboard_text_color"
-                        android:textSize="@dimen/text_dimen_12" />
+                        android:layout_marginStart="@dimen/ten_dp"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/cod_pending_val"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/roboto_bold"
-                        android:textColor="@color/dashboard_pending_text_color"
-                        android:textSize="@dimen/text_dimen_20" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_regular"
+                            android:text="COD Pending Deposits"
+                            android:textColor="@color/label_color"
+                            android:textSize="@dimen/text_dimen_11" />
+
+                        <TextView
+                            android:id="@+id/cod_pending_val"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_bold"
+                            android:textColor="#e21d27"
+                            android:textSize="@dimen/text_dimen_18" />
+
+                    </LinearLayout>
                 </LinearLayout>
+
             </LinearLayout>
-            <View
-                android:id="@+id/devider"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/five_dp"
-                android:background="@color/colorGrey" />
+
+            <!--            <View-->
+            <!--                android:id="@+id/devider"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="@dimen/five_dp"-->
+            <!--                android:background="@color/colorGrey" />-->
+            <!--            <androidx.core.widget.NestedScrollView-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                app:layout_behavior="@string/appbar_scrolling_view_behavior">-->
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/reports_recycler"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:paddingStart="@dimen/seven_dp"
+                android:paddingEnd="@dimen/seven_dp"
+                android:paddingBottom="@dimen/one_dp" />
+            <!--            </androidx.core.widget.NestedScrollView>-->
+
         </LinearLayout>
 
         <RelativeLayout
@@ -115,7 +253,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/one_hundred_fifty_dp"
-                android:background="@drawable/bg_no_order_found_layout"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:padding="@dimen/forty_dp">
@@ -142,5 +279,8 @@
 
     <data>
 
+        <variable
+            name="callback"
+            type="com.apollo.epos.fragment.reports.ReportsFragmentCallback" />
     </data>
 </layout>

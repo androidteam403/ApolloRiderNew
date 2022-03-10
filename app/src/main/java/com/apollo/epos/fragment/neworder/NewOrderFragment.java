@@ -120,7 +120,7 @@ public class NewOrderFragment extends BaseFragment implements DirectionApiCallba
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-
+//        NavigationActivity.getInstance().setTitle(R.string.menu_);
         Animation RightSwipe = AnimationUtils.loadAnimation(mActivity, R.anim.right_swipe);
         orderDeliveryTimeLayout.startAnimation(RightSwipe);
 

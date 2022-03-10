@@ -56,6 +56,7 @@ import com.apollo.epos.activity.CartActivity;
 import com.apollo.epos.activity.login.LoginActivity;
 import com.apollo.epos.adapter.NavigationDrawerAdapter;
 import com.apollo.epos.databinding.DialogAlertCustomBinding;
+import com.apollo.epos.databinding.DialogAlertMessageBinding;
 import com.apollo.epos.databinding.DialogPermissionDeniedBinding;
 import com.apollo.epos.db.SessionManager;
 import com.apollo.epos.fragment.changepassword.ChangePasswordFragment;
@@ -66,6 +67,7 @@ import com.apollo.epos.fragment.myorders.MyOrdersFragmentCallback;
 import com.apollo.epos.fragment.notifications.NotificationsFragment;
 import com.apollo.epos.fragment.profile.ProfileFragment;
 import com.apollo.epos.fragment.reports.ReportsFragment;
+import com.apollo.epos.fragment.summary.SummaryFragment;
 import com.apollo.epos.fragment.takeneworder.TakeNewOrderFragment;
 import com.apollo.epos.model.NavDrawerModel;
 import com.apollo.epos.service.BatteryLevelLocationService;
@@ -83,7 +85,6 @@ import java.util.Locale;
 import java.util.Objects;
 
 import static com.apollo.epos.utils.AppConstants.LAST_ACTIVITY;
-import static com.apollo.epos.utils.FragmentUtils.TRANSITION_FROM_LEFT_TO_RIGHT;
 
 public class NavigationActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, NavigationActivityCallback {
     Toolbar toolbar;
@@ -114,6 +115,42 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        if (intent != null)
+            if (intent.getBooleanExtra("ORDER_ASSIGNED", false)) {
+                Dialog alertDialog = new Dialog(this);
+                DialogAlertMessageBinding alertMessageBinding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.dialog_alert_message, null, false);
+                alertDialog.setContentView(alertMessageBinding.getRoot());
+                alertMessageBinding.message.setText(intent.getStringExtra("NOTIFICATION"));
+                alertDialog.setCancelable(false);
+                alertMessageBinding.dialogButtonOk.setOnClickListener(v -> {
+                    alertDialog.dismiss();
+                    if (getSessionManager().getNotificationStatus())
+                        selectItem(0);
+                    else
+                        Toast.makeText(this, "No Notification.", Toast.LENGTH_SHORT).show();
+                });
+                alertDialog.show();
+            } else if (intent.getBooleanExtra("order_cancelled", false)) {
+                Dialog alertDialog = new Dialog(this);
+                DialogAlertMessageBinding alertMessageBinding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.dialog_alert_message, null, false);
+                alertDialog.setContentView(alertMessageBinding.getRoot());
+                alertMessageBinding.message.setText(intent.getStringExtra("NOTIFICATION"));
+                alertDialog.setCancelable(false);
+                alertMessageBinding.dialogButtonOk.setOnClickListener(v -> {
+                    alertDialog.dismiss();
+                });
+                alertDialog.show();
+            } else if (intent.getBooleanExtra("order_shifted", false)) {
+                Dialog alertDialog = new Dialog(this);
+                DialogAlertMessageBinding alertMessageBinding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.dialog_alert_message, null, false);
+                alertDialog.setContentView(alertMessageBinding.getRoot());
+                alertMessageBinding.message.setText(intent.getStringExtra("NOTIFICATION"));
+                alertDialog.setCancelable(false);
+                alertMessageBinding.dialogButtonOk.setOnClickListener(v -> {
+                    alertDialog.dismiss();
+                });
+                alertDialog.show();
+            }
     }
 
     @Override
@@ -245,21 +282,25 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 
     @Override
     public void onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            finish();
-            return;
+        if (selectedItemPos == 0) {
+            if (doubleBackToExitPressedOnce) {
+                finish();
+                return;
+            }
+            this.doubleBackToExitPressedOnce = true;
+            Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+            new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
+        } else {
+            selectItem(0);
         }
-        this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
-        new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
     }
 
     @SuppressLint("WrongConstant")
     public void showFragment(Fragment fragment, @StringRes int titleResId) {
         FragmentUtils.replaceFragment(this, fragment, R.id.content_frame, true, 5);
-        if (titleResId == 0)
-            return;
-        setTitle(titleResId);
+//        if (titleResId == 0)
+//            return;
+//        setTitle(titleResId);
     }
 
     @Override
@@ -276,8 +317,10 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 //            FragmentUtils.replaceFragment(this, new DashboardFragment(), R.id.content_frame, false, TRANSITION_FROM_LEFT_TO_RIGHT);
             showFragment(new TakeNewOrderFragment(), R.string.menu_take_order);
         } else if (mItem == R.id.nav_dashboard) {
-            FragmentUtils.replaceFragment(this, new DashboardFragment(), R.id.content_frame, false, TRANSITION_FROM_LEFT_TO_RIGHT);
+//            FragmentUtils.replaceFragment(this, new DashboardFragment(), R.id.content_frame, false, TRANSITION_FROM_LEFT_TO_RIGHT);
 //            showFragment(new DashboardFragment(), R.string.menu_dashboard);
+            showFragment(new DashboardFragment(), R.string.menu_dashboard);
+
         } else if (mItem == R.id.nav_profile) {
             showFragment(new ProfileFragment(), R.string.menu_profile);
         } else if (mItem == R.id.nav_change_password) {
@@ -290,6 +333,8 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
             showFragment(new HelpFragment(), R.string.menu_help);
         } else if (mItem == R.id.nav_reports) {
             showFragment(new ReportsFragment(), R.string.menu_reports);
+        } else if (mItem == R.id.nav_summary) {
+            showFragment(new SummaryFragment(), R.string.menu_summary);
         }
 //        else if (mItem == R.id.nav_logout) {
 //            ActivityUtils.startActivity(this, LoginActivity.class, null);
@@ -347,7 +392,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         header = (ViewGroup) inflater.inflate(R.layout.nav_header_main, mDrawerList, false);
         mDrawerList.addHeaderView(header);
 
-        NavDrawerModel[] drawerItem = new NavDrawerModel[6];
+        NavDrawerModel[] drawerItem = new NavDrawerModel[7];
         drawerItem[0] = new NavDrawerModel(mNavigationDrawerItemTitles[0], false, true);
         drawerItem[1] = new NavDrawerModel(mNavigationDrawerItemTitles[1], false, false);
 //        drawerItem[2] = new NavDrawerModel(mNavigationDrawerItemTitles[2], false, false);
@@ -355,6 +400,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         drawerItem[3] = new NavDrawerModel(mNavigationDrawerItemTitles[3], false, false);
         drawerItem[4] = new NavDrawerModel(mNavigationDrawerItemTitles[4], false, false);
         drawerItem[5] = new NavDrawerModel(mNavigationDrawerItemTitles[5], false, false);
+        drawerItem[6] = new NavDrawerModel(mNavigationDrawerItemTitles[6], false, false);
 //        drawerItem[6] = new NavDrawerModel(mNavigationDrawerItemTitles[6], false, false);
         adapter = new NavigationDrawerAdapter(this, R.layout.nav_item_row, drawerItem);
 
@@ -473,14 +519,18 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 //                        showFragment(NotificationsFragment.newInstance(), R.string.menu_notifications);
 //                        break;
                     case 3:
+                        mCurrentFrag = getString(R.string.menu_summary);
+                        showFragment(SummaryFragment.newInstance(), R.string.menu_summary);
+                        break;
+                    case 4:
                         mCurrentFrag = getString(R.string.menu_profile);
                         showFragment(ProfileFragment.newInstance(), R.string.menu_profile);
                         break;
-                    case 4:
+                    case 5:
                         mCurrentFrag = getString(R.string.menu_change_password);
                         showFragment(ChangePasswordFragment.newInstance(), R.string.menu_change_password);
                         break;
-                    case 5:
+                    case 6:
                         mCurrentFrag = getString(R.string.menu_help);
                         showFragment(HelpFragment.newInstance(), R.string.menu_help);
                         break;
@@ -578,9 +628,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                 String orderDate = CommonUtils.getCurrentTimeDate();
                 Date orderDates = formatter.parse(orderDate);
                 long orderDateMills = orderDates.getTime();
-
                 getInstance().getSessionManager().setNotificationArrivedTime(CommonUtils.getTimeFormatter(orderDateMills));
-
             } catch (Exception e) {
                 System.out.println("NavigationActivity:::::::::::::::::::::::::::::" + e.getMessage());
             }

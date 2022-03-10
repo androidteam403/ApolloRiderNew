@@ -48,11 +48,11 @@
             android:name=".activity.reports.ReportsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.MAIN" />-->
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
+            <!--            </intent-filter>-->
 
         </activity>
         <activity
@@ -69,9 +69,10 @@
                 android:value=".activity.NewOrderActivity" />
         </activity>
         <activity
-            android:name=".activity.MapViewActivity"
+            android:name=".activity.onlinepayment.OnlinePaymentActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activity.MapViewActivity" />
         <activity
             android:name=".activity.trackmap.TrackMapActivity"
             android:screenOrientation="portrait"

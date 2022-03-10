@@ -2,17 +2,17 @@ package com.apollo.epos.activity.login;
 
 import android.content.Context;
 import android.os.Build;
-import android.view.View;
 
 import com.apollo.epos.BuildConfig;
 import com.apollo.epos.activity.login.model.FirebaseTokenRequest;
 import com.apollo.epos.activity.login.model.LoginRequest;
 import com.apollo.epos.activity.login.model.LoginResponse;
+import com.apollo.epos.activity.login.model.OrderPaymentTypeResponse;
 import com.apollo.epos.activity.login.model.SaveUserDeviceInfoRequest;
 import com.apollo.epos.activity.login.model.SaveUserDeviceInfoResponse;
 import com.apollo.epos.activity.orderdelivery.model.DeliveryFailreReasonsResponse;
-import com.apollo.epos.databinding.ActivityOrderDeliveryBinding;
 import com.apollo.epos.db.SessionManager;
+import com.apollo.epos.fragment.profile.model.ComplaintReasonsListResponse;
 import com.apollo.epos.model.GetRiderProfileResponse;
 import com.apollo.epos.network.ApiClient;
 import com.apollo.epos.network.ApiInterface;
@@ -49,6 +49,7 @@ public class LoginActivityController {
 
                     if (response.body() != null && response.body().getData() != null && response.body().getSuccess()) {
                         mListener.onSuccessLoginApi(response.body());
+                        orderPaymentTypelistApiCall();
                         saveUserDeviceInfoApiCall(firebaseToken);
                         firebaseToken(firebaseToken);
                     } else if (response.body() != null && !response.body().getSuccess()) {
@@ -158,6 +159,7 @@ public class LoginActivityController {
             mListener.onFialureMessage("Something went wrong.");
         }
     }
+
     public void deliveryFailureReasonApiCall() {
         if (NetworkUtils.isNetworkConnected(context)) {
             ApiInterface apiInterface = ApiClient.getApiService();
@@ -175,6 +177,56 @@ public class LoginActivityController {
 
                 @Override
                 public void onFailure(@NotNull Call<DeliveryFailreReasonsResponse> call, @NotNull Throwable t) {
+                    ActivityUtils.hideDialog();
+                    mListener.onFialureMessage(t.getMessage());
+                }
+            });
+        } else {
+            mListener.onFialureMessage("Something went wrong.");
+        }
+    }
+
+    public void getComplaintReasonsListApiCall() {
+        if (NetworkUtils.isNetworkConnected(context)) {
+//            ActivityUtils.showDialog(context, "Please Wait");
+            ApiInterface apiInterface = ApiClient.getApiService();
+            Call<ComplaintReasonsListResponse> call = apiInterface.GET_COMPLAINT_REASONS_LIST_API_CALL("Bearer " + new SessionManager(context).getLoginToken(), "application/json");
+            call.enqueue(new Callback<ComplaintReasonsListResponse>() {
+                @Override
+                public void onResponse(@NotNull Call<ComplaintReasonsListResponse> call, @NotNull Response<ComplaintReasonsListResponse> response) {
+                    ActivityUtils.hideDialog();
+                    if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
+                        new SessionManager(context).setComplaintReasonsListResponse(response.body());
+                    } else if (response.code() == 401) {
+                    }
+                }
+
+                @Override
+                public void onFailure(@NotNull Call<ComplaintReasonsListResponse> call, @NotNull Throwable t) {
+                    ActivityUtils.hideDialog();
+                    mListener.onFialureMessage(t.getMessage());
+                }
+            });
+        } else {
+            mListener.onFialureMessage("Something went wrong.");
+        }
+    }
+
+    public void orderPaymentTypelistApiCall() {
+        if (NetworkUtils.isNetworkConnected(context)) {
+            ApiInterface apiInterface = ApiClient.getApiService();
+            Call<OrderPaymentTypeResponse> call = apiInterface.GET_ORDER_PAYMENT_TYPE_LIST_API_CALL();
+            call.enqueue(new Callback<OrderPaymentTypeResponse>() {
+                @Override
+                public void onResponse(@NotNull Call<OrderPaymentTypeResponse> call, @NotNull Response<OrderPaymentTypeResponse> response) {
+                    ActivityUtils.hideDialog();
+                    if (response.body() != null && response.body().getSuccess()) {
+                        new SessionManager(context).setOrderPaymentTypeList(response.body());
+                    }
+                }
+
+                @Override
+                public void onFailure(@NotNull Call<OrderPaymentTypeResponse> call, @NotNull Throwable t) {
                     ActivityUtils.hideDialog();
                     mListener.onFialureMessage(t.getMessage());
                 }

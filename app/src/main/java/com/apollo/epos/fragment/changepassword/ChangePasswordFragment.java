@@ -111,6 +111,17 @@ public class ChangePasswordFragment extends BaseFragment implements ChangePasswo
 
     }
 
+    @Override
+    public void onLogout() {
+        getSessionManager().clearAllSharedPreferences();
+        NavigationActivity.getInstance().stopBatteryLevelLocationService();
+        Intent intent = new Intent(getContext(), LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        getActivity().finish();
+        getActivity().overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+    }
+
     public ChangePasswordFragmentController getController() {
         return new ChangePasswordFragmentController(getContext(), this);
     }

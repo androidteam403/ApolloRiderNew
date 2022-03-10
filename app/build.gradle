@@ -23,9 +23,12 @@ android {
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField("String", "BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
-            buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
-            buildConfigField("String", "HELP_BASE_URL", "\"https://apollo_rider.v35.dev.zeroco.de/apollo/rider/rider-help/\"")
+//            buildConfigField("String", "BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
+//            buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
+//            buildConfigField("String", "HELP_BASE_URL", "\"https://apollo_rider.v35.dev.zeroco.de/apollo/rider/rider-help/\"")
+            buildConfigField("String", "BASE_URL", "\"https://apis.v35.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
+            buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
+            buildConfigField("String", "HELP_BASE_URL", "\"https://apollo_rider.v35.zeroco.de/apollo/rider/rider-help/\"")
         }
         release {
             minifyEnabled false
@@ -132,6 +135,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics:20.0.2'
     implementation 'com.google.firebase:firebase-messaging:23.0.0'
     implementation 'com.google.firebase:firebase-crashlytics:18.2.6'
+
+    //QR code generation
+    implementation 'androidmads.library.qrgenearator:QRGenearator:1.0.3'
+
 }
 
 /**

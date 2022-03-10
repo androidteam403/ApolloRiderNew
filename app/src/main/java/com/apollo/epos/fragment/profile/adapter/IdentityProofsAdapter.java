@@ -38,11 +38,13 @@ public class IdentityProofsAdapter extends RecyclerView.Adapter<IdentityProofsAd
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         GetRiderProfileResponse.IdentificationProof identificationProof = identificationProofList.get(position);
         holder.identityProofsBinding.proofName.setText(identificationProof.getDocType().getName());
-        Glide.with(context)
-                .load(identificationProof.getDoc().get(0).getDimenesions().get300300FullPath())
-                .error(R.drawable.placeholder_image)
-                .placeholder(R.drawable.placeholder_image)
-                .into(holder.identityProofsBinding.proofIcon);
+        if (identificationProof.getDoc().get(0).getDimenesions() != null && identificationProof.getDoc().get(0).getDimenesions().get300300FullPath() != null) {
+            Glide.with(context)
+                    .load(identificationProof.getDoc().get(0).getDimenesions().get300300FullPath())
+                    .error(R.drawable.placeholder_image)
+                    .placeholder(R.drawable.placeholder_image)
+                    .into(holder.identityProofsBinding.proofIcon);
+        }
         holder.itemView.setOnClickListener(v -> {
             if (mListener != null) {
                 mListener.onItemClickIdentityProof(identificationProof);

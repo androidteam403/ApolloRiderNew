@@ -18,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.apollo.epos.R;
 import com.apollo.epos.activity.BaseActivity;
+import com.apollo.epos.activity.login.LoginActivity;
+import com.apollo.epos.activity.navigation.NavigationActivity;
 import com.apollo.epos.activity.reports.adapter.OrdersCodStatusAdapter;
 import com.apollo.epos.activity.reports.model.OrdersCodStatusResponse;
 import com.apollo.epos.databinding.ActivityReportsBinding;
@@ -69,6 +71,11 @@ public class ReportsActivity extends BaseActivity implements ReportsActivityCall
     }
 
     @Override
+    public void onFailureMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void onClickNotificationIcon() {
         if (getSessionManager().getNotificationStatus()) {
             notificationText.clearAnimation();
@@ -95,25 +102,27 @@ public class ReportsActivity extends BaseActivity implements ReportsActivityCall
             this.ordersCodStatusListLoad = ordersCodStatusResponse.getData().getListData().getRows();
 //            for (int i = 0; i < 30; i++)
 //                ordersCodStatusListLoad.add(ordersCodStatusListLoad.get(0));
-            if (ordersCodStatusListLoad != null) {
-                ordersCodStatusList = new ArrayList<>();
-                if (ordersCodStatusListLoad.size() > 10) {
-                    for (int i = 0; i <= 10; i++) {
-                        ordersCodStatusList.add(ordersCodStatusListLoad.get(i));
-                    }
-                } else {
-                    this.ordersCodStatusList = ordersCodStatusListLoad;
-                }
-            }
+//            if (ordersCodStatusListLoad != null) {
+//                ordersCodStatusList = new ArrayList<>();
+//                if (ordersCodStatusListLoad.size() > 10) {
+//                    for (int i = 0; i <= 10; i++) {
+//                        ordersCodStatusList.add(ordersCodStatusListLoad.get(i));
+//                    }
+//                } else {
+//                    this.ordersCodStatusList = ordersCodStatusListLoad;
+//                }
+//            }
+            ordersCodStatusAdapter = new OrdersCodStatusAdapter(this, ordersCodStatusResponse.getData().getListData().getRows(), this);
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
             reportsBinding.reportsRecycler.setLayoutManager(mLayoutManager);
             reportsBinding.reportsRecycler.setItemAnimator(new DefaultItemAnimator());
+            reportsBinding.reportsRecycler.setAdapter(ordersCodStatusAdapter);
             reportsBinding.reportsRecycler.setVisibility(View.VISIBLE);
             reportsBinding.codreceivedCodpending.setVisibility(View.VISIBLE);
             reportsBinding.devider.setVisibility(View.VISIBLE);
             reportsBinding.noReportsFoundLayout.setVisibility(View.GONE);
-            initAdapter();
-            initScrollListener();
+//            initAdapter();
+//            initScrollListener();
         } else {
             reportsBinding.reportsRecycler.setVisibility(View.GONE);
             reportsBinding.codreceivedCodpending.setVisibility(View.GONE);
@@ -177,6 +186,17 @@ public class ReportsActivity extends BaseActivity implements ReportsActivityCall
 
     @Override
     public void onClickBack() {
+        finish();
+        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+    }
+
+    @Override
+    public void onLogout() {
+        getSessionManager().clearAllSharedPreferences();
+        NavigationActivity.getInstance().stopBatteryLevelLocationService();
+        Intent intent = new Intent(ReportsActivity.this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
         finish();
         overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
     }

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apollo.epos.R;
+import com.apollo.epos.activity.login.LoginActivity;
+import com.apollo.epos.activity.navigation.NavigationActivity;
 import com.apollo.epos.adapter.CustomReasonAdapter;
 import com.apollo.epos.base.BaseFragment;
 import com.apollo.epos.databinding.BottomSheetBinding;
@@ -70,12 +73,17 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentCall
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        NavigationActivity.getInstance().setTitle(R.string.menu_profile);
         setup();
     }
 
     private void setup() {
         profileBinding.setCallback(this);
-        getController().getComplaintReasonsListApiCall();
+        if (getSessionManager().getComplaintReasonsListResponse() != null) {
+            onSuccessComplaintReasonsListApiCall(getSessionManager().getComplaintReasonsListResponse());
+        } else {
+            getController().getComplaintReasonsListApiCall();
+        }
         if (getSessionManager().getRiderProfileResponse() != null) {
             onSuccessGetProfileDetailsApi(getSessionManager().getRiderProfileResponse());
         } else {
@@ -98,9 +106,14 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentCall
             if (complaintReasonsList != null && complaintReasonsList.size() > 0) {
                 for (ComplaintReasonsListResponse.Row row : complaintReasonsList) {
                     if (row.getName().equals(complaintReason)) {
-                        getController().riderComplaintSaveUpdateApiCall(row.getUid(), bottomSheetBinding.comment.getText().toString().trim());
-                        dialog.dismiss();
-                        break;
+                        if (!bottomSheetBinding.comment.getText().toString().isEmpty()) {
+                            getController().riderComplaintSaveUpdateApiCall(row.getUid(), bottomSheetBinding.comment.getText().toString().trim());
+                            dialog.dismiss();
+                            break;
+                        } else {
+                            Toast.makeText(mActivity, "Comment should not be empty ", Toast.LENGTH_SHORT).show();
+                            break;
+                        }
                     }
                 }
             }
@@ -118,6 +131,17 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentCall
 
             }
         });
+    }
+
+    @Override
+    public void onLogout() {
+        getSessionManager().clearAllSharedPreferences();
+        NavigationActivity.getInstance().stopBatteryLevelLocationService();
+        Intent intent = new Intent(getContext(), LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        getActivity().finish();
+        getActivity().overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
     }
 
     @Override
@@ -146,17 +170,28 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentCall
                 else
                     profileBinding.riderDob.setText(CommonUtils.getTimeFormatter(orderDateMills).substring(0, CommonUtils.getTimeFormatter(orderDateMills).length() - 8));
 
-                String currentAddress = getRiderProfileResponse.getData().getUserAddress().getCurrentAddress() + ", "
-                        + getRiderProfileResponse.getData().getUserAddress().getCaCity() + ", "
+                String currentAddress = "";
+                if (getRiderProfileResponse.getData().getUserAddress().getCurrentAddress() != null)
+                    currentAddress = getRiderProfileResponse.getData().getUserAddress().getCurrentAddress() + ", ";
+                currentAddress = currentAddress
+                        + getRiderProfileResponse.getData().getUserAddress().getCaDistrict().getName() + ", "
+                        + getRiderProfileResponse.getData().getUserAddress().getCadCity().getName() + ", "
                         + getRiderProfileResponse.getData().getUserAddress().getCaState().getName() + ", "
-                        + getRiderProfileResponse.getData().getUserAddress().getCaPincode() + ", "
-                        + getRiderProfileResponse.getData().getUserAddress().getCaCountry().getName();
+                        + getRiderProfileResponse.getData().getUserAddress().getCuaRegion().getName() + ", "
+                        + getRiderProfileResponse.getData().getUserAddress().getCaCountry().getName() + ", "
+                        + getRiderProfileResponse.getData().getUserAddress().getCaPinCode().getName();
                 profileBinding.currentAddress.setText(currentAddress);
-                String permanentAddress = getRiderProfileResponse.getData().getUserAddress().getPermanentAddress() + ", "
-                        + getRiderProfileResponse.getData().getUserAddress().getPaCity() + ", "
+
+                String permanentAddress = "";
+                if (getRiderProfileResponse.getData().getUserAddress().getPermanentAddress() != null)
+                    permanentAddress = getRiderProfileResponse.getData().getUserAddress().getPermanentAddress() + ", ";
+                permanentAddress = permanentAddress
+                        + getRiderProfileResponse.getData().getUserAddress().getPaDistrict().getName() + ", "
+                        + getRiderProfileResponse.getData().getUserAddress().getPadCity().getName() + ", "
                         + getRiderProfileResponse.getData().getUserAddress().getPaState().getName() + ", "
-                        + getRiderProfileResponse.getData().getUserAddress().getPaPincode() + ", "
-                        + getRiderProfileResponse.getData().getUserAddress().getPaCountry().getName();
+                        + getRiderProfileResponse.getData().getUserAddress().getPeaRegion().getName() + ", "
+                        + getRiderProfileResponse.getData().getUserAddress().getPaCountry().getName() + ", "
+                        + getRiderProfileResponse.getData().getUserAddress().getPaPinCode().getName();
                 profileBinding.permanentAddress.setText(permanentAddress);
 
                 profileBinding.vehicleType.setText(getRiderProfileResponse.getData().getUserAddInfo().getVehicleType().getName());

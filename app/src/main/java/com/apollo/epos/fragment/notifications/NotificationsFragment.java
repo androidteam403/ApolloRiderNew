@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apollo.epos.R;
+import com.apollo.epos.activity.navigation.NavigationActivity;
 import com.apollo.epos.adapter.NotificationsListAdapter;
 import com.apollo.epos.base.BaseFragment;
 import com.apollo.epos.model.NotificationItemModel;
@@ -64,7 +65,7 @@ public class NotificationsFragment extends BaseFragment implements OnItemClickLi
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-
+        NavigationActivity.getInstance().setTitle(R.string.menu_notifications);
         getNotifications();
 
         mNotificationListAdapter = new NotificationsListAdapter(mActivity, notificationsList, this);

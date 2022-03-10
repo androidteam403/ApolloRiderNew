@@ -125,7 +125,7 @@ public class FloatingTouchService extends Service {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 mParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
             } else {
-                Toast.makeText(this, "Build.VERSION.SDK_INT"+Build.VERSION.SDK_INT, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "Build.VERSION.SDK_INT"+Build.VERSION.SDK_INT, Toast.LENGTH_SHORT).show();
                 mParams.type = WindowManager.LayoutParams.TYPE_PHONE;
             }
             mParams.width = WindowManager.LayoutParams.WRAP_CONTENT;

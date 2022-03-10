@@ -3,7 +3,7 @@
     <color name="colorPrimary">#1f373a</color>
     <color name="colorPrimaryDark">#0d2c2a</color>
 <!--    <color name="colorAccent">#1f373a</color>-->
-    <color name="colorAccent">#00a552</color>
+    <color name="colorAccent">#0d2c2a</color>
 
     <color name="colorBlack">#000000</color>
     <color name="colorWhite">#ffffff</color>
@@ -77,4 +77,10 @@
     <color name="edit_text_textcolor">#b5c3c2</color>
     <color name="order_status_pending_green_color">#6B8E23</color>
     <color name="orange_color">#f77901</color>
+
+    <color name="transperent_black_color">#CC000000</color>
+    <color name="thick_blue">#6f2da8</color>
+    <color name="terniary">#808080</color>
+    <color name="color_green">#30732c</color>
+    <color name="label_color">#3f9bb3</color>
 </resources>

@@ -1497,8 +1497,8 @@
                                     android:background="@color/colorGrey"
                                     android:contentDescription="@string/app_name"
                                     android:hardwareAccelerated="false"
-                                    android:visibility="gone"
-                                    android:layerType="software" />
+                                    android:layerType="software"
+                                    android:visibility="gone" />
                             </LinearLayout>
 
                             <RelativeLayout
@@ -2675,8 +2675,20 @@
                                                             android:fontFamily="@font/roboto_bold"
                                                             android:text="Card"
                                                             android:textColor="@color/white"
-                                                            android:theme="@style/MyRadioButton" />
+                                                            android:theme="@style/MyRadioButton"
+                                                            android:visibility="gone" />
 
+                                                        <RadioButton
+                                                            android:id="@+id/payment_wallet"
+                                                            android:layout_width="wrap_content"
+                                                            android:layout_height="wrap_content"
+                                                            android:layout_marginStart="@dimen/five_dp"
+                                                            android:checked="false"
+                                                            android:focusableInTouchMode="false"
+                                                            android:fontFamily="@font/roboto_bold"
+                                                            android:text="Wallet"
+                                                            android:textColor="@color/white"
+                                                            android:theme="@style/MyRadioButton" />
 
                                                     </RadioGroup>
 
@@ -2689,7 +2701,7 @@
                                                         android:background="@drawable/continue_driving_btn_bg"
                                                         android:fontFamily="@font/roboto_bold"
                                                         android:onClick="@{()-> callback.onClickCollectPaymentSave()}"
-                                                        android:text="@string/ok"
+                                                        android:text="@string/label_continue"
                                                         android:textColor="@color/colorWhite"
                                                         android:textSize="@dimen/text_dimen_17" />
 
@@ -3443,7 +3455,7 @@
                 android:background="@drawable/btn_logout_ripple_effect"
                 android:fontFamily="@font/roboto_bold"
                 android:gravity="center"
-                android:text="@string/label_order_cancel"
+                android:text="@string/label_change_order_status"
                 android:textAllCaps="true"
                 android:textColor="@color/colorWhite"
                 android:textSize="@dimen/text_dimen_16"

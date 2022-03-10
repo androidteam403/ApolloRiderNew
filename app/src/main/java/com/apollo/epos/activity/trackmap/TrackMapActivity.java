@@ -36,6 +36,7 @@ import com.ahmadrosid.lib.drawroutemap.PiontsCallback;
 import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.R;
 import com.apollo.epos.activity.BaseActivity;
+import com.apollo.epos.activity.login.LoginActivity;
 import com.apollo.epos.activity.navigation.NavigationActivity;
 import com.apollo.epos.activity.trackmap.model.OrderEndJourneyUpdateResponse;
 import com.apollo.epos.activity.trackmap.model.OrderStartJourneyUpdateResponse;
@@ -129,7 +130,22 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
                     finish();
                 });
                 alertDialog.show();
+            } else if (intent.getBooleanExtra("order_shifted", false)) {
+                Dialog alertDialog = new Dialog(this);
+                DialogAlertMessageBinding alertMessageBinding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.dialog_alert_message, null, false);
+                alertDialog.setContentView(alertMessageBinding.getRoot());
+                alertMessageBinding.message.setText(intent.getStringExtra("NOTIFICATION"));
+                alertDialog.setCancelable(false);
+                alertMessageBinding.dialogButtonOk.setOnClickListener(v -> {
+                    alertDialog.dismiss();
+                    Intent intent1 = new Intent();
+                    intent1.putExtra("IS_ORDER_SHIFTED", true);
+                    setResult(Activity.RESULT_OK, intent1);
+                    finish();
+                });
+                alertDialog.show();
             }
+
     }
 
     @Override
@@ -540,7 +556,7 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
                 }
                 break;
             case "Destination":
-                new TrackMapActivityController(this, this).ordersSaveUpdateStatusApiCall("OUTFORDELIVERY", orderUid, "", "");
+//                new TrackMapActivityController(this, this).ordersSaveUpdateStatusApiCall("OUTFORDELIVERY", orderUid, "", "");
                 new TrackMapActivityController(this, this).orderStartJourneyUpdateApiCall(orderUid, distanceInKm);
                 break;
             case "Store":
@@ -655,8 +671,8 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onFialureMessage(String message) {
-
+    public void onFailureMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -692,6 +708,17 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
     @Override
     public void onFailureOrderEndJourneyUpdateApiCall(String message) {
 
+    }
+
+    @Override
+    public void onLogout() {
+        getSessionManager().clearAllSharedPreferences();
+        NavigationActivity.getInstance().stopBatteryLevelLocationService();
+        Intent intent = new Intent(TrackMapActivity.this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
     }
 
 }

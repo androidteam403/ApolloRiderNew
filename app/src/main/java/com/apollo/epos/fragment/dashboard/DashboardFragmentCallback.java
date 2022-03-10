@@ -13,4 +13,16 @@ public interface DashboardFragmentCallback {
     void onClickCodReciebedorPendingDeposits();
 
     void onClickTotalDeliveredCancelledOrders();
+
+    void onLogout();
+
+    void onClickNewOrders();
+
+    void onClickIntransitOrders();
+
+    void onClickDeliveredOrders();
+
+    void onClickCancelledOrders();
+
+    boolean isActiveStausSw();
 }
