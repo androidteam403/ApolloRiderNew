@@ -145,7 +145,7 @@ public class OnlinePaymentController {
             ActivityUtils.showDialog(mContext, "Please Wait...");
 
             ApiInterface apiInterface = ApiClient.getApiService();
-            Call<ResponseBody> call = apiInterface.GENERATE_PHONEPE_LINK_API_CALL(siteId, orderNumber.substring(orderNumber.length() - 4) + CommonUtils.getCurrentDateTimeMSUnique(), "VEG", "100", mobileNumber, "WITHDRAW");//amount
+            Call<ResponseBody> call = apiInterface.GENERATE_PHONEPE_LINK_API_CALL(siteId, CommonUtils.getCurrentDateTimeMSUnique() + orderNumber.substring(orderNumber.length() - 6), "VEG", amount, mobileNumber, "WITHDRAW");//amount
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {

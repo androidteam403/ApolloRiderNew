@@ -245,6 +245,7 @@ public class ReportsFragment extends BaseFragment implements ReportsFragmentCall
                 e.printStackTrace();
             }
         }, mYear, mMonth, mDay);
+        dialog.getDatePicker().setMinDate((long) (System.currentTimeMillis()-2592000000L));
         dialog.getDatePicker().setMaxDate((long) (System.currentTimeMillis()));// - (1000 * 60 * 60 * 24 * 365.25 * 18)
         dialog.show();
     }
@@ -285,6 +286,7 @@ public class ReportsFragment extends BaseFragment implements ReportsFragmentCall
                 e.printStackTrace();
             }
         }, mYear, mMonth, mDay);
+        dialog.getDatePicker().setMinDate((long) (System.currentTimeMillis()-2592000000L));
         dialog.getDatePicker().setMaxDate((long) (System.currentTimeMillis()));// - (1000 * 60 * 60 * 24 * 365.25 * 18)
         dialog.show();
     }

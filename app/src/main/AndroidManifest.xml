@@ -34,7 +34,14 @@
             android:name=".activity.navigation.NavigationActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustPan"
+            android:exported="true">
+<!--            <intent-filter>-->
+<!--                <action android:name="apollo:complaints:complaints" />-->
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+<!--            </intent-filter>-->
+
+        </activity>
         <activity
             android:name=".activity.NewOrderActivity"
             android:label="New Order"
@@ -60,10 +67,10 @@
             android:label="New Order"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="apollo:orders:create-orders-form" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+<!--            <intent-filter>-->
+<!--                <action android:name="apollo:orders:create-orders-form" />-->
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+<!--            </intent-filter>-->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.NewOrderActivity" />
@@ -122,7 +129,8 @@
 
         <service android:name=".service.FloatingTouchService" />
 
-        <service android:name=".service.MyFirebaseMessagingService">
+        <service
+            android:name=".service.MyFirebaseMessagingService">
 
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

@@ -6,14 +6,28 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/proof_name"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto_regular"
-            android:text="@string/label_driving_licence"
-            android:textColor="@color/profile_header_color"
-            android:textSize="@dimen/text_dimen_12" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/proof_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_regular"
+                android:textColor="@color/profile_header_color"
+                android:textSize="@dimen/text_dimen_12" />
+
+            <TextView
+                android:id="@+id/identity_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/three_dp"
+                android:fontFamily="@font/roboto_bold"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/text_dimen_14" />
+        </LinearLayout>
 
         <ImageView
             android:id="@+id/proof_icon"

@@ -33,7 +33,6 @@
                     app:elevation="0dp"
                     app:titleMarginStart="0dp"
                     app:titleTextColor="@color/colorWhite" />
-
             </com.google.android.material.appbar.AppBarLayout>
         </LinearLayout>
 
@@ -41,8 +40,6 @@
             android:id="@+id/content_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-
-
     </LinearLayout>
 
     <RelativeLayout
@@ -125,7 +122,5 @@
             android:background="@drawable/btn_signin_ripple_effect"
             android:fontFamily="@font/roboto_bold"
             android:text="Location permission" />
-
-
     </LinearLayout>
 </androidx.drawerlayout.widget.DrawerLayout>

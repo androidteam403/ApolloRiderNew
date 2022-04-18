@@ -6,12 +6,11 @@
     <string name="action_settings">Settings</string>
 
     <string-array name="navigation_drawer_items_array">
-        <!--        <item>New Order</item>-->
         <item>Dashboard</item>
         <item>My Orders</item>
-        <!--        <item>Notifications</item>-->
         <item>Cash Deposits</item>
         <item>Summary</item>
+        <item>Complaints</item>
         <item>Profile</item>
         <item>Change Password</item>
         <item>Help</item>
@@ -29,6 +28,7 @@
     <string name="menu_my_orders">My Orders</string>
     <string name="menu_reports">Cash Deposits</string>
     <string name="menu_summary">Summary</string>
+    <string name="menu_complaints">Complaints</string>
     <string name="menu_notifications">Notifications</string>
     <string name="menu_profile">Profile</string>
     <string name="menu_change_password">Change Password</string>
@@ -269,5 +269,9 @@
     <string name="label_from">From</string>
     <string name="label_to">To</string>
     <string name="label_order_date">Order Date</string>
+    <string name="label_languages_known_to_speak">Languages Known to Speak</string>
+    <string name="label_no_complaints_found">No complaints found</string>
+    <string name="label_rider_name">Rider Name:</string>
+    <string name="label_mobile_no">Mobile No.:</string>
 
 </resources>

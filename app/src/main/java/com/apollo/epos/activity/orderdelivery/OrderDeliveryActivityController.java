@@ -20,6 +20,8 @@ import com.apollo.epos.activity.orderdelivery.model.OrderSaveUpdateStausResponse
 import com.apollo.epos.activity.orderdelivery.model.OrderStatusHitoryListResponse;
 import com.apollo.epos.activity.trackmap.model.OrderEndJourneyUpdateRequest;
 import com.apollo.epos.activity.trackmap.model.OrderEndJourneyUpdateResponse;
+import com.apollo.epos.activity.trackmap.model.OrderStartJourneyUpdateRequest;
+import com.apollo.epos.activity.trackmap.model.OrderStartJourneyUpdateResponse;
 import com.apollo.epos.databinding.ActivityOrderDeliveryBinding;
 import com.apollo.epos.db.SessionManager;
 import com.apollo.epos.fragment.dashboard.model.RiderActiveStatusRequest;
@@ -226,12 +228,15 @@ public class OrderDeliveryActivityController {
         }
     }
 
-    public void ordersSaveUpdateStatusApiCall(String orderStatus, String orderUid, String orderCancelReason, String comment) {
+    public void ordersSaveUpdateStatusApiCall(String orderStatus, String orderUid, String orderCancelReason, String comment, String transactionId) {
         if (NetworkUtils.isNetworkConnected(context)) {
             OrderSaveUpdateStausRequest orderSaveUpdateStausRequest = new OrderSaveUpdateStausRequest();
             orderSaveUpdateStausRequest.setUid(orderUid);
             OrderSaveUpdateStausRequest.OrderStatus orderStatus1 = new OrderSaveUpdateStausRequest.OrderStatus();
             orderStatus1.setUid(orderStatus);
+            OrderSaveUpdateStausRequest.OrderPayment orderPayment = new OrderSaveUpdateStausRequest.OrderPayment();
+            orderPayment.setTxnId(transactionId);
+            orderSaveUpdateStausRequest.setOrderPayment(orderPayment);
             orderSaveUpdateStausRequest.setOrderStatus(orderStatus1);
             OrderSaveUpdateStausRequest.DeliveryFailureReason deliveryFailureReason = new OrderSaveUpdateStausRequest.DeliveryFailureReason();
             deliveryFailureReason.setUid(orderCancelReason);
@@ -265,7 +270,7 @@ public class OrderDeliveryActivityController {
                             public void onResponse(@NotNull Call<LoginResponse> call1, @NotNull Response<LoginResponse> response) {
                                 if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
                                     new SessionManager(context).setLoginToken(response.body().getData().getToken());
-                                    ordersSaveUpdateStatusApiCall(orderStatus, orderUid, orderCancelReason, comment);
+                                    ordersSaveUpdateStatusApiCall(orderStatus, orderUid, orderCancelReason, comment, transactionId);
                                 } else if (response.code() == 401) {
                                     logout();
                                 } else {
@@ -678,4 +683,65 @@ public class OrderDeliveryActivityController {
             mListener.onFailureMessage("Something went wrong.");
         }
     }
+
+    public void orderStartJourneyUpdateApiCall(String uid, String distance) {
+        if (NetworkUtils.isNetworkConnected(context)) {
+//            ActivityUtils.showDialog(context, "Please wait.");
+
+            OrderStartJourneyUpdateRequest orderStartJourneyUpdateRequest = new OrderStartJourneyUpdateRequest();
+            orderStartJourneyUpdateRequest.setUid(uid);
+            OrderStartJourneyUpdateRequest.OrderRider orderRider = new OrderStartJourneyUpdateRequest.OrderRider();
+            orderRider.setActualDistance(distance);
+            orderRider.setStartTime(CommonUtils.getCurrentTimeDate());
+            orderStartJourneyUpdateRequest.setOrderRider(orderRider);
+
+            ApiInterface apiInterface = ApiClient.getApiService();
+            Call<OrderStartJourneyUpdateResponse> call = apiInterface.ORDER_START_JOURNEY_UPDATE_API_CALL("Bearer " + new SessionManager(context).getLoginToken(), orderStartJourneyUpdateRequest);
+            call.enqueue(new Callback<OrderStartJourneyUpdateResponse>() {
+                @Override
+                public void onResponse(@NotNull Call<OrderStartJourneyUpdateResponse> call, @NotNull Response<OrderStartJourneyUpdateResponse> response) {
+                    ActivityUtils.hideDialog();
+                    if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
+//                        mListener.onSuccessOrderStartJourneyUpdateApiCall(response.body());
+                    } else if (response.code() == 401) {
+                        ActivityUtils.showDialog(context, "Please wait.");
+                        HashMap<String, Object> refreshTokenRequest = new HashMap<>();
+                        refreshTokenRequest.put("token", new SessionManager(context).getLoginToken());
+                        Call<LoginResponse> call1 = apiInterface.REFRESH_TOKEN(refreshTokenRequest);
+                        call1.enqueue(new Callback<LoginResponse>() {
+                            @Override
+                            public void onResponse(@NotNull Call<LoginResponse> call1, @NotNull Response<LoginResponse> response) {
+                                if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
+                                    new SessionManager(context).setLoginToken(response.body().getData().getToken());
+                                    orderStartJourneyUpdateApiCall(uid, distance);
+                                } else if (response.code() == 401) {
+                                    logout();
+                                } else {
+                                    mListener.onFailureMessage("Please try again");
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(@NotNull Call<LoginResponse> call1, @NotNull Throwable t) {
+                                ActivityUtils.hideDialog();
+                                mListener.onFailureMessage("Please try again");
+                                System.out.println("REFRESH_TOKEN_DASHBOARD ==============" + t.getMessage());
+                            }
+                        });
+                    } else {
+                        mListener.onFailureMessage("No data saved.");
+                    }
+                }
+
+                @Override
+                public void onFailure(@NotNull Call<OrderStartJourneyUpdateResponse> call, @NotNull Throwable t) {
+                    ActivityUtils.hideDialog();
+                    mListener.onFailureMessage(t.getMessage());
+                }
+            });
+        } else {
+            mListener.onFailureMessage("Something went wrong.");
+        }
+    }
+
 }

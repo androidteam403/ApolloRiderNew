@@ -76,6 +76,9 @@ public class BatteryLevelLocationService extends Service implements LocationList
 //        riderTotalTravelledDistanceinaDay();
     }
 
+
+
+
     Location preLocation = null;
 
     @Override

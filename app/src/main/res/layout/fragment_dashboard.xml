@@ -598,6 +598,53 @@
                     android:background="@color/colorGrey" />
 
                 <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/ten_dp"
+                    android:visibility="gone"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="@dimen/thirty_five_dp"
+                        android:layout_height="@dimen/thirty_five_dp"
+                        android:contentDescription="@string/app_name"
+                        android:src="@drawable/ic_distance_travelled" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ten_dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_regular"
+                            android:text="Today Travelled"
+                            android:textColor="@color/label_color"
+                            android:textSize="@dimen/text_dimen_12" />
+
+                        <TextView
+                            android:id="@+id/rider_travelled_distance_inaday"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_bold"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/text_dimen_24" />
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/one_dp"
+                    android:visibility="gone"
+                    android:background="@color/colorGrey" />
+
+                <LinearLayout
                     android:id="@+id/orders_information_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -1077,7 +1124,6 @@
                                 android:textSize="@dimen/text_dimen_12" />
 
                             <TextView
-                                android:id="@+id/rider_travelled_distance_inaday"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/roboto_bold"

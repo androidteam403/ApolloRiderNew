@@ -13,8 +13,8 @@ import androidx.databinding.DataBindingUtil;
 import com.apollo.epos.R;
 import com.apollo.epos.activity.login.LoginActivity;
 import com.apollo.epos.activity.navigation.NavigationActivity;
+import com.apollo.epos.activity.orderdelivery.OrderDeliveryActivity;
 import com.apollo.epos.databinding.ActivitySplashBinding;
-import com.apollo.epos.db.SessionManager;
 import com.novoda.merlin.Merlin;
 
 import butterknife.ButterKnife;
@@ -29,6 +29,7 @@ public class SplashScreen extends BaseActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
+
         ActivitySplashBinding splashBinding = DataBindingUtil.setContentView(this, R.layout.activity_splash);
         ButterKnife.bind(this);
 
@@ -44,10 +45,30 @@ public class SplashScreen extends BaseActivity {
 
         new Handler().postDelayed(() -> {
             if (getSessionManager().getLoginToken() != null && !getSessionManager().getLoginToken().isEmpty()) {
-                Intent mainIntent = new Intent(SplashScreen.this, NavigationActivity.class);
-                startActivity(mainIntent);
-                finish();
-                overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+                if (getIntent() != null) {
+                    String notificationType = getIntent().getStringExtra("notification_type");
+                    if (notificationType != null && notificationType.equals("ORDER_ASSIGNED")) {
+                        startActivity(OrderDeliveryActivity.getStartIntent(SplashScreen.this, getIntent().getStringExtra("uid"), true));
+                        finish();
+                        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+                    } else if (notificationType != null && notificationType.equals("COMPLAINT_RESOLVED")) {
+                        Intent mainIntent = new Intent(SplashScreen.this, NavigationActivity.class);
+                        mainIntent.putExtra("COMPLAINT_RESOLVED", true);
+                        startActivity(mainIntent);
+                        finish();
+                        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+                    } else {
+                        Intent mainIntent = new Intent(SplashScreen.this, NavigationActivity.class);
+                        startActivity(mainIntent);
+                        finish();
+                        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+                    }
+                } else {
+                    Intent mainIntent = new Intent(SplashScreen.this, NavigationActivity.class);
+                    startActivity(mainIntent);
+                    finish();
+                    overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+                }
             } else {
                 Intent mainIntent = new Intent(SplashScreen.this, LoginActivity.class);
                 startActivity(mainIntent);

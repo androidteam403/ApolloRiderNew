@@ -51,6 +51,10 @@ import androidx.transition.Slide;
 import androidx.transition.Transition;
 import androidx.transition.TransitionManager;
 
+import com.ahmadrosid.lib.drawroutemap.DirectionApiCallback;
+import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
+import com.ahmadrosid.lib.drawroutemap.PiontsCallback;
+import com.ahmadrosid.lib.drawroutemap.TaskLoadedCallback;
 import com.apollo.epos.R;
 import com.apollo.epos.activity.BaseActivity;
 import com.apollo.epos.activity.CancelOrderActivity;
@@ -78,12 +82,18 @@ import com.apollo.epos.service.GPSLocationService;
 import com.apollo.epos.utils.ActivityUtils;
 import com.apollo.epos.utils.CommonUtils;
 import com.bumptech.glide.Glide;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.novoda.merlin.Merlin;
 import com.orhanobut.hawk.Hawk;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -105,7 +115,7 @@ import static com.apollo.epos.utils.ActivityUtils.showTextDownAnimation;
 import static com.apollo.epos.utils.AppConstants.LAST_ACTIVITY;
 
 public class OrderDeliveryActivity extends BaseActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener,
-        View.OnFocusChangeListener, View.OnKeyListener, OrderDeliveryActivityCallback {
+        View.OnFocusChangeListener, View.OnKeyListener, OrderDeliveryActivityCallback, DirectionApiCallback, TaskLoadedCallback, PiontsCallback {
     @BindView(R.id.reached_store_layout)
     protected LinearLayout reachedStoreLayout;
     @BindView(R.id.reached_store_img)
@@ -317,7 +327,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
     private String customerNameTypeSinner;
     private String orderCancelReason;
     private String paymentType;
-
+    private String transactionId = "";
     private static TextView notificationText;
     private int orderCurrentStatus = 0; // order assigned =1, order in transit =2, order delivered =3, order not delivered =4, order handover to pharmacy =5.
 
@@ -333,7 +343,14 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
         intent.putExtra("order_number", orderNumber);
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         return intent;
+    }
 
+    public static Intent getStartIntent(Context context, String orderNumber, boolean isLaunchedByPushNotification) {
+        Intent intent = new Intent(context, OrderDeliveryActivity.class);
+        intent.putExtra("order_number", orderNumber);
+        intent.putExtra("ORDER_ASSIGNED", isLaunchedByPushNotification);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        return intent;
     }
 
     private boolean isLaunchedByPushNotification;
@@ -369,23 +386,24 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
             orderDeliveryBinding.notificationDot.setVisibility(View.GONE);
         }
 
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            try {
-                //bundle must contain all info sent in "data" field of the notification
-                String orderNumberId = bundle.getString("uid");
-                if (getIntent().getStringExtra("order_number") == null) {
-                    isLaunchedByPushNotification = true;
-                    new OrderDeliveryActivityController(this, this).orderDetailsApiCall(getSessionManager().getLoginToken(), orderNumberId, orderDeliveryBinding);
-                }
-            } catch (Exception e) {
-                System.out.println("push notification new order activity::::::::::::::::::::::::::::" + e.getMessage());
-            }
-
-        }
+//        Bundle bundle = getIntent().getExtras();
+//        if (bundle != null) {
+//            try {
+//                //bundle must contain all info sent in "data" field of the notification
+//                String orderNumberId = bundle.getString("uid");
+//                if (getIntent().getStringExtra("order_number") == null) {
+//                    isLaunchedByPushNotification = true;
+//                    new OrderDeliveryActivityController(this, this).orderDetailsApiCall(getSessionManager().getLoginToken(), orderNumberId, orderDeliveryBinding);
+//                }
+//            } catch (Exception e) {
+//                System.out.println("push notification new order activity::::::::::::::::::::::::::::" + e.getMessage());
+//            }
+//
+//        }
         if (getIntent() != null) {
             if (getIntent().getStringExtra("order_number") != null) {
                 String orderNumberId = getIntent().getStringExtra("order_number");
+                isLaunchedByPushNotification = getIntent().getBooleanExtra("ORDER_ASSIGNED", false);
                 if (orderNumberId != null && !orderNumberId.isEmpty()) {
                     new OrderDeliveryActivityController(this, this).orderDetailsApiCall(getSessionManager().getLoginToken(), orderNumberId, orderDeliveryBinding);
                 } else {
@@ -637,7 +655,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
     @Override
     public void onSuccessOrderPaymentUpdateApiCall() {
         ActivityUtils.showDialog(this, "Please Wait.");
-        new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("DELIVERED", orderUid, "", "");
+        new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("DELIVERED", orderUid, "", "", transactionId);
     }
 
     @Override
@@ -1071,7 +1089,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
         selectionTag = 5;
         if (!paymentType.equals("COD")) {
             ActivityUtils.showDialog(this, "Please Wait.");
-            new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("DELIVERED", orderUid, "", "");
+            new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("DELIVERED", orderUid, "", "", transactionId);
         }
     }
 
@@ -1234,8 +1252,14 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
             if (cancelReasonsList != null && cancelReasonsList.size() > 0) {
                 for (DeliveryFailreReasonsResponse.Row row : cancelReasonsList) {
                     if (row.getName().equals(orderCancelReason)) {
-                        new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall(row.getUid(), orderUid, row.getUid(), bottomSheetBinding.comment.getText().toString().trim());
-                        dialog.dismiss();
+                        if (row.getUid().equals("PDIT") || row.getUid().equals("CNA")) {
+                            new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("CANCELRETURNINITIATED", orderUid, row.getUid(), bottomSheetBinding.comment.getText().toString().trim(), transactionId);
+                            dialog.dismiss();
+                        } else if (row.getUid().equals("NCAPL") || row.getUid().equals("NRFCCN")) {
+                            new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("DELIVERYATTEMPTED", orderUid, row.getUid(), bottomSheetBinding.comment.getText().toString().trim(), transactionId);
+                            dialog.dismiss();
+                        }
+
                         break;
                     }
                 }
@@ -1298,6 +1322,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                 boolean isPaymentSuccessfull = data.getBooleanExtra("PAYMENT_SUCCESSFULL", false);
                 if (isPaymentSuccessfull) {
                     String transactionId = data.getStringExtra("TRANSACTION_ID");
+                    this.transactionId = transactionId;
                     new OrderDeliveryActivityController(this, this).orderPaymentUpdateApiCall(this.orderDetailsResponse, "wallet", "", transactionId);
                 }
             }
@@ -2033,7 +2058,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                     } else {
                         this.isOrderCancelled = true;
                         ActivityUtils.showDialog(this, "Please Wait");
-                        new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("CANCELRETURNINITIATED", orderUid, "", "");
+                        new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("CANCELRETURNINITIATED", orderUid, "", "", transactionId);
                     }
                 });
                 alertDialog.show();
@@ -2046,6 +2071,16 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                 alertMessageBinding.dialogButtonOk.setOnClickListener(v -> {
                     alertDialog.dismiss();
                     finish();
+                });
+                alertDialog.show();
+            } else if (intent.getBooleanExtra("COMPLAINT_RESOLVED", false)) {
+                Dialog alertDialog = new Dialog(this);
+                DialogAlertMessageBinding alertMessageBinding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.dialog_alert_message, null, false);
+                alertDialog.setContentView(alertMessageBinding.getRoot());
+                alertMessageBinding.message.setText(intent.getStringExtra("NOTIFICATION"));
+                alertDialog.setCancelable(false);
+                alertMessageBinding.dialogButtonOk.setOnClickListener(v -> {
+                    alertDialog.dismiss();
                 });
                 alertDialog.show();
             } else {
@@ -2514,9 +2549,9 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
             hideKeyboard();
             ActivityUtils.showDialog(this, "Please wait.");
             if (this.orderDetailsResponse.getData().getOrderState().getName().equals("RETURN"))
-                new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("RETURNPICKED", orderUid, "", "");
+                new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("RETURNPICKED", orderUid, "", "", transactionId);
             else
-                new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("PICKUP", orderUid, "", "");
+                new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("PICKUP", orderUid, "", "", transactionId);
         } else {
             pickupOtpEditTextLayout.setVisibility(View.VISIBLE);
             pickupVerifyOtpBtn.setVisibility(View.VISIBLE);
@@ -2537,10 +2572,14 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
     @Override
     public void onSuccessOrderSaveUpdateStatusApi(String status) {
         try {
+            int deliveryFailureAttempts = Integer.parseInt(getSessionManager().getGlobalSettingSelectResponse().getData().getDeliverAttempts().getUid());
             if (status.equals("PICKU")) {
                 orderDeliveryBinding.orderStatusHeader.setText("Order Pickup");
-                new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("OUTFORDELIVERY", orderUid, "", "");
+                new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("OUTFORDELIVERY", orderUid, "", "", transactionId);
             } else if (status.equals("PICKUP") || status.equals("RETURNPICKED")) {//|| status.equals("OUTFORDELIVERY")
+                DrawRouteMaps.getInstance(this, this, this, this).draw(
+                        new LatLng(this.orderDetailsResponse.getData().getPickupLatitude(), this.orderDetailsResponse.getData().getPickupLongitude()),
+                        new LatLng(this.orderDetailsResponse.getData().getDeliverLatitude(), this.orderDetailsResponse.getData().getDeliverLongitude()), null, 0);
 
                 orderDeliveryBinding.pharmacyMapViewImg.setVisibility(View.GONE);
 
@@ -2752,17 +2791,22 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 //                    overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
 //                }, 1000);
                 }
-            } else if (status.equals("DELIVERYATTEMPTED") && this.orderDetailsResponse.getData().getFailureAttempts() < 2) {
-                finish();
-            } else if ((status.equals("DELIVERYATTEMPTED") && this.orderDetailsResponse.getData().getFailureAttempts() >= 2) || status.equals("DELIVERYFAILED")) {
-
-                if (status.equals("DELIVERYATTEMPTED"))
-                    orderDeliveryBinding.orderStatusHeader.setText("Delivery Attempted");
-                else if (status.equals("DELIVERYFAILED"))
-                    orderDeliveryBinding.orderStatusHeader.setText("Delivery Failed");
-                new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("CANCELRETURNINITIATED", orderUid, "CANCELRETURNINITIATED", null);
-            } else if (status.equals("CANCELRETURNINITIATED")) {
+            } else if (status.equals("DELIVERYATTEMPTED") && this.orderDetailsResponse.getData().getFailureAttempts() < deliveryFailureAttempts - 1) {
                 new OrderDeliveryActivityController(this, this).orderEndJourneyUpdateApiCall(orderUid);
+                finish();
+            }
+//            else if ((status.equals("DELIVERYATTEMPTED") && this.orderDetailsResponse.getData().getFailureAttempts() >= deliveryFailureAttempts) || status.equals("DELIVERYFAILED")) {
+//
+//                if (status.equals("DELIVERYATTEMPTED"))
+//                    orderDeliveryBinding.orderStatusHeader.setText("Delivery Attempted");
+//                else if (status.equals("DELIVERYFAILED"))
+//                    orderDeliveryBinding.orderStatusHeader.setText("Delivery Failed");
+////                onSuccessOrderSaveUpdateStatusApi("CANCELRETURNINITIATED");
+////                new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("CANCELRETURNINITIATED", orderUid, "CANCELRETURNINITIATED", null);
+//            }
+            else if ((status.equals("DELIVERYATTEMPTED") && this.orderDetailsResponse.getData().getFailureAttempts() >= deliveryFailureAttempts - 1)
+                    || status.equals("DELIVERYFAILED")
+                    || status.equals("CANCELRETURNINITIATED")) {
                 orderDeliveryBinding.pharmacyMapViewImg.setVisibility(View.GONE);
                 ActivityUtils.hideDialog();
                 orderCurrentStatus = 4;
@@ -2814,8 +2858,13 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                         orderDeliveryBinding.cancelledPinHiddenEdittext.setText("00000000");
                     }
                 }
+                if (status.equals("DELIVERYATTEMPTED"))
+                    orderDeliveryBinding.orderStatusHeader.setText("Delivery Attempted");
+                else if (status.equals("DELIVERYFAILED"))
+                    orderDeliveryBinding.orderStatusHeader.setText("Delivery Failed");
+                else if (status.equals("CANCELRETURNINITIATED"))
+                    orderDeliveryBinding.orderStatusHeader.setText("Cancel Return Initiated");
 
-                orderDeliveryBinding.orderStatusHeader.setText("Cancel Return Initiated");
                 orderDeliveryBinding.orderNotDeliveredHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_disable_curves_bg));
                 orderDeliveryBinding.orderNotDeliveredInnerHeadLayout.setBackground(getResources().getDrawable(R.drawable.status_disable_curves_bg));
                 orderDeliveryBinding.orderDeliveryProcessImg.setVisibility(View.VISIBLE);
@@ -2829,6 +2878,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                 orderDeliveryBinding.orderCancelTxt.setBackground(getResources().getDrawable(R.drawable.order_active_circle_bg));
 //                onClickDelivered();
             } else if (status.equals("CANCELORDERRTO")) {
+                new OrderDeliveryActivityController(this, this).orderEndJourneyUpdateApiCall(orderUid);
                 isOrderDelivered = true;
                 orderDeliveryBinding.pharmacyMapViewImg.setVisibility(View.GONE);
                 orderDeliveryBinding.mapViewLayout.setVisibility(View.GONE);
@@ -2900,7 +2950,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
         selectionTag = 5;
         if (!paymentType.equals("COD")) {
             ActivityUtils.showDialog(this, "Please Wait.");
-            new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("DELIVERED", orderUid, "", "");
+            new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("DELIVERED", orderUid, "", "", transactionId);
         }
     }
 
@@ -2956,13 +3006,13 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
             hideKeyboard();
             ActivityUtils.showDialog(this, "Please Wait.");
             if (this.orderDetailsResponse.getData().getOrderState().getName().equals("RETURN")) {
-                new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("RETURNORDERRTO", orderUid, "", "");
+                new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("RETURNORDERRTO", orderUid, "", "", transactionId);
             } else {
                 if (this.orderDetailsResponse.getData().getOrderStatus().getUid().equals("CANCELLED")) {
                     this.isStatusCancelled = true;
-                    new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("CANCELRETURNINITIATED", orderUid, "", "");
+                    new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("CANCELRETURNINITIATED", orderUid, "", "", transactionId);
                 } else {
-                    new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("CANCELORDERRTO", orderUid, "", "");
+                    new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("CANCELORDERRTO", orderUid, "", "", transactionId);
                 }
             }
         } else {
@@ -2982,7 +3032,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
     @Override
     public void statusCanelled() {
         this.isStatusCancelled = false;
-        new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("CANCELORDERRTO", orderUid, "", "");
+        new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("CANCELORDERRTO", orderUid, "", "", transactionId);
     }
 
     @Override
@@ -3021,5 +3071,69 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    public void onDirectionApi(int colorFlag, JSONArray jsonArray) {
+
+        String distance, time;
+        float removing = 0;
+        float removingTime = 0;
+        try {
+            if (jsonArray != null) {
+                distance = ((JSONObject) jsonArray.get(0)).getJSONObject("distance").getString("text");
+                time = ((JSONObject) jsonArray.get(0)).getJSONObject("duration").getString("value");
+                removing = Float.parseFloat(distance.replace("\"", "").replace("km", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
+//                removingTime = Float.parseFloat(time.replace("\"", "").replace("mins", ""));//Pattern.compile("\"").matcher(distance).replaceAll("");
+                removingTime = Float.parseFloat(time) / 60;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        final boolean[] isStartJourneyUpdate = {false};
+        float finalRemoving = removing;
+        float finalTime = removingTime;
+        if (finalRemoving != 0) {
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    float i;
+                    try {
+                        for (i = 0; i <= 100; i++) {
+                            runOnUiThread(() -> {
+                                if (!isStartJourneyUpdate[0]) {
+                                    isStartJourneyUpdate[0] = true;
+                                    new OrderDeliveryActivityController(OrderDeliveryActivity.this, OrderDeliveryActivity.this).orderStartJourneyUpdateApiCall(OrderDeliveryActivity.this.orderDetailsResponse.getData().getUid(), String.valueOf(finalRemoving));
+                                }
+                            });
+                            sleep(500);
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            thread.start();
+        }
+    }
+
+    @Override
+    public Polyline onTaskDone(boolean flag, Object... values) {
+        return null;
+    }
+
+    @Override
+    public Polyline onSecondTaskDone(boolean flag, Object... values) {
+        return null;
+    }
+
+    @Override
+    public void pointsFirst(List<LatLng> pionts) {
+
+    }
+
+    @Override
+    public void pointsSecond(List<LatLng> pionts) {
+
     }
 }

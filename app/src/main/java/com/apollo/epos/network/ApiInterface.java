@@ -25,12 +25,12 @@ import com.apollo.epos.activity.trackmap.model.OrderStartJourneyUpdateRequest;
 import com.apollo.epos.activity.trackmap.model.OrderStartJourneyUpdateResponse;
 import com.apollo.epos.fragment.changepassword.model.ChangePasswordRequest;
 import com.apollo.epos.fragment.changepassword.model.ChangePasswordResponse;
+import com.apollo.epos.fragment.complaints.model.ComplaintsResponse;
 import com.apollo.epos.fragment.dashboard.model.RiderActiveStatusRequest;
 import com.apollo.epos.fragment.dashboard.model.RiderActiveStatusResponse;
 import com.apollo.epos.fragment.dashboard.model.RiderDashboardCountResponse;
 import com.apollo.epos.fragment.dashboard.model.RiderLalangBatteryStatusResponse;
 import com.apollo.epos.fragment.dashboard.model.RiderLatlangBatteryStatusRequest;
-import com.apollo.epos.fragment.help.model.RiderBasicDetailsforHelpResponse;
 import com.apollo.epos.fragment.myorders.model.GlobalSettingSelectResponse;
 import com.apollo.epos.fragment.myorders.model.MyOrdersListResponse;
 import com.apollo.epos.fragment.profile.model.ComplaintReasonsListResponse;
@@ -123,6 +123,8 @@ public interface ApiInterface {
     @GET("api/choose-data/order_payment_type")
     Call<OrderPaymentTypeResponse> GET_ORDER_PAYMENT_TYPE_LIST_API_CALL();
 
+    @GET("api/rider_complaint/list")
+    Call<ComplaintsResponse> GET_COMPLAINTS_LIST_API_CALL(@Header("authorization") String token, @Query("page") String page);
 
     //Payment Api's
     @POST("http://lms.apollopharmacy.org:8033/PHONEPEUAT/APOLLO/PhonePe/GenerateQrCode")

@@ -338,7 +338,6 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
 
             NavigationActivity.getInstance().selectItem(1);
 //            startUpdatesButtonHandler(newOrderLayout);
-
         });
     }
 
@@ -527,7 +526,7 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
         ArrayList<BarEntry> yVals1 = new ArrayList<BarEntry>();
 //        yVals1.add(new BarEntry(0, (int) monVal));
 
-        yVals1.add(new BarEntry(0, new float[]{monCan, monDel}, ""));
+        yVals1.add(new BarEntry(0, new float[]{monCan, monDel,1}, ""));
         yVals1.add(new BarEntry(1, new float[]{tueCan, tueDel}, ""));
         yVals1.add(new BarEntry(2, new float[]{wedCan, wedDel}, ""));
         yVals1.add(new BarEntry(3, new float[]{thuCan, thuDel}, ""));
@@ -1019,7 +1018,7 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
             getSessionManager().setRiderProfileDetails(getRiderProfileResponse);
             NavigationActivity.getInstance().setProfileData();
             if (getRiderProfileResponse != null && getRiderProfileResponse.getData() != null && getRiderProfileResponse.getData().getPic() != null && getRiderProfileResponse.getData().getPic().size() > 0)
-                Glide.with(getContext()).load(getSessionManager().getrRiderIconUrl()).circleCrop().error(R.drawable.apollo_app_logo).into(dashboardBinding.userImage);
+                Glide.with(getContext()).load(getSessionManager().getrRiderIconUrl()).circleCrop().error(R.drawable.apollo_circle_logo).into(dashboardBinding.userImage);
             dashboardBinding.riderName.setText(getRiderProfileResponse.getData().getFirstName() + " " + getRiderProfileResponse.getData().getLastName());
             dashboardBinding.riderPhoneNumber.setText(getRiderProfileResponse.getData().getPhone());
         }
@@ -1054,7 +1053,7 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
             dashboardBinding.codReceivedVal.setText(getActivity().getResources().getString(R.string.label_rupee_symbol) + " " + decim.format(riderDashboardCountResponse.getData().getCount().getCodReceived()));
             dashboardBinding.codPendingVal.setText(getActivity().getResources().getString(R.string.label_rupee_symbol) + " " + decim.format(riderDashboardCountResponse.getData().getCount().getCodPending()));
             dashboardBinding.travelledDistanceVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getDistanceTravelled()) + " KM");
-            todayRiderTravelledDistanceText();
+//            todayRiderTravelledDistanceText();
 
             if (isActiveSwith) {
                 isActiveSwith = false;
@@ -1135,7 +1134,7 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
 
     private void todayRiderTravelledDistanceText() {
         try {
-            dashboardBinding.riderTravelledDistanceInaday.setText(getSessionManager().getRiderTravelledDistanceinDay() + " M");
+            dashboardBinding.riderTravelledDistanceInaday.setText(getSessionManager().getRiderTravelledDistanceinDay().contains(".") ? getSessionManager().getRiderTravelledDistanceinDay().substring(0, getSessionManager().getRiderTravelledDistanceinDay().indexOf(".")) + " M" : getSessionManager().getRiderTravelledDistanceinDay() + " M");
             Handler todayRiderTravelledDistance = new Handler();
             todayRiderTravelledDistance.postDelayed(() -> todayRiderTravelledDistanceText(), 1000);
         } catch (Exception e) {

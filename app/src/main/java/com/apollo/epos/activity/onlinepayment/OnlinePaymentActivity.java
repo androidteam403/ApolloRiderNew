@@ -197,7 +197,7 @@ public class OnlinePaymentActivity extends BaseActivity implements OnlinePayment
                 case "success":
                     Intent intent = new Intent();
                     intent.putExtra("PAYMENT_SUCCESSFULL", true);
-                    intent.putExtra("TRANSACTION_ID", phonePeLinktransactionId);
+                    intent.putExtra("TRANSACTION_ID", data[3]);
                     setResult(Activity.RESULT_OK, intent);
                     finish();
                     ActivityUtils.hideDialog();

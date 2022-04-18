@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#e8e7e7">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/complaints_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/fifty_five_dp"
+            android:paddingStart="@dimen/ten_dp"
+            android:paddingTop="@dimen/two_dp"
+            android:paddingEnd="@dimen/ten_dp"
+            android:paddingBottom="@dimen/three_dp" />
+
+        <RelativeLayout
+            android:id="@+id/no_order_found_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/one_hundred_fifty_dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="@dimen/forty_dp"
+                tools:ignore="UselessParent">
+
+                <ImageView
+                    android:layout_width="@dimen/one_hundred_fifty_dp"
+                    android:layout_height="@dimen/one_hundred_dp"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/rider" />
+
+                <TextView
+                    android:id="@+id/no_orders_instatus_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/five_dp"
+                    android:fontFamily="@font/roboto_bold"
+                    android:text="@string/label_no_complaints_found"
+                    android:textColor="@color/orange_color"
+                    android:textSize="@dimen/text_dimen_25" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/btn_complaint_box"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/forty_five_dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="@dimen/thirty_dp"
+            android:layout_marginEnd="@dimen/thirty_dp"
+            android:layout_marginBottom="@dimen/ten_dp"
+            android:background="@drawable/btn_complaint_ripple_effect"
+            android:fontFamily="@font/roboto_bold"
+            android:onClick="@{()-> callback.onClickComplaint()}"
+            android:text="@string/label_complaint_box"
+            android:textColor="@color/colorWhite" />
+
+    </RelativeLayout>
+
+    <data>
+
+        <variable
+            name="callback"
+            type="com.apollo.epos.fragment.complaints.ComplaintsFragmentCallback" />
+    </data>
+</layout>

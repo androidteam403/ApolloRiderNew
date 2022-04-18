@@ -1,5 +1,6 @@
 package com.apollo.epos.fragment.profile.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -34,10 +35,12 @@ public class IdentityProofsAdapter extends RecyclerView.Adapter<IdentityProofsAd
         return new ViewHolder(identityProofsBinding);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         GetRiderProfileResponse.IdentificationProof identificationProof = identificationProofList.get(position);
-        holder.identityProofsBinding.proofName.setText(identificationProof.getDocType().getName());
+        holder.identityProofsBinding.proofName.setText(identificationProof.getDocType().getName() + ":");
+        holder.identityProofsBinding.identityNumber.setText(identificationProof.getDocNo());
         if (identificationProof.getDoc().get(0).getDimenesions() != null && identificationProof.getDoc().get(0).getDimenesions().get300300FullPath() != null) {
             Glide.with(context)
                     .load(identificationProof.getDoc().get(0).getDimenesions().get300300FullPath())

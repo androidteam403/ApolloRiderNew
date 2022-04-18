@@ -156,7 +156,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentCall
             if (getRiderProfileResponse != null && getRiderProfileResponse.getData() != null) {
                 if (getRiderProfileResponse.getData().getPic() != null && getRiderProfileResponse.getData().getPic().size() > 0)
                     if (getContext() != null)
-                        Glide.with(getContext()).load(getSessionManager().getrRiderIconUrl()).circleCrop().error(R.drawable.apollo_app_logo).into(profileBinding.userImage);
+                        Glide.with(getContext()).load(getSessionManager().getrRiderIconUrl()).circleCrop().error(R.drawable.apollo_circle_logo).into(profileBinding.userImage);
                 profileBinding.employeeId.setText(getRiderProfileResponse.getData().getLoginUnique());
                 profileBinding.riderName.setText(getRiderProfileResponse.getData().getFirstName() + " " + getRiderProfileResponse.getData().getLastName());
                 profileBinding.riderPhoneNumber.setText("+91 " + getRiderProfileResponse.getData().getPhone());

@@ -36,7 +36,9 @@ public class CommonUtils {
     public static String getBeforeSevenDaysDate() {
         return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date().getTime() - 518400000L);//604800000L
     }
-
+    public static String getBeforeThirtyOneDaysDate() {
+        return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date().getTime() - 2592000000L);
+    }
     public static String getfromDate() {
         return new SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(new Date());
     }
@@ -125,7 +127,7 @@ public class CommonUtils {
 
     public static String getCurrentDateTimeMSUnique() {
         Date dNow = new Date();
-        SimpleDateFormat ft = new SimpleDateFormat("hhmmss");
+        SimpleDateFormat ft = new SimpleDateFormat("mmss");
         String datetime = ft.format(dNow);
         return datetime;
     }

@@ -144,6 +144,16 @@ public class TrackMapActivity extends BaseActivity implements OnMapReadyCallback
                     finish();
                 });
                 alertDialog.show();
+            }else if (intent.getBooleanExtra("COMPLAINT_RESOLVED", false)) {
+                Dialog alertDialog = new Dialog(this);
+                DialogAlertMessageBinding alertMessageBinding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.dialog_alert_message, null, false);
+                alertDialog.setContentView(alertMessageBinding.getRoot());
+                alertMessageBinding.message.setText(intent.getStringExtra("NOTIFICATION"));
+                alertDialog.setCancelable(false);
+                alertMessageBinding.dialogButtonOk.setOnClickListener(v -> {
+                    alertDialog.dismiss();
+                });
+                alertDialog.show();
             }
 
     }
