@@ -1,7 +1,5 @@
 package com.ahmadrosid.lib.drawroutemap;
 
-import android.animation.ValueAnimator;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -9,7 +7,6 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONObject;
@@ -111,7 +108,8 @@ public class RouteDrawerTask extends AsyncTask<String, Integer, List<List<HashMa
 
             if (lineOptions != null && mMap != null && colorFlag == 0) {
                 piontsCallback.pointsFirst(points);
-                MapAnimator.getInstance().animateRoute(mMap, points, taskLoadedCallback, false);
+                mMap.addPolyline(lineOptions.addAll(points));
+//                MapAnimator.getInstance().animateRoute(mMap, points, taskLoadedCallback, false);
 //                taskLoadedCallback.onTaskDone(lineOptions);
 
             } else if (lineOptions != null && mMap != null && colorFlag == 1) {

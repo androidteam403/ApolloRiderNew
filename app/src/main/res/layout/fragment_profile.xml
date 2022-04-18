@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <variable
             name="getProfileDetails"
             type="com.apollo.epos.model.GetRiderProfileResponse" />
+
+        <variable
+            name="callback"
+            type="com.apollo.epos.fragment.profile.ProfileFragmentCallback" />
     </data>
 
     <RelativeLayout
@@ -72,7 +77,7 @@
                         </RelativeLayout>
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_marginTop="@dimen/five_dp"
@@ -98,36 +103,58 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="@dimen/three_dp"
                                     android:fontFamily="@font/roboto_bold"
-                                    android:text="8880002258"
                                     android:textColor="@color/colorBlack"
                                     android:textSize="@dimen/text_dimen_14" />
                             </LinearLayout>
-
-
-                            <TextView
-                                android:id="@+id/rider_name"
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/five_dp"
-                                android:fontFamily="@font/roboto_bold"
-                                android:text="Muddaraboina Naveen"
-                                android:textColor="@color/colorBlack"
-                                android:textSize="@dimen/text_dimen_14" />
+                                android:orientation="horizontal">
 
-                            <TextView
-                                android:id="@+id/rider_phone_number"
-                                android:layout_width="wrap_content"
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/roboto_regular"
+                                    android:text="@string/label_rider_name"
+                                    android:textColor="@color/profile_header_color"
+                                    android:textSize="@dimen/text_dimen_12" />
+
+                                <TextView
+                                    android:id="@+id/rider_name"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/roboto_bold"
+                                    android:layout_marginStart="@dimen/three_dp"
+                                    android:textColor="@color/colorBlack"
+                                    android:textSize="@dimen/text_dimen_14" />
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/two_dp"
-                                android:fontFamily="@font/roboto_bold"
-                                android:text="+91 9177551736"
-                                android:textColor="@color/colorBlack"
-                                android:textSize="@dimen/text_dimen_14" />
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/roboto_regular"
+                                    android:text="@string/label_mobile_no"
+                                    android:textColor="@color/profile_header_color"
+                                    android:textSize="@dimen/text_dimen_12" />
+
+                                <TextView
+                                    android:id="@+id/rider_phone_number"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/roboto_bold"
+                                    android:layout_marginStart="@dimen/three_dp"
+                                    android:textColor="@color/colorBlack"
+                                    android:textSize="@dimen/text_dimen_14" />
+                            </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/fifteen_dp"
                         android:layout_marginTop="@dimen/five_dp"
@@ -148,7 +175,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/roboto_bold"
-                            android:text="25/09/1990"
                             android:textColor="@color/colorBlack"
                             android:textSize="@dimen/text_dimen_14" />
                     </LinearLayout>
@@ -181,7 +207,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/roboto_bold"
-                            android:text="Kukatpally"
                             android:textColor="@color/colorBlack" />
                     </LinearLayout>
 
@@ -203,18 +228,50 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/roboto_regular"
-                            android:text="@string/label_address"
+                            android:text="@string/label_current_address"
                             android:textColor="@color/profile_header_color"
                             android:textSize="@dimen/text_dimen_12" />
 
                         <TextView
-                            android:id="@+id/address"
+                            android:id="@+id/current_address"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/roboto_bold"
-                            android:text="Prajay Megapolis, Kukatpally, Hyderabad."
+                            android:textColor="@color/colorBlack" />
+
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/one_dp"
+                        android:background="@color/dashboard_item_border_color" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/fifteen_dp"
+                        android:layout_marginTop="@dimen/five_dp"
+                        android:layout_marginEnd="@dimen/fifteen_dp"
+                        android:layout_marginBottom="@dimen/ten_dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_regular"
+                            android:text="@string/label_permanent_address"
+                            android:textColor="@color/profile_header_color"
+                            android:textSize="@dimen/text_dimen_12" />
+
+                        <TextView
+                            android:id="@+id/permanent_address"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_bold"
                             android:textColor="@color/colorBlack" />
                     </LinearLayout>
+
                 </LinearLayout>
 
                 <TextView
@@ -251,16 +308,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/roboto_regular"
-                            android:text="@string/label_model"
+                            android:text="@string/label_vehicle_type"
                             android:textColor="@color/profile_header_color"
                             android:textSize="@dimen/text_dimen_12" />
 
                         <TextView
-                            android:id="@+id/vehicle_model"
+                            android:id="@+id/vehicle_type"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/roboto_bold"
-                            android:text="Hero Splender"
                             android:textColor="@color/colorBlack" />
                     </LinearLayout>
 
@@ -282,16 +338,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/roboto_regular"
-                            android:text="@string/label_making_year"
+                            android:text="@string/label_vehicle_number"
                             android:textColor="@color/profile_header_color"
                             android:textSize="@dimen/text_dimen_12" />
 
                         <TextView
-                            android:id="@+id/vehicle_making_year"
+                            android:id="@+id/vehicle_number"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/roboto_bold"
-                            android:text="2018"
                             android:textColor="@color/colorBlack" />
                     </LinearLayout>
 
@@ -313,18 +368,78 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/roboto_regular"
-                            android:text="@string/label_registration_no"
+                            android:text="@string/label_model1"
                             android:textColor="@color/profile_header_color"
                             android:textSize="@dimen/text_dimen_12" />
 
                         <TextView
-                            android:id="@+id/vehicle_registration_number"
+                            android:id="@+id/model"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/roboto_bold"
-                            android:text="TS08FU9506"
                             android:textColor="@color/colorBlack" />
                     </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/one_dp"
+                        android:background="@color/dashboard_item_border_color" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/fifteen_dp"
+                        android:layout_marginTop="@dimen/five_dp"
+                        android:layout_marginEnd="@dimen/fifteen_dp"
+                        android:layout_marginBottom="@dimen/ten_dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_regular"
+                            android:text="@string/label_capacity"
+                            android:textColor="@color/profile_header_color"
+                            android:textSize="@dimen/text_dimen_12" />
+
+                        <TextView
+                            android:id="@+id/capacity"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_bold"
+                            android:textColor="@color/colorBlack" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/one_dp"
+                        android:background="@color/dashboard_item_border_color" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/fifteen_dp"
+                        android:layout_marginTop="@dimen/five_dp"
+                        android:layout_marginEnd="@dimen/fifteen_dp"
+                        android:layout_marginBottom="@dimen/ten_dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_regular"
+                            android:text="@string/label_manufacturer"
+                            android:textColor="@color/profile_header_color"
+                            android:textSize="@dimen/text_dimen_12" />
+
+                        <TextView
+                            android:id="@+id/manufacturer"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_bold"
+                            android:textColor="@color/colorBlack" />
+                    </LinearLayout>
+
                 </LinearLayout>
 
                 <TextView
@@ -337,7 +452,7 @@
                     android:paddingTop="@dimen/five_dp"
                     android:paddingEnd="@dimen/ten_dp"
                     android:paddingBottom="@dimen/five_dp"
-                    android:text="@string/label_language_speaks"
+                    android:text="@string/label_languages_known_to_speak"
                     android:textAllCaps="true"
                     android:textColor="@color/colorBlack"
                     android:textSize="@dimen/text_dimen_15" />
@@ -351,7 +466,6 @@
                     android:layout_marginEnd="@dimen/fifteen_dp"
                     android:layout_marginBottom="@dimen/fifteen_dp"
                     android:fontFamily="@font/roboto_regular"
-                    android:text="English, Telugu, Hindi"
                     android:textColor="@color/colorBlack"
                     android:textSize="@dimen/text_dimen_14" />
 
@@ -498,7 +612,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/roboto_bold"
-                            android:text="State Bank of India"
                             android:textColor="@color/colorBlack" />
                     </LinearLayout>
 
@@ -529,7 +642,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/roboto_bold"
-                            android:text="110957879"
                             android:textColor="@color/colorBlack" />
                     </LinearLayout>
 
@@ -553,14 +665,14 @@
                             android:fontFamily="@font/roboto_regular"
                             android:text="@string/label_area"
                             android:textColor="@color/profile_header_color"
-                            android:textSize="@dimen/text_dimen_12" />
+                            android:textSize="@dimen/text_dimen_12"
+                            tools:ignore="TooManyViews" />
 
                         <TextView
                             android:id="@+id/area"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/roboto_bold"
-                            android:text="Ameerpet, Hyderabad"
                             android:textColor="@color/colorBlack" />
                     </LinearLayout>
                 </LinearLayout>
@@ -602,9 +714,11 @@
             android:layout_marginStart="@dimen/thirty_dp"
             android:layout_marginTop="@dimen/ten_dp"
             android:layout_marginEnd="@dimen/thirty_dp"
+            android:visibility="gone"
             android:layout_marginBottom="@dimen/twenty_dp"
             android:background="@drawable/btn_complaint_ripple_effect"
             android:fontFamily="@font/roboto_bold"
+            android:onClick="@{()-> callback.onClickComplaint()}"
             android:text="@string/label_complaint_box"
             android:textColor="@color/colorWhite" />
 

@@ -54,6 +54,9 @@ public class LoginResponse {
         @SerializedName("addInfo")
         @Expose
         private AddInfo addInfo;
+        @SerializedName("pic")
+        @Expose
+        private List<Pic> pic = null;
 
         public String getMessage() {
             return message;
@@ -85,6 +88,14 @@ public class LoginResponse {
 
         public void setAddInfo(AddInfo addInfo) {
             this.addInfo = addInfo;
+        }
+
+        public List<Pic> getPic() {
+            return pic;
+        }
+
+        public void setPic(List<Pic> pic) {
+            this.pic = pic;
         }
     }
 

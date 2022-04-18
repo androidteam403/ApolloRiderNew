@@ -4,6 +4,7 @@ import android.Manifest;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -28,16 +29,19 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 
 import com.apollo.epos.R;
-import com.apollo.epos.activity.NavigationActivity;
 import com.apollo.epos.activity.NewOrderActivity;
+import com.apollo.epos.activity.login.LoginActivity;
+import com.apollo.epos.activity.navigation.NavigationActivity;
 import com.apollo.epos.base.BaseFragment;
 import com.apollo.epos.databinding.FragmentDashboardBinding;
+import com.apollo.epos.fragment.dashboard.model.RiderDashboardCountResponse;
 import com.apollo.epos.model.GetRiderProfileResponse;
 import com.apollo.epos.utils.ActivityUtils;
 import com.apollo.epos.utils.CommonUtils;
@@ -74,9 +78,9 @@ import com.nabinbhandari.android.permissions.PermissionHandler;
 import com.nabinbhandari.android.permissions.Permissions;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -85,7 +89,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class DashboardFragment extends BaseFragment implements DashboardFragmentCallback, OnChartValueSelectedListener, DashboardView, GoogleApiClient.ConnectionCallbacks,
+public class DashboardFragment extends BaseFragment implements DashboardFragmentCallback, OnChartValueSelectedListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
         ResultCallback<LocationSettingsResult> {
@@ -98,9 +102,6 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
     @BindView(R.id.barChart)
     protected BarChart mChart;
     protected RectF mOnValueSelectedRectF = new RectF();
-    private DashboardViewModel dashboardViewModel;
-    private DashboardView dashboardView;
-
     @BindColor(R.color.dashboard_pending_text_color)
     protected int cancelledOrdersColour;
     @BindColor(R.color.theme_end_color)
@@ -209,8 +210,7 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
 
     private final int REQ_LOC_PERMISSION = 5002;
 
-    private static TextView timeView;
-
+    private static TextView timeView, youGotNewOrder, newOrder;
 
     public static DashboardFragment newInstance() {
         return new DashboardFragment();
@@ -233,16 +233,25 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
 
     final AnimationDrawable drawable = new AnimationDrawable();
     final Handler handler = new Handler();
+    private boolean isActiveSwith = false;
+
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        NavigationActivity.getInstance().setTitle(R.string.menu_dashboard);
         ButterKnife.bind(this, view);
-
+        dashboardBinding.setCallback(this);
+        new DashboardFragmentController(getContext(), this).getRiderDashboardCountsApiCall();
         newOrderLayoutView = view.findViewById(R.id.new_order_layout);
         timeView = view.findViewById(R.id.time);
+        youGotNewOrder = view.findViewById(R.id.you_got_new_order);
+        newOrder = view.findViewById(R.id.new_order);
+        if (CommonUtils.NOTIFICATIONS_COUNT == 0)
+            getSessionManager().setNotificationStatus(false);
         if (getSessionManager().getNotificationStatus()) {
             dashboardBinding.newOrderLayout.setVisibility(View.VISIBLE);
+            dashboardBinding.newOrder.setText(CommonUtils.NOTIFICATIONS_COUNT == 1 ? "1 New Order" : CommonUtils.NOTIFICATIONS_COUNT + " New Orders");
             dashboardBinding.time.setText(getSessionManager().getNotificationArrivedTime());
         } else {
             dashboardBinding.newOrderLayout.setVisibility(View.GONE);
@@ -251,35 +260,34 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
         if (getSessionManager().getRiderProfileResponse() != null)
             onSuccessGetProfileDetailsApi(getSessionManager().getRiderProfileResponse());
         else
-            new DashboardFragmentController(getContext(), this).getRiderProfileDetailsApi(getSessionManager().getLoginToken());
+            getController().getRiderProfileDetailsApi(getSessionManager().getLoginToken());
 
         if (getSessionManager().getRiderActiveStatus().equals("Offline")) {
             userStatus.setText("Offline");
             sw.setChecked(false);
-            new DashboardFragmentController(getContext(), this).riderUpdateStauts(getSessionManager().getLoginToken(), "Offline");
-
+            getController().riderUpdateStauts(getSessionManager().getLoginToken(), "Offline");
         } else {
             userStatus.setText("Online");
             sw.setChecked(true);
-            new DashboardFragmentController(getContext(), this).riderUpdateStauts(getSessionManager().getLoginToken(), "Online");
+            getController().riderUpdateStauts(getSessionManager().getLoginToken(), "Online");
         }
 
         sw.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 userStatus.setText("Online");
-                new DashboardFragmentController(getContext(), this).riderUpdateStauts(getSessionManager().getLoginToken(), "Online");
+                getController().riderUpdateStauts(getSessionManager().getLoginToken(), "Online");
             } else {
-                userStatus.setText("Offline");
-                new DashboardFragmentController(getContext(), this).riderUpdateStauts(getSessionManager().getLoginToken(), "Offline");
+                isActiveSwith = true;
+                getController().getRiderDashboardCountsApiCall();
+//                userStatus.setText("Offline");
+//                getController().riderUpdateStauts(getSessionManager().getLoginToken(), "Offline");
             }
         });
 
         Animation animSlideFromBottom = AnimationUtils.loadAnimation(mActivity, R.anim.slide_from_bottom);
         ordersInformationLayout.clearAnimation();
         ordersInformationLayout.startAnimation(animSlideFromBottom);
-
-        dashboardView = this;
-        dashboardView.setGraphData();
+        setGraphData();
         //textColor
         ObjectAnimator anim = ObjectAnimator.ofInt(newOrderLayout, "backgroundColor",
                 mActivity.getResources().getColor(R.color.colorPrimary),
@@ -291,13 +299,13 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
         anim.start();
 
         setData(5, 15, 0, 12, 8, 22, 10, 45, 3, 15, 0, 28, 5, 15);
-        totalOrdersVal.setText("183");
-        deliveredOrdersVal.setText("152");
-        cancelledOrdersVal.setText("31");
-        codReceivedVal.setText("2050");
-        codPendingVal.setText("560");
-        salesGeneratedVal.setText("24 Orders");
-        travelledDistanceVal.setText("110.4 KM");
+//        totalOrdersVal.setText("183");
+//        deliveredOrdersVal.setText("152");
+//        cancelledOrdersVal.setText("31");
+//        codReceivedVal.setText("2050");
+//        codPendingVal.setText("560");
+//        salesGeneratedVal.setText("24 Orders");
+//        travelledDistanceVal.setText("110.4 KM");
     }
 
     @Override
@@ -322,13 +330,14 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
         buildLocationSettingsRequest();
 
         newOrderLayout.setOnClickListener(v -> {
+            if (getSessionManager().getAsignedOrderUid() != null && getSessionManager().getAsignedOrderUid().size() > 0)
+                getSessionManager().setAsignedOrderUid(null);
             dashboardBinding.newOrderLayout.setVisibility(View.GONE);
             NavigationActivity.notificationDotVisibility(false);
             getSessionManager().setNotificationStatus(false);
 
             NavigationActivity.getInstance().selectItem(1);
 //            startUpdatesButtonHandler(newOrderLayout);
-
         });
     }
 
@@ -456,7 +465,6 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
 
     }
 
-    @Override
     public void setGraphData() {
         mChart.setOnChartValueSelectedListener(this);
         mChart.setDrawBarShadow(false);
@@ -510,14 +518,15 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
         mChart.setMarker(mv); // Set the marker to the chart
     }
 
-    private void setData(float monCan, float monDel, float tueCan, float tueDel, float wedCan,
-                         float wedDel, float thuCan, float thuDel,
-                         float friCan, float friDel, float satCan, float satDel, float sunCan, float sunDel) {
+    private void setData(float monCan, float monDel, float tueCan, float tueDel,
+                         float wedCan, float wedDel, float thuCan, float thuDel,
+                         float friCan, float friDel, float satCan, float satDel,
+                         float sunCan, float sunDel) {
         mChart.invalidate();
         ArrayList<BarEntry> yVals1 = new ArrayList<BarEntry>();
 //        yVals1.add(new BarEntry(0, (int) monVal));
 
-        yVals1.add(new BarEntry(0, new float[]{monCan, monDel}, ""));
+        yVals1.add(new BarEntry(0, new float[]{monCan, monDel,1}, ""));
         yVals1.add(new BarEntry(1, new float[]{tueCan, tueDel}, ""));
         yVals1.add(new BarEntry(2, new float[]{wedCan, wedDel}, ""));
         yVals1.add(new BarEntry(3, new float[]{thuCan, thuDel}, ""));
@@ -903,12 +912,14 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
         // It is a good practice to remove location requests when the activity is in a paused or
         // stopped state. Doing so helps battery performance and is especially
         // recommended in applications that request frequent location updates.
-        LocationServices.FusedLocationApi.removeLocationUpdates(
-                mGoogleApiClient,
-                this
-        ).setResultCallback(status -> {
-            mRequestingLocationUpdates = false;
-        });
+        if (mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(
+                    mGoogleApiClient,
+                    this
+            ).setResultCallback(status -> {
+                mRequestingLocationUpdates = false;
+            });
+        }
     }
 
     @Override
@@ -933,9 +944,9 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
         super.onPause();
         // Stop location updates to save battery, but don't disconnect the GoogleApiClient object.
         if (mGoogleApiClient.isConnected()) {
-            stopLocationUpdates();
             mGoogleApiClient.stopAutoManage(getActivity());
             mGoogleApiClient.disconnect();
+            stopLocationUpdates();
         }
     }
 
@@ -995,7 +1006,8 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putBoolean(KEY_REQUESTING_LOCATION_UPDATES, mRequestingLocationUpdates);
+        if (mRequestingLocationUpdates != null)
+            savedInstanceState.putBoolean(KEY_REQUESTING_LOCATION_UPDATES, mRequestingLocationUpdates);
         savedInstanceState.putParcelable(KEY_LOCATION, mCurrentLocation);
         savedInstanceState.putString(KEY_LAST_UPDATED_TIME_STRING, mLastUpdateTime);
     }
@@ -1006,7 +1018,7 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
             getSessionManager().setRiderProfileDetails(getRiderProfileResponse);
             NavigationActivity.getInstance().setProfileData();
             if (getRiderProfileResponse != null && getRiderProfileResponse.getData() != null && getRiderProfileResponse.getData().getPic() != null && getRiderProfileResponse.getData().getPic().size() > 0)
-                Glide.with(getContext()).load(getSessionManager().getrRiderIconUrl()).circleCrop().error(R.drawable.apollo_app_logo).into(dashboardBinding.userImage);
+                Glide.with(getContext()).load(getSessionManager().getrRiderIconUrl()).circleCrop().error(R.drawable.apollo_circle_logo).into(dashboardBinding.userImage);
             dashboardBinding.riderName.setText(getRiderProfileResponse.getData().getFirstName() + " " + getRiderProfileResponse.getData().getLastName());
             dashboardBinding.riderPhoneNumber.setText(getRiderProfileResponse.getData().getPhone());
         }
@@ -1017,20 +1029,133 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
         Toast.makeText(mActivity, message, Toast.LENGTH_SHORT).show();
     }
 
+    private DashboardFragmentController getController() {
+        return new DashboardFragmentController(getContext(), this);
+    }
+
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void onSuccessGetRiderDashboardCountApiCall(RiderDashboardCountResponse riderDashboardCountResponse) {
+        if (riderDashboardCountResponse != null && riderDashboardCountResponse.getSuccess() && riderDashboardCountResponse.getData() != null && riderDashboardCountResponse.getData().getCount() != null) {
+//            dashboardBinding.totalOrdersVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getTotalOrders()));
+//            dashboardBinding.newOrders.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getNewOrders()));
+//            dashboardBinding.inTransit.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getIntransitOrders()));
+//            dashboardBinding.deliveredOrdersVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getDeliveredOrders()));
+//            dashboardBinding.cancelledOrdersVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getCancelledOrders()));
+
+            dashboardBinding.total.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getTotalOrders()));
+            dashboardBinding.newOrdr.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getNewOrders()));
+            dashboardBinding.intransit.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getIntransitOrders()));
+            dashboardBinding.delivered.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getDeliveredOrders()));
+            dashboardBinding.cancelled.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getCancelledOrders()));
+
+            DecimalFormat decim = new DecimalFormat("#,###.##");
+            dashboardBinding.codReceivedVal.setText(getActivity().getResources().getString(R.string.label_rupee_symbol) + " " + decim.format(riderDashboardCountResponse.getData().getCount().getCodReceived()));
+            dashboardBinding.codPendingVal.setText(getActivity().getResources().getString(R.string.label_rupee_symbol) + " " + decim.format(riderDashboardCountResponse.getData().getCount().getCodPending()));
+            dashboardBinding.travelledDistanceVal.setText(String.valueOf(riderDashboardCountResponse.getData().getCount().getDistanceTravelled()) + " KM");
+//            todayRiderTravelledDistanceText();
+
+            if (isActiveSwith) {
+                isActiveSwith = false;
+                if (riderDashboardCountResponse.getData().getCount().getNewOrders() > 0
+                        || riderDashboardCountResponse.getData().getCount().getIntransitOrders() > 0) {
+                    Toast.makeText(mActivity, "Please Complete Pending Orders.", Toast.LENGTH_SHORT).show();
+                    sw.setChecked(true);
+                } else {
+                    userStatus.setText("Offline");
+                    getController().riderUpdateStauts(getSessionManager().getLoginToken(), "Offline");
+                }
+            } else {
+                ActivityUtils.hideDialog();
+            }
+        }
+    }
+
+    @Override
+    public void onClickCodReciebedorPendingDeposits() {
+        NavigationActivity.getInstance().selectItem(2);
+
+
+//        startActivity(ReportsActivity.getStartIntent(getContext()));
+//        getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+    }
+
+    @Override
+    public void onClickTotalDeliveredCancelledOrders() {
+        if (getSessionManager().getAsignedOrderUid() != null && getSessionManager().getAsignedOrderUid().size() > 0)
+            getSessionManager().setAsignedOrderUid(null);
+        dashboardBinding.newOrderLayout.setVisibility(View.GONE);
+        NavigationActivity.notificationDotVisibility(false);
+        getSessionManager().setNotificationStatus(false);
+
+        NavigationActivity.getInstance().selectItem(1);
+//            startUpdatesButtonHandler(newOrderLayout);
+    }
+
+    @Override
+    public void onLogout() {
+        getSessionManager().clearAllSharedPreferences();
+        NavigationActivity.getInstance().stopBatteryLevelLocationService();
+        Intent intent = new Intent(getContext(), LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        getActivity().finish();
+        getActivity().overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+    }
+
+    @Override
+    public void onClickNewOrders() {
+        CommonUtils.selectedTab = "NEW";
+        NavigationActivity.getInstance().selectItem(1);
+    }
+
+    @Override
+    public void onClickIntransitOrders() {
+        CommonUtils.selectedTab = "INTRANSIT";
+        NavigationActivity.getInstance().selectItem(1);
+    }
+
+    @Override
+    public void onClickDeliveredOrders() {
+        CommonUtils.selectedTab = "DELIVERED";
+        NavigationActivity.getInstance().selectItem(1);
+    }
+
+    @Override
+    public void onClickCancelledOrders() {
+        CommonUtils.selectedTab = "CANCELLED";
+        NavigationActivity.getInstance().selectItem(1);
+    }
+
+    @Override
+    public boolean isActiveStausSw() {
+        return isActiveSwith;
+    }
+
+    private void todayRiderTravelledDistanceText() {
+        try {
+            dashboardBinding.riderTravelledDistanceInaday.setText(getSessionManager().getRiderTravelledDistanceinDay().contains(".") ? getSessionManager().getRiderTravelledDistanceinDay().substring(0, getSessionManager().getRiderTravelledDistanceinDay().indexOf(".")) + " M" : getSessionManager().getRiderTravelledDistanceinDay() + " M");
+            Handler todayRiderTravelledDistance = new Handler();
+            todayRiderTravelledDistance.postDelayed(() -> todayRiderTravelledDistanceText(), 1000);
+        } catch (Exception e) {
+            System.out.println("todayRiderTravelledDistanceText::::::::::::::::::::::::::::::" + e.getMessage());
+        }
+    }
+
     public static void newOrderViewVisibility(boolean show) {
-        try{
+        try {
             if (show) {
                 newOrderLayoutView.setVisibility(View.VISIBLE);
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                 String orderDate = CommonUtils.getCurrentTimeDate();
                 Date orderDates = formatter.parse(orderDate);
                 long orderDateMills = orderDates.getTime();
+                newOrder.setText(CommonUtils.NOTIFICATIONS_COUNT == 1 ? "1 New Order" : +CommonUtils.NOTIFICATIONS_COUNT + " New Orders");
                 timeView.setText(CommonUtils.getTimeFormatter(orderDateMills));
-
             } else {
                 newOrderLayoutView.setVisibility(View.GONE);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
     }
@@ -1038,6 +1163,8 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
     @Override
     public void onDestroy() {
         super.onDestroy();
-        getSessionManager().setNotificationStatus(false);
+//        getSessionManager().setNotificationStatus(false);
     }
+
+
 }

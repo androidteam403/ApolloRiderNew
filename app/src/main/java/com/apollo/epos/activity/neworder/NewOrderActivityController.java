@@ -34,7 +34,7 @@ public class NewOrderActivityController {
             orderDetailsRequest.setOrderNumber(orderNumber);
 
             ApiInterface apiInterface = ApiClient.getApiService();
-            Call<OrderDetailsResponse> call = apiInterface.ORDER_DETAILS_API_CALL("Bearer " + token, orderDetailsRequest);
+            Call<OrderDetailsResponse> call = apiInterface.ORDER_DETAILS_API_CALL("Bearer " + token, orderNumber);
             call.enqueue(new Callback<OrderDetailsResponse>() {
                 @Override
                 public void onResponse(@NotNull Call<OrderDetailsResponse> call, @NotNull Response<OrderDetailsResponse> response) {

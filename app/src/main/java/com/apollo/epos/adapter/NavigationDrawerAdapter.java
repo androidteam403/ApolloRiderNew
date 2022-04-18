@@ -54,11 +54,11 @@ public class NavigationDrawerAdapter extends ArrayAdapter<NavDrawerModel> {
             dividerView.setVisibility(View.GONE);
         } else {
             listItem.findViewById(R.id.itemview).setBackgroundColor(Color.TRANSPARENT);
-            if (position == 6) {
-                dividerView.setVisibility(View.GONE);
-            } else {
+//            if (position == 6) {
+//                dividerView.setVisibility(View.GONE);
+//            } else {
                 dividerView.setVisibility(View.VISIBLE);
-            }
+//            }
         }
 
         return listItem;

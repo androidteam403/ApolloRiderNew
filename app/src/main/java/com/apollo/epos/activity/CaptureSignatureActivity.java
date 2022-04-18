@@ -7,13 +7,16 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.databinding.DataBindingUtil;
 
 import com.apollo.epos.R;
+import com.apollo.epos.activity.signature.SignatureView;
 import com.apollo.epos.databinding.ActivityCaptureSignatureBinding;
-import com.kyanogen.signatureview.SignatureView;
+import com.apollo.epos.service.FloatingTouchService;
+import com.apollo.epos.utils.CommonUtils;
 import com.novoda.merlin.Merlin;
 
 import java.io.ByteArrayOutputStream;
@@ -90,16 +93,27 @@ public class CaptureSignatureActivity extends BaseActivity {
 
     @OnClick(R.id.save_layout)
     void onSaveClick() {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitMap = signatureView.getSignatureBitmap();
+        if (signatureView.isSigned) {
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitMap = signatureView.getSignatureBitmap();
 //                path = saveImage(bitmap);
-        bitMap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-        byte[] byteArray = stream.toByteArray();
+            bitMap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            byte[] byteArray = stream.toByteArray();
 
-        Intent intent = new Intent();
-        intent.putExtra("capturedSignature", byteArray);
-        setResult(2, intent);
-        finish();
-        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+            Intent intent = new Intent();
+            intent.putExtra("capturedSignature", byteArray);
+            setResult(2, intent);
+            finish();
+            overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+        }else {
+            Toast.makeText(this, "Not signed yet", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CommonUtils.CURRENT_SCREEN = getClass().getSimpleName();
+        startService(new Intent(CaptureSignatureActivity.this, FloatingTouchService.class));
     }
 }

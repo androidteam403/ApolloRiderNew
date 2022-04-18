@@ -2,6 +2,7 @@ package com.apollo.epos.fragment.changepassword;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,9 +14,12 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
 import com.apollo.epos.R;
+import com.apollo.epos.activity.login.LoginActivity;
+import com.apollo.epos.activity.navigation.NavigationActivity;
 import com.apollo.epos.base.BaseFragment;
 import com.apollo.epos.databinding.FragmentChangePasswordBinding;
-import com.apollo.epos.utils.ActivityUtils;
+import com.apollo.epos.db.SessionManager;
+import com.apollo.epos.fragment.changepassword.model.ChangePasswordResponse;
 
 import java.util.Objects;
 
@@ -68,10 +72,57 @@ public class ChangePasswordFragment extends BaseFragment implements ChangePasswo
     }
 
     @Override
+    public void onFailureMessage(String message) {
+        Toast.makeText(mActivity, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void onClickUpdate() {
         if (validate()) {
-//            ActivityUtils.customSnackbar(getView(),"New password updated");
-            Toast.makeText(mActivity, "New password updated", Toast.LENGTH_SHORT).show();
+            getController().changePasswordApiCall(Objects.requireNonNull(changePasswordBinding.etOldPassword.getText()).toString().trim(),
+                    Objects.requireNonNull(changePasswordBinding.etNewPassword.getText()).toString().trim(),
+                    Objects.requireNonNull(changePasswordBinding.etConfirmPassword.getText()).toString().trim());
         }
+    }
+
+    @Override
+    public void onSuccessChangePasswordApiCall(ChangePasswordResponse changePasswordResponse) {
+        getController().riderUpdateStauts(getSessionManager().getLoginToken(), "Offline");
+        Toast.makeText(mActivity, changePasswordResponse.getMessage(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onFailureChangePasswordApiCall(String message) {
+        Toast.makeText(mActivity, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSuccessRiderUpdateStatusApiCall() {
+        new SessionManager(getContext()).clearAllSharedPreferences();
+        NavigationActivity.getInstance().stopBatteryLevelLocationService();
+        Intent intent = new Intent(getContext(), LoginActivity.class);
+        startActivity(intent);
+        NavigationActivity.getInstance().finish();
+        getActivity().overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+    }
+
+    @Override
+    public void onFailureRiderUpdateStatusApiCall(String message) {
+
+    }
+
+    @Override
+    public void onLogout() {
+        getSessionManager().clearAllSharedPreferences();
+        NavigationActivity.getInstance().stopBatteryLevelLocationService();
+        Intent intent = new Intent(getContext(), LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        getActivity().finish();
+        getActivity().overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+    }
+
+    public ChangePasswordFragmentController getController() {
+        return new ChangePasswordFragmentController(getContext(), this);
     }
 }

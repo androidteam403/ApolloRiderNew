@@ -16,6 +16,21 @@
         android:name="com.apollo.epos.fragment.profile.ProfileFragment"
         android:label="@string/menu_profile"
         tools:layout="@layout/fragment_new_order" />
+    <fragment
+        android:id="@+id/nav_reports"
+        android:name="com.apollo.epos.fragment.reports.ReportsFragment"
+        android:label="@string/menu_reports"
+        tools:layout="@layout/fragment_reports" />
+    <fragment
+        android:id="@+id/nav_summary"
+        android:name="com.apollo.epos.fragment.summary.SummaryFragment"
+        android:label="@string/menu_summary"
+        tools:layout="@layout/fragment_summary" />
+    <fragment
+        android:id="@+id/nav_complaints"
+        android:name="com.apollo.epos.fragment.complaints.ComplaintsFragment"
+        android:label="@string/menu_complaints"
+        tools:layout="@layout/fragment_complaints" />
 
     <fragment
         android:id="@+id/nav_change_password"

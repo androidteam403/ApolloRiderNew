@@ -1,15 +1,16 @@
 <resources>
-    <string name="app_name">Apollo Rider </string>
+    <string name="app_name">Vivekagam </string>
     <string name="nav_header_title">Muddaraboina Naveen</string>
     <string name="nav_header_subtitle">+91 9177551736</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
     <string-array name="navigation_drawer_items_array">
-        <!--        <item>New Order</item>-->
         <item>Dashboard</item>
         <item>My Orders</item>
-        <!--        <item>Notifications</item>-->
+        <item>Cash Deposits</item>
+        <item>Summary</item>
+        <item>Complaints</item>
         <item>Profile</item>
         <item>Change Password</item>
         <item>Help</item>
@@ -25,6 +26,9 @@
     <string name="menu_take_order">New Order</string>
     <string name="menu_dashboard">Dashboard</string>
     <string name="menu_my_orders">My Orders</string>
+    <string name="menu_reports">Cash Deposits</string>
+    <string name="menu_summary">Summary</string>
+    <string name="menu_complaints">Complaints</string>
     <string name="menu_notifications">Notifications</string>
     <string name="menu_profile">Profile</string>
     <string name="menu_change_password">Change Password</string>
@@ -127,6 +131,7 @@
     <string name="label_order_accepted">ACCEPTED</string>
     <string name="label_order_cancel">CANCEL ORDER</string>
     <string name="label_cancel_reason_header">Write reason below for cancel the order</string>
+    <string name="label_cancel_reason_subheader">Choose reason to cancel order</string>
     <string name="label_cancel_item">CANCEL ITEM</string>
     <string name="label_reached_the_store">1. Reached the Store</string>
     <string name="label_scan_the_barcode">2. Scan the Barcode</string>
@@ -216,5 +221,57 @@
     <string name="label_customer_name_">Customer Name</string>
     <string name="label_pickup_instructions">Pickup Instructions</string>
     <string name="label_delivery_instruction">Delivery Instructions</string>
+    <string name="label_phone_number_or_emp_id">Phone Number or Emp Id</string>
+    <string name="label_welcome_rider">Welcome Rider</string>
+    <string name="label_current_address">Current Address</string>
+    <string name="label_permanent_address">Permanent Address</string>
+    <string name="label_vivekagam_logistics_system">Vivekagam Logistics System</string>
+    <string name="label_gps_enable_to_access_application">GPS enable to access application</string>
+    <string name="gps_enable">GPS permission</string>
+    <string name="label_are_you_sure_want_to_logout">Are sure want to logout?</string>
+    <string name="label_alert">Alert!</string>
+    <string name="label_no">No</string>
+    <string name="label_yes">Yes</string>
+    <string name="label_location_permission_must_be_required_to_access_application">Location permission must be required to access application</string>
+    <string name="label_location_permission">Location permission</string>
+    <string name="label_vehicle_type">Vehicle Type</string>
+    <string name="label_vehicle_number">Vehicle Number</string>
+    <string name="label_model1">Model</string>
+    <string name="label_capacity">Capacity</string>
+    <string name="label_manufacturer">Manufacturer</string>
+    <string name="label_current_order_has_been_cancelled">Current order has been cancelled</string>
+    <string name="label_no_orders_yet">No Orders Yet</string>
+    <string name="label_no_orders_assigned">No orders assigned</string>
+    <string name="label_no_orders_intransit">No orders in Transit</string>
+    <string name="label_no_orders_delivered">No orders delivered</string>
+    <string name="label_no_orders_cancelled">No orders cancelled</string>
+    <string name="label_this_order_is_cancelled">This Order is Cancelled</string>
+    <string name="label_reports">Cash Deposits</string>
+    <string name="label_no_reports_yet">No Reports Yet</string>
+    <string name="label_online_payment">Online Payment</string>
+    <string name="label_phonepe_qr_code">PhonePe QR Code</string>
+    <string name="label_check_status">Check Status</string>
+    <string name="label_cancel">Cancel</string>
+    <string name="label_phonepe_link">PhonePe Link</string>
+    <string name="label_hdfc_link">HDFC Link</string>
+    <string name="label_9177551647">9177551647</string>
+    <string name="label_continue">Continue</string>
+    <string name="label_change_order_status">Change Order Status</string>
+    <string name="label_choose_appropriate_reasons">Choose Appropriate Reason</string>
+    <string name="label_from_date">From Date</string>
+    <string name="label_go">GO</string>
+    <string name="label_order_number">Order Number</string>
+    <string name="label_sdelivered_on">Delivered On</string>
+    <string name="label_p">P</string>
+    <string name="label_d">D</string>
+    <string name="label_to_date">To Date</string>
+    <string name="label_apply">Apply</string>
+    <string name="label_from">From</string>
+    <string name="label_to">To</string>
+    <string name="label_order_date">Order Date</string>
+    <string name="label_languages_known_to_speak">Languages Known to Speak</string>
+    <string name="label_no_complaints_found">No complaints found</string>
+    <string name="label_rider_name">Rider Name:</string>
+    <string name="label_mobile_no">Mobile No.:</string>
 
 </resources>

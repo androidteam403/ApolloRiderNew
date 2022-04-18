@@ -259,6 +259,10 @@ public class ActivityUtils {
         }
     }
 
+    public static boolean isLoadingShowing() {
+        return spotsDialog.isShowing();
+    }
+
     public static String getCurrentTime() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a", Locale.ENGLISH);
         return dateFormat.format(new Date()).toString();
