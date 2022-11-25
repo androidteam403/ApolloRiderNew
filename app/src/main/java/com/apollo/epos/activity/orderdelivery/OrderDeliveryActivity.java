@@ -313,9 +313,9 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
     private String customerPhoneNumber;
 
     private String branPickupVerificationCode = "00000000";
-    private String branReturnVerificatonCode = "00000000";
+    private String branReturnVerificatonCode = "00000000";//
     private String cusPickupVerificationCode = "00000000";
-    private String cusDeliveryVerificationCode = "00000000";
+    private String cusDeliveryVerificationCode = "00000000";//
 
     private boolean isBranPickupVerificationCode = false;
     private boolean isBranReturnVerificatonCode = false;
@@ -2358,7 +2358,8 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                             if (orderDetailsResponse.getData().getBranreturnVerCode() == null || orderDetailsResponse.getData().getBranreturnVerCode().isEmpty() || (getSessionManager().getGlobalSettingSelectResponse() != null && !getSessionManager().getGlobalSettingSelectResponse().getData().getOtpBranchHndovr())) {
                                 orderDeliveryBinding.cancelledOtpVerifyText.setText("2. Return verification");
                                 orderDeliveryBinding.cancelledOtpEditTextLayout.setVisibility(View.GONE);
-                                isBranReturnVerificatonCode = true;
+//                                isBranReturnVerificatonCode = true;
+                                isCusDeliveryVerificationCode = true;
                                 orderDeliveryBinding.cancelledOptNum1.setText("0");
                                 orderDeliveryBinding.cancelledOptNum2.setText("0");
                                 orderDeliveryBinding.cancelledOptNum3.setText("0");
@@ -2632,7 +2633,8 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                     if (orderDetailsResponse.getData().getBranreturnVerCode() == null || orderDetailsResponse.getData().getBranreturnVerCode().isEmpty() || (getSessionManager().getGlobalSettingSelectResponse() != null && !getSessionManager().getGlobalSettingSelectResponse().getData().getOtpBranchHndovr())) {
                         orderDeliveryBinding.cancelledOtpVerifyText.setText("2. Return verification");
                         orderDeliveryBinding.cancelledOtpEditTextLayout.setVisibility(View.GONE);
-                        isBranReturnVerificatonCode = true;
+                        isCusDeliveryVerificationCode = true;
+//                        isBranReturnVerificatonCode = true;
                         orderDeliveryBinding.cancelledOptNum1.setText("0");
                         orderDeliveryBinding.cancelledOptNum2.setText("0");
                         orderDeliveryBinding.cancelledOptNum3.setText("0");
@@ -3002,18 +3004,20 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 
     @Override
     public void onClickCancelledVerifyOtp() {
-        if (isBranReturnVerificatonCode || orderDeliveryBinding.cancelledPinHiddenEdittext.getText().toString().equalsIgnoreCase(branReturnVerificatonCode)) {
+
+        if (isCusDeliveryVerificationCode || orderDeliveryBinding.cancelledPinHiddenEdittext.getText().toString().equalsIgnoreCase(cusDeliveryVerificationCode) &&
+                this.orderDetailsResponse.getData().getOrderState().getName().equals("RETURN")) {
             hideKeyboard();
             ActivityUtils.showDialog(this, "Please Wait.");
-            if (this.orderDetailsResponse.getData().getOrderState().getName().equals("RETURN")) {
-                new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("RETURNORDERRTO", orderUid, "", "", transactionId);
+            new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("RETURNORDERRTO", orderUid, "", "", transactionId);
+        } else if (isBranReturnVerificatonCode || orderDeliveryBinding.cancelledPinHiddenEdittext.getText().toString().equalsIgnoreCase(branReturnVerificatonCode)) {
+            hideKeyboard();
+            ActivityUtils.showDialog(this, "Please Wait.");
+            if (this.orderDetailsResponse.getData().getOrderStatus().getUid().equals("CANCELLED")) {
+                this.isStatusCancelled = true;
+                new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("CANCELRETURNINITIATED", orderUid, "", "", transactionId);
             } else {
-                if (this.orderDetailsResponse.getData().getOrderStatus().getUid().equals("CANCELLED")) {
-                    this.isStatusCancelled = true;
-                    new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("CANCELRETURNINITIATED", orderUid, "", "", transactionId);
-                } else {
-                    new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("CANCELORDERRTO", orderUid, "", "", transactionId);
-                }
+                new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("CANCELORDERRTO", orderUid, "", "", transactionId);
             }
         } else {
             orderDeliveryBinding.cancelledOtpEditTextLayout.setVisibility(View.VISIBLE);

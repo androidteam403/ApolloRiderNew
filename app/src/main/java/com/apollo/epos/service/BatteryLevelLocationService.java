@@ -77,13 +77,12 @@ public class BatteryLevelLocationService extends Service implements LocationList
     }
 
 
-
-
     Location preLocation = null;
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        this.currentLocation = location;
+        if (location != null)
+            this.currentLocation = location;
 //        if (preLocation != null)
 //            todayTravelledDistance();
 //        else

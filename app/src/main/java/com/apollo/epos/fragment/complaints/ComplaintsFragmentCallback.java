@@ -15,4 +15,6 @@ public interface ComplaintsFragmentCallback {
     void onSuccessComplaintSaveUpdate(String message);
 
     void onSuccessComplaintReasonsListApiCall(ComplaintReasonsListResponse complaintReasonsListResponse);
+
+    void complaintResolvedCallback();
 }

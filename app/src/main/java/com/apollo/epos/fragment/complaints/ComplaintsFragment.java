@@ -61,6 +61,7 @@ public class ComplaintsFragment extends BaseFragment implements ComplaintsFragme
 
     private void setUp() {
         complaintsBinding.setCallback(this);
+        NavigationActivity.getInstance().setComplaintsFragmentCallback(this);
         if (getSessionManager().getComplaintReasonsListResponse() != null) {
             onSuccessComplaintReasonsListApiCall(getSessionManager().getComplaintReasonsListResponse());
         } else {
@@ -234,6 +235,8 @@ public class ComplaintsFragment extends BaseFragment implements ComplaintsFragme
 
     @Override
     public void onSuccessComplaintSaveUpdate(String message) {
+        this.page = 1;
+        getController().getComplaintsListApiCall(page);
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
@@ -248,5 +251,10 @@ public class ComplaintsFragment extends BaseFragment implements ComplaintsFragme
         } catch (Exception e) {
             System.out.println("onSuccessDeliveryReasonApiCall:::::::::::::::::::::::::::::::" + e.getMessage());
         }
+    }
+
+    @Override
+    public void complaintResolvedCallback() {
+        onSuccessComplaintSaveUpdate("Complaint Resolved");
     }
 }

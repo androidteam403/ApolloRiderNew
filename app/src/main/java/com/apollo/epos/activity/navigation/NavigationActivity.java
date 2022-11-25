@@ -61,6 +61,7 @@ import com.apollo.epos.databinding.DialogPermissionDeniedBinding;
 import com.apollo.epos.db.SessionManager;
 import com.apollo.epos.fragment.changepassword.ChangePasswordFragment;
 import com.apollo.epos.fragment.complaints.ComplaintsFragment;
+import com.apollo.epos.fragment.complaints.ComplaintsFragmentCallback;
 import com.apollo.epos.fragment.dashboard.DashboardFragment;
 import com.apollo.epos.fragment.help.HelpFragment;
 import com.apollo.epos.fragment.myorders.MyOrdersFragment;
@@ -160,9 +161,17 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                 alertDialog.setCancelable(false);
                 alertMessageBinding.dialogButtonOk.setOnClickListener(v -> {
                     alertDialog.dismiss();
+                    if (mCurrentFrag.equals(getString(R.string.menu_complaints)))
+                        complaintsFragmentCallback.complaintResolvedCallback();
                 });
                 alertDialog.show();
             }
+    }
+
+    public ComplaintsFragmentCallback complaintsFragmentCallback;
+
+    public void setComplaintsFragmentCallback(ComplaintsFragmentCallback complaintsFragmentCallback) {
+        this.complaintsFragmentCallback = complaintsFragmentCallback;
     }
 
     @Override
