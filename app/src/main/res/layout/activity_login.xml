@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:android.support.design="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:android.support.design="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <RelativeLayout
         android:id="@+id/login_parent_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,7 +19,8 @@
             android:layout_gravity="center"
             android:layout_marginStart="@dimen/thirty_dp"
             android:layout_marginEnd="@dimen/thirty_dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            tools:ignore="UselessParent">
 
             <ImageView
                 android:layout_width="@dimen/one_hundred_seventy_dp"
@@ -44,7 +45,7 @@
                     android:drawableStart="@drawable/ic_login_user"
                     android:drawablePadding="@dimen/ten_dp"
                     android:fontFamily="@font/roboto_regular"
-                    android:hint="@string/label_email_hint"
+                    android:hint="@string/label_phone_number_or_emp_id"
                     android:inputType="textEmailAddress"
                     android:singleLine="true"
                     android:textColor="@color/edit_text_textcolor"
@@ -84,10 +85,11 @@
                 android:layout_gravity="end"
                 android:layout_marginTop="@dimen/five_dp"
                 android:fontFamily="@font/roboto_regular"
+                android:onClick="@{()-> callback.onClickForgotPasswordText()}"
                 android:padding="@dimen/five_dp"
-                android:visibility="gone"
                 android:text="@string/label_forgot_password"
-                android:textColor="@color/colorWhite" />
+                android:textColor="@color/colorWhite"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/btn_signin"
@@ -96,7 +98,15 @@
                 android:layout_marginTop="@dimen/forty_dp"
                 android:background="@drawable/btn_signin_ripple_effect"
                 android:fontFamily="@font/roboto_bold"
+                android:onClick="@{()-> callback.onClickSignin()}"
                 android:text="@string/label_signin" />
         </LinearLayout>
     </RelativeLayout>
+
+    <data>
+
+        <variable
+            name="callback"
+            type="com.apollo.epos.activity.login.LoginActivityCallback" />
+    </data>
 </layout>

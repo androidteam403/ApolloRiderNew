@@ -4,10 +4,15 @@ import android.graphics.Bitmap;
 
 import com.apollo.epos.activity.neworder.model.OrderDetailsResponse;
 import com.apollo.epos.activity.orderdelivery.model.DeliveryFailreReasonsResponse;
+import com.apollo.epos.activity.orderdelivery.model.OrderPaymentSelectResponse;
 import com.apollo.epos.activity.orderdelivery.model.OrderStatusHitoryListResponse;
+import com.apollo.epos.activity.trackmap.model.OrderEndJourneyUpdateResponse;
 
 public interface OrderDeliveryActivityCallback {
     // test
+
+    void onFailureMessage(String message);
+
     void onClickBackIcon();
 
     void onSuccessOrderDetailsApiCall(OrderDetailsResponse orderDetailsResponse);
@@ -33,6 +38,8 @@ public interface OrderDeliveryActivityCallback {
     void onClickCollectPayment();
 
     void onClickCollectPaymentSave();
+
+    String getCodCardCash();
 
     void onSuccessOrderPaymentUpdateApiCall();
 
@@ -71,4 +78,22 @@ public interface OrderDeliveryActivityCallback {
     void onClickDelivered();
 
     void onClickReturnLabel();
+
+    void onClickReturntoStoreShowMap();
+
+    void onSuccessOrderPaymentTypeInCod(OrderPaymentSelectResponse orderPaymentSelectResponse);
+
+    void onFailureOrderPaymentTypeInCod(String message);
+
+    void onSuccessOrderEndJourneyUpdateApiCall(OrderEndJourneyUpdateResponse orderEndJourneyUpdateResponse);
+
+    void onLogout();
+
+    boolean isOrderCancelled();
+
+    void orderCancelled();
+
+    boolean isStatusCancelled();
+
+    void statusCanelled();
 }

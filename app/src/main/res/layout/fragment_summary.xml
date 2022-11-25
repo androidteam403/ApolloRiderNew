@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#e8e7e7"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:descendantFocusability="blocksDescendants"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingTop="@dimen/five_dp"
+                android:paddingEnd="@dimen/ten_dp"
+                android:paddingBottom="@dimen/three_dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorWhite"
+                    android:nestedScrollingEnabled="false"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/ten_dp"
+                        android:layout_weight=".42"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_regular"
+                            android:text="@string/label_from"
+                            android:textColor="@color/label_color" />
+
+                        <EditText
+                            android:id="@+id/from_date"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/thirty_dp"
+                            android:layout_marginStart="@dimen/five_dp"
+                            android:background="@drawable/date_edit_bg"
+                            android:focusable="false"
+                            android:fontFamily="@font/roboto_regular"
+                            android:gravity="center"
+                            android:importantForAutofill="no"
+                            android:inputType="date"
+                            android:onClick="@{()-> callbak.onClickFromDate()}"
+                            android:padding="@dimen/five_dp"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/text_dimen_12"
+                            tools:ignore="LabelFor" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/ten_dp"
+                        android:layout_weight=".42"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_regular"
+                            android:text="@string/label_to"
+                            android:textColor="@color/label_color" />
+
+                        <EditText
+                            android:id="@+id/to_date"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/thirty_dp"
+                            android:layout_marginStart="@dimen/five_dp"
+                            android:background="@drawable/date_edit_bg"
+                            android:focusable="false"
+                            android:fontFamily="@font/roboto_regular"
+                            android:gravity="center"
+                            android:importantForAutofill="no"
+                            android:inputType="date"
+                            android:onClick="@{()-> callbak.onClickToDate()}"
+                            android:padding="@dimen/five_dp"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/text_dimen_12"
+                            tools:ignore="LabelFor" />
+                    </LinearLayout>
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.16"
+                        android:gravity="bottom">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/thirty_dp"
+                            android:background="#4b9e2e"
+                            android:fontFamily="@font/roboto_bold"
+                            android:gravity="center"
+                            android:onClick="@{()-> callbak.onClickOk()}"
+                            android:text="@string/label_apply"
+                            android:textColor="@color/colorWhite" />
+
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/date_comparison_error_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/five_dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="Invalid Date Range."
+                    android:textColor="#e21d27"
+                    android:textSize="@dimen/text_dimen_10"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <!--            <androidx.core.widget.NestedScrollView-->
+            <!--                android:id="@+id/summary_nested_scroll_view"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:descendantFocusability="blocksDescendants"-->
+            <!--                app:layout_behavior="@string/appbar_scrolling_view_behavior">-->
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/summary_list_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingEnd="@dimen/ten_dp"
+                android:paddingBottom="@dimen/three_dp" />
+            <!--            </androidx.core.widget.NestedScrollView>-->
+
+        </LinearLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/no_order_found_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/one_hundred_fifty_dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="@dimen/forty_dp"
+                tools:ignore="UselessParent">
+
+                <ImageView
+                    android:layout_width="@dimen/one_hundred_fifty_dp"
+                    android:layout_height="@dimen/one_hundred_dp"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/rider" />
+
+                <TextView
+                    android:id="@+id/no_orders_instatus_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/five_dp"
+                    android:fontFamily="@font/roboto_bold"
+                    android:text="@string/label_no_orders_found"
+                    android:textColor="@color/orange_color"
+                    android:textSize="@dimen/text_dimen_25" />
+            </LinearLayout>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <data>
+
+        <variable
+            name="callbak"
+            type="com.apollo.epos.fragment.summary.SummaryFragmentCallback" />
+    </data>
+</layout>

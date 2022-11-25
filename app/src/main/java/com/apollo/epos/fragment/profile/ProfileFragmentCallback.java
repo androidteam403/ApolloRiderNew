@@ -16,4 +16,7 @@ public interface ProfileFragmentCallback {
 
     void onSuccessComplaintReasonsListApiCall(ComplaintReasonsListResponse complaintReasonsListResponse);
 
+    void onClickComplaint();
+
+    void onLogout();
 }

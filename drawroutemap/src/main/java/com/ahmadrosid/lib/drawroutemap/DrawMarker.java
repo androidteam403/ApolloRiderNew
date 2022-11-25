@@ -13,6 +13,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
 import java.util.HashMap;
 
 /**
@@ -41,21 +42,24 @@ public class DrawMarker {
     }
 
     public void draw(GoogleMap googleMap, LatLng location, int resDrawable, String title, int load, HashMap<Integer, Marker> hashMap) {
-        Drawable circleDrawable = ContextCompat.getDrawable(context, resDrawable);
-        BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
+        try {
+            Drawable circleDrawable = ContextCompat.getDrawable(context, resDrawable);
+            BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
 
-        if (load != 0 && hashMap.containsKey(1)) {
-            Marker marker = hashMap.get(load);
-            marker.setPosition(location);// Update your marker
-        } else {
-            marker = googleMap.addMarker(new MarkerOptions()
-                    .position(location)
-                    .title(title)
-                    .icon(markerIcon));
+            if (load != 0 && hashMap.containsKey(1)) {
+                Marker marker = hashMap.get(load);
+                marker.setPosition(location);// Update your marker
+            } else {
+                marker = googleMap.addMarker(new MarkerOptions()
+                        .position(location)
+                        .title(title)
+                        .icon(markerIcon));
 
-            hashMap.put(load, marker);
+                hashMap.put(load, marker);
+            }
+        } catch (Exception e) {
+            System.out.println("DrawMarker================================= class" + e.getMessage());
         }
-
     }
 
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
