@@ -6,11 +6,11 @@
 6
 7    <uses-sdk
 8        android:minSdkVersion="15"
-8-->E:\workspace\ApolloRiderNew05_12_22\cusotmloader\src\main\AndroidManifest.xml
+8-->D:\ApolloRiderNew\cusotmloader\src\main\AndroidManifest.xml
 9        android:targetSdkVersion="27" />
-9-->E:\workspace\ApolloRiderNew05_12_22\cusotmloader\src\main\AndroidManifest.xml
+9-->D:\ApolloRiderNew\cusotmloader\src\main\AndroidManifest.xml
 10
 11    <application />
-11-->E:\workspace\ApolloRiderNew05_12_22\cusotmloader\src\main\AndroidManifest.xml:3:5-19
+11-->D:\ApolloRiderNew\cusotmloader\src\main\AndroidManifest.xml:3:5-19
 12
 13</manifest>

@@ -5,6 +5,7 @@ import android.os.Build;
 
 import com.apollo.epos.BuildConfig;
 import com.apollo.epos.activity.login.model.FirebaseTokenRequest;
+import com.apollo.epos.activity.login.model.GetDetailsRequest;
 import com.apollo.epos.activity.login.model.LoginRequest;
 import com.apollo.epos.activity.login.model.LoginResponse;
 import com.apollo.epos.activity.login.model.OrderPaymentTypeResponse;
@@ -18,10 +19,16 @@ import com.apollo.epos.network.ApiClient;
 import com.apollo.epos.network.ApiInterface;
 import com.apollo.epos.service.NetworkUtils;
 import com.apollo.epos.utils.ActivityUtils;
+import com.apollo.epos.utils.AppConstants;
 import com.apollo.epos.utils.CommonUtils;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
+
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -35,6 +42,41 @@ public class LoginActivityController {
         this.mListener = mListener;
     }
 
+//    public void loginApiCall(String userName, String password, String firebaseToken) {
+//        if (NetworkUtils.isNetworkConnected(context)) {
+//            ActivityUtils.showDialog(context, "Please wait.");
+//            ApiInterface apiInterface = ApiClient.getApiService();
+//            LoginRequest loginRequest = new LoginRequest();
+//            loginRequest.setAppUserName(userName);
+//            loginRequest.setAppPassword(password);
+//            Call<LoginResponse> call = apiInterface.DO_LOGIN_API_CALL(loginRequest);
+//            call.enqueue(new Callback<LoginResponse>() {
+//                @Override
+//                public void onResponse(@NotNull Call<LoginResponse> call, @NotNull Response<LoginResponse> response) {
+//
+//                    if (response.body() != null && response.body().getData() != null && response.body().getSuccess()) {
+//                        mListener.onSuccessLoginApi(response.body());
+//                        orderPaymentTypelistApiCall();
+//                        saveUserDeviceInfoApiCall(firebaseToken);
+//                        firebaseToken(firebaseToken);
+//                    } else if (response.body() != null && !response.body().getSuccess()) {
+//                        ActivityUtils.hideDialog();
+//                        mListener.onFailureLoginApi(response.body().getMessage());
+//
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure(@NotNull Call<LoginResponse> call, @NotNull Throwable t) {
+//                    ActivityUtils.hideDialog();
+//                    mListener.onFailureLoginApi(t.getMessage());
+//                }
+//            });
+//        } else {
+//            mListener.onFailureLoginApi("Something went wrong.");
+//        }
+//    }
+
     public void loginApiCall(String userName, String password, String firebaseToken) {
         if (NetworkUtils.isNetworkConnected(context)) {
             ActivityUtils.showDialog(context, "Please wait.");
@@ -42,30 +84,53 @@ public class LoginActivityController {
             LoginRequest loginRequest = new LoginRequest();
             loginRequest.setAppUserName(userName);
             loginRequest.setAppPassword(password);
-            Call<LoginResponse> call = apiInterface.DO_LOGIN_API_CALL(loginRequest);
-            call.enqueue(new Callback<LoginResponse>() {
+            Gson gson = new Gson();
+            String jsonLoginRequest = gson.toJson(loginRequest);
+            GetDetailsRequest getDetailsRequest = new GetDetailsRequest();
+            getDetailsRequest.setRequesturl(BuildConfig.BASE_URL+"login");
+            getDetailsRequest.setRequestjson(jsonLoginRequest);
+            getDetailsRequest.setHeadertokenkey("");
+            getDetailsRequest.setHeadertokenvalue("");
+            getDetailsRequest.setRequesttype("POST");
+            Call<ResponseBody> calls = apiInterface.getDetails(AppConstants.PROXY_URL, AppConstants.PROXY_TOKEN, getDetailsRequest);
+            calls.enqueue(new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(@NotNull Call<LoginResponse> call, @NotNull Response<LoginResponse> response) {
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.body() != null) {
+                        String resp = null;
+                        try {
+                            resp = response.body().string();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        if (resp != null) {
+                            String res = BackSlash.removeBackSlashes(resp);
+                            Gson gson = new Gson();
+                            LoginResponse loginResponse = gson.fromJson(BackSlash.removeSubString(res), LoginResponse.class);
+                            if (loginResponse != null && loginResponse.getData() != null && loginResponse.getSuccess()) {
+                                mListener.onSuccessLoginApi(loginResponse);
+                                orderPaymentTypelistApiCall();
+                                saveUserDeviceInfoApiCall(firebaseToken);
+                                firebaseToken(firebaseToken);
+                            } else if (loginResponse != null && !loginResponse.getSuccess()) {
+                                ActivityUtils.hideDialog();
+                                mListener.onFailureLoginApi(loginResponse.getMessage());
 
-                    if (response.body() != null && response.body().getData() != null && response.body().getSuccess()) {
-                        mListener.onSuccessLoginApi(response.body());
-                        orderPaymentTypelistApiCall();
-                        saveUserDeviceInfoApiCall(firebaseToken);
-                        firebaseToken(firebaseToken);
-                    } else if (response.body() != null && !response.body().getSuccess()) {
-                        ActivityUtils.hideDialog();
-                        mListener.onFailureLoginApi(response.body().getMessage());
-
+                            }
+                        }
                     }
+
+
                 }
 
                 @Override
-                public void onFailure(@NotNull Call<LoginResponse> call, @NotNull Throwable t) {
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
                     ActivityUtils.hideDialog();
                     mListener.onFailureLoginApi(t.getMessage());
                 }
             });
-        } else {
+
+        }else {
             mListener.onFailureLoginApi("Something went wrong.");
         }
     }

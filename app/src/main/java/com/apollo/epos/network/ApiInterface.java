@@ -1,6 +1,7 @@
 package com.apollo.epos.network;
 
 import com.apollo.epos.activity.login.model.FirebaseTokenRequest;
+import com.apollo.epos.activity.login.model.GetDetailsRequest;
 import com.apollo.epos.activity.login.model.LoginRequest;
 import com.apollo.epos.activity.login.model.LoginResponse;
 import com.apollo.epos.activity.login.model.OrderPaymentTypeResponse;
@@ -46,8 +47,25 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
+import retrofit2.http.Url;
 
 public interface ApiInterface {
+
+//    @POST//("https://viswam.apollopharmacy.org/LIGHTPOSPROXY/Apollo/UTIES/GETDetails")
+//    suspend fun getDetails(
+//            @Url url: String,
+//            @Header("token") token: String,
+//            @Body getDetailsRequest: GetDetailsRequest,
+//            ): ResponseBody
+//
+    @POST
+    Call<ResponseBody> getDetails(@Url String url, @Header("token") String token, @Body GetDetailsRequest getDetailsRequest);
+
+
+
+//    @POST
+//    Call<LoginResponse> DO_LOGIN_API_CALL(@Url String url ,@Body LoginRequest loginRequest);
+
     @POST("login")
     Call<LoginResponse> DO_LOGIN_API_CALL(@Body LoginRequest loginRequest);
 
