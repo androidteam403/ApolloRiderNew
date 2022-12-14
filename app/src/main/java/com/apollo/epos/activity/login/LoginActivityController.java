@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -77,6 +78,8 @@ public class LoginActivityController {
 //        }
 //    }
 
+
+
     public void loginApiCall(String userName, String password, String firebaseToken) {
         if (NetworkUtils.isNetworkConnected(context)) {
             ActivityUtils.showDialog(context, "Please wait.");
@@ -87,7 +90,7 @@ public class LoginActivityController {
             Gson gson = new Gson();
             String jsonLoginRequest = gson.toJson(loginRequest);
             GetDetailsRequest getDetailsRequest = new GetDetailsRequest();
-            getDetailsRequest.setRequesturl(BuildConfig.BASE_URL+"login");
+            getDetailsRequest.setRequesturl(BuildConfig.BASE_URL + "login");
             getDetailsRequest.setRequestjson(jsonLoginRequest);
             getDetailsRequest.setHeadertokenkey("");
             getDetailsRequest.setHeadertokenvalue("");
@@ -130,40 +133,101 @@ public class LoginActivityController {
                 }
             });
 
-        }else {
+        } else {
             mListener.onFailureLoginApi("Something went wrong.");
         }
     }
 
     public void getRiderProfileDetailsApi(String token) {
         if (NetworkUtils.isNetworkConnected(context)) {
+            ActivityUtils.showDialog(context, "Please wait.");
             ApiInterface apiInterface = ApiClient.getApiService();
-            Call<GetRiderProfileResponse> call = apiInterface.GET_RIDER_PROFILE_API_CALL("Bearer " + token);
-            call.enqueue(new Callback<GetRiderProfileResponse>() {
+            GetDetailsRequest getDetailsRequest = new GetDetailsRequest();
+            getDetailsRequest.setRequesturl(BuildConfig.BASE_URL + "api/user/select/rider-profile-select");
+            getDetailsRequest.setHeadertokenkey("authorization");
+            getDetailsRequest.setHeadertokenvalue("Bearer " + token);
+            getDetailsRequest.setRequestjson("The");
+            getDetailsRequest.setRequesttype("GET");
+            Call<ResponseBody> call = apiInterface.getDetails(AppConstants.PROXY_URL, AppConstants.PROXY_TOKEN, getDetailsRequest);
+            call.enqueue(new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(@NotNull Call<GetRiderProfileResponse> call, @NotNull Response<GetRiderProfileResponse> response) {
+                public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {
+                    ActivityUtils.hideDialog();
+                    if (response.body() != null) {
+                        String resp = null;
+                        try {
+                            resp = response.body().string();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        if (resp != null) {
+                            String res = BackSlash.removeBackSlashes(resp);
+                            Gson gson = new Gson();
+                            GetRiderProfileResponse riderProfileResponse = gson.fromJson(BackSlash.removeSubString(res), GetRiderProfileResponse.class);
+                            if (riderProfileResponse != null && riderProfileResponse.getData() != null && riderProfileResponse.getSuccess()) {
+                                mListener.onSuccessGetProfileDetailsApi(riderProfileResponse);
 
-                    if (response.body() != null && response.body().getSuccess()) {
-                        mListener.onSuccessGetProfileDetailsApi(response.body());
-                    } else {
-                        ActivityUtils.hideDialog();
-                        mListener.onFailureGetProfileDetailsApi("No data found.");
+                            } else {
+                                ActivityUtils.hideDialog();
+                                mListener.onFailureGetProfileDetailsApi("No Data Found");
+
+                            }
+                        }
                     }
                 }
 
                 @Override
-                public void onFailure(@NotNull Call<GetRiderProfileResponse> call, @NotNull Throwable t) {
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
                     ActivityUtils.hideDialog();
                     mListener.onFailureGetProfileDetailsApi(t.getMessage());
                 }
             });
+
         } else {
             mListener.onFailureGetProfileDetailsApi("Something went wrong.");
         }
     }
 
+
+    //    public void saveUserDeviceInfoApiCall(String firebaseToken) {
+//        if (NetworkUtils.isNetworkConnected(context)) {
+//            ApiInterface apiInterface = ApiClient.getApiService();
+//            SaveUserDeviceInfoRequest saveUserDeviceInfoRequest = new SaveUserDeviceInfoRequest();
+//            SaveUserDeviceInfoRequest.DeviceInfo deviceInfo = new SaveUserDeviceInfoRequest.DeviceInfo();
+//            deviceInfo.setMac_id(CommonUtils.getDeviceId(context));
+//            deviceInfo.setDevice_name(CommonUtils.getDeviceName());
+//            deviceInfo.setManufacture(Build.MANUFACTURER);
+//            deviceInfo.setBrand(Build.BRAND);
+//            deviceInfo.setUser(Build.USER);
+//            deviceInfo.setVersion_sdk(Build.VERSION.SDK);
+//            deviceInfo.setFingerprint(Build.FINGERPRINT);
+//            deviceInfo.setApp_version_code(String.valueOf(BuildConfig.VERSION_CODE));
+//            deviceInfo.setApp_version_name(BuildConfig.VERSION_NAME);
+//            saveUserDeviceInfoRequest.setDeviceInfo(deviceInfo);
+//            saveUserDeviceInfoRequest.setFirebaseId(firebaseToken);
+//
+//            Call<SaveUserDeviceInfoResponse> call = apiInterface.SAVE_USER_DEVICE_INFO_API_CALL("Bearer " + new SessionManager(context).getLoginToken(), saveUserDeviceInfoRequest);
+//            call.enqueue(new Callback<SaveUserDeviceInfoResponse>() {
+//                @Override
+//                public void onResponse(@NotNull Call<SaveUserDeviceInfoResponse> call, @NotNull Response<SaveUserDeviceInfoResponse> response) {
+//                    if (response.isSuccessful() && response.body() != null && response.body().getSuccess()) {
+//
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure(@NotNull Call<SaveUserDeviceInfoResponse> call, @NotNull Throwable t) {
+//                    ActivityUtils.hideDialog();
+//                    mListener.onFialureMessage(t.getMessage());
+//                }
+//            });
+//        } else {
+//            mListener.onFialureMessage("Something went wrong.");
+//        }
+//    }
     public void saveUserDeviceInfoApiCall(String firebaseToken) {
         if (NetworkUtils.isNetworkConnected(context)) {
+            ActivityUtils.showDialog(context, "Please wait.");
             ApiInterface apiInterface = ApiClient.getApiService();
             SaveUserDeviceInfoRequest saveUserDeviceInfoRequest = new SaveUserDeviceInfoRequest();
             SaveUserDeviceInfoRequest.DeviceInfo deviceInfo = new SaveUserDeviceInfoRequest.DeviceInfo();
@@ -178,48 +242,104 @@ public class LoginActivityController {
             deviceInfo.setApp_version_name(BuildConfig.VERSION_NAME);
             saveUserDeviceInfoRequest.setDeviceInfo(deviceInfo);
             saveUserDeviceInfoRequest.setFirebaseId(firebaseToken);
-
-            Call<SaveUserDeviceInfoResponse> call = apiInterface.SAVE_USER_DEVICE_INFO_API_CALL("Bearer " + new SessionManager(context).getLoginToken(), saveUserDeviceInfoRequest);
-            call.enqueue(new Callback<SaveUserDeviceInfoResponse>() {
+            Gson gson = new Gson();
+            String jsonUserDeviceRequest = gson.toJson(saveUserDeviceInfoRequest);
+            GetDetailsRequest getDetailsRequest = new GetDetailsRequest();
+            getDetailsRequest.setRequesturl(BuildConfig.BASE_URL + "api/user/save-update/update-user-device-info");
+            getDetailsRequest.setRequestjson(jsonUserDeviceRequest);
+            getDetailsRequest.setHeadertokenkey("authorization");
+            getDetailsRequest.setHeadertokenvalue("Bearer " + new SessionManager(context).getLoginToken());
+            getDetailsRequest.setRequesttype("POST");
+            Call<ResponseBody> calls = apiInterface.getDetails(AppConstants.PROXY_URL, AppConstants.PROXY_TOKEN, getDetailsRequest);
+            calls.enqueue(new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(@NotNull Call<SaveUserDeviceInfoResponse> call, @NotNull Response<SaveUserDeviceInfoResponse> response) {
-                    if (response.isSuccessful() && response.body() != null && response.body().getSuccess()) {
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.body() != null) {
+                        String resp = null;
+                        try {
+                            resp = response.body().string();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        if (resp != null) {
+                            String res = BackSlash.removeBackSlashes(resp);
+                            Gson gson = new Gson();
+                            SaveUserDeviceInfoResponse saveUserDeviceInfoResponse = gson.fromJson(BackSlash.removeSubString(res), SaveUserDeviceInfoResponse.class);
+                            if (saveUserDeviceInfoResponse != null && saveUserDeviceInfoResponse.getSuccess() != null) {
 
+                            } else if (saveUserDeviceInfoResponse != null && !saveUserDeviceInfoResponse.getSuccess()) {
+                                ActivityUtils.hideDialog();
+                                mListener.onFialureMessage(saveUserDeviceInfoResponse.getMessage());
+
+                            }
+                        }
                     }
+
+
                 }
 
                 @Override
-                public void onFailure(@NotNull Call<SaveUserDeviceInfoResponse> call, @NotNull Throwable t) {
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
                     ActivityUtils.hideDialog();
                     mListener.onFialureMessage(t.getMessage());
                 }
             });
+
         } else {
             mListener.onFialureMessage("Something went wrong.");
         }
     }
 
+
     public void firebaseToken(String firebaseToken) {
         if (NetworkUtils.isNetworkConnected(context)) {
+            ActivityUtils.showDialog(context, "Please wait.");
             ApiInterface apiInterface = ApiClient.getApiService();
-            FirebaseTokenRequest o = new FirebaseTokenRequest();
-            o.setFirebaseToken(firebaseToken);
-
-            Call<Object> call = apiInterface.UPDATE_FIREBASE_TOKEN_API_CALL("Bearer " + new SessionManager(context).getLoginToken(), o);
-            call.enqueue(new Callback<Object>() {
+            FirebaseTokenRequest firebaseTokenRequest = new FirebaseTokenRequest();
+            firebaseTokenRequest.setFirebaseToken(firebaseToken);
+            Gson gson = new Gson();
+            String jsonfirebaseTokenRequest = gson.toJson(firebaseToken);
+            GetDetailsRequest getDetailsRequest = new GetDetailsRequest();
+            getDetailsRequest.setRequesturl(BuildConfig.BASE_URL + "updateFirebaseToken");
+            getDetailsRequest.setRequestjson(jsonfirebaseTokenRequest);
+            getDetailsRequest.setHeadertokenkey("authorization");
+            getDetailsRequest.setHeadertokenvalue("Bearer " + new SessionManager(context).getLoginToken());
+            getDetailsRequest.setRequesttype("POST");
+            Call<ResponseBody> calls = apiInterface.getDetails(AppConstants.PROXY_URL, AppConstants.PROXY_TOKEN, getDetailsRequest);
+            calls.enqueue(new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(@NotNull Call<Object> call, @NotNull Response<Object> response) {
-//                    if (response.isSuccessful() && response.body() != null && response.body().getSuccess()) {
-//
-//                    }
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.body() != null) {
+                        String resp = null;
+                        try {
+                            resp = response.body().string();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        if (resp != null) {
+                            String res = BackSlash.removeBackSlashes(resp);
+                            Gson gson = new Gson();
+                            Object object = gson.fromJson(BackSlash.removeSubString(res), Object.class);
+                            if (object != null) {
+
+                            } else if (object != null) {
+                                ActivityUtils.hideDialog();
+                                mListener.onFialureMessage("Something went wrong");
+
+                            }
+                        }
+                    }
+
+
                 }
 
                 @Override
-                public void onFailure(@NotNull Call<Object> call, @NotNull Throwable t) {
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
                     ActivityUtils.hideDialog();
                     mListener.onFialureMessage(t.getMessage());
                 }
             });
+
         } else {
             mListener.onFialureMessage("Something went wrong.");
         }
@@ -227,25 +347,52 @@ public class LoginActivityController {
 
     public void deliveryFailureReasonApiCall() {
         if (NetworkUtils.isNetworkConnected(context)) {
+            ActivityUtils.showDialog(context, "Please wait.");
             ApiInterface apiInterface = ApiClient.getApiService();
-            Call<DeliveryFailreReasonsResponse> call = apiInterface.DELIVERY_FAILURE_REASONS_API_CALL("Bearer " + new SessionManager(context).getLoginToken(), "application/json");
-            call.enqueue(new Callback<DeliveryFailreReasonsResponse>() {
+
+            Gson gson = new Gson();
+
+            GetDetailsRequest getDetailsRequest = new GetDetailsRequest();
+            getDetailsRequest.setRequesturl(BuildConfig.BASE_URL + "api/choose-data/delivery_failure_reasons");
+            getDetailsRequest.setRequestjson("The");
+            getDetailsRequest.setHeadertokenkey("authorization");
+            getDetailsRequest.setHeadertokenvalue("Bearer " + new SessionManager(context).getLoginToken());
+            getDetailsRequest.setRequesttype("POST");
+            Call<ResponseBody> calls = apiInterface.getDetails(AppConstants.PROXY_URL, AppConstants.PROXY_TOKEN, getDetailsRequest);
+            calls.enqueue(new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(@NotNull Call<DeliveryFailreReasonsResponse> call, @NotNull Response<DeliveryFailreReasonsResponse> response) {
-                    ActivityUtils.hideDialog();
-                    if (response.body() != null && response.body().isSuccess()) {
-                        mListener.onSuccessDeliveryReasonApiCall(response.body());
-                    } else {
-                        mListener.onFialureMessage("No data found.");
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.body() != null) {
+                        String resp = null;
+                        try {
+                            resp = response.body().string();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        if (resp != null) {
+                            String res = BackSlash.removeBackSlashes(resp);
+                            Gson gson = new Gson();
+                            DeliveryFailreReasonsResponse deliveryFailreReasonsResponse = gson.fromJson(BackSlash.removeSubString(res), DeliveryFailreReasonsResponse.class);
+                            if (deliveryFailreReasonsResponse != null && deliveryFailreReasonsResponse.isSuccess()) {
+                                mListener.onSuccessDeliveryReasonApiCall(deliveryFailreReasonsResponse);
+
+                            } else {
+                                ActivityUtils.hideDialog();
+                                mListener.onFialureMessage("No data found.");
+                            }
+                        }
                     }
+
+
                 }
 
                 @Override
-                public void onFailure(@NotNull Call<DeliveryFailreReasonsResponse> call, @NotNull Throwable t) {
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
                     ActivityUtils.hideDialog();
                     mListener.onFialureMessage(t.getMessage());
                 }
             });
+
         } else {
             mListener.onFialureMessage("Something went wrong.");
         }
@@ -253,25 +400,49 @@ public class LoginActivityController {
 
     public void getComplaintReasonsListApiCall() {
         if (NetworkUtils.isNetworkConnected(context)) {
-//            ActivityUtils.showDialog(context, "Please Wait");
+            ActivityUtils.showDialog(context, "Please wait.");
             ApiInterface apiInterface = ApiClient.getApiService();
-            Call<ComplaintReasonsListResponse> call = apiInterface.GET_COMPLAINT_REASONS_LIST_API_CALL("Bearer " + new SessionManager(context).getLoginToken(), "application/json");
-            call.enqueue(new Callback<ComplaintReasonsListResponse>() {
+
+            Gson gson = new Gson();
+
+            GetDetailsRequest getDetailsRequest = new GetDetailsRequest();
+            getDetailsRequest.setRequesturl(BuildConfig.BASE_URL + "api/choose-data/complaint_reason");
+            getDetailsRequest.setRequestjson("The");
+            getDetailsRequest.setHeadertokenkey("authorization");
+            getDetailsRequest.setHeadertokenvalue("Bearer " + new SessionManager(context).getLoginToken());
+            getDetailsRequest.setRequesttype("POST");
+            Call<ResponseBody> calls = apiInterface.getDetails(AppConstants.PROXY_URL, AppConstants.PROXY_TOKEN, getDetailsRequest);
+            calls.enqueue(new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(@NotNull Call<ComplaintReasonsListResponse> call, @NotNull Response<ComplaintReasonsListResponse> response) {
-                    ActivityUtils.hideDialog();
-                    if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
-                        new SessionManager(context).setComplaintReasonsListResponse(response.body());
-                    } else if (response.code() == 401) {
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.body() != null) {
+                        String resp = null;
+                        try {
+                            resp = response.body().string();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        if (resp != null) {
+                            String res = BackSlash.removeBackSlashes(resp);
+                            Gson gson = new Gson();
+                            ComplaintReasonsListResponse complaintReasonsListResponse = gson.fromJson(BackSlash.removeSubString(res), ComplaintReasonsListResponse.class);
+                            if (complaintReasonsListResponse != null && complaintReasonsListResponse.getSuccess()) {
+                                new SessionManager(context).setComplaintReasonsListResponse(complaintReasonsListResponse);
+                            } else if (response.code() == 401) {
+                            }
+                        }
                     }
+
+
                 }
 
                 @Override
-                public void onFailure(@NotNull Call<ComplaintReasonsListResponse> call, @NotNull Throwable t) {
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
                     ActivityUtils.hideDialog();
                     mListener.onFialureMessage(t.getMessage());
                 }
             });
+
         } else {
             mListener.onFialureMessage("Something went wrong.");
         }
@@ -279,25 +450,51 @@ public class LoginActivityController {
 
     public void orderPaymentTypelistApiCall() {
         if (NetworkUtils.isNetworkConnected(context)) {
+            ActivityUtils.showDialog(context, "Please wait.");
             ApiInterface apiInterface = ApiClient.getApiService();
-            Call<OrderPaymentTypeResponse> call = apiInterface.GET_ORDER_PAYMENT_TYPE_LIST_API_CALL();
-            call.enqueue(new Callback<OrderPaymentTypeResponse>() {
+
+            Gson gson = new Gson();
+
+            GetDetailsRequest getDetailsRequest = new GetDetailsRequest();
+            getDetailsRequest.setRequesturl(BuildConfig.BASE_URL + "api/choose-data/order_payment_type");
+            getDetailsRequest.setRequestjson("The");
+            getDetailsRequest.setHeadertokenkey("");
+            getDetailsRequest.setHeadertokenvalue("");
+            getDetailsRequest.setRequesttype("GET");
+            Call<ResponseBody> calls = apiInterface.getDetails(AppConstants.PROXY_URL, AppConstants.PROXY_TOKEN, getDetailsRequest);
+            calls.enqueue(new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(@NotNull Call<OrderPaymentTypeResponse> call, @NotNull Response<OrderPaymentTypeResponse> response) {
-                    ActivityUtils.hideDialog();
-                    if (response.body() != null && response.body().getSuccess()) {
-                        new SessionManager(context).setOrderPaymentTypeList(response.body());
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.body() != null) {
+                        String resp = null;
+                        try {
+                            resp = response.body().string();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        if (resp != null) {
+                            String res = BackSlash.removeBackSlashes(resp);
+                            Gson gson = new Gson();
+                            OrderPaymentTypeResponse orderPaymentTypeResponse = gson.fromJson(BackSlash.removeSubString(res), OrderPaymentTypeResponse.class);
+                            if (orderPaymentTypeResponse != null && orderPaymentTypeResponse.getSuccess()) {
+                                new SessionManager(context).setOrderPaymentTypeList(orderPaymentTypeResponse);
+                            }
+                        }
                     }
+
+
                 }
 
                 @Override
-                public void onFailure(@NotNull Call<OrderPaymentTypeResponse> call, @NotNull Throwable t) {
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
                     ActivityUtils.hideDialog();
                     mListener.onFialureMessage(t.getMessage());
                 }
             });
+
         } else {
             mListener.onFialureMessage("Something went wrong.");
         }
     }
+
 }
