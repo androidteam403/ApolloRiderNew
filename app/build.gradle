@@ -23,12 +23,12 @@ android {
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-//            buildConfigField("String", "BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
-//            buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
-//            buildConfigField("String", "HELP_BASE_URL", "\"https://apollo_rider.v35.dev.zeroco.de/apollo/rider/rider-help/\"")
-            buildConfigField("String", "BASE_URL", "\"https://apis.v35.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
-            buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
-            buildConfigField("String", "HELP_BASE_URL", "\"https://apollo_rider.v35.zeroco.de/apollo/rider/rider-help/\"")
+            buildConfigField("String", "BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
+            buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
+            buildConfigField("String", "HELP_BASE_URL", "\"https://apollo_rider.v35.dev.zeroco.de/apollo/rider/rider-help/\"")
+//            buildConfigField("String", "BASE_URL", "\"https://apis.v35.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
+//            buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
+//            buildConfigField("String", "HELP_BASE_URL", "\"https://apollo_rider.v35.zeroco.de/apollo/rider/rider-help/\"")
         }
         release {
             minifyEnabled false
@@ -92,6 +92,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
+    implementation 'com.google.code.gson:gson:2.7'
     implementation 'com.squareup.okhttp3:okhttp-urlconnection:3.6.0'
     implementation 'com.squareup.retrofit2:converter-scalars:2.6.1'
 
