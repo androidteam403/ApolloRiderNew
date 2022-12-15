@@ -18,16 +18,24 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 
+import com.apollo.epos.BuildConfig;
+import com.apollo.epos.activity.login.BackSlash;
+import com.apollo.epos.activity.login.model.GetDetailsRequest;
 import com.apollo.epos.db.SessionManager;
 import com.apollo.epos.fragment.dashboard.model.RiderLalangBatteryStatusResponse;
 import com.apollo.epos.fragment.dashboard.model.RiderLatlangBatteryStatusRequest;
 import com.apollo.epos.network.ApiClient;
 import com.apollo.epos.network.ApiInterface;
 import com.apollo.epos.utils.ActivityUtils;
+import com.apollo.epos.utils.AppConstants;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -110,8 +118,36 @@ public class BatteryLevelLocationService extends Service implements LocationList
         Toast.makeText(this, provider, Toast.LENGTH_SHORT).show();
     }
 
+//    public void riderLatlangBatteryStatusApi(String token, String lattitude, String langitude, String batteryPercentage) {
+//        if (NetworkUtils.isNetworkConnected(this)) {
+//            RiderLatlangBatteryStatusRequest riderLatlangBatteryStatusRequest = new RiderLatlangBatteryStatusRequest();
+//            RiderLatlangBatteryStatusRequest.UserAddInfo userAddInfo = new RiderLatlangBatteryStatusRequest.UserAddInfo();
+//            userAddInfo.setBatteryStatus(batteryPercentage);
+//            userAddInfo.setLat(lattitude);
+//            userAddInfo.setLong(langitude);
+//            userAddInfo.setLastActive(ActivityUtils.getCurrentTimeDate());
+//            riderLatlangBatteryStatusRequest.setUserAddInfo(userAddInfo);
+//
+//            ApiInterface apiInterface = ApiClient.getApiService();
+//            Call<RiderLalangBatteryStatusResponse> call = apiInterface.RIDER_LALANG_BATTERY_STATUS_API_CALL("Bearer " + token, riderLatlangBatteryStatusRequest);
+//            call.enqueue(new Callback<RiderLalangBatteryStatusResponse>() {
+//                @Override
+//                public void onResponse(@NotNull Call<RiderLalangBatteryStatusResponse> call, @NotNull Response<RiderLalangBatteryStatusResponse> response) {
+//                }
+//
+//                @Override
+//                public void onFailure(@NotNull Call<RiderLalangBatteryStatusResponse> call, @NotNull Throwable t) {
+//                    System.out.println("Battery latlang and last active status api error :::::::::::::::::::::::::::::::" + t.getMessage());
+//                }
+//            });
+//        }
+//    }
+
+
     public void riderLatlangBatteryStatusApi(String token, String lattitude, String langitude, String batteryPercentage) {
         if (NetworkUtils.isNetworkConnected(this)) {
+
+            ApiInterface apiInterface = ApiClient.getApiService();
             RiderLatlangBatteryStatusRequest riderLatlangBatteryStatusRequest = new RiderLatlangBatteryStatusRequest();
             RiderLatlangBatteryStatusRequest.UserAddInfo userAddInfo = new RiderLatlangBatteryStatusRequest.UserAddInfo();
             userAddInfo.setBatteryStatus(batteryPercentage);
@@ -119,16 +155,39 @@ public class BatteryLevelLocationService extends Service implements LocationList
             userAddInfo.setLong(langitude);
             userAddInfo.setLastActive(ActivityUtils.getCurrentTimeDate());
             riderLatlangBatteryStatusRequest.setUserAddInfo(userAddInfo);
-
-            ApiInterface apiInterface = ApiClient.getApiService();
-            Call<RiderLalangBatteryStatusResponse> call = apiInterface.RIDER_LALANG_BATTERY_STATUS_API_CALL("Bearer " + token, riderLatlangBatteryStatusRequest);
-            call.enqueue(new Callback<RiderLalangBatteryStatusResponse>() {
+            Gson gson = new Gson();
+            String jsonLoginRequest = gson.toJson(riderLatlangBatteryStatusRequest);
+            GetDetailsRequest getDetailsRequest = new GetDetailsRequest();
+            getDetailsRequest.setRequesturl(BuildConfig.BASE_URL+"api/user/save-update/update-rider-lat-long-battery-status");
+            getDetailsRequest.setRequestjson(jsonLoginRequest);
+            getDetailsRequest.setHeadertokenkey("authorization");
+            getDetailsRequest.setHeadertokenvalue("Bearer " + token);
+            getDetailsRequest.setRequesttype("POST");
+            Call<ResponseBody> calls = apiInterface.getDetails(AppConstants.PROXY_URL, AppConstants.PROXY_TOKEN, getDetailsRequest);
+            calls.enqueue(new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(@NotNull Call<RiderLalangBatteryStatusResponse> call, @NotNull Response<RiderLalangBatteryStatusResponse> response) {
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.body() != null) {
+                        String resp = null;
+                        try {
+                            resp = response.body().string();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        if (resp != null) {
+                            String res = BackSlash.removeBackSlashes(resp);
+                            Gson gson = new Gson();
+                            RiderLalangBatteryStatusResponse riderLalangBatteryStatusResponse = gson.fromJson(BackSlash.removeSubString(res), RiderLalangBatteryStatusResponse.class);
+                            if (riderLalangBatteryStatusResponse != null && riderLalangBatteryStatusResponse.getData() != null && riderLalangBatteryStatusResponse.getSuccess()) {
+
+                            }
+
+                        }
+                    }
                 }
 
                 @Override
-                public void onFailure(@NotNull Call<RiderLalangBatteryStatusResponse> call, @NotNull Throwable t) {
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
                     System.out.println("Battery latlang and last active status api error :::::::::::::::::::::::::::::::" + t.getMessage());
                 }
             });
