@@ -2,7 +2,11 @@ package com.apollo.epos.fragment.complaints;
 
 import android.content.Context;
 
+import com.apollo.epos.BuildConfig;
+import com.apollo.epos.activity.login.BackSlash;
+import com.apollo.epos.activity.login.model.GetDetailsRequest;
 import com.apollo.epos.activity.login.model.LoginResponse;
+import com.apollo.epos.activity.orderdelivery.model.DeliveryFailreReasonsResponse;
 import com.apollo.epos.db.SessionManager;
 import com.apollo.epos.fragment.complaints.model.ComplaintsResponse;
 import com.apollo.epos.fragment.dashboard.model.RiderActiveStatusRequest;
@@ -10,15 +14,20 @@ import com.apollo.epos.fragment.dashboard.model.RiderActiveStatusResponse;
 import com.apollo.epos.fragment.profile.model.ComplaintReasonsListResponse;
 import com.apollo.epos.fragment.profile.model.ComplaintSaveUpdateRequest;
 import com.apollo.epos.fragment.profile.model.ComplaintSaveUpdateResponse;
+import com.apollo.epos.model.GetRiderProfileResponse;
 import com.apollo.epos.network.ApiClient;
 import com.apollo.epos.network.ApiInterface;
 import com.apollo.epos.service.NetworkUtils;
 import com.apollo.epos.utils.ActivityUtils;
+import com.apollo.epos.utils.AppConstants;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.HashMap;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -37,102 +46,165 @@ public class ComplaintsFragmentController {
         if (NetworkUtils.isNetworkConnected(mContext)) {
             ActivityUtils.showDialog(mContext, "Please wait.");
             ApiInterface apiInterface = ApiClient.getApiService();
-            Call<ComplaintsResponse> call = apiInterface.GET_COMPLAINTS_LIST_API_CALL("Bearer " + new SessionManager(mContext).getLoginToken(), String.valueOf(page));
-            call.enqueue(new Callback<ComplaintsResponse>() {
+            GetDetailsRequest getDetailsRequest = new GetDetailsRequest();
+            getDetailsRequest.setRequesturl(String.format("%sapi/rider_complaint/list?page=%s", BuildConfig.BASE_URL, String.valueOf(page)));
+            getDetailsRequest.setHeadertokenkey("authorization");
+            getDetailsRequest.setRequestjson("The");
+            getDetailsRequest.setHeadertokenvalue("Bearer "+ new SessionManager(mContext).getLoginToken());
+            getDetailsRequest.setRequesttype("GET");
+            Call<ResponseBody> call = apiInterface.getDetails(AppConstants.PROXY_URL, AppConstants.PROXY_TOKEN, getDetailsRequest);
+            call.enqueue(new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(@NotNull Call<ComplaintsResponse> call, @NotNull Response<ComplaintsResponse> response) {
+                public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {
                     ActivityUtils.hideDialog();
-                    if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
-                        mListener.onSuccessGetComplaintsListApiCall(response.body());
-                    } else if (response.code() == 401) {
+                    if (response.body() != null) {
+                        String resp = null;
+                        try {
+                            resp = response.body().string();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        if (resp != null) {
+                            String res = BackSlash.removeBackSlashes(resp);
+                            Gson gson = new Gson();
+                            ComplaintsResponse complaintsResponse = gson.fromJson(BackSlash.removeSubString(res), ComplaintsResponse.class);
+                            if (complaintsResponse != null && complaintsResponse.getData() != null && complaintsResponse.getSuccess()) {
+                                mListener.onSuccessGetComplaintsListApiCall(complaintsResponse);
 
-                        ActivityUtils.showDialog(mContext, "Please wait.");
-                        HashMap<String, Object> refreshTokenRequest = new HashMap<>();
-                        refreshTokenRequest.put("token", new SessionManager(mContext).getLoginToken());
-                        Call<LoginResponse> call1 = apiInterface.REFRESH_TOKEN(refreshTokenRequest);
-                        call1.enqueue(new Callback<LoginResponse>() {
-                            @Override
-                            public void onResponse(@NotNull Call<LoginResponse> call1, @NotNull Response<LoginResponse> response) {
-                                if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
-                                    new SessionManager(mContext).setLoginToken(response.body().getData().getToken());
-                                    getComplaintsListApiCall(page);
-                                } else if (response.code() == 401) {
-                                    logout();
-                                } else {
-                                    mListener.onFailureMessage("Please try again");
-                                }
+                            } else if (response.code() == 401) {
+                                Gson tokenGson = new Gson();
+                                HashMap<String, Object> refreshTokenRequest = new HashMap<>();
+
+                                String jsonTokenRequest = tokenGson.toJson(refreshTokenRequest);
+                                GetDetailsRequest getDetailsRequest = new GetDetailsRequest();
+                                getDetailsRequest.setRequesturl(BuildConfig.BASE_URL + "refresh-token");
+                                getDetailsRequest.setRequestjson(jsonTokenRequest);
+                                getDetailsRequest.setHeadertokenkey("");
+                                getDetailsRequest.setHeadertokenvalue("");
+                                getDetailsRequest.setRequesttype("POST");
+                                ActivityUtils.showDialog(mContext, "Please wait.");
+//                                HashMap<String, Object> refreshTokenRequest = new HashMap<>();
+                                refreshTokenRequest.put("token", new SessionManager(mContext).getLoginToken());
+                                Call<ResponseBody> call1 = apiInterface.getDetails(AppConstants.PROXY_URL, AppConstants.PROXY_TOKEN, getDetailsRequest);
+
+//                                Call<LoginResponse> call1 = apiInterface.REFRESH_TOKEN(refreshTokenRequest);
+                                call1.enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(@NotNull Call<ResponseBody> call1, @NotNull Response<ResponseBody> response) {
+                                        if (response.code() == 200 && response.body() != null) {
+                                            new SessionManager(mContext).setLoginToken(response.body().toString());
+                                            getComplaintsListApiCall(page);                                        } else if (response.code() == 401) {
+                                            logout();
+                                        } else {
+                                            mListener.onFailureMessage("Please try again");
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(@NotNull Call<ResponseBody> call1, @NotNull Throwable t) {
+                                        ActivityUtils.hideDialog();
+                                        mListener.onFailureMessage("Please try again");
+                                        System.out.println("REFRESH_TOKEN_DASHBOARD ==============" + t.getMessage());
+                                    }
+                                });
+
                             }
-
-                            @Override
-                            public void onFailure(@NotNull Call<LoginResponse> call1, @NotNull Throwable t) {
-                                ActivityUtils.hideDialog();
-                                mListener.onFailureMessage("Please try again");
-                                System.out.println("REFRESH_TOKEN_DASHBOARD ==============" + t.getMessage());
-                            }
-                        });
-
-                    } else {
-                        mListener.onFailureMessage("No data found.");
+                        }
                     }
                 }
 
                 @Override
-                public void onFailure(@NotNull Call<ComplaintsResponse> call, @NotNull Throwable t) {
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
                     ActivityUtils.hideDialog();
                     mListener.onFailureMessage(t.getMessage());
                 }
             });
+
         } else {
             mListener.onFailureMessage("Something went wrong.");
         }
     }
     public void getComplaintReasonsListApiCall() {
         if (NetworkUtils.isNetworkConnected(mContext)) {
-            ActivityUtils.showDialog(mContext, "Please Wait");
+            ActivityUtils.showDialog(mContext, "Please wait.");
             ApiInterface apiInterface = ApiClient.getApiService();
-            Call<ComplaintReasonsListResponse> call = apiInterface.GET_COMPLAINT_REASONS_LIST_API_CALL("Bearer " + new SessionManager(mContext).getLoginToken(), "application/json");
-            call.enqueue(new Callback<ComplaintReasonsListResponse>() {
+            GetDetailsRequest getDetailsRequest = new GetDetailsRequest();
+            getDetailsRequest.setRequesturl(BuildConfig.BASE_URL + "api/choose-data/complaint_reason");
+            getDetailsRequest.setHeadertokenkey("authorization");
+            getDetailsRequest.setRequestjson("The");
+            getDetailsRequest.setHeadertokenvalue("Bearer "+ new SessionManager(mContext).getLoginToken());
+            getDetailsRequest.setRequesttype("POST");
+            Call<ResponseBody> call = apiInterface.getDetails(AppConstants.PROXY_URL, AppConstants.PROXY_TOKEN, getDetailsRequest);
+            call.enqueue(new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(@NotNull Call<ComplaintReasonsListResponse> call, @NotNull Response<ComplaintReasonsListResponse> response) {
+                public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {
                     ActivityUtils.hideDialog();
-                    if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
-                        mListener.onSuccessComplaintReasonsListApiCall(response.body());
-                    }else if (response.code() == 401){
-                        ActivityUtils.showDialog(mContext, "Please wait.");
-                        HashMap<String, Object> refreshTokenRequest = new HashMap<>();
-                        refreshTokenRequest.put("token", new SessionManager(mContext).getLoginToken());
-                        Call<LoginResponse> call1 = apiInterface.REFRESH_TOKEN(refreshTokenRequest);
-                        call1.enqueue(new Callback<LoginResponse>() {
-                            @Override
-                            public void onResponse(@NotNull Call<LoginResponse> call1, @NotNull Response<LoginResponse> response) {
-                                if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
-                                    new SessionManager(mContext).setLoginToken(response.body().getData().getToken());
-                                    getComplaintReasonsListApiCall();
-                                } else if (response.code() == 401) {
-                                    logout();
-                                } else {
-                                    mListener.onFailureMessage("Please try again");
-                                }
-                            }
+                    if (response.body() != null) {
+                        String resp = null;
+                        try {
+                            resp = response.body().string();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        if (resp != null) {
+                            String res = BackSlash.removeBackSlashes(resp);
+                            Gson gson = new Gson();
+                            ComplaintReasonsListResponse complaintsResponse = gson.fromJson(BackSlash.removeSubString(res), ComplaintReasonsListResponse.class);
+                            if (complaintsResponse != null && complaintsResponse.getData() != null && complaintsResponse.getSuccess()) {
+                                mListener.onSuccessComplaintReasonsListApiCall(complaintsResponse);
 
-                            @Override
-                            public void onFailure(@NotNull Call<LoginResponse> call1, @NotNull Throwable t) {
-                                ActivityUtils.hideDialog();
-                                mListener.onFailureMessage("Please try again");
-                                System.out.println("REFRESH_TOKEN_DASHBOARD ==============" + t.getMessage());
+                            } else if (response.code() == 401) {
+                                Gson tokenGson = new Gson();
+                                HashMap<String, Object> refreshTokenRequest = new HashMap<>();
+
+                                String jsonTokenRequest = tokenGson.toJson(refreshTokenRequest);
+                                GetDetailsRequest getDetailsRequest = new GetDetailsRequest();
+                                getDetailsRequest.setRequesturl(BuildConfig.BASE_URL + "refresh-token");
+                                getDetailsRequest.setRequestjson(jsonTokenRequest);
+                                getDetailsRequest.setHeadertokenkey("");
+                                getDetailsRequest.setHeadertokenvalue("");
+                                getDetailsRequest.setRequesttype("POST");
+                                ActivityUtils.showDialog(mContext, "Please wait.");
+//                                HashMap<String, Object> refreshTokenRequest = new HashMap<>();
+                                refreshTokenRequest.put("token", new SessionManager(mContext).getLoginToken());
+                                Call<ResponseBody> call1 = apiInterface.getDetails(AppConstants.PROXY_URL, AppConstants.PROXY_TOKEN, getDetailsRequest);
+
+//                                Call<LoginResponse> call1 = apiInterface.REFRESH_TOKEN(refreshTokenRequest);
+                                call1.enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(@NotNull Call<ResponseBody> call1, @NotNull Response<ResponseBody> response) {
+                                        if (response.code() == 200 && response.body() != null) {
+                                            new SessionManager(mContext).setLoginToken(response.body().toString());
+                                            getComplaintReasonsListApiCall();
+                                        }
+                                           else if (response.code() == 401) {
+                                    logout();
+//
+                                        } else {
+                                            mListener.onFailureMessage("Please try again");
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(@NotNull Call<ResponseBody> call1, @NotNull Throwable t) {
+                                        ActivityUtils.hideDialog();
+                                        mListener.onFailureMessage("Please try again");
+                                        System.out.println("REFRESH_TOKEN_DASHBOARD ==============" + t.getMessage());
+                                    }
+                                });
+
                             }
-                        });
-                    }else {
-                        mListener.onFailureMessage("No data found.");
+                        }
                     }
                 }
 
                 @Override
-                public void onFailure(@NotNull Call<ComplaintReasonsListResponse> call, @NotNull Throwable t) {
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
                     ActivityUtils.hideDialog();
                     mListener.onFailureMessage(t.getMessage());
                 }
             });
+
         } else {
             mListener.onFailureMessage("Something went wrong.");
         }
@@ -140,93 +212,155 @@ public class ComplaintsFragmentController {
     public void riderComplaintSaveUpdateApiCall(String reason, String comment) {
         if (NetworkUtils.isNetworkConnected(mContext)) {
             ActivityUtils.showDialog(mContext, "Please wait.");
-            ComplaintSaveUpdateRequest complaintSaveUpdateRequest = new ComplaintSaveUpdateRequest();
+            ApiInterface apiInterface = ApiClient.getApiService();
+            ComplaintSaveUpdateRequest complaintSaveUpdateRequest=new ComplaintSaveUpdateRequest();
+
             complaintSaveUpdateRequest.setComments(comment);
             ComplaintSaveUpdateRequest.Reason reason1 = new ComplaintSaveUpdateRequest.Reason();
             reason1.setUid(reason);
             complaintSaveUpdateRequest.setReason(reason1);
+            Gson gson = new Gson();
+            String jsoncomplaintSaveUpdatRequest = gson.toJson(complaintSaveUpdateRequest);
 
-            ApiInterface apiInterface = ApiClient.getApiService();
-            Call<ComplaintSaveUpdateResponse> call = apiInterface.COMPLAINT_SAVE_UPDATE_API_CALL("Bearer " + new SessionManager(mContext).getLoginToken(), complaintSaveUpdateRequest);
-            call.enqueue(new Callback<ComplaintSaveUpdateResponse>() {
+            GetDetailsRequest getDetailsRequest = new GetDetailsRequest();
+            getDetailsRequest.setRequesturl(BuildConfig.BASE_URL + "api/rider_complaint/save-update");
+            getDetailsRequest.setHeadertokenkey("authorization");
+            getDetailsRequest.setRequestjson(jsoncomplaintSaveUpdatRequest);
+            getDetailsRequest.setHeadertokenvalue("Bearer "+ new SessionManager(mContext).getLoginToken());
+            getDetailsRequest.setRequesttype("POST");
+            Call<ResponseBody> call = apiInterface.getDetails(AppConstants.PROXY_URL, AppConstants.PROXY_TOKEN, getDetailsRequest);
+            call.enqueue(new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(@NotNull Call<ComplaintSaveUpdateResponse> call, @NotNull Response<ComplaintSaveUpdateResponse> response) {
+                public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {
                     ActivityUtils.hideDialog();
-                    if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
-                        mListener.onSuccessComplaintSaveUpdate(response.body().getMessage());
-                    } else if (response.code() == 401){
+                    if (response.body() != null) {
+                        String resp = null;
+                        try {
+                            resp = response.body().string();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        if (resp != null) {
+                            String res = BackSlash.removeBackSlashes(resp);
+                            Gson gson = new Gson();
+                            ComplaintSaveUpdateResponse complaintSaveUpdateResponse = gson.fromJson(BackSlash.removeSubString(res), ComplaintSaveUpdateResponse.class);
+                            if (complaintSaveUpdateResponse != null && complaintSaveUpdateResponse.getSuccess()) {
+                                mListener.onSuccessComplaintSaveUpdate(complaintSaveUpdateResponse.getMessage());
 
-                        ActivityUtils.showDialog(mContext, "Please wait.");
-                        HashMap<String, Object> refreshTokenRequest = new HashMap<>();
-                        refreshTokenRequest.put("token", new SessionManager(mContext).getLoginToken());
-                        Call<LoginResponse> call1 = apiInterface.REFRESH_TOKEN(refreshTokenRequest);
-                        call1.enqueue(new Callback<LoginResponse>() {
-                            @Override
-                            public void onResponse(@NotNull Call<LoginResponse> call1, @NotNull Response<LoginResponse> response) {
-                                if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
-                                    new SessionManager(mContext).setLoginToken(response.body().getData().getToken());
-                                    riderComplaintSaveUpdateApiCall(reason, comment);
-                                } else if (response.code() == 401) {
-                                    logout();
-                                } else {
-                                    mListener.onFailureMessage("Please try again");
-                                }
+                            } else if (response.code() == 401) {
+                                Gson tokenGson = new Gson();
+                                HashMap<String, Object> refreshTokenRequest = new HashMap<>();
+
+                                String jsonTokenRequest = tokenGson.toJson(refreshTokenRequest);
+                                GetDetailsRequest getDetailsRequest = new GetDetailsRequest();
+                                getDetailsRequest.setRequesturl(BuildConfig.BASE_URL + "refresh-token");
+                                getDetailsRequest.setRequestjson(jsonTokenRequest);
+                                getDetailsRequest.setHeadertokenkey("");
+                                getDetailsRequest.setHeadertokenvalue("");
+                                getDetailsRequest.setRequesttype("POST");
+                                ActivityUtils.showDialog(mContext, "Please wait.");
+//                                HashMap<String, Object> refreshTokenRequest = new HashMap<>();
+                                refreshTokenRequest.put("token", new SessionManager(mContext).getLoginToken());
+                                Call<ResponseBody> call1 = apiInterface.getDetails(AppConstants.PROXY_URL, AppConstants.PROXY_TOKEN, getDetailsRequest);
+
+//                                Call<LoginResponse> call1 = apiInterface.REFRESH_TOKEN(refreshTokenRequest);
+                                call1.enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(@NotNull Call<ResponseBody> call1, @NotNull Response<ResponseBody> response) {
+                                        if (response.code() == 200 && response.body() != null) {
+                                            new SessionManager(mContext).setLoginToken(response.body().toString());
+                                            riderComplaintSaveUpdateApiCall(reason, comment);
+                                        }
+                                        else if (response.code() == 401) {
+                                            logout();
+//
+                                        } else {
+                                            mListener.onFailureMessage("Please try again");
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(@NotNull Call<ResponseBody> call1, @NotNull Throwable t) {
+                                        ActivityUtils.hideDialog();
+                                        mListener.onFailureMessage("Please try again");
+                                        System.out.println("REFRESH_TOKEN_DASHBOARD ==============" + t.getMessage());
+                                    }
+                                });
+
                             }
-
-                            @Override
-                            public void onFailure(@NotNull Call<LoginResponse> call1, @NotNull Throwable t) {
-                                ActivityUtils.hideDialog();
-                                mListener.onFailureMessage("Please try again");
-                                System.out.println("REFRESH_TOKEN_DASHBOARD ==============" + t.getMessage());
-                            }
-                        });
-
-                    }else {
-                        mListener.onFailureMessage("No data found.");
+                        }
                     }
                 }
 
                 @Override
-                public void onFailure(@NotNull Call<ComplaintSaveUpdateResponse> call, @NotNull Throwable t) {
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
                     ActivityUtils.hideDialog();
                     mListener.onFailureMessage(t.getMessage());
                 }
             });
+
         } else {
             mListener.onFailureMessage("Something went wrong.");
         }
     }
-
     public void logout() {
         if (NetworkUtils.isNetworkConnected(mContext)) {
+            ActivityUtils.showDialog(mContext, "Please wait.");
             ApiInterface apiInterface = ApiClient.getApiService();
             RiderActiveStatusRequest riderActiveStatusRequest = new RiderActiveStatusRequest();
             riderActiveStatusRequest.setUid(new SessionManager(mContext).getRiderProfileResponse().getData().getUid());
-            RiderActiveStatusRequest.UserAddInfo userAddInfo = new RiderActiveStatusRequest.UserAddInfo();
             RiderActiveStatusRequest.AvailableStatus availableStatus = new RiderActiveStatusRequest.AvailableStatus();
-            availableStatus.setUid("Offline");
+            RiderActiveStatusRequest.UserAddInfo userAddInfo = new RiderActiveStatusRequest.UserAddInfo();
+            availableStatus.setUid("offline");
             userAddInfo.setAvailableStatus(availableStatus);
             riderActiveStatusRequest.setUserAddInfo(userAddInfo);
 
-            Call<RiderActiveStatusResponse> call = apiInterface.RIDER_ACTIVE_STATUS_API_CALL("Bearer " + new SessionManager(mContext).getLoginToken(), riderActiveStatusRequest);
-            call.enqueue(new Callback<RiderActiveStatusResponse>() {
+            Gson gson = new Gson();
+            String jsonriderRequest = gson.toJson(riderActiveStatusRequest);
+            GetDetailsRequest getDetailsRequest = new GetDetailsRequest();
+            getDetailsRequest.setRequesturl(BuildConfig.BASE_URL + "api/user/save-update/update-rider-available-status");
+            getDetailsRequest.setHeadertokenkey("authorization");
+            getDetailsRequest.setHeadertokenvalue("Bearer " + new SessionManager(mContext).getLoginToken());
+            getDetailsRequest.setRequesttype("POST");
+            getDetailsRequest.setRequestjson(jsonriderRequest);
+
+            Call<ResponseBody> call = apiInterface.getDetails(AppConstants.PROXY_URL, AppConstants.PROXY_TOKEN, getDetailsRequest);
+            call.enqueue(new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(@NotNull Call<RiderActiveStatusResponse> call, @NotNull Response<RiderActiveStatusResponse> response) {
+                public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {
                     ActivityUtils.hideDialog();
-                    if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
-                        new SessionManager(mContext).setRiderActiveStatus("Offline");
-                        mListener.onLogout();
-                    } else if (response.code() == 401) {
-                        mListener.onLogout();
+                    if (response.body() != null) {
+                        String resp = null;
+                        try {
+                            resp = response.body().string();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        if (resp != null) {
+                            String res = BackSlash.removeBackSlashes(resp);
+                            Gson gson = new Gson();
+                            RiderActiveStatusResponse riderActiveStatusResponse = gson.fromJson(BackSlash.removeSubString(res), RiderActiveStatusResponse.class);
+                            if (riderActiveStatusResponse != null && riderActiveStatusResponse.getData() != null && riderActiveStatusResponse.getSuccess()) {
+                                new SessionManager(mContext).setRiderActiveStatus("offline");
+                                mListener.onLogout();
+                            } else if (response.code()==401) {
+                                ActivityUtils.hideDialog();
+                                mListener.onLogout();
+
+                            }
+                        }
                     }
+
+
                 }
 
                 @Override
-                public void onFailure(@NotNull Call<RiderActiveStatusResponse> call, @NotNull Throwable t) {
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
                     ActivityUtils.hideDialog();
-                    System.out.println("RIDER ACTIVE STATUS ==============" + t.getMessage());
+                    System.out.println("RIDER ACTIVE STATUS ==========="+t.getMessage());
                 }
             });
+
         } else {
             mListener.onFailureMessage("Something went wrong.");
         }

@@ -255,7 +255,9 @@ public class DashboardFragmentController {
 
             ApiInterface apiInterface = ApiClient.getApiService();
             RiderActiveStatusRequest riderActiveStatusRequest = new RiderActiveStatusRequest();
-            riderActiveStatusRequest.setUid(new SessionManager(context).getRiderProfileResponse().getData().getUid());
+            if (new SessionManager(context).getRiderProfileResponse().getData().getUid()!=null) {
+                riderActiveStatusRequest.setUid(new SessionManager(context).getRiderProfileResponse().getData().getUid());
+            }
             RiderActiveStatusRequest.UserAddInfo userAddInfo = new RiderActiveStatusRequest.UserAddInfo();
             RiderActiveStatusRequest.AvailableStatus availableStatus = new RiderActiveStatusRequest.AvailableStatus();
             availableStatus.setUid(activieStatus);
