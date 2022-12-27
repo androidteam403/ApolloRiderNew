@@ -223,13 +223,18 @@ public class MyOrdersFragment extends BaseFragment implements AdapterView.OnItem
                 for (MyOrdersListResponse.Row order : myOrdersList)
                     if (order.getOrderStatus().getUid() == null)
                         System.out.println("naveen");
+                    else if (order.getOrderStatus().getUid().equals("DELIVERYATTEMPTED")||order.getOrderStatus().getUid().equals("PICKUP") || order.getOrderStatus().getUid().equals("OUTFORDELIVERY") || order.getOrderStatus().getUid().equals("RETURNPICKED"))
+                        myInTransitOrdersList.add(order);
                     else if (order.getOrderStatus().getUid().equals("ORDERUPDATE") || order.getOrderStatus().getUid().equals("ORDERACCEPTED") || (order.getOrderStatus().getUid().equals("DELIVERYATTEMPTED") && order.getFailureAttempts() <= 2))
                         myNewOrdersList.add(order);
-                    else if (order.getOrderStatus().getUid().equals("PICKUP") || order.getOrderStatus().getUid().equals("OUTFORDELIVERY") || order.getOrderStatus().getUid().equals("RETURNPICKED"))
-                        myInTransitOrdersList.add(order);
+
                     else if (order.getOrderStatus().getUid().equals("DELIVERED") || order.getOrderStatus().getUid().equals("RETURNORDERRTO"))
                         deliveredOrdersList.add(order);
-                    else if ((order.getOrderStatus().getUid().equals("DELIVERYATTEMPTED") && order.getFailureAttempts() > 2) || order.getOrderStatus().getUid().equals("DELIVERYFAILED") || order.getOrderStatus().getUid().equals("CANCELRETURNINITIATED")
+//                    else if ((order.getOrderStatus().getUid().equals("DELIVERYATTEMPTED") && order.getFailureAttempts() > 2) || order.getOrderStatus().getUid().equals("DELIVERYFAILED") || order.getOrderStatus().getUid().equals("CANCELRETURNINITIATED")
+//                            || (order.getOrderStatus().getUid().equals("CANCELLED") && !order.getOrderSh().get(order.getOrderSh().size() - 1).getOrderStatus().getUid().equals("ORDERUPDATE")) && !order.getOrderSh().get(order.getOrderSh().size() - 1).getOrderStatus().getUid().equals("ORDERACCEPTED")
+//                            || order.getOrderStatus().getUid().equals("CANCELORDERRTO"))
+//                        orderNotDeliveredList.add(order);
+                    else if (order.getOrderStatus().getUid().equals("DELIVERYFAILED") || order.getOrderStatus().getUid().equals("CANCELRETURNINITIATED")
                             || (order.getOrderStatus().getUid().equals("CANCELLED") && !order.getOrderSh().get(order.getOrderSh().size() - 1).getOrderStatus().getUid().equals("ORDERUPDATE")) && !order.getOrderSh().get(order.getOrderSh().size() - 1).getOrderStatus().getUid().equals("ORDERACCEPTED")
                             || order.getOrderStatus().getUid().equals("CANCELORDERRTO"))
                         orderNotDeliveredList.add(order);
