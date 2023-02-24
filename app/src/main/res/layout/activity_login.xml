@@ -40,7 +40,7 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_user_email"
                     android:layout_width="match_parent"
-                    android:text="Emp-116"
+                    android:text="emp_100"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/colorWhite"
                     android:drawableStart="@drawable/ic_login_user"
@@ -65,7 +65,7 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_user_password"
                     android:layout_width="match_parent"
-                    android:text="Naveen#1234"
+                    android:text="Rider#2022"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/colorWhite"
                     android:drawableStart="@drawable/ic_login_password"

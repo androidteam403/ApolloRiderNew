@@ -844,7 +844,7 @@ public class OrderDeliveryActivityController {
             mListener.onFialureMessage("Something went wrong.");
         }
     }
-
+//https://apis.v35.dev.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/upload
     public void uploadFile(Bitmap bmp, String orderuid, String orderNumber, String customerName) throws IOException {
         if (NetworkUtils.isNetworkConnected(context)) {
             ActivityUtils.showDialog(context, "Please wait.");
@@ -913,7 +913,7 @@ public class OrderDeliveryActivityController {
             Gson gson1 = new Gson();
             String jsonLoginRequest = gson1.toJson(requestBody);
             GetDetailsRequest getDetailsRequest = new GetDetailsRequest();
-            getDetailsRequest.setRequesturl(BuildConfig.BASE_URL+"login");
+            getDetailsRequest.setRequesturl(BuildConfig.UPLOAD_BASE_URL+"upload");
             getDetailsRequest.setRequestjson(jsonLoginRequest);
             getDetailsRequest.setHeadertokenkey("");
             getDetailsRequest.setHeadertokenvalue("");
@@ -1035,6 +1035,63 @@ public class OrderDeliveryActivityController {
         }
     }
 
+
+//    public void orderDetailsApiCall(String token, String orderNumber, ActivityOrderDeliveryBinding orderDeliveryBinding) {
+//        if (NetworkUtils.isNetworkConnected(context)) {
+//            ActivityUtils.showDialog(context, "Please wait.");
+//
+//            OrderDetailsRequest orderDetailsRequest = new OrderDetailsRequest();
+//            orderDetailsRequest.setOrderNumber(orderNumber);
+//
+//            ApiInterface apiInterface = ApiClient.getApiService();
+//            Call<OrderDetailsResponse> call = apiInterface.ORDER_DETAILS_API_CALL("Bearer " + token, orderNumber);
+//            call.enqueue(new Callback<OrderDetailsResponse>() {
+//                @Override
+//                public void onResponse(@NotNull Call<OrderDetailsResponse> call, @NotNull Response<OrderDetailsResponse> response) {
+//                    if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
+//                        mListener.onSuccessOrderDetailsApiCall(response.body());
+////                        deliveryFailureReasonApiCall(orderDeliveryBinding);
+//                    } else if (response.code() == 401) {
+//                        HashMap<String, Object> refreshTokenRequest = new HashMap<>();
+//                        refreshTokenRequest.put("token", new SessionManager(context).getLoginToken());
+//                        Call<LoginResponse> call1 = apiInterface.REFRESH_TOKEN(refreshTokenRequest);
+//                        call1.enqueue(new Callback<LoginResponse>() {
+//                            @Override
+//                            public void onResponse(@NotNull Call<LoginResponse> call1, @NotNull Response<LoginResponse> response) {
+//                                if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
+//                                    new SessionManager(context).setLoginToken(response.body().getData().getToken());
+//                                    orderDetailsApiCall(token, orderNumber, orderDeliveryBinding);
+//                                } else if (response.code() == 401) {
+//                                    logout();
+//                                } else {
+//                                    mListener.onFailureMessage("Please try again");
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onFailure(@NotNull Call<LoginResponse> call1, @NotNull Throwable t) {
+//                                ActivityUtils.hideDialog();
+//                                mListener.onFailureMessage("Please try again");
+//                                System.out.println("REFRESH_TOKEN_DASHBOARD ==============" + t.getMessage());
+//                            }
+//                        });
+//                    } else {
+//                        ActivityUtils.hideDialog();
+//                        mListener.onFialureMessage("No data found.");
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure(@NotNull Call<OrderDetailsResponse> call, @NotNull Throwable t) {
+//                    ActivityUtils.hideDialog();
+//                    mListener.onFialureMessage(t.getMessage());
+//                }
+//            });
+//        } else {
+//            mListener.onFialureMessage("Something went wrong.");
+//        }
+//    }
+//    https://apis.v35.dev.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/api/orders/select/my-order-select?order_number=FL20220209201098817
     public void orderDetailsApiCall(String token, String orderNumber, ActivityOrderDeliveryBinding orderDeliveryBinding) {
         if (NetworkUtils.isNetworkConnected(context)) {
             ActivityUtils.showDialog(context, "Please wait.");
@@ -1044,11 +1101,11 @@ public class OrderDeliveryActivityController {
             Gson gson = new Gson();
             String jsonLoginRequest = gson.toJson(orderDetailsRequest);
             GetDetailsRequest getDetailsRequest = new GetDetailsRequest();
-            getDetailsRequest.setRequesturl(BuildConfig.BASE_URL+"api/orders/select/my-order-select"+"?"+orderNumber);
-            getDetailsRequest.setRequestjson(jsonLoginRequest);
+            getDetailsRequest.setRequesturl(BuildConfig.BASE_URL+"api/orders/select/my-order-select"+"?"+"order_number"+"="+orderNumber);
+            getDetailsRequest.setRequestjson("The");
             getDetailsRequest.setHeadertokenkey("authorization");
             getDetailsRequest.setHeadertokenvalue("Bearer " + token);
-            getDetailsRequest.setRequesttype("POST");
+            getDetailsRequest.setRequesttype("GET");
             Call<ResponseBody> calls = apiInterface.getDetails(AppConstants.PROXY_URL, AppConstants.PROXY_TOKEN, getDetailsRequest);
             calls.enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -1210,18 +1267,15 @@ public class OrderDeliveryActivityController {
             mListener.onFialureMessage("Something went wrong.");
         }
     }
-
+// https://apis.v35.dev.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/api/order_status_his/list/order-status-history-list?uid=9370BDBD701E49BA59A9418CA849AB22
     public void orderStatusHistoryListApiCall(String uid) {
         if (NetworkUtils.isNetworkConnected(context)) {
             ActivityUtils.showDialog(context, "Please wait.");
 //            OrderStatusHistoryListRequest orderStatusHistoryListRequest = new OrderStatusHistoryListRequest();
 //            orderStatusHistoryListRequest.setUid(uid);
-
-
-
             ApiInterface apiInterface = ApiClient.getApiService();
             GetDetailsRequest getDetailsRequest = new GetDetailsRequest();
-            getDetailsRequest.setRequesturl(BuildConfig.BASE_URL + "api/order_status_his/list/order-status-history-list"+"?"+uid);
+            getDetailsRequest.setRequesturl(BuildConfig.BASE_URL + "api/order_status_his/list/order-status-history-list"+"?"+"uid"+"="+uid);
             getDetailsRequest.setRequestjson("The");
             getDetailsRequest.setHeadertokenkey("authorization");
             getDetailsRequest.setHeadertokenvalue("Bearer " + new SessionManager(context).getLoginToken());
@@ -1431,7 +1485,7 @@ public class OrderDeliveryActivityController {
 
             ApiInterface apiInterface = ApiClient.getApiService();
             GetDetailsRequest getDetailsRequest = new GetDetailsRequest();
-            getDetailsRequest.setRequesturl(BuildConfig.BASE_URL + "api/orders/select/orders-payment-select"+"?"+orderUid);
+            getDetailsRequest.setRequesturl(BuildConfig.BASE_URL + "api/orders/select/orders-payment-select"+"?"+"uid"+"="+orderUid);
             getDetailsRequest.setRequestjson("The");
             getDetailsRequest.setHeadertokenkey("authorization");
             getDetailsRequest.setHeadertokenvalue("Bearer " + new SessionManager(context).getLoginToken());

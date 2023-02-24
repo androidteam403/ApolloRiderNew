@@ -480,6 +480,64 @@ public class DashboardFragmentController {
         }
     }
 
+
+//    public void getRiderDashboardCountsApiCall() {
+//        if (NetworkUtils.isNetworkConnected(context)) {
+//            ActivityUtils.showDialog(context, "Please wait.");
+//            ApiInterface apiInterface = ApiClient.getApiService();
+//
+//            Call<RiderDashboardCountResponse> call = apiInterface.GET_RIDER_DASHBOARD_COUNTS_API_CALL("Bearer " + new SessionManager(context).getLoginToken(), CommonUtils.getBeforeSevenDaysDate(), CommonUtils.getCurrentDate());//CommonUtils.getfromDate() + "-01"
+//            call.enqueue(new Callback<RiderDashboardCountResponse>() {
+//                @Override
+//                public void onResponse(@NotNull Call<RiderDashboardCountResponse> call, @NotNull Response<RiderDashboardCountResponse> response) {
+//                    if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
+//                        mListener.onSuccessGetRiderDashboardCountApiCall(response.body());
+//                        getSessionManager().setCodReceived(String.valueOf(response.body().getData().getCount().getCodReceived()));
+//                        getSessionManager().setCodPendingDeposited(String.valueOf(response.body().getData().getCount().getCodPending()));
+//                    } else if (response.code() == 401) {
+//                        ActivityUtils.showDialog(context, "Please wait.");
+//                        HashMap<String, Object> refreshTokenRequest = new HashMap<>();
+//                        refreshTokenRequest.put("token", new SessionManager(context).getLoginToken());
+//                        Call<LoginResponse> call1 = apiInterface.REFRESH_TOKEN(refreshTokenRequest);
+//                        call1.enqueue(new Callback<LoginResponse>() {
+//                            @Override
+//                            public void onResponse(@NotNull Call<LoginResponse> call1, @NotNull Response<LoginResponse> response) {
+//                                if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
+//                                    new SessionManager(context).setLoginToken(response.body().getData().getToken());
+//                                    getRiderDashboardCountsApiCall();
+//                                } else if (response.code() == 401) {
+//                                    logout();
+//                                } else {
+//                                    mListener.onFialureMessage("Please try again");
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onFailure(@NotNull Call<LoginResponse> call1, @NotNull Throwable t) {
+//                                ActivityUtils.hideDialog();
+//                                mListener.onFialureMessage("Please try again");
+//                                System.out.println("REFRESH_TOKEN_DASHBOARD ==============" + t.getMessage());
+//                            }
+//                        });
+//                    } else {
+//                        ActivityUtils.hideDialog();
+//                        mListener.onFialureMessage("No Data Found");
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure(@NotNull Call<RiderDashboardCountResponse> call, @NotNull Throwable t) {
+//                    ActivityUtils.hideDialog();
+//                    mListener.onFialureMessage("No Data Found");
+//                    System.out.println("GET RIDER DASHBOARD COUNTS ==============" + t.getMessage());
+//                }
+//            });
+//        } else {
+//            mListener.onFialureMessage("Something went wrong.");
+//        }
+//    }
+
+//    https://apis.v35.dev.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/api/user/select/rider-dashboard-counts?from_date=2022-12-09&to_date=2022-12-15
     public void getRiderDashboardCountsApiCall() {
         if (NetworkUtils.isNetworkConnected(context)) {
             ActivityUtils.showDialog(context, "Please wait.");
