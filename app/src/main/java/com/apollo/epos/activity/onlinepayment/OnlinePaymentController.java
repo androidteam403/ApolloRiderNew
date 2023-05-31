@@ -2,6 +2,7 @@ package com.apollo.epos.activity.onlinepayment;
 
 import android.content.Context;
 
+import com.apollo.epos.BuildConfig;
 import com.apollo.epos.activity.neworder.model.OrderDetailsResponse;
 import com.apollo.epos.activity.onlinepayment.model.PhonePeQrCodeRequest;
 import com.apollo.epos.activity.onlinepayment.model.PhonePeQrCodeResponse;
@@ -40,7 +41,7 @@ public class OnlinePaymentController {
             phonePeQrCodeRequest.setExpiresIn(2000);
             phonePeQrCodeRequest.setRequestType("VIVEKAGAM");
 
-            ApiInterface apiInterface = ApiClient.getApiService();
+            ApiInterface apiInterface = ApiClient.getApiServiceForBaseUrl(BuildConfig.PHONEPE_QR_CODE_BASE_URL);
             Call<PhonePeQrCodeResponse> call = apiInterface.PHONEPE_QRCODE_API_CALL(phonePeQrCodeRequest);
             call.enqueue(new Callback<PhonePeQrCodeResponse>() {
                 @Override
@@ -76,7 +77,7 @@ public class OnlinePaymentController {
             phonePeQrCodeRequest.setTransactionId(phonePeQrCodetransactionId);
             phonePeQrCodeRequest.setRequestType("VIVEKAGAM");
 
-            ApiInterface apiInterface = ApiClient.getApiService();
+            ApiInterface apiInterface = ApiClient.getApiServiceForBaseUrl(BuildConfig.PHONEPE_QR_CODE_BASE_URL);
             Call<PhonePeQrCodeResponse> call = apiInterface.PHONEPE_CHECK_PAYMENT_STAUS_API_CALL(phonePeQrCodeRequest);
             call.enqueue(new Callback<PhonePeQrCodeResponse>() {
                 @Override
@@ -111,7 +112,7 @@ public class OnlinePaymentController {
             phonePeQrCodeRequest.setTransactionId(phonePeQrCodetransactionId);
             phonePeQrCodeRequest.setRequestType("VIVEKAGAM");
 
-            ApiInterface apiInterface = ApiClient.getApiService();
+            ApiInterface apiInterface = ApiClient.getApiServiceForBaseUrl(BuildConfig.PHONEPE_QR_CODE_BASE_URL);
             Call<PhonePeQrCodeResponse> call = apiInterface.PHONEPE_PAYMENT_CANCELLED_API_CALL(phonePeQrCodeRequest);
             call.enqueue(new Callback<PhonePeQrCodeResponse>() {
                 @Override

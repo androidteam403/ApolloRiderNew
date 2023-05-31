@@ -101,6 +101,34 @@
                 android:onClick="@{()-> callback.onClickSignin()}"
                 android:text="@string/label_signin" />
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/ten_dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/app_version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/roboto_regular"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/vivekagam_logistics_system"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/five_dp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="@string/label_vivekagam_logistics_system"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
     </RelativeLayout>
 
     <data>

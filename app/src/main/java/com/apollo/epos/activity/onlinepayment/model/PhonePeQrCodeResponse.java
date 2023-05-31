@@ -17,7 +17,7 @@ public class PhonePeQrCodeResponse {
     private String qrCode;
     @SerializedName("providerReferenceId")
     @Expose
-    private Object providerReferenceId;
+    private String providerReferenceId;
     @SerializedName("StatusCode")
     @Expose
     private Object statusCode;
@@ -46,11 +46,11 @@ public class PhonePeQrCodeResponse {
         this.qrCode = qrCode;
     }
 
-    public Object getProviderReferenceId() {
+    public String getProviderReferenceId() {
         return providerReferenceId;
     }
 
-    public void setProviderReferenceId(Object providerReferenceId) {
+    public void setProviderReferenceId(String providerReferenceId) {
         this.providerReferenceId = providerReferenceId;
     }
 

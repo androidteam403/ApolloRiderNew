@@ -127,13 +127,19 @@ public interface ApiInterface {
     Call<ComplaintsResponse> GET_COMPLAINTS_LIST_API_CALL(@Header("authorization") String token, @Query("page") String page);
 
     //Payment Api's
-    @POST("https://online.apollopharmacy.org/PHONEPEPROD/APOLLO/PhonePe/GenerateQrCode")// UAT http://lms.apollopharmacy.org:8033/PHONEPEUAT/APOLLO/PhonePe/GenerateQrCode
+//    @POST("https://online.apollopharmacy.org/PHONEPEPROD/APOLLO/PhonePe/GenerateQrCode")// UAT http://lms.apollopharmacy.org:8033/PHONEPEUAT/APOLLO/PhonePe/GenerateQrCode
+    @POST("GenerateQrCode")
+//https://online.apollopharmacy.org/PHONEPEUAT/APOLLO/PhonePe/
     Call<PhonePeQrCodeResponse> PHONEPE_QRCODE_API_CALL(@Body PhonePeQrCodeRequest phonePeQrCodeRequest);
 
-    @POST("https://online.apollopharmacy.org/PHONEPEPROD/APOLLO/PhonePe/CheckPaymentStatus")// UAT http://lms.apollopharmacy.org:8033/PHONEPEUAT/APOLLO/PhonePe/CheckPaymentStatus
+    //    @POST("https://online.apollopharmacy.org/PHONEPEPROD/APOLLO/PhonePe/CheckPaymentStatus")// UAT http://lms.apollopharmacy.org:8033/PHONEPEUAT/APOLLO/PhonePe/CheckPaymentStatus
+    @POST("CheckPaymentStatus")
+//https://online.apollopharmacy.org/PHONEPEUAT/APOLLO/PhonePe/
     Call<PhonePeQrCodeResponse> PHONEPE_CHECK_PAYMENT_STAUS_API_CALL(@Body PhonePeQrCodeRequest phonePeQrCodeRequest);
 
-    @POST("https://online.apollopharmacy.org/PHONEPEPROD/APOLLO/PhonePe/PaymentCancel")// UAT http://lms.apollopharmacy.org:8033/PHONEPEUAT/APOLLO/PhonePe/PaymentCancel
+    //    @POST("https://online.apollopharmacy.org/PHONEPEPROD/APOLLO/PhonePe/PaymentCancel")// UAT http://lms.apollopharmacy.org:8033/PHONEPEUAT/APOLLO/PhonePe/PaymentCancel
+    @POST("PaymentCancel")
+//https://online.apollopharmacy.org/PHONEPEUAT/APOLLO/PhonePe/
     Call<PhonePeQrCodeResponse> PHONEPE_PAYMENT_CANCELLED_API_CALL(@Body PhonePeQrCodeRequest phonePeQrCodeRequest);
 
     @GET("https://online.apollopharmacy.org/PHONEPELINK/apollophonepe.aspx")

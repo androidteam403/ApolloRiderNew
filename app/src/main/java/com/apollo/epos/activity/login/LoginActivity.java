@@ -7,10 +7,12 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.databinding.DataBindingUtil;
 
+import com.apollo.epos.BuildConfig;
 import com.apollo.epos.R;
 import com.apollo.epos.activity.BaseActivity;
 import com.apollo.epos.activity.login.model.LoginResponse;
@@ -46,6 +48,8 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
     @SuppressLint("ClickableViewAccessibility")
     private void setUp() {
         loginBinding.setCallback(this);
+        TextView appVersion = findViewById(R.id.app_version);
+        appVersion.setText("Version " + BuildConfig.VERSION_NAME);
         FirebaseMessaging.getInstance().getToken().addOnSuccessListener(token -> {
             if (!TextUtils.isEmpty(token)) {
                 this.firebaseToken = token;

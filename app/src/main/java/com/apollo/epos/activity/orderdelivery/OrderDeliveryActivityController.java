@@ -598,6 +598,9 @@ public class OrderDeliveryActivityController {
             orderEndJourneyUpdateRequest.setUid(uid);
             OrderEndJourneyUpdateRequest.OrderRider orderRider = new OrderEndJourneyUpdateRequest.OrderRider();
             orderRider.setEndTime(CommonUtils.getCurrentTimeDate());
+            double distanceTravveledinMeters = Double.parseDouble(new SessionManager(context).getRiderTravelledDistanceinDay());
+            double distanceTravelledInKm = distanceTravveledinMeters * 0.001;
+            orderRider.setDistanceTravelled(String.valueOf(distanceTravelledInKm));
             orderEndJourneyUpdateRequest.setOrderRider(orderRider);
 
             ApiInterface apiInterface = ApiClient.getApiService();
@@ -607,6 +610,7 @@ public class OrderDeliveryActivityController {
                 public void onResponse(@NotNull Call<OrderEndJourneyUpdateResponse> call, @NotNull Response<OrderEndJourneyUpdateResponse> response) {
                     ActivityUtils.hideDialog();
                     if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
+                        new SessionManager(context).setRiderTravelledDistanceinDay("0");
                         mListener.onSuccessOrderEndJourneyUpdateApiCall(response.body());
                     } else if (response.code() == 401) {
                         ActivityUtils.showDialog(context, "Please wait.");
@@ -692,6 +696,9 @@ public class OrderDeliveryActivityController {
             orderStartJourneyUpdateRequest.setUid(uid);
             OrderStartJourneyUpdateRequest.OrderRider orderRider = new OrderStartJourneyUpdateRequest.OrderRider();
             orderRider.setActualDistance(distance);
+            double distanceTravveledinMeters = Double.parseDouble(new SessionManager(context).getRiderTravelledDistanceinDay());
+            double distanceTravelledInKm = distanceTravveledinMeters * 0.001;
+            orderRider.setDistanceTravelled(String.valueOf(distanceTravelledInKm));
             orderRider.setStartTime(CommonUtils.getCurrentTimeDate());
             orderStartJourneyUpdateRequest.setOrderRider(orderRider);
 

@@ -2,7 +2,15 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 android {
-    compileSdkVersion 28
+    signingConfigs {
+        release {
+            storeFile file('D:\\workspace\\ApolloRiderNew\\app\\vivekagam.jks')
+            storePassword 'vivekagam12345'
+            keyPassword 'vivekagam12345'
+            keyAlias 'vivekagam'
+        }
+    }
+    compileSdkVersion 33
     dataBinding {
         enabled = true
     }
@@ -12,9 +20,9 @@ android {
     defaultConfig {
         applicationId "com.apollo.epos"
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 33
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         useLibrary 'org.apache.http.legacy'
         multiDexEnabled true
@@ -23,19 +31,37 @@ android {
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField("String", "BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
-            buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
-            buildConfigField("String", "HELP_BASE_URL", "\"https://apollo_rider.v35.dev.zeroco.de/apollo/rider/rider-help/\"")
-//            buildConfigField("String", "BASE_URL", "\"https://apis.v35.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
-//            buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
-//            buildConfigField("String", "HELP_BASE_URL", "\"https://apollo_rider.v35.zeroco.de/apollo/rider/rider-help/\"")
+
+            //Uat
+//            buildConfigField("String", "BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
+//            buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
+//            buildConfigField("String", "HELP_BASE_URL", "\"https://apollo_rider.v35.dev.zeroco.de/apollo/rider/rider-help/\"")
+//            buildConfigField("String", "PHONEPE_QR_CODE_BASE_URL", "\"https://online.apollopharmacy.org/PHONEPEUAT/APOLLO/PhonePe/\"")
+
+            //Prod
+            buildConfigField("String", "BASE_URL", "\"https://apis.v35.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
+            buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
+            buildConfigField("String", "HELP_BASE_URL", "\"https://apollo_rider.v35.zeroco.de/apollo/rider/rider-help/\"")
+            buildConfigField("String", "PHONEPE_QR_CODE_BASE_URL", "\"https://online.apollopharmacy.org/PHONEPEPROD/APOLLO/PhonePe/\"")
         }
         release {
             minifyEnabled false
+            debuggable = false
+
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField("String", "BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
-            buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
-            buildConfigField("String", "HELP_BASE_URL", "\"https://apollo_rider.v35.dev.zeroco.de/apollo/rider/rider-help/\"")
+
+            //Uat
+//            buildConfigField("String", "BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
+//            buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
+//            buildConfigField("String", "HELP_BASE_URL", "\"https://apollo_rider.v35.dev.zeroco.de/apollo/rider/rider-help/\"")
+//            buildConfigField("String", "PHONEPE_QR_CODE_BASE_URL", "\"https://online.apollopharmacy.org/PHONEPEUAT/APOLLO/PhonePe/\"")
+
+            //Prod
+            buildConfigField("String", "BASE_URL", "\"https://apis.v35.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
+            buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
+            buildConfigField("String", "HELP_BASE_URL", "\"https://apollo_rider.v35.zeroco.de/apollo/rider/rider-help/\"")
+            buildConfigField("String", "PHONEPE_QR_CODE_BASE_URL", "\"https://online.apollopharmacy.org/PHONEPEPROD/APOLLO/PhonePe/\"")
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
@@ -117,6 +143,8 @@ dependencies {
 
     implementation project(path: ':cusotmloader')
 
+    implementation project(path: ':permissions')
+
     implementation 'androidx.multidex:multidex:2.0.1'
 
     implementation project(path: ':drawroutemap')
@@ -127,7 +155,7 @@ dependencies {
     implementation 'com.orhanobut:hawk:2.0.1'
     implementation 'pub.devrel:easypermissions:1.0.1'
 
-    implementation 'com.nabinbhandari.android:permissions:3.8'
+//    implementation 'com.nabinbhandari.android:permissions:3.8'
     implementation project(path: ':easywaylocation')
 
     //firebase
@@ -139,6 +167,9 @@ dependencies {
     //QR code generation
     implementation 'androidmads.library.qrgenearator:QRGenearator:1.0.3'
 
+    //OkHttpProfiler
+    implementation 'com.localebro:okhttpprofiler:1.0.8'
+
 }
 
 /**
@@ -148,5 +179,4 @@ dependencies {
  *
  * dev base url           :::   https://apis.v35.dev.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/
  * dev upload base url    :::   https://apis.v35.dev.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/
- * dev help base url      :::   https://apollo_rider.v35.dev.zeroco.de/apollo/rider/rider-help/
- */
+ * dev help base url      :::   https://apollo_rider.v35.dev.zeroco.de/apollo/rider/rider-help/*/

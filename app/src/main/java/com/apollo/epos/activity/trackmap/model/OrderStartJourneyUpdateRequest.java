@@ -40,6 +40,11 @@ public class OrderStartJourneyUpdateRequest {
         @Expose
         private String actualDistance;
 
+        @SerializedName("distance_travelled")
+        @Expose
+        private String distanceTravelled;
+
+
         public String getUid() {
             return uid;
         }
@@ -64,6 +69,13 @@ public class OrderStartJourneyUpdateRequest {
             this.actualDistance = actualDistance;
         }
 
+        public String getDistanceTravelled() {
+            return distanceTravelled;
+        }
+
+        public void setDistanceTravelled(String distanceTravelled) {
+            this.distanceTravelled = distanceTravelled;
+        }
     }
 
 }

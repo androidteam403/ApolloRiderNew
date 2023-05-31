@@ -105,6 +105,9 @@ public class TrackMapActivityController {
             orderStartJourneyUpdateRequest.setUid(uid);
             OrderStartJourneyUpdateRequest.OrderRider orderRider = new OrderStartJourneyUpdateRequest.OrderRider();
             orderRider.setActualDistance(distance);
+            double distanceTravveledinMeters = Double.parseDouble(new SessionManager(context).getRiderTravelledDistanceinDay());
+            double distanceTravelledInKm = distanceTravveledinMeters * 0.001;
+            orderRider.setDistanceTravelled(String.valueOf(distanceTravelledInKm));
             orderRider.setStartTime(CommonUtils.getCurrentTimeDate());
             orderStartJourneyUpdateRequest.setOrderRider(orderRider);
 

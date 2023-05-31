@@ -48,11 +48,11 @@ public class BatteryLevelLocationService extends Service implements LocationList
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 5, this);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 5, this);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10, this);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 10, this);
         batteryPercentage();
 
-        riderTotalTravelledDistanceinaDay();
+//        riderTotalTravelledDistanceinaDay();
     }
 
     @Nullable
@@ -81,8 +81,10 @@ public class BatteryLevelLocationService extends Service implements LocationList
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        if (location != null)
+        if (location != null) {
             this.currentLocation = location;
+            riderTotalTravelledDistanceinaDay();
+        }
 //        if (preLocation != null)
 //            todayTravelledDistance();
 //        else
@@ -153,23 +155,26 @@ public class BatteryLevelLocationService extends Service implements LocationList
             if (previousLocation == null)
                 previousLocation = currentLocation;
         }
-        Handler todayRiderTravelledDistance = new Handler();
-        todayRiderTravelledDistance.postDelayed(this::riderTotalTravelledDistanceinaDay, 3000);
+//        Handler todayRiderTravelledDistance = new Handler();
+//        todayRiderTravelledDistance.postDelayed(this::riderTotalTravelledDistanceinaDay, 3000);
     }
 
     public void getTravelledDistance(LatLng previousLocation, LatLng currentLocationss) {
+        distanceTravelled = Double.parseDouble(getSessionManager().getRiderTravelledDistanceinDay());
+        distances = distanceTravelled;
         Location locationA = new Location("point A");
         locationA.setLatitude(previousLocation.latitude);
         locationA.setLongitude(previousLocation.latitude);
         Location locationB = new Location("point B");
         locationB.setLatitude(currentLocationss.latitude);
         locationB.setLongitude(currentLocationss.latitude);
-        if (locationA.distanceTo(locationB) > 5 && locationA.distanceTo(locationB) < 15) {
+//        if (locationA.distanceTo(locationB) > 5 && locationA.distanceTo(locationB) < 15) {
 //            Toast.makeText(this, "" + locationA.distanceTo(locationB), Toast.LENGTH_LONG).show();
-            distances = distances + locationA.distanceTo(locationB);
-            getSessionManager().setRiderTravelledDistanceinDay(String.valueOf(distances));
-            this.previousLocation = this.currentLocation;
-        }
+        distances = distances + locationA.distanceTo(locationB);
+        getSessionManager().setRiderTravelledDistanceinDay(String.valueOf(distances));
+        this.previousLocation = this.currentLocation;
+//        Toast.makeText(this, "Distance====" + distances, Toast.LENGTH_SHORT).show();
+//        }
     }
 
     private SessionManager getSessionManager() {

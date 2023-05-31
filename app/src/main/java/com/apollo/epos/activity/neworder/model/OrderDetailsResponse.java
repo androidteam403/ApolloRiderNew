@@ -533,6 +533,9 @@ public class OrderDetailsResponse implements Serializable {
         @SerializedName("order_rider")
         @Expose
         private OrderRider orderRider;
+        @SerializedName("pickup_site")
+        @Expose
+        private PickupSite pickupSite;
         @SerializedName("order_handover")
         @Expose
         private OrderHandover orderHandover;
@@ -1242,6 +1245,14 @@ public class OrderDetailsResponse implements Serializable {
             this.orderRider = orderRider;
         }
 
+        public PickupSite getPickupSite() {
+            return pickupSite;
+        }
+
+        public void setPickupSite(PickupSite pickupSite) {
+            this.pickupSite = pickupSite;
+        }
+
         public OrderHandover getOrderHandover() {
             return orderHandover;
         }
@@ -1602,6 +1613,64 @@ public class OrderDetailsResponse implements Serializable {
             this.deliveredOn = deliveredOn;
         }
 
+    }
+
+    public class PickupSite implements Serializable {
+        @SerializedName("uid")
+        @Expose
+        private String uid;
+        @SerializedName("otp_branch_hndovr")
+        @Expose
+        private Boolean otpBranchHndovr;
+        @SerializedName("otp_cust_pickup")
+        @Expose
+        private Boolean otpCustPickup;
+        @SerializedName("otp_delivery")
+        @Expose
+        private Boolean otpDelivery;
+        @SerializedName("otp_pickup")
+        @Expose
+        private Boolean otpPickup;
+
+        public String getUid() {
+            return uid;
+        }
+
+        public void setUid(String uid) {
+            this.uid = uid;
+        }
+
+        public Boolean getOtpBranchHndovr() {
+            return otpBranchHndovr;
+        }
+
+        public void setOtpBranchHndovr(Boolean otpBranchHndovr) {
+            this.otpBranchHndovr = otpBranchHndovr;
+        }
+
+        public Boolean getOtpCustPickup() {
+            return otpCustPickup;
+        }
+
+        public void setOtpCustPickup(Boolean otpCustPickup) {
+            this.otpCustPickup = otpCustPickup;
+        }
+
+        public Boolean getOtpDelivery() {
+            return otpDelivery;
+        }
+
+        public void setOtpDelivery(Boolean otpDelivery) {
+            this.otpDelivery = otpDelivery;
+        }
+
+        public Boolean getOtpPickup() {
+            return otpPickup;
+        }
+
+        public void setOtpPickup(Boolean otpPickup) {
+            this.otpPickup = otpPickup;
+        }
     }
 
     public class OrderSh implements Serializable {

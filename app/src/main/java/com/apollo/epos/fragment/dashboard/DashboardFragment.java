@@ -526,7 +526,7 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
         ArrayList<BarEntry> yVals1 = new ArrayList<BarEntry>();
 //        yVals1.add(new BarEntry(0, (int) monVal));
 
-        yVals1.add(new BarEntry(0, new float[]{monCan, monDel,1}, ""));
+        yVals1.add(new BarEntry(0, new float[]{monCan, monDel, 1}, ""));
         yVals1.add(new BarEntry(1, new float[]{tueCan, tueDel}, ""));
         yVals1.add(new BarEntry(2, new float[]{wedCan, wedDel}, ""));
         yVals1.add(new BarEntry(3, new float[]{thuCan, thuDel}, ""));
