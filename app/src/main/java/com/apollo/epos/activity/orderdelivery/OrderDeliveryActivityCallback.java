@@ -2,6 +2,7 @@ package com.apollo.epos.activity.orderdelivery;
 
 import android.graphics.Bitmap;
 
+import com.apollo.epos.activity.login.model.OrderPaymentTypeResponse;
 import com.apollo.epos.activity.neworder.model.OrderDetailsResponse;
 import com.apollo.epos.activity.orderdelivery.model.DeliveryFailreReasonsResponse;
 import com.apollo.epos.activity.orderdelivery.model.OrderPaymentSelectResponse;
@@ -96,4 +97,6 @@ public interface OrderDeliveryActivityCallback {
     boolean isStatusCancelled();
 
     void statusCanelled();
+
+    void onSelectPaymentSubtype(OrderPaymentTypeResponse.Row row, int pos);
 }

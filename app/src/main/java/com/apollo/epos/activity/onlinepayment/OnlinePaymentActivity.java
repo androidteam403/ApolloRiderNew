@@ -26,6 +26,7 @@ import com.apollo.epos.databinding.DialogGeneratePhonepeQrcodeBinding;
 import com.apollo.epos.databinding.DialogPhonepeLinkBinding;
 import com.apollo.epos.utils.ActivityUtils;
 import com.apollo.epos.utils.CommonUtils;
+import com.google.gson.Gson;
 import com.google.zxing.WriterException;
 import com.novoda.merlin.Merlin;
 
@@ -95,6 +96,7 @@ public class OnlinePaymentActivity extends BaseActivity implements OnlinePayment
 
     @Override
     public void onClickPhonePeQRCode() {
+
         getController().phonePeQRCodeApiCall(orderDetailsResponse);
     }
 
@@ -126,14 +128,24 @@ public class OnlinePaymentActivity extends BaseActivity implements OnlinePayment
     private String phonePeQrCodetransactionId;
     Dialog generatePhonePeQrCodeDialog;
 
+    private String qrCode = "";
+    private String wallet_req_txn_id;
+
+    private String requestTime = "";
+
+    private String responseTime = "";
+
     @Override
-    public void onSuccessPhonepeQrCode(PhonePeQrCodeResponse phonePeQrCodeResponse, String phonePeQrCodetransactionId) {
+    public void onSuccessPhonepeQrCode(PhonePeQrCodeResponse phonePeQrCodeResponse, String phonePeQrCodetransactionId, String transaction) {
         generatePhonePeQrCodeDialog = new Dialog(this, R.style.fadeinandoutcustomDialog);
         DialogGeneratePhonepeQrcodeBinding generatePhonepeQrcodeBinding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.dialog_generate_phonepe_qrcode, null, false);
         generatePhonePeQrCodeDialog.setContentView(generatePhonepeQrcodeBinding.getRoot());
         generatePhonePeQrCodeDialog.setCancelable(false);
         generatePhonepeQrcodeBinding.setCallback(OnlinePaymentActivity.this);
         generatePhonePeQrCodeDialog.show();
+        qrCode = phonePeQrCodeResponse.getQrCode();
+        wallet_req_txn_id = transaction;
+        requestTime = CommonUtils.getCurrentTimeDate();
         QrCodeGeneration(phonePeQrCodeResponse.getQrCode(), generatePhonepeQrcodeBinding, this);
         ActivityUtils.hideDialog();
         this.phonePeQrCodetransactionId = phonePeQrCodetransactionId;
@@ -142,9 +154,20 @@ public class OnlinePaymentActivity extends BaseActivity implements OnlinePayment
     @Override
     public void onSuccessPhonepeCheckStatus(PhonePeQrCodeResponse phonePeQrCodeResponse) {
 //        Toast.makeText(this, phonePeQrCodeResponse.getMessage(), Toast.LENGTH_SHORT).show();
+
+        String walletResponse = new Gson().toJson(phonePeQrCodeResponse);
+
+
+        responseTime = CommonUtils.getCurrentTimeDate();
         Intent intent = new Intent();
         intent.putExtra("PAYMENT_SUCCESSFULL", true);
         intent.putExtra("TRANSACTION_ID", phonePeQrCodeResponse.getProviderReferenceId());//phonePeQrCodetransactionId
+        intent.putExtra("wallet_req_txn_id", wallet_req_txn_id);
+        intent.putExtra("resp_id", qrCode);
+        intent.putExtra("request_time", requestTime);
+        intent.putExtra("response_time", responseTime);
+        intent.putExtra("WALLET_RESPONSE", walletResponse);
+        intent.putExtra("PAYMENTMODE", "PHONEPE QRCODE APP");
         setResult(Activity.RESULT_OK, intent);
         finish();
         ActivityUtils.hideDialog();
@@ -176,6 +199,7 @@ public class OnlinePaymentActivity extends BaseActivity implements OnlinePayment
         if (response != null) {
             String[] data = response.substring(0, response.indexOf("<")).split("\\|");
             if (data[0].equals("success")) {
+                requestTime = CommonUtils.getCurrentTimeDate();
                 this.phonePeLinktransactionId = data[2];
                 this.phonePeLinkRefferenceId = data[3];
                 phonePePaymentLinkDialogShow();
@@ -195,9 +219,14 @@ public class OnlinePaymentActivity extends BaseActivity implements OnlinePayment
                     Toast.makeText(this, data[1], Toast.LENGTH_SHORT).show();
                     break;
                 case "success":
+                    responseTime = CommonUtils.getCurrentTimeDate();
                     Intent intent = new Intent();
                     intent.putExtra("PAYMENT_SUCCESSFULL", true);
                     intent.putExtra("TRANSACTION_ID", data[3]);
+                    intent.putExtra("PAYMENTMODE", "PHONEPE PAYMENT LINK");
+//                    intent.putExtra("WALLET_RESPONSE", data);
+                    intent.putExtra("request_time", requestTime);
+                    intent.putExtra("response_time", responseTime);
                     setResult(Activity.RESULT_OK, intent);
                     finish();
                     ActivityUtils.hideDialog();

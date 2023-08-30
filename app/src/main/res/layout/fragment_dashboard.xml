@@ -52,6 +52,7 @@
                                     android:id="@+id/user_image"
                                     android:layout_width="60dp"
                                     android:layout_height="60dp"
+                                    android:src="@drawable/ic_login_user"
                                     android:contentDescription="@string/nav_header_desc" />
                             </RelativeLayout>
                         </LinearLayout>

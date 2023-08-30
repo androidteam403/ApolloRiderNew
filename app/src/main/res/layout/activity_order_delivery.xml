@@ -2645,12 +2645,18 @@
                                                     android:orientation="vertical"
                                                     android:visibility="gone">
 
+                                                    <androidx.recyclerview.widget.RecyclerView
+                                                        android:id="@+id/payment_subtype_list_recycler"
+                                                        android:layout_width="match_parent"
+                                                        android:layout_height="wrap_content" />
+
                                                     <RadioGroup
                                                         android:id="@+id/cash_card_radiogroup"
                                                         android:layout_width="match_parent"
                                                         android:layout_height="wrap_content"
                                                         android:layout_marginTop="@dimen/five_dp"
-                                                        android:orientation="horizontal">
+                                                        android:orientation="horizontal"
+                                                        android:visibility="gone">
 
 
                                                         <RadioButton

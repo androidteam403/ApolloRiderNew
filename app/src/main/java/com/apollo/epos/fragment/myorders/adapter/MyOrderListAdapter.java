@@ -119,6 +119,7 @@ public class MyOrderListAdapter extends RecyclerView.Adapter<MyOrderListAdapter.
         }
 
         if (item.getOrderState().getName().equals("RETURN")) {
+            holder.myordersListBinding.siteId.setText("(" + item.getPickupBranch() + ")");
             if (item.getOrderStatus().getUid().equals("ORDERACCEPTED") || item.getOrderStatus().getUid().equals("ORDERUPDATE")) {
                 holder.myordersListBinding.deliveredOnText.setText("Pickup by: ");
                 orderDate = item.getPickupEtWindo();
@@ -139,6 +140,7 @@ public class MyOrderListAdapter extends RecyclerView.Adapter<MyOrderListAdapter.
             holder.myordersListBinding.deliveryAddress.setText(returnAddress);
             holder.myordersListBinding.deliveryLandMark.setText(item.getReturnLandmark());
         } else {
+            holder.myordersListBinding.siteId.setText("(" + item.getDeliverBranch() + ")");
             if (item.getOrderStatus().getUid().equals("ORDERACCEPTED") || item.getOrderStatus().getUid().equals("ORDERUPDATE")) {
                 holder.myordersListBinding.deliveredOnText.setText("Deliver by: ");
                 orderDate = item.getDelEtWindo();

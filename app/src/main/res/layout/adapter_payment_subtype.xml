@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/payment_cash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="@{row.paymentSubtypeSelected}"
+            android:focusableInTouchMode="false"
+            android:fontFamily="@font/roboto_bold"
+            android:text="@{row.name}"
+            android:clickable="false"
+            android:textColor="@color/white"
+            android:theme="@style/MyRadioButton" />
+    </RelativeLayout>
+
+    <data>
+
+        <variable
+            name="row"
+            type="com.apollo.epos.activity.login.model.OrderPaymentTypeResponse.Row" />
+    </data>
+</layout>

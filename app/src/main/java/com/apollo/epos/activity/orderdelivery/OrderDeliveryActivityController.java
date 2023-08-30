@@ -464,7 +464,7 @@ public class OrderDeliveryActivityController {
         }
     }
 
-    public void orderPaymentUpdateApiCall(OrderDetailsResponse orderDetailsResponse, String paymentType, String deviceType1, String transactionId) {
+    public void orderPaymentUpdateApiCall(OrderDetailsResponse orderDetailsResponse, String paymentType, String deviceType1, String transactionId, String walletReqTxnId, String respId, String requestTime, String responseTime, String paymentModeText, String walletResponse) {
         if (NetworkUtils.isNetworkConnected(context)) {
             ActivityUtils.showDialog(context, "Please Wait");
 
@@ -474,10 +474,27 @@ public class OrderDeliveryActivityController {
             OrderPaymentUpdateRequest.OrderPayment orderPayment = new OrderPaymentUpdateRequest.OrderPayment();
             orderPayment.setAmount(orderDetailsResponse.getData().getPakgValue());
             orderPayment.setTxnDate(CommonUtils.getCurrentTimeDate());
+
+
+            OrderPaymentUpdateRequest.PaymentMode paymentMode = new OrderPaymentUpdateRequest.PaymentMode();
+            paymentMode.setUid(paymentModeText);
+            orderPayment.setPaymentMode(paymentMode);
+
             orderPayment.setTxnId(transactionId);
             OrderPaymentUpdateRequest.Type type = new OrderPaymentUpdateRequest.Type();
             type.setUid(paymentType);
             orderPayment.setType(type);
+
+            //new fields
+            orderPayment.setLiveTrackingUrl(""); // Empty
+            orderPayment.setPAYMENTMODE(paymentModeText);
+            orderPayment.setVendorid(""); // Empty
+            orderPayment.setSettlementsite(""); // Empty
+            orderPayment.setWalletReqTxnId(walletReqTxnId);
+            orderPayment.setRespId(respId);
+            orderPayment.setWalletResp(walletResponse);
+            orderPayment.setRequestTime(requestTime);
+            orderPayment.setResponseTime(responseTime);
 
             OrderPaymentUpdateRequest.DeviceType deviceType = new OrderPaymentUpdateRequest.DeviceType();
             deviceType.setUid(deviceType1);
@@ -503,7 +520,7 @@ public class OrderDeliveryActivityController {
                             public void onResponse(@NotNull Call<LoginResponse> call1, @NotNull Response<LoginResponse> response) {
                                 if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
                                     new SessionManager(context).setLoginToken(response.body().getData().getToken());
-                                    orderPaymentUpdateApiCall(orderDetailsResponse, paymentType, deviceType1, transactionId);
+                                    orderPaymentUpdateApiCall(orderDetailsResponse, paymentType, deviceType1, transactionId, walletReqTxnId, respId, requestTime, responseTime, paymentModeText, walletResponse);
                                 } else if (response.code() == 401) {
                                     logout();
                                 } else {
@@ -750,5 +767,59 @@ public class OrderDeliveryActivityController {
             mListener.onFailureMessage("Something went wrong.");
         }
     }
+
+    /*private void omsOrderMobileWalletPaymentSave(OmsOrderMobileWalletPaymentSaveRequest omsOrderMobileWalletPaymentSaveRequest) {
+        if (NetworkUtils.isNetworkConnected(context)) {
+//            ActivityUtils.showDialog(context, "Please wait.");
+//            OmsOrderMobileWalletPaymentSaveRequest omsOrderMobileWalletPaymentSaveRequest = new OmsOrderMobileWalletPaymentSaveRequest();
+
+            ApiInterface apiInterface = ApiClient.getApiService();
+            Call<ResponseBody> call = apiInterface.OMS_ORDER_MOBILE_WALLET_PAYMENT_SAVE_API_CALL("Bearer " + new SessionManager(context).getLoginToken(), omsOrderMobileWalletPaymentSaveRequest);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {
+                    ActivityUtils.hideDialog();
+                    if (response.code() == 200 && response.body() != null ) {//&& response.body().getSuccess()
+//                        mListener.onSuccessOrderStartJourneyUpdateApiCall(response.body());
+                    } else if (response.code() == 401) {
+                        ActivityUtils.showDialog(context, "Please wait.");
+                        HashMap<String, Object> refreshTokenRequest = new HashMap<>();
+                        refreshTokenRequest.put("token", new SessionManager(context).getLoginToken());
+                        Call<LoginResponse> call1 = apiInterface.REFRESH_TOKEN(refreshTokenRequest);
+                        call1.enqueue(new Callback<LoginResponse>() {
+                            @Override
+                            public void onResponse(@NotNull Call<LoginResponse> call1, @NotNull Response<LoginResponse> response) {
+                                if (response.code() == 200 && response.body() != null && response.body().getSuccess()) {
+                                    new SessionManager(context).setLoginToken(response.body().getData().getToken());
+                                    omsOrderMobileWalletPaymentSave(omsOrderMobileWalletPaymentSaveRequest);
+                                } else if (response.code() == 401) {
+                                    logout();
+                                } else {
+                                    mListener.onFailureMessage("Please try again");
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(@NotNull Call<LoginResponse> call1, @NotNull Throwable t) {
+                                ActivityUtils.hideDialog();
+                                mListener.onFailureMessage("Please try again");
+                                System.out.println("REFRESH_TOKEN_DASHBOARD ==============" + t.getMessage());
+                            }
+                        });
+                    } else {
+                        mListener.onFailureMessage("No data saved.");
+                    }
+                }
+
+                @Override
+                public void onFailure(@NotNull Call<ResponseBody> call, @NotNull Throwable t) {
+                    ActivityUtils.hideDialog();
+                    mListener.onFailureMessage(t.getMessage());
+                }
+            });
+        } else {
+            mListener.onFailureMessage("Something went wrong.");
+        }
+    }*/
 
 }

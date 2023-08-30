@@ -87,6 +87,8 @@ public class OrderPaymentTypeResponse {
         @Expose
         private Object isDefault;
 
+        private boolean isPaymentSubtypeSelected;
+
         public String getName() {
             return name;
         }
@@ -143,6 +145,13 @@ public class OrderPaymentTypeResponse {
             this.isDefault = isDefault;
         }
 
+        public boolean isPaymentSubtypeSelected() {
+            return isPaymentSubtypeSelected;
+        }
+
+        public void setPaymentSubtypeSelected(boolean paymentSubtypeSelected) {
+            isPaymentSubtypeSelected = paymentSubtypeSelected;
+        }
     }
 
 }

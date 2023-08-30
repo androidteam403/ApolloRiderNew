@@ -11,6 +11,7 @@ import com.apollo.epos.activity.onlinepayment.model.PhonePeQrCodeRequest;
 import com.apollo.epos.activity.onlinepayment.model.PhonePeQrCodeResponse;
 import com.apollo.epos.activity.orderdelivery.model.DeliveryFailreReasonsResponse;
 import com.apollo.epos.activity.orderdelivery.model.FileDataResponse;
+import com.apollo.epos.activity.orderdelivery.model.OmsOrderMobileWalletPaymentSaveRequest;
 import com.apollo.epos.activity.orderdelivery.model.OrderHandoverSaveUpdateRequest;
 import com.apollo.epos.activity.orderdelivery.model.OrderHandoverSaveUpdateResponse;
 import com.apollo.epos.activity.orderdelivery.model.OrderPaymentSelectResponse;
@@ -125,6 +126,11 @@ public interface ApiInterface {
 
     @GET("api/rider_complaint/list")
     Call<ComplaintsResponse> GET_COMPLAINTS_LIST_API_CALL(@Header("authorization") String token, @Query("page") String page);
+
+
+    @POST("api/order_payment/save-update/oms-order-mobile-wallet-payment-save")
+    Call<ResponseBody> OMS_ORDER_MOBILE_WALLET_PAYMENT_SAVE_API_CALL(@Header("authorization") String token, @Body OmsOrderMobileWalletPaymentSaveRequest omsOrderMobileWalletPaymentSaveRequest);
+
 
     //Payment Api's
 //    @POST("https://online.apollopharmacy.org/PHONEPEPROD/APOLLO/PhonePe/GenerateQrCode")// UAT http://lms.apollopharmacy.org:8033/PHONEPEUAT/APOLLO/PhonePe/GenerateQrCode

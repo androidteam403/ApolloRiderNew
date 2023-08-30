@@ -101,7 +101,9 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
         if (loginResponse != null && loginResponse.getData() != null && loginResponse.getSuccess() && loginResponse.getData().getToken() != null) {
             try {
                 getSessionManager().setLoginToken(loginResponse.getData().getToken());
-                getSessionManager().setRiderIconUrl(loginResponse.getData().getPic().get(0).getDimenesions().get200200FullPath());
+                if (loginResponse.getData().getPic() != null && loginResponse.getData().getPic().size() > 0 && loginResponse.getData().getPic().get(0).getDimenesions() != null && loginResponse.getData().getPic().get(0).getDimenesions().get200200FullPath() != null) {
+                    getSessionManager().setRiderIconUrl(loginResponse.getData().getPic().get(0).getDimenesions().get200200FullPath());
+                }
                 new LoginActivityController(this, this).getRiderProfileDetailsApi(getSessionManager().getLoginToken());
             } catch (Exception e) {
                 System.out.println("onSuccessLoginApi ::::::::::::::::::::::::" + e.getMessage());

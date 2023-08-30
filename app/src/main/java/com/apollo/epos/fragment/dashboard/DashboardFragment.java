@@ -1017,8 +1017,11 @@ public class DashboardFragment extends BaseFragment implements DashboardFragment
         if (getRiderProfileResponse != null) {
             getSessionManager().setRiderProfileDetails(getRiderProfileResponse);
             NavigationActivity.getInstance().setProfileData();
-            if (getRiderProfileResponse != null && getRiderProfileResponse.getData() != null && getRiderProfileResponse.getData().getPic() != null && getRiderProfileResponse.getData().getPic().size() > 0)
-                Glide.with(getContext()).load(getSessionManager().getrRiderIconUrl()).circleCrop().error(R.drawable.apollo_circle_logo).into(dashboardBinding.userImage);
+            if (getRiderProfileResponse != null && getRiderProfileResponse.getData() != null && getRiderProfileResponse.getData().getPic() != null && getRiderProfileResponse.getData().getPic().size() > 0) {
+                Glide.with(getContext()).load(getSessionManager().getrRiderIconUrl()).circleCrop().error(R.drawable.user_icon_dashboard).into(dashboardBinding.userImage);
+            } else {
+                dashboardBinding.userImage.setImageDrawable(getContext().getResources().getDrawable(R.drawable.user_icon_dashboard));
+            }
             dashboardBinding.riderName.setText(getRiderProfileResponse.getData().getFirstName() + " " + getRiderProfileResponse.getData().getLastName());
             dashboardBinding.riderPhoneNumber.setText(getRiderProfileResponse.getData().getPhone());
         }

@@ -15,7 +15,7 @@ public interface OnlinePaymentCallback {
 
     void onFailureMessage(String message);
 
-    void onSuccessPhonepeQrCode(PhonePeQrCodeResponse phonePeQrCodeResponse, String phonePeQrCodetransactionId);
+    void onSuccessPhonepeQrCode(PhonePeQrCodeResponse phonePeQrCodeResponse, String phonePeQrCodetransactionId, String transaction);
 
     void onSuccessPhonepeCheckStatus(PhonePeQrCodeResponse phonePeQrCodeResponse);
 

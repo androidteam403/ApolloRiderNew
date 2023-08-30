@@ -780,6 +780,15 @@ public class MyOrdersListResponse {
         @SerializedName("del_et_windo")
         @Expose
         private String delEtWindo;
+
+        @SerializedName("deliver_branch")
+        @Expose
+        private String deliverBranch;
+
+        @SerializedName("pickup_branch")
+        @Expose
+        private String pickupBranch;
+
         @SerializedName("pickup_et_windo")
         @Expose
         private String pickupEtWindo;
@@ -1169,6 +1178,22 @@ public class MyOrdersListResponse {
 
         public void setDelEtWindo(String delEtWindo) {
             this.delEtWindo = delEtWindo;
+        }
+
+        public String getDeliverBranch() {
+            return deliverBranch;
+        }
+
+        public void setDeliverBranch(String deliverBranch) {
+            this.deliverBranch = deliverBranch;
+        }
+
+        public String getPickupBranch() {
+            return pickupBranch;
+        }
+
+        public void setPickupBranch(String pickupBranch) {
+            this.pickupBranch = pickupBranch;
         }
 
         public String getPickupEtWindo() {

@@ -1,5 +1,7 @@
 package com.apollo.epos.activity.navigation;
 
+import static com.apollo.epos.utils.AppConstants.LAST_ACTIVITY;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
@@ -85,8 +87,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
-
-import static com.apollo.epos.utils.AppConstants.LAST_ACTIVITY;
 
 public class NavigationActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, NavigationActivityCallback {
     Toolbar toolbar;
@@ -781,7 +781,9 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         if (getSessionManager().getRiderProfileResponse() != null) {
             ImageView userImg = header.findViewById(R.id.user_image);
             if (getSessionManager().getRiderProfileResponse() != null && getSessionManager().getRiderProfileResponse().getData() != null && getSessionManager().getRiderProfileResponse().getData().getPic() != null && getSessionManager().getRiderProfileResponse().getData().getPic().size() > 0)
-                Glide.with(this).load(getSessionManager().getrRiderIconUrl()).circleCrop().error(R.drawable.apollo_app_logo).into(userImg);
+                Glide.with(this).load(getSessionManager().getrRiderIconUrl()).circleCrop().error(R.drawable.user_icon_menu).into(userImg);
+            else
+                userImg.setImageDrawable(getResources().getDrawable(R.drawable.user_icon_menu));
             TextView riderName = header.findViewById(R.id.nav_header_rider_name);
             riderName.setText(getSessionManager().getRiderProfileResponse().getData().getFirstName() + " " + getSessionManager().getRiderProfileResponse().getData().getLastName());
             TextView riderPhoneNumber = header.findViewById(R.id.nav_header_rider_phone_number);
