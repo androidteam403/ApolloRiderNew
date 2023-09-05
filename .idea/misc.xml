@@ -1,8 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CMakeSettings">
     <configurations>
       <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
     </configurations>
+  </component>
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/AndroidWorkspace/ApolloRiderNew/app/src/main/res/drawable/dialog_background.xml" value="0.214" />
+        <entry key="..\:/AndroidWorkspace/ApolloRiderNew/app/src/main/res/drawable/green_rounded_corners.xml" value="0.146" />
+        <entry key="..\:/AndroidWorkspace/ApolloRiderNew/app/src/main/res/drawable/red_rounded_corners.xml" value="0.146" />
+        <entry key="..\:/AndroidWorkspace/ApolloRiderNew/app/src/main/res/drawable/update_dialog_background.xml" value="0.146" />
+        <entry key="..\:/AndroidWorkspace/ApolloRiderNew/app/src/main/res/layout/activity_splash.xml" value="0.25" />
+        <entry key="..\:/AndroidWorkspace/ApolloRiderNew/app/src/main/res/layout/dialog_alert_custom.xml" value="0.25" />
+        <entry key="..\:/AndroidWorkspace/ApolloRiderNew/app/src/main/res/layout/dialog_alert_message.xml" value="0.25" />
+        <entry key="..\:/AndroidWorkspace/ApolloRiderNew/app/src/main/res/layout/dialog_force_update.xml" value="0.25" />
+        <entry key="..\:/AndroidWorkspace/ApolloRiderNew/app/src/main/res/layout/red_rounded_corners.xml" value="0.24895833333333334" />
+      </map>
+    </option>
   </component>
   <component name="NullableNotNullManager">
     <option name="myDefaultNullable" value="org.jetbrains.annotations.Nullable" />

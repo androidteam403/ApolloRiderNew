@@ -37,6 +37,7 @@ import com.apollo.epos.fragment.myorders.model.MyOrdersListResponse;
 import com.apollo.epos.fragment.profile.model.ComplaintReasonsListResponse;
 import com.apollo.epos.fragment.profile.model.ComplaintSaveUpdateRequest;
 import com.apollo.epos.fragment.profile.model.ComplaintSaveUpdateResponse;
+import com.apollo.epos.model.ForceUpdateResponse;
 import com.apollo.epos.model.GetRiderProfileResponse;
 
 import okhttp3.RequestBody;
@@ -156,4 +157,7 @@ public interface ApiInterface {
 
     @GET("https://online.apollopharmacy.org/PHONEPELINK/apollophonepe.aspx")
     Call<ResponseBody> PHONEPE_LINK_CANCELLED_REQUEST_API_CALL(@Query("Siteid") String siteId, @Query("docnum") String docnum, @Query("referenceid") String referenceId, @Query("mobnum") String mobileNumber, @Query("transactionid") String transactionId, @Query("Action") String action);
+
+    @GET("http://jsonblob.com/api/jsonBlob/1146305752289107968")
+    Call<ForceUpdateResponse> FORCE_UPDATE_RESPONSE_API_CALL();
 }
