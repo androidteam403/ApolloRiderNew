@@ -722,7 +722,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
 
     @Override
     public void onSuccessOrderPaymentUpdateApiCall() {
-        ActivityUtils.showDialog(this, "Please Wait.");
+//        ActivityUtils.showDialog(this, "Please Wait.");
         new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("DELIVERED", orderUid, "", "", transactionId);
     }
 
@@ -2709,6 +2709,7 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                 orderDeliveryBinding.orderStatusHeader.setText("Order Pickup");
                 new OrderDeliveryActivityController(this, this).ordersSaveUpdateStatusApiCall("OUTFORDELIVERY", orderUid, "", "", transactionId);
             } else if (status.equals("PICKUP") || status.equals("RETURNPICKED")) {//|| status.equals("OUTFORDELIVERY")
+                ActivityUtils.showDialog(this, "Please wait.");
                 DrawRouteMaps.getInstance(this, this, this, this).draw(new LatLng(this.orderDetailsResponse.getData().getPickupLatitude(), this.orderDetailsResponse.getData().getPickupLongitude()), new LatLng(this.orderDetailsResponse.getData().getDeliverLatitude(), this.orderDetailsResponse.getData().getDeliverLongitude()), null, 0);
 
                 orderDeliveryBinding.pharmacyMapViewImg.setVisibility(View.GONE);

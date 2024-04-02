@@ -33,16 +33,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
             //Uat
-            buildConfigField("String", "BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
-            buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
-            buildConfigField("String", "HELP_BASE_URL", "\"https://apollo_rider.v35.dev.zeroco.de/apollo/rider/rider-help/\"")
+            buildConfigField("String", "BASE_URL", "\"https://apis.v35.apollodev.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
+            buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.apollodev.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
+            buildConfigField("String", "HELP_BASE_URL", "\"https://apollo_rider.v35.apollodev.zeroco.de/apollo/rider/rider-help/\"")
             buildConfigField("String", "PHONEPE_QR_CODE_BASE_URL", "\"https://online.apollopharmacy.org/PHONEPEUAT/APOLLO/PhonePe/\"")
 
             //Prod
-//            buildConfigField("String", "BASE_URL", "\"https://apis.v35.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
-//            buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
-//            buildConfigField("String", "HELP_BASE_URL", "\"https://apollo_rider.v35.zeroco.de/apollo/rider/rider-help/\"")
-//            buildConfigField("String", "PHONEPE_QR_CODE_BASE_URL", "\"https://online.apollopharmacy.org/PHONEPEPROD/APOLLO/PhonePe/\"")
+            /*buildConfigField("String", "BASE_URL", "\"https://apis.v35.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
+            buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
+            buildConfigField("String", "HELP_BASE_URL", "\"https://apollo_rider.v35.zeroco.de/apollo/rider/rider-help/\"")
+            buildConfigField("String", "PHONEPE_QR_CODE_BASE_URL", "\"https://online.apollopharmacy.org/PHONEPEPROD/APOLLO/PhonePe/\"")*/
         }
         release {
             minifyEnabled false
@@ -51,9 +51,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
             //Uat
-            buildConfigField("String", "BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
-            buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.dev.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
-            buildConfigField("String", "HELP_BASE_URL", "\"https://apollo_rider.v35.dev.zeroco.de/apollo/rider/rider-help/\"")
+            buildConfigField("String", "BASE_URL", "\"https://apis.v35.apollodev.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
+            buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.apollodev.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
+            buildConfigField("String", "HELP_BASE_URL", "\"https://apollo_rider.v35.apollodev.zeroco.de/apollo/rider/rider-help/\"")
             buildConfigField("String", "PHONEPE_QR_CODE_BASE_URL", "\"https://online.apollopharmacy.org/PHONEPEUAT/APOLLO/PhonePe/\"")
 
             //Prod

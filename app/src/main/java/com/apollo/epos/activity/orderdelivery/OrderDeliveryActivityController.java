@@ -509,7 +509,7 @@ public class OrderDeliveryActivityController {
                 @Override
                 public void onResponse(@NotNull Call<Object> call, @NotNull Response<Object> response) {
                     if (response.code() == 200 && response.body() != null) {
-                        ActivityUtils.hideDialog();
+//                        ActivityUtils.hideDialog();
                         mListener.onSuccessOrderPaymentUpdateApiCall();
                     } else if (response.code() == 401) {
                         HashMap<String, Object> refreshTokenRequest = new HashMap<>();
