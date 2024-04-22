@@ -22,6 +22,7 @@ public class CommonUtils {
     public static boolean is_order_delivery_screen = false;
     public static boolean isIs_order_delivery_or_track_map_screen = false;
     public static final int ONLINE_PAYMENT_ACTIVITY = 151;
+    public static final int PAYTM_WIRELESS_DEVICE_ACTIVITY = 152;
     public static String selectedTab = "";
     public static boolean isMyOrdersListApiCall = false;
 
@@ -36,9 +37,11 @@ public class CommonUtils {
     public static String getBeforeSevenDaysDate() {
         return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date().getTime() - 518400000L);//604800000L
     }
+
     public static String getBeforeThirtyOneDaysDate() {
         return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date().getTime() - 2592000000L);
     }
+
     public static String getfromDate() {
         return new SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(new Date());
     }
@@ -140,5 +143,9 @@ public class CommonUtils {
 
         // this will convert any number sequence into 6 character.
         return String.format("%06d", number);
+    }
+
+    public static String getCurrentTimeStamp() {
+        return new SimpleDateFormat("yyyyMMddHHmmss", Locale.ENGLISH).format(new java.util.Date());
     }
 }

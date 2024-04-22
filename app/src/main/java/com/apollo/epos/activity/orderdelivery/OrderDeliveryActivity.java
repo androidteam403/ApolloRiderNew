@@ -77,6 +77,7 @@ import com.apollo.epos.activity.orderdelivery.adapter.PaymentSubtypeAdapter;
 import com.apollo.epos.activity.orderdelivery.model.DeliveryFailreReasonsResponse;
 import com.apollo.epos.activity.orderdelivery.model.OrderPaymentSelectResponse;
 import com.apollo.epos.activity.orderdelivery.model.OrderStatusHitoryListResponse;
+import com.apollo.epos.activity.paytmwirelessdevice.PaytmWirelessDeviceActivity;
 import com.apollo.epos.activity.trackmap.TrackMapActivity;
 import com.apollo.epos.activity.trackmap.model.OrderEndJourneyUpdateResponse;
 import com.apollo.epos.adapter.CustomReasonAdapter;
@@ -697,6 +698,11 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
             if (getSessionManager().getOrderPaymentTypeList().getData().getListData().getRows().size() > 2)
                 this.codCardCash = getSessionManager().getOrderPaymentTypeList().getData().getListData().getRows().get(2).getUid();
             startActivityForResult(OnlinePaymentActivity.getStartIntent(this, orderDetailsResponse), CommonUtils.ONLINE_PAYMENT_ACTIVITY);
+            overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+        } else if (rowPaymentType.getUid().equalsIgnoreCase("paytm_wireless_device")) {
+            if (getSessionManager().getOrderPaymentTypeList().getData().getListData().getRows().size() > 3)
+                this.codCardCash = getSessionManager().getOrderPaymentTypeList().getData().getListData().getRows().get(3).getUid();
+            startActivityForResult(PaytmWirelessDeviceActivity.getStartIntent(this, orderDetailsResponse), CommonUtils.ONLINE_PAYMENT_ACTIVITY);
             overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
         }
 
@@ -1405,6 +1411,25 @@ public class OrderDeliveryActivity extends BaseActivity implements AdapterView.O
                     this.wallet_resp = walletResp;
 
                     new OrderDeliveryActivityController(this, this).orderPaymentUpdateApiCall(this.orderDetailsResponse, rowPaymentType.getUid(), "", transactionId, wallet_req_txn_id, resp_id, request_time, response_time, paymentMode, walletResp);
+                }
+            }
+        } else if (requestCode == CommonUtils.PAYTM_WIRELESS_DEVICE_ACTIVITY && resultCode == RESULT_OK) {
+            if (data != null) {
+                boolean isPaymentSuccessfull = data.getBooleanExtra("PAYMENT_SUCCESSFULL", false);
+                if (isPaymentSuccessfull) {
+                    String transactionId = data.getStringExtra("TRANSACTION_ID");
+                    this.transactionId = transactionId;
+
+                    String request_time = data.getStringExtra("request_time");
+                    this.request_time = request_time;
+
+                    String response_time = data.getStringExtra("response_time");
+                    this.response_time = response_time;
+
+                    String paymentMode = data.getStringExtra("PAYMENTMODE");
+                    this.paymentMode = paymentMode;
+
+                    new OrderDeliveryActivityController(this, this).orderPaymentUpdateApiCall(this.orderDetailsResponse, rowPaymentType.getUid(), "", transactionId, "", "", request_time, response_time, paymentMode, "");
                 }
             }
         } else if (requestCode == CAM_REQUEST && resultCode == RESULT_OK) {

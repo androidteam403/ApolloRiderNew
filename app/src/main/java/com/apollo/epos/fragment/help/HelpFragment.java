@@ -71,7 +71,6 @@ public class HelpFragment extends BaseFragment {
             public void onPageFinished(WebView view, String url) {
                 ActivityUtils.hideDialog();
             }
-
         });
     }
 

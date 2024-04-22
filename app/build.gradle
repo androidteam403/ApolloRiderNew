@@ -32,17 +32,27 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-            //Uat
-            buildConfigField("String", "BASE_URL", "\"https://apis.v35.apollodev.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
-            buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.apollodev.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
-            buildConfigField("String", "HELP_BASE_URL", "\"https://apollo_rider.v35.apollodev.zeroco.de/apollo/rider/rider-help/\"")
+            //Dev
+            buildConfigField("String", "BASE_URL", "\"https://apis.v35.apollodev.zeroco.de/zc-v3.1-user-svc/2.0/apollorider/\"")
+            buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.apollodev.zeroco.de/zc-v3.1-fs-svc/2.0/apollorider/\"")
+            buildConfigField("String", "HELP_BASE_URL", "\"https://apollorider.v35.dev.zeroco.de/apollo/rider/rider-help/\"")
             buildConfigField("String", "PHONEPE_QR_CODE_BASE_URL", "\"https://online.apollopharmacy.org/PHONEPEUAT/APOLLO/PhonePe/\"")
+            buildConfigField("String", "PAYTM_WIRELESS_DEVICE_PAYTM_REQUEST_URL", "\"https://phrmapvtuat.apollopharmacy.info:8443/PAYTMWLESUAT/Apollo/PAYTM/PaytmRequest\"")
+            buildConfigField("String", "PAYTM_WIRELESS_DEVICE_PAYTM_CHECK_STATUS_URL", "\"https://phrmapvtuat.apollopharmacy.info:8443/PAYTMWLESUAT/Apollo/PAYTM/checkstatus\"")
+
+            //UAT
+            /*buildConfigField("String", "BASE_URL", "\"https://vivegam.apollopharmacy.org/zc-v3.1-user-svc/2.0/apollo_rider/\"")
+            buildConfigField("String", "UPLOAD_BASE_URL", "\"https://vivegam.apollopharmacy.org/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
+            buildConfigField("String", "HELP_BASE_URL", "\"https://vivegam.apollopharmacy.org/apollo/rider/rider-help/\"")
+            buildConfigField("String", "PHONEPE_QR_CODE_BASE_URL", "\"https://online.apollopharmacy.org/PHONEPEUAT/APOLLO/PhonePe/\"")*/
 
             //Prod
             /*buildConfigField("String", "BASE_URL", "\"https://apis.v35.zeroco.de/zc-v3.1-user-svc/2.0/apollo_rider/\"")
             buildConfigField("String", "UPLOAD_BASE_URL", "\"https://apis.v35.zeroco.de/zc-v3.1-fs-svc/2.0/apollo_rider/\"")
             buildConfigField("String", "HELP_BASE_URL", "\"https://apollo_rider.v35.zeroco.de/apollo/rider/rider-help/\"")
             buildConfigField("String", "PHONEPE_QR_CODE_BASE_URL", "\"https://online.apollopharmacy.org/PHONEPEPROD/APOLLO/PhonePe/\"")*/
+
+
         }
         release {
             minifyEnabled false

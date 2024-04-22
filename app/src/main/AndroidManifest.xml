@@ -136,6 +136,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.navigation.NavigationActivity" />
         </activity>
+        <activity
+            android:name=".activity.paytmwirelessdevice.PaytmWirelessDeviceActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

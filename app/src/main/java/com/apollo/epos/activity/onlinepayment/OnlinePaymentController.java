@@ -142,8 +142,8 @@ public class OnlinePaymentController {
 
 
     public void generatePhonePePaymentLinkApiCall(String amount, String mobileNumber, String orderNumber, String siteId) {
-        mobileNumber = "9177551736";
-        amount = "21";
+        /*mobileNumber = "9177551736";
+        amount = "21";*/
         if (NetworkUtils.isNetworkConnected(mContext)) {
             ActivityUtils.showDialog(mContext, "Please Wait...");
 

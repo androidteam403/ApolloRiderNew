@@ -273,5 +273,8 @@
     <string name="label_no_complaints_found">No complaints found</string>
     <string name="label_rider_name">Rider Name:</string>
     <string name="label_mobile_no">Mobile No.:</string>
+    <string name="label_paytm_wireless_payment">Paytm Wireless Payment</string>
+    <string name="label_generate_paytm_payment">Generate Paytm Payment</string>
+    <string name="label_001">001</string>
 
 </resources>

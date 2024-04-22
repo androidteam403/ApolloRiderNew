@@ -19,6 +19,10 @@ import com.apollo.epos.activity.orderdelivery.model.OrderPaymentUpdateRequest;
 import com.apollo.epos.activity.orderdelivery.model.OrderSaveUpdateStausRequest;
 import com.apollo.epos.activity.orderdelivery.model.OrderSaveUpdateStausResponse;
 import com.apollo.epos.activity.orderdelivery.model.OrderStatusHitoryListResponse;
+import com.apollo.epos.activity.paytmwirelessdevice.model.PaytmCheckStatusRequest;
+import com.apollo.epos.activity.paytmwirelessdevice.model.PaytmCheckStatusResponse;
+import com.apollo.epos.activity.paytmwirelessdevice.model.PaytmRequestRequest;
+import com.apollo.epos.activity.paytmwirelessdevice.model.PaytmRequestResponse;
 import com.apollo.epos.activity.reports.model.OrdersCodStatusResponse;
 import com.apollo.epos.activity.trackmap.model.OrderEndJourneyUpdateRequest;
 import com.apollo.epos.activity.trackmap.model.OrderEndJourneyUpdateResponse;
@@ -48,6 +52,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
+import retrofit2.http.Url;
 
 public interface ApiInterface {
     @POST("login")
@@ -158,6 +163,18 @@ public interface ApiInterface {
     @GET("https://online.apollopharmacy.org/PHONEPELINK/apollophonepe.aspx")
     Call<ResponseBody> PHONEPE_LINK_CANCELLED_REQUEST_API_CALL(@Query("Siteid") String siteId, @Query("docnum") String docnum, @Query("referenceid") String referenceId, @Query("mobnum") String mobileNumber, @Query("transactionid") String transactionId, @Query("Action") String action);
 
-    @GET("http://jsonblob.com/api/jsonBlob/1146305752289107968")
+    //Paytm wireless device api's
+    @POST
+    Call<PaytmRequestResponse> PAYTM_REQUEST_API_CALL(@Url String url, @Body PaytmRequestRequest paytmRequestRequest);
+
+    @POST
+    Call<PaytmCheckStatusResponse> PAYTM_CHECK_STATUS_API_CALL(@Url String url, @Body PaytmCheckStatusRequest paytmCheckStatusRequest);
+
+    //UAT
+    @GET("https://apollorider.v35.dev.zeroco.de/app_settings.json")
     Call<ForceUpdateResponse> FORCE_UPDATE_RESPONSE_API_CALL();
+
+    //PRODUCTION
+    /*@GET("https://vivegam.apollopharmacy.org/app_settings.json")
+    Call<ForceUpdateResponse> FORCE_UPDATE_RESPONSE_API_CALL();*/
 }
