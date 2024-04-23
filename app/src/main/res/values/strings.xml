@@ -276,5 +276,7 @@
     <string name="label_paytm_wireless_payment">Paytm Wireless Payment</string>
     <string name="label_generate_paytm_payment">Generate Paytm Payment</string>
     <string name="label_001">001</string>
+    <string name="label_phonepe">PhonePe</string>
+    <string name="label_paytm">Paytm</string>
 
 </resources>
